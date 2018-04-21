@@ -1,0 +1,897 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="tor,暗网," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="写这一篇博客犹豫了很久，最终还是决定发表出来，毕竟技术本无对错，但我们要明辨是非。   0x00 暗网暗网是指那些存储在网络数据库里、但不能通过超链接访问而需要通过动态网页技术访问的资源集合，不属于那些可以被标准搜索引擎索引的表面网络。   但当今的爬虫并非完全爬行不到Hidden Web后台数据库内，一些主要的搜索引擎已经覆盖Hidden Web大约三分之一的内容。然而，在覆盖率上当前搜索引擎存">
+<meta name="keywords" content="tor,暗网">
+<meta property="og:type" content="article">
+<meta property="og:title" content="配置tor browser实现访问暗网">
+<meta property="og:url" content="http://yoursite.com/2018/03/01/配置tor-browser实现访问暗网/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="写这一篇博客犹豫了很久，最终还是决定发表出来，毕竟技术本无对错，但我们要明辨是非。   0x00 暗网暗网是指那些存储在网络数据库里、但不能通过超链接访问而需要通过动态网页技术访问的资源集合，不属于那些可以被标准搜索引擎索引的表面网络。   但当今的爬虫并非完全爬行不到Hidden Web后台数据库内，一些主要的搜索引擎已经覆盖Hidden Web大约三分之一的内容。然而，在覆盖率上当前搜索引擎存">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor01.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor02.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor03.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor04.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor05.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor06.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor07.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor08.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor09.png">
+<meta property="og:updated_time" content="2018-02-28T17:18:39.259Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="配置tor browser实现访问暗网">
+<meta name="twitter:description" content="写这一篇博客犹豫了很久，最终还是决定发表出来，毕竟技术本无对错，但我们要明辨是非。   0x00 暗网暗网是指那些存储在网络数据库里、但不能通过超链接访问而需要通过动态网页技术访问的资源集合，不属于那些可以被标准搜索引擎索引的表面网络。   但当今的爬虫并非完全爬行不到Hidden Web后台数据库内，一些主要的搜索引擎已经覆盖Hidden Web大约三分之一的内容。然而，在覆盖率上当前搜索引擎存">
+<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/01/配置tor-browser实现访问暗网/"/>
+
+
+
+
+
+  <title> 配置tor browser实现访问暗网 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/01/配置tor-browser实现访问暗网/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                配置tor browser实现访问暗网
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-01T01:15:20+08:00">
+                2018-03-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/暗网/" itemprop="url" rel="index">
+                    <span itemprop="name">暗网</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/01/配置tor-browser实现访问暗网/" class="leancloud_visitors" data-flag-title="配置tor browser实现访问暗网">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>写这一篇博客犹豫了很久，最终还是决定发表出来，毕竟技术本无对错，但我们要明辨是非。  </p>
+<h2 id="0x00-暗网"><a href="#0x00-暗网" class="headerlink" title="0x00 暗网"></a>0x00 暗网</h2><p>暗网是指那些存储在网络数据库里、但不能通过超链接访问而需要通过动态网页技术访问的资源集合，不属于那些可以被标准搜索引擎索引的表面网络。  </p>
+<p>但当今的爬虫并非完全爬行不到Hidden Web后台数据库内，一些主要的搜索引擎已经覆盖Hidden Web大约三分之一的内容。然而，在覆盖率上当前搜索引擎存在技术上的本质缺陷。  </p>
+<h2 id="0x01-tor工作原理"><a href="#0x01-tor工作原理" class="headerlink" title="0x01 tor工作原理"></a>0x01 tor工作原理</h2><p>Tor由已经安装了Tor软件的电脑连接网络而成。它之所以被称为onion，是因为它的结构就跟洋葱相同，你只能看出它的外表，而想要看到核心，就必须把它层层的剥开。即每个路由器间的传输都经过点对点密钥（symmetric key）来加密，形成有层次的结构。它中间所经过的各节点，都好像洋葱的一层皮，把客户端包在里面，算是保护信息来源的一种方式。</p>
+<p>用 Tor 创建一条私有网络路径时，用户的软件或客户端通过网络上的中继递增地建立一条由若干加密连接组成的环路（circuit）。环路一次扩展一跳（hop），环路上的中继仅仅知道它从哪一个中继接收数据以及向哪一个中继发送数据。没有一台单独的中继会知道数据包的完整路径。客户端与环路上的每一跳都协商一组独立的密钥，这样可以保证数据通过任何一跳时都无法跟踪。  </p>
+<h2 id="0x02-tor-browser浏览器"><a href="#0x02-tor-browser浏览器" class="headerlink" title="0x02 tor browser浏览器"></a>0x02 tor browser浏览器</h2><p>tor browser的最大特点就是匿名性。</p>
+<ul>
+<li><p>您的互联网服务提供商和任何本地的监视者都将无法查看您的连接、跟踪您的网络活动，包括您所访问网站的名称和地址。</p>
+</li>
+<li><p>您使用的网站和服务的运营商以及任何监视它们的人都将看到连接来自 Tor 网络而不是您的互联网IP地址，并且不知道您是谁，除非您明确标识自己。</p>
+</li>
+</ul>
+<h2 id="0x03-配置过程"><a href="#0x03-配置过程" class="headerlink" title="0x03 配置过程"></a>0x03 配置过程</h2><p>首先我们下载安装tor browser<br>下载地址： <a href="https://tor-browser.en.softonic.com/" target="_blank" rel="noopener">https://tor-browser.en.softonic.com/</a>  </p>
+<p>然后我们运行tor browser进行配置：  </p>
+<p>首先我们知道国内是无法直连的，所以我们要选择configure来配置代理。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor01.png" alt="">  </p>
+<p>然后在你的网络提供商是否对Tor网络进行了封锁或审查这里选yes。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor02.png" alt=""></p>
+<p>选了yes就要配置网桥，这里我们可以使用他提供的一些集成网桥，但是速度比较慢，自己去试试速度然后选个合适的。  </p>
+<p>但是我们想要更快更稳定的话，我们可以访问访问 <a href="https://bridges.torproject.org/bridges?transport=obfs4" target="_blank" rel="noopener">https://bridges.torproject.org/bridges?transport=obfs4</a> 获取obfs4网桥 。 </p>
+<p>然后在<a href="https://link.jianshu.com/?t=https://atlas.torproject.org/#search/网址后面加入刚才获取网桥中间的四十位字母数字来测试连接速度。" target="_blank" rel="noopener">https://link.jianshu.com/?t=https://atlas.torproject.org/#search/网址后面加入刚才获取网桥中间的四十位字母数字来测试连接速度。</a>  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor03.png" alt=""></p>
+<p>速度足够快的我们保留下来几条，选自定义网桥，然后逐条填在里面。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor04.png" alt=""></p>
+<p>其实这里配置已经可以使用了，但是在下一步如果我们有vpn的话，就直接选择使用本地代理，然后如果使用的是ss的话，那就直接选sock5协议，地址填127.0.0.1，端口填1080即可。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor05.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor06.png" alt=""></p>
+<p>在这里为什么我们还要选择vpn呢？因为GFW的原因，很多的网桥都失效了，我们很难找到能用的网桥，就算找到了，速度也非常慢，所以如果有vpn的话，我们就可以直接绕过ISP对Tor的审查，并且速度也会非常快。  </p>
+<p>接着我们选择connect，稍微等几十秒配置成功，就可以使用了。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor07.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor08.png" alt=""></p>
+<p>然后我们需要找一些暗网的导航网站，如<a href="https://hiddenwikitor.com/" target="_blank" rel="noopener">https://hiddenwikitor.com/</a><br>然后去寻找我们需要的网站。但是千万谨记隐藏自己的真实身份。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor09.png" alt=""></p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>暗网因为其匿名性，缺乏监管，变成了一个鱼龙混杂的地方，它是互联网真正的暗面。我们小小的满足了一下好奇心，然后就应该明白我们并不属于这里。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tor/" rel="tag"># tor</a>
+          
+            <a href="/tags/暗网/" rel="tag"># 暗网</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/27/sql注入漏洞复现/" rel="next" title="sql注入漏洞复现">
+                <i class="fa fa-chevron-left"></i> sql注入漏洞复现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/17/ubuntu16.04安装snort/" rel="prev" title="ubuntu16.04安装snort">
+                ubuntu16.04安装snort <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-暗网"><span class="nav-number">1.</span> <span class="nav-text">0x00 暗网</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-tor工作原理"><span class="nav-number">2.</span> <span class="nav-text">0x01 tor工作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-tor-browser浏览器"><span class="nav-number">3.</span> <span class="nav-text">0x02 tor browser浏览器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-配置过程"><span class="nav-number">4.</span> <span class="nav-text">0x03 配置过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-总结"><span class="nav-number">5.</span> <span class="nav-text">0x04 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>

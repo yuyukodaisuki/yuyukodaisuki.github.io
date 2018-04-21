@@ -1,0 +1,871 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="天文学," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="我们经常在新闻里听说：距离地球XX光年发生超新星爆炸，距离地球XX光年发现类地行星。且不管新闻真假，真空中电磁波速度是c，要真的用雷达测量几十光年几百光年的距离是不可能实现的，那我们看到这些报道的时候有没有曾怀疑过这些距离是怎么测算的呢？   0x01 天文学距离单位介绍谈到距离，肯定离不开距离单位，我们平时用到的距离单位放在天体的层面运算的话实在是令人头疼的事情，所以我们经常使用天文单位、光年、">
+<meta name="keywords" content="天文学">
+<meta property="og:type" content="article">
+<meta property="og:title" content="天体距离测量">
+<meta property="og:url" content="http://yoursite.com/2017/11/09/天体距离测量/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="我们经常在新闻里听说：距离地球XX光年发生超新星爆炸，距离地球XX光年发现类地行星。且不管新闻真假，真空中电磁波速度是c，要真的用雷达测量几十光年几百光年的距离是不可能实现的，那我们看到这些报道的时候有没有曾怀疑过这些距离是怎么测算的呢？   0x01 天文学距离单位介绍谈到距离，肯定离不开距离单位，我们平时用到的距离单位放在天体的层面运算的话实在是令人头疼的事情，所以我们经常使用天文单位、光年、">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tianwen/01.jpg">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tianwen/02.jpg">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/03.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tianwen/04.jpg">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tianwen/05.png">
+<meta property="og:updated_time" content="2017-11-09T14:49:40.756Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="天体距离测量">
+<meta name="twitter:description" content="我们经常在新闻里听说：距离地球XX光年发生超新星爆炸，距离地球XX光年发现类地行星。且不管新闻真假，真空中电磁波速度是c，要真的用雷达测量几十光年几百光年的距离是不可能实现的，那我们看到这些报道的时候有没有曾怀疑过这些距离是怎么测算的呢？   0x01 天文学距离单位介绍谈到距离，肯定离不开距离单位，我们平时用到的距离单位放在天体的层面运算的话实在是令人头疼的事情，所以我们经常使用天文单位、光年、">
+<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/tianwen/01.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/09/天体距离测量/"/>
+
+
+
+
+
+  <title> 天体距离测量 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/09/天体距离测量/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                天体距离测量
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-09T22:47:05+08:00">
+                2017-11-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/天文学/" itemprop="url" rel="index">
+                    <span itemprop="name">天文学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/11/09/天体距离测量/" class="leancloud_visitors" data-flag-title="天体距离测量">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>我们经常在新闻里听说：距离地球XX光年发生超新星爆炸，距离地球XX光年发现类地行星。且不管新闻真假，真空中电磁波速度是c，要真的用雷达测量几十光年几百光年的距离是不可能实现的，那我们看到这些报道的时候有没有曾怀疑过这些距离是怎么测算的呢？  </p>
+<h2 id="0x01-天文学距离单位介绍"><a href="#0x01-天文学距离单位介绍" class="headerlink" title="0x01 天文学距离单位介绍"></a>0x01 天文学距离单位介绍</h2><p>谈到距离，肯定离不开距离单位，我们平时用到的距离单位放在天体的层面运算的话实在是令人头疼的事情，所以我们经常使用天文单位、光年、秒差距这些单位。  </p>
+<ul>
+<li>天文单位（AU）：即太阳和地球之间的平均距离，约1.5亿公里。</li>
+<li>光年（ly）：光在宇宙真空中沿直线传播了一儒略年（365.25天）时间的距离，约94607亿千米.</li>
+<li>秒差距（pc）：以地球公转轨道的平均半径（一个天文单位）为底边所对应的三角形内角称为周年视差。当这个角的大小为1角秒时，这个三角形的一条边的长度（地球到这个恒星的距离）就称为1秒差距。约为3.26光年。</li>
+</ul>
+<p>前两个单位我们经常见到，第三个很多不了解的人看了上面的定义也很迷糊，简单的说，1秒差距是周年视差为1”时天体的距离。</p>
+<h2 id="0x02-周年视差"><a href="#0x02-周年视差" class="headerlink" title="0x02 周年视差"></a>0x02 周年视差</h2><p>而秒差距中所说的周年视差又是什么？在说周年视差的概念之前我们先来看看视差是什么。<br>视差就是从有一定距离的两个点上观察同一个目标所产生的方向差异。从目标看两个点之间的夹角，叫做这两个点的视差角，两点之间的距离称作基线。只要知道视差角度和基线长度，就可以计算出目标和观测者之间的距离。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/01.jpg" alt="">  </p>
+<p>就像当你伸出一个手指放在眼前，先闭上右眼，用左眼看它；再闭上左眼，用右眼看它，会发现手指相对远方的物体的位置有了变化，这就是从不同角度去看同一点的视差。<br>而周年视差则是地球绕太阳周年运动的直径作为这个“左右眼”的距离，看天体所产生的视差。<br>即当恒星与太阳的连线垂直地球轨道半径时，恒星对日地平均距离d所张的角ρ叫恒星的周年视差。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/02.jpg" alt="">  </p>
+<h2 id="0x03-天体距离的计算"><a href="#0x03-天体距离的计算" class="headerlink" title="0x03 天体距离的计算"></a>0x03 天体距离的计算</h2><p>介绍了上面的这些定义，我们来看看天体距离的计算<br>当ρ为被测天体相对地球轨道半长径的夹角，a为地球公转轨道半长轴，d为天体距离时，距离的计算是：<br><img src="http://oo3iot5oz.bkt.clouddn.com/03.png" alt=""></p>
+<p>在这里角度极小情况下sin（ρ）近似为ρ，a为一个天文单位，所以最终距离为周年视差（以秒为单位时）的倒数倍的秒差距。<br>比如我们的比邻星周年视差为0.76”，则计算距离时：<br>0.76的倒数为1.32，所以1.32倍的秒差距（3.26光年）为4.3光年。<br>而建立空间卫星能提升观测距离的真正原因就是因为地面上的望远镜受到大气层影响太大，角分辨率一般不到0.01”，而2013年发射的盖亚空间卫星的角分辨率可以达到0.00001”，大大的增加了观测距离。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/04.jpg" alt="盖亚卫星">  </p>
+<h2 id="0x04-宇宙距离阶梯"><a href="#0x04-宇宙距离阶梯" class="headerlink" title="0x04 宇宙距离阶梯"></a>0x04 宇宙距离阶梯</h2><p>虽然通过之前的办法可以观测到很远的地方，但是宇宙的广袤远远超出我们的想像，再远的地方怎么办呢？对于更远的地方，人类就有了其他的观测方案。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/05.png" alt="宇宙距离阶梯">  </p>
+<p>在一系列的方法之下，哈勃望远镜眼中的宇宙深处，我们能够观察的宇宙空间直径大约是930亿光年，这个数字是这样得出的：那些从138亿光年外发出的光线，产生这些光线的古老天体，由于宇宙的膨胀，今天它们和我们之间的距离已经达到了大约465亿光年左右。这是我们能观测到的极限半径，乘以二则是我们能够观察的宇宙空间直径，约930亿光年。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/天文学/" rel="tag"># 天文学</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/29/搜索引擎黑客之通过shodan入侵弱口令网络摄像头/" rel="next" title="搜索引擎黑客之通过shodan入侵弱口令网络摄像头">
+                <i class="fa fa-chevron-left"></i> 搜索引擎黑客之通过shodan入侵弱口令网络摄像头
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/25/https握手详解/" rel="prev" title="https握手详解">
+                https握手详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-天文学距离单位介绍"><span class="nav-number">1.</span> <span class="nav-text">0x01 天文学距离单位介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-周年视差"><span class="nav-number">2.</span> <span class="nav-text">0x02 周年视差</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-天体距离的计算"><span class="nav-number">3.</span> <span class="nav-text">0x03 天体距离的计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-宇宙距离阶梯"><span class="nav-number">4.</span> <span class="nav-text">0x04 宇宙距离阶梯</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>

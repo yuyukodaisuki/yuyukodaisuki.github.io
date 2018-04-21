@@ -1,0 +1,884 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="漏洞利用,文件上传,php," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 文件上传漏洞在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。上一篇文件上传漏洞的博客介绍了文件上传漏洞的原理和实战，这里来记录一些常见的绕过方法。 0x01 绕过前端验证我们都知道，任何基于前端的验证都是不安全的，因为用户能直接修改它进行绕过。 如果在前端对上传文件的格式进行了限制，我们可以通过以下的办法进行绕过:  禁用js我们通过fire">
+<meta name="keywords" content="漏洞利用,文件上传,php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传漏洞绕过方式总结">
+<meta property="og:url" content="http://yoursite.com/2018/04/12/文件上传漏洞绕过方式总结/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 文件上传漏洞在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。上一篇文件上传漏洞的博客介绍了文件上传漏洞的原理和实战，这里来记录一些常见的绕过方法。 0x01 绕过前端验证我们都知道，任何基于前端的验证都是不安全的，因为用户能直接修改它进行绕过。 如果在前端对上传文件的格式进行了限制，我们可以通过以下的办法进行绕过:  禁用js我们通过fire">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-04-14T06:54:38.017Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件上传漏洞绕过方式总结">
+<meta name="twitter:description" content="0x00 文件上传漏洞在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。上一篇文件上传漏洞的博客介绍了文件上传漏洞的原理和实战，这里来记录一些常见的绕过方法。 0x01 绕过前端验证我们都知道，任何基于前端的验证都是不安全的，因为用户能直接修改它进行绕过。 如果在前端对上传文件的格式进行了限制，我们可以通过以下的办法进行绕过:  禁用js我们通过fire">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/12/文件上传漏洞绕过方式总结/"/>
+
+
+
+
+
+  <title> 文件上传漏洞绕过方式总结 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/12/文件上传漏洞绕过方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                文件上传漏洞绕过方式总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-12T13:37:31+08:00">
+                2018-04-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/漏洞利用/" itemprop="url" rel="index">
+                    <span itemprop="name">漏洞利用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/12/文件上传漏洞绕过方式总结/" class="leancloud_visitors" data-flag-title="文件上传漏洞绕过方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-文件上传漏洞"><a href="#0x00-文件上传漏洞" class="headerlink" title="0x00 文件上传漏洞"></a>0x00 文件上传漏洞</h2><p>在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。上一篇文件上传漏洞的博客介绍了文件上传漏洞的原理和实战，这里来记录一些常见的绕过方法。</p>
+<h2 id="0x01-绕过前端验证"><a href="#0x01-绕过前端验证" class="headerlink" title="0x01 绕过前端验证"></a>0x01 绕过前端验证</h2><p>我们都知道，任何基于前端的验证都是不安全的，因为用户能直接修改它进行绕过。</p>
+<p>如果在前端对上传文件的格式进行了限制，我们可以通过以下的办法进行绕过:</p>
+<ul>
+<li><p>禁用js<br>我们通过firefox中的一个插件NoScript，将脚本禁用，这个时候上传文件的时候就不会触发js校验。</p>
+</li>
+<li><p>修改可上传的文件类型<br>因为是基于前端的验证，所有代码我们都可以通过firebug来修改，只需要在允许的类型中加入我们的文件类型，或者在禁止的类型中删除我们的文件类型，提交即可饶过。</p>
+</li>
+<li><p>通过BurpSuite绕过<br>我们通过BurpSuite进行绕过时，首先将文件名后缀改成它允许的类型，然后通过了前端的检查之后截取这个包，将文件后缀再改回来，就成功的绕过了js检查。</p>
+</li>
+</ul>
+<h2 id="0x02-后端检测-MIME"><a href="#0x02-后端检测-MIME" class="headerlink" title="0x02 后端检测-MIME"></a>0x02 后端检测-MIME</h2><p>此类后端检查时，检查的是Content-Type，也叫Mime-Type，这个时候，我们上传一个PHP文件，通过BurpSuite抓包，将.php后缀的Content-Type: application/octet-stream更改为.jpg的Content-Type: image/jpeg。<br>然后发包，就可以绕过后端基于Content-Type的检测。</p>
+<h2 id="0x03-后端检测-文件头"><a href="#0x03-后端检测-文件头" class="headerlink" title="0x03 后端检测-文件头"></a>0x03 后端检测-文件头</h2><p>这个时候他会检测文件的16进制数据头是否是合法文件的数据头，这个时候我们找一个普通的图片文件，再写一个一句话木马文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php eval($_POST[123456])?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后通过前面隐写术的方法，进入两个文件的路径，在cmd中输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy/b 1.jpg+1.php 2.jpg</span><br></pre></td></tr></table></figure></p>
+<p>制作成图片马，即可通过菜刀连接一句话木马。</p>
+<h2 id="0x04-后端检测-黑名单"><a href="#0x04-后端检测-黑名单" class="headerlink" title="0x04 后端检测-黑名单"></a>0x04 后端检测-黑名单</h2><p>对于黑名单的检测方式，我们有如下几种办法绕过：</p>
+<ul>
+<li>后缀名大小写混用<br>假如.php后缀，我们可以写成.PHp之类的形式，用于一些过滤不严谨的系统。</li>
+<li>双写后缀<br>在一些系统中，仅仅匹配非法后缀删除，这个时候我们构造.pphphp，当它将第一个php匹配删除之后，剩下的字符又重新组合成了.php。</li>
+<li>同义后缀名<br>很多文件的后缀名不止一个，一些不常用的后缀名如果没有加入黑名单，就可以通过其他的同义后缀绕过。</li>
+</ul>
+<h2 id="0x05-后端检测-iis解析漏洞"><a href="#0x05-后端检测-iis解析漏洞" class="headerlink" title="0x05 后端检测-iis解析漏洞"></a>0x05 后端检测-iis解析漏洞</h2><p>在iis6中，如果提交图片格式为1.asp;.jpg，后缀是jpg可以绕过检测，然后在上传后就会被解析成asp格式的文件，这个时候通过上面的办法制作图片马，然后上传后通过菜刀连接上传后的图片马即可。</p>
+<h2 id="0x06-目录禁止执行"><a href="#0x06-目录禁止执行" class="headerlink" title="0x06 目录禁止执行"></a>0x06 目录禁止执行</h2><p>在一些存放上传文件的目录，禁止执行脚本，这个时候我们可以通过在这个目录创建新的子目录，然后将脚本写入子目录中，即可执行。</p>
+<h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>文件上传漏洞带来的危害十分巨大，在有文件上传的位置，一定要做严格的检查，不能因为开发一时的方便而忽视危害，建议在开发时遵循如下几点：</p>
+<ul>
+<li>1.应用白名单的方式过滤文件扩展名</li>
+<li>2.使用三等于（===）来对比扩展名（防止类型转换带来的逻辑漏洞，之后写逻辑漏洞的时候会写到）</li>
+<li>3.如果不是图片等必要呈现出来的文件，对上传路径设置权限。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/漏洞利用/" rel="tag"># 漏洞利用</a>
+          
+            <a href="/tags/文件上传/" rel="tag"># 文件上传</a>
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/04/跨站脚本攻击XSS/" rel="next" title="跨站脚本攻击XSS">
+                <i class="fa fa-chevron-left"></i> 跨站脚本攻击XSS
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/17/逻辑处理漏洞/" rel="prev" title="逻辑处理漏洞">
+                逻辑处理漏洞 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-文件上传漏洞"><span class="nav-number">1.</span> <span class="nav-text">0x00 文件上传漏洞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-绕过前端验证"><span class="nav-number">2.</span> <span class="nav-text">0x01 绕过前端验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-后端检测-MIME"><span class="nav-number">3.</span> <span class="nav-text">0x02 后端检测-MIME</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-后端检测-文件头"><span class="nav-number">4.</span> <span class="nav-text">0x03 后端检测-文件头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-后端检测-黑名单"><span class="nav-number">5.</span> <span class="nav-text">0x04 后端检测-黑名单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-后端检测-iis解析漏洞"><span class="nav-number">6.</span> <span class="nav-text">0x05 后端检测-iis解析漏洞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-目录禁止执行"><span class="nav-number">7.</span> <span class="nav-text">0x06 目录禁止执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-总结"><span class="nav-number">8.</span> <span class="nav-text">0x07 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>

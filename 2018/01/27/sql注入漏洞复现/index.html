@@ -1,0 +1,968 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="漏洞利用,sql注入,mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 sql注入SQL注入是用户从正常的www访问通过全局变量POST和GET提交一些sql语句对数据库的数据进行操作。   0x01 环境搭建安装MariaDB、PHP、Apache环境:   安装MariaDB：1sudo yum install -y mysql mysql-server 安装apache：1sudo yum install -y httpd 安装php：1sudo yu">
+<meta name="keywords" content="漏洞利用,sql注入,mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sql注入漏洞复现">
+<meta property="og:url" content="http://yoursite.com/2018/01/27/sql注入漏洞复现/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 sql注入SQL注入是用户从正常的www访问通过全局变量POST和GET提交一些sql语句对数据库的数据进行操作。   0x01 环境搭建安装MariaDB、PHP、Apache环境:   安装MariaDB：1sudo yum install -y mysql mysql-server 安装apache：1sudo yum install -y httpd 安装php：1sudo yu">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%871.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%872.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%873.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%874.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%875.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%876.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%877.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%878.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%879.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8710.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8711.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8712.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8713.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8714.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8715.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8716.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8717.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8718.png">
+<meta property="og:updated_time" content="2018-04-21T07:08:12.212Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sql注入漏洞复现">
+<meta name="twitter:description" content="0x00 sql注入SQL注入是用户从正常的www访问通过全局变量POST和GET提交一些sql语句对数据库的数据进行操作。   0x01 环境搭建安装MariaDB、PHP、Apache环境:   安装MariaDB：1sudo yum install -y mysql mysql-server 安装apache：1sudo yum install -y httpd 安装php：1sudo yu">
+<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%871.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/27/sql注入漏洞复现/"/>
+
+
+
+
+
+  <title> sql注入漏洞复现 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/sql注入漏洞复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                sql注入漏洞复现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T19:16:37+08:00">
+                2018-01-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/漏洞利用/" itemprop="url" rel="index">
+                    <span itemprop="name">漏洞利用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/01/27/sql注入漏洞复现/" class="leancloud_visitors" data-flag-title="sql注入漏洞复现">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-sql注入"><a href="#0x00-sql注入" class="headerlink" title="0x00 sql注入"></a>0x00 sql注入</h2><p>SQL注入是用户从正常的www访问通过全局变量POST和GET提交一些sql语句对数据库的数据进行操作。  </p>
+<h2 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a>0x01 环境搭建</h2><p>安装MariaDB、PHP、Apache环境:  </p>
+<p>安装MariaDB：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y mysql mysql-server</span><br></pre></td></tr></table></figure></p>
+<p>安装apache：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y httpd</span><br></pre></td></tr></table></figure></p>
+<p>安装php：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y php</span><br></pre></td></tr></table></figure></p>
+<p>安装php的一些组件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y php-gd libjpeg* php-imap php-ldap php-odbc php-pear php-mysqlnd</span><br></pre></td></tr></table></figure></p>
+<p>安装完成后编辑配置文件，然后重启httpd和mariadb。  </p>
+<h2 id="0x02-搭载存在SQL注入的php页面"><a href="#0x02-搭载存在SQL注入的php页面" class="headerlink" title="0x02 搭载存在SQL注入的php页面"></a>0x02 搭载存在SQL注入的php页面</h2><p>首先输入mysql -u root -p<br>然后输入密码进入数据库，创建一个test的数据库，然后在test里创建一个名为users的表单，表单中写入如下三组数据作为测试数据。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%871.png" alt=""></p>
+<p>然后在/var/www/html目录创建select.php<br>在select.php中写入一个存在SQL注入的代码段<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$servername = &quot;localhost&quot;;</span><br><span class="line">$username = &quot;root&quot;;</span><br><span class="line">$password = &quot;123456&quot;;</span><br><span class="line">$dbname = &quot;test&quot;;</span><br><span class="line"></span><br><span class="line">// 创建连接</span><br><span class="line">$conn = new mysqli($servername, $username, $password, $dbname);</span><br><span class="line">// Check connection</span><br><span class="line">if ($conn-&gt;connect_error) &#123;</span><br><span class="line">    die(&quot;连接失败: &quot; . $conn-&gt;connect_error);</span><br><span class="line">&#125;</span><br><span class="line">$id= $_GET[&apos;x&apos;];//接受get传递的参数名x的值并赋值给变量id</span><br><span class="line">$sql = &quot;select * from users where id=$id&quot;;//定义sql语句并组合变量id</span><br><span class="line">$result = $conn-&gt;query($sql);</span><br><span class="line">while($row = $result-&gt;fetch_assoc()) &#123;</span><br><span class="line">        echo &quot;Id: &quot; . $row[&quot;id&quot;]. &quot;  Name: &quot; . $row[&quot;username&quot;]. &quot;&lt;br&gt;&quot;;</span><br><span class="line">&#125; </span><br><span class="line">$conn-&gt;close();</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码的作用是读取一个输入的变量id，然后通过id查询数据库中这个id对应的username。  </p>
+<p>测试一下效果，通过读入x=1出现下面结果说明成功。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%872.png" alt=""></p>
+<h2 id="0x03-手工注入"><a href="#0x03-手工注入" class="headerlink" title="0x03 手工注入"></a>0x03 手工注入</h2><p>(1)判断是否存在SQL注入  </p>
+<p>与一个正确的式子时，结果不变。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%873.png" alt=""></p>
+<p>与一个错误的式子，结果改变，说明存在注入点。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%874.png" alt=""></p>
+<p>(2)当前数据库权限判断<br>提交and ord(mid(user(),1,1))=114如果页面正常则为root权限，下图可以看出是root权限</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%875.png" alt=""></p>
+<p>(3)判断字段数<br>提交union select * from users order by 数字填猜测的字段数，下图可见，填4可以正常显示，填5不能，所以字段数是4个。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%876.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%877.png" alt=""></p>
+<p>(4)获取数据库库名<br>获取字段数之后，我们就构造 and 1=2 union select 1,schema_name,3,4 from information_schema.schemata来查询所有数据库名  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%878.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的schemata表中的schema_name字段就存着数据库名。</p>
+<p>(5)获取数据库表名<br>获取数据库名之后，我们就构造 and 1=2 union select 1,table_name,3,4 from information_schema.tables where table_schema=0x76657374来查询test数据库下的所有表名  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%879.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的tables表中的table_name字段就存着表名，where后面的限定条件用来选择数据库，等号后面填数据库ascii编码的十六进制（如test是0x76657374）。</p>
+<p>(6)获取数据库字段名<br>获取数据库名和表名之后，我们就构造 and 1=2 union select 1,column_name,3,4 from information_schema.columns where table_name=0x7573657273 and table_schema=0x76657374来查询test数据库下users表中的所有字段名。<br><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8710.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的columns表中的column_name字段就存着字段名，where后面的限定条件用来选择数据库和对应表，等号后面填数据库和表的ascii编码的十六进制（如test是0x76657374，users是0x7573657273）。</p>
+<p>(7)获取数据<br>已经获取了字段名和其顺序，我们知道了之前输出的位置是1，2号位的id和username，然后我们需要输出password和email到1，2号位，所以构造<br>and 1=2 union select email,password,3,4 from test.users<br>来查询test数据库下users表的email和password，获取这些数据。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8711.png" alt=""></p>
+<h2 id="0x04-sqlmap注入"><a href="#0x04-sqlmap注入" class="headerlink" title="0x04 sqlmap注入"></a>0x04 sqlmap注入</h2><p>使用sqlmap时我们有以下几种探测方式<br>参数：–technique<br>这个参数可以指定sqlmap使用的探测技术，默认情况下会测试所有的方式。<br>支持的探测方式如下：  </p>
+<ul>
+<li>B: Boolean-based blind SQL injection（布尔型注入）</li>
+<li>E: Error-based SQL injection（报错型注入）</li>
+<li>U: UNION query SQL injection（可联合查询注入）</li>
+<li>S: Stacked queries SQL injection（可多语句查询注入）</li>
+<li>T: Time-based blind SQL injection（基于时间延迟注入）</li>
+</ul>
+<p>我们先用默认方式测试一下：  </p>
+<p>先查看有哪些数据库：<br>sqlmap -u “192.168.0.104/select.php?x=1” –dbs</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8712.png" alt=""></p>
+<p>然后查看test数据库中的所有表:<br>sqlmap -u “192.168.0.104/select.php?x=1” -D test –tables</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8713.png" alt=""></p>
+<p>然后查看users表中所有字段:<br>sqlmap -u “192.168.0.104/select.php?x=1” –D test -T users –columns</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8714.png" alt=""></p>
+<p>然后查看password字段中所有值:<br>sqlmap -u “192.168.0.104/select.php?x=1” –D test -T users -C password –dump  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8715.png" alt=""></p>
+<h2 id="0x05-抓包分析"><a href="#0x05-抓包分析" class="headerlink" title="0x05 抓包分析"></a>0x05 抓包分析</h2><p>我们再对其中几种注入方式进行抓包分析：  </p>
+<ul>
+<li><p>sqlmap Union注入  </p>
+<p>  可联合查询注入，通过UNION查询获取到所有想要的数据。</p>
+<p>  使用场景：请求返回后能输出SQL执行后查询到的所有内容。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1” -D test –tables –technique=U</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8716.png" alt=""></p>
+<p>从wireshrak抓包可以看到，只通过http请求从返回的信息中获取数据。  </p>
+<ul>
+<li><p>sqlmap Boolean Based注入</p>
+<p>  布尔型注入，可以根据返回页面判断条件真假的注入。</p>
+<p>  使用场景：我们无法根据应用程序的返回页面得到我们需要的数据库信息。但是可以通过构造逻辑判断（比较大小）来得到我们需要的信息。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1”–dbs –technique=B</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8717.png" alt=""></p>
+<p>从wireshark抓包我们可以看到，sqlmap一直在构造逻辑，然后通过反回的Error（500）或者ok（200）来得到信息。  </p>
+<ul>
+<li><p>sqlmap Time Based注入</p>
+<p>  基于时间的盲注，即不能根据页面返回内容判断任何信息，用条件语句查看时间延迟语句是否执行（即页面返回时间是否增加）来判断。</p>
+<p>  应用场景 ： 页面不会返回错误信息，不会输出UNION注入所查出来的泄露的信息。类似搜索这类请求，boolean注入也无能为力，因为搜索返回空也属于正常的，这时就得采用time-based的注入了，即判断请求响应的时间，但该类型注入获取信息的速度非常慢。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1” –dbs –technique=T –flush-session</p>
+<p>  因为之前已经抓取到了数据库，为了防止结果影响，在这里加入–flush-session参数来清空之前的session，重新测试该目标。</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8718.png" alt=""></p>
+<p>从wireshark中可以看出，sqlmap在构造sleep函数，不通过返回来判断结果，而是通过返回的时间是否在预期内来判断是否存在注入点。  </p>
+<h2 id="0x08-危害"><a href="#0x08-危害" class="headerlink" title="0x08 危害"></a>0x08 危害</h2><ul>
+<li>入侵者可以通过网页来提交mysql语句对公司数据库敏感数据进行读取，配合python脚本可以获取整个数据库的数据。</li>
+<li>入侵者可以对公司数据库数据进行篡改，造成巨大损失。</li>
+<li>入侵者可以私自添加系统账号或是数据库使用者账号，拿到webshell，然后进而控制整个web服务器。</li>
+</ul>
+<h2 id="0x09-应对方案"><a href="#0x09-应对方案" class="headerlink" title="0x09 应对方案"></a>0x09 应对方案</h2><ul>
+<li><p>1.对输入参数进行验证</p>
+</li>
+<li><p>2.特殊字符过滤</p>
+</li>
+<li><p>3.使用参数化语句，不要拼接sql</p>
+</li>
+<li><p>4.编码输出</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/漏洞利用/" rel="tag"># 漏洞利用</a>
+          
+            <a href="/tags/sql注入/" rel="tag"># sql注入</a>
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/27/openssl心脏出血漏洞/" rel="next" title="openssl心脏出血漏洞">
+                <i class="fa fa-chevron-left"></i> openssl心脏出血漏洞
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/01/配置tor-browser实现访问暗网/" rel="prev" title="配置tor browser实现访问暗网">
+                配置tor browser实现访问暗网 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-sql注入"><span class="nav-number">1.</span> <span class="nav-text">0x00 sql注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-环境搭建"><span class="nav-number">2.</span> <span class="nav-text">0x01 环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-搭载存在SQL注入的php页面"><span class="nav-number">3.</span> <span class="nav-text">0x02 搭载存在SQL注入的php页面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-手工注入"><span class="nav-number">4.</span> <span class="nav-text">0x03 手工注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-sqlmap注入"><span class="nav-number">5.</span> <span class="nav-text">0x04 sqlmap注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-抓包分析"><span class="nav-number">6.</span> <span class="nav-text">0x05 抓包分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-危害"><span class="nav-number">7.</span> <span class="nav-text">0x08 危害</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x09-应对方案"><span class="nav-number">8.</span> <span class="nav-text">0x09 应对方案</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>
