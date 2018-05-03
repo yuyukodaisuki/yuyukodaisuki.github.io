@@ -258,6 +258,666 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/17/ubuntu16.04安装snort/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/03/17/ubuntu16.04安装snort/" itemprop="url">
+                  ubuntu16.04安装snort
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-17T22:04:45+08:00">
+                2018-03-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络安全/" itemprop="url" rel="index">
+                    <span itemprop="name">网络安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/17/ubuntu16.04安装snort/" class="leancloud_visitors" data-flag-title="ubuntu16.04安装snort">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-snort是什么？"><a href="#0x00-snort是什么？" class="headerlink" title="0x00 snort是什么？"></a>0x00 snort是什么？</h2><p>snort是一款开源的入侵检测系统，由Marty Roesch先生用C语言开发，直至今天，Snort已发展成为一个多平台(Multi-Platform),实时(Real-Time)流量分析，网络IP数据包(Pocket)记录等特性的强大的网络入侵检测/防御系统。  </p>
+<h2 id="0x01-snort安装"><a href="#0x01-snort安装" class="headerlink" title="0x01 snort安装"></a>0x01 snort安装</h2><p>这里主要讲ubuntu下通过编译源码的安装方法  </p>
+<p>首先，我们在snort官方 <a href="http://www.snort.org" target="_blank" rel="noopener">www.snort.org</a> 下查看最新版本的源码。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort01.png" alt=""></p>
+<p>然后在terminal中输入如下指令获取daq源码包和snort源码包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.snort.org/downloads/snort/daq-2.0.6.tar.gz</span><br><span class="line">wget https://www.snort.org/downloads/snort/snort-2.9.11.1.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>接着解压源码包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar xvzf daq-2.0.6.tar.gz</span><br><span class="line">tar xvzf snort-2.9.11.1.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>然后我们安装一下daq所依赖的一些开发包，否则直接编译安装会出现flex、bison和libpcap错误<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install flex</span><br><span class="line">sudo apt-get install bison</span><br><span class="line">sudo apt-get install libpcap-dev</span><br></pre></td></tr></table></figure></p>
+<p>然后先进入解压后daq的路径，进行编译安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd daq-2.0.6</span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort02.jpg" alt=""></p>
+<p>结果如下没有报错说明我们安装完成。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort03.jpg" alt=""></p>
+<p>接着我们要安装一下snort所依赖的一些开发包，否则配置脚本会由于缺少libpcre-dev、libdumbnet-dev 和zlib开发库而报错。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libpcre3-dev</span><br><span class="line">sudo apt-get install libdumbnet-dev</span><br><span class="line">sudo apt-get install zlib1g-dev</span><br></pre></td></tr></table></figure></p>
+<p>然后我们在local创建一个目录,再进入刚才解压的snort目录中，编译安装snort<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /usr/local/snort</span><br><span class="line">./configure --prefix=/usr/local/snort/ --enable-sourcefire &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
+<p>结果如下没有报错说明我们安装完成。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort04.jpg" alt=""></p>
+<p>然后我们进入刚才创建的目录，并进入它的子目录bin来运行snort<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/snort/bin</span><br><span class="line">./snort</span><br></pre></td></tr></table></figure></p>
+<p>我们可以看到它处在promisc模式（包转储模式）。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort05.jpg" alt=""></p>
+<p>至此，我们snort安装完成。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/01/配置tor-browser实现访问暗网/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/03/01/配置tor-browser实现访问暗网/" itemprop="url">
+                  配置tor browser实现访问暗网
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-01T01:15:20+08:00">
+                2018-03-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/暗网/" itemprop="url" rel="index">
+                    <span itemprop="name">暗网</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/01/配置tor-browser实现访问暗网/" class="leancloud_visitors" data-flag-title="配置tor browser实现访问暗网">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>写这一篇博客犹豫了很久，最终还是决定发表出来，毕竟技术本无对错，但我们要明辨是非。  </p>
+<h2 id="0x00-暗网"><a href="#0x00-暗网" class="headerlink" title="0x00 暗网"></a>0x00 暗网</h2><p>暗网是指那些存储在网络数据库里、但不能通过超链接访问而需要通过动态网页技术访问的资源集合，不属于那些可以被标准搜索引擎索引的表面网络。  </p>
+<p>但当今的爬虫并非完全爬行不到Hidden Web后台数据库内，一些主要的搜索引擎已经覆盖Hidden Web大约三分之一的内容。然而，在覆盖率上当前搜索引擎存在技术上的本质缺陷。  </p>
+<h2 id="0x01-tor工作原理"><a href="#0x01-tor工作原理" class="headerlink" title="0x01 tor工作原理"></a>0x01 tor工作原理</h2><p>Tor由已经安装了Tor软件的电脑连接网络而成。它之所以被称为onion，是因为它的结构就跟洋葱相同，你只能看出它的外表，而想要看到核心，就必须把它层层的剥开。即每个路由器间的传输都经过点对点密钥（symmetric key）来加密，形成有层次的结构。它中间所经过的各节点，都好像洋葱的一层皮，把客户端包在里面，算是保护信息来源的一种方式。</p>
+<p>用 Tor 创建一条私有网络路径时，用户的软件或客户端通过网络上的中继递增地建立一条由若干加密连接组成的环路（circuit）。环路一次扩展一跳（hop），环路上的中继仅仅知道它从哪一个中继接收数据以及向哪一个中继发送数据。没有一台单独的中继会知道数据包的完整路径。客户端与环路上的每一跳都协商一组独立的密钥，这样可以保证数据通过任何一跳时都无法跟踪。  </p>
+<h2 id="0x02-tor-browser浏览器"><a href="#0x02-tor-browser浏览器" class="headerlink" title="0x02 tor browser浏览器"></a>0x02 tor browser浏览器</h2><p>tor browser的最大特点就是匿名性。</p>
+<ul>
+<li><p>您的互联网服务提供商和任何本地的监视者都将无法查看您的连接、跟踪您的网络活动，包括您所访问网站的名称和地址。</p>
+</li>
+<li><p>您使用的网站和服务的运营商以及任何监视它们的人都将看到连接来自 Tor 网络而不是您的互联网IP地址，并且不知道您是谁，除非您明确标识自己。</p>
+</li>
+</ul>
+<h2 id="0x03-配置过程"><a href="#0x03-配置过程" class="headerlink" title="0x03 配置过程"></a>0x03 配置过程</h2><p>首先我们下载安装tor browser<br>下载地址： <a href="https://tor-browser.en.softonic.com/" target="_blank" rel="noopener">https://tor-browser.en.softonic.com/</a>  </p>
+<p>然后我们运行tor browser进行配置：  </p>
+<p>首先我们知道国内是无法直连的，所以我们要选择configure来配置代理。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor01.png" alt="">  </p>
+<p>然后在你的网络提供商是否对Tor网络进行了封锁或审查这里选yes。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor02.png" alt=""></p>
+<p>选了yes就要配置网桥，这里我们可以使用他提供的一些集成网桥，但是速度比较慢，自己去试试速度然后选个合适的。  </p>
+<p>但是我们想要更快更稳定的话，我们可以访问访问 <a href="https://bridges.torproject.org/bridges?transport=obfs4" target="_blank" rel="noopener">https://bridges.torproject.org/bridges?transport=obfs4</a> 获取obfs4网桥 。 </p>
+<p>然后在<a href="https://link.jianshu.com/?t=https://atlas.torproject.org/#search/网址后面加入刚才获取网桥中间的四十位字母数字来测试连接速度。" target="_blank" rel="noopener">https://link.jianshu.com/?t=https://atlas.torproject.org/#search/网址后面加入刚才获取网桥中间的四十位字母数字来测试连接速度。</a>  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor03.png" alt=""></p>
+<p>速度足够快的我们保留下来几条，选自定义网桥，然后逐条填在里面。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor04.png" alt=""></p>
+<p>其实这里配置已经可以使用了，但是在下一步如果我们有vpn的话，就直接选择使用本地代理，然后如果使用的是ss的话，那就直接选sock5协议，地址填127.0.0.1，端口填1080即可。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor05.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor06.png" alt=""></p>
+<p>在这里为什么我们还要选择vpn呢？因为GFW的原因，很多的网桥都失效了，我们很难找到能用的网桥，就算找到了，速度也非常慢，所以如果有vpn的话，我们就可以直接绕过ISP对Tor的审查，并且速度也会非常快。  </p>
+<p>接着我们选择connect，稍微等几十秒配置成功，就可以使用了。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor07.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor08.png" alt=""></p>
+<p>然后我们需要找一些暗网的导航网站，如<a href="https://hiddenwikitor.com/" target="_blank" rel="noopener">https://hiddenwikitor.com/</a><br>然后去寻找我们需要的网站。但是千万谨记隐藏自己的真实身份。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor09.png" alt=""></p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>暗网因为其匿名性，缺乏监管，变成了一个鱼龙混杂的地方，它是互联网真正的暗面。我们小小的满足了一下好奇心，然后就应该明白我们并不属于这里。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/sql注入漏洞复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/01/27/sql注入漏洞复现/" itemprop="url">
+                  sql注入漏洞复现
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T19:16:37+08:00">
+                2018-01-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/01/27/sql注入漏洞复现/" class="leancloud_visitors" data-flag-title="sql注入漏洞复现">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-sql注入"><a href="#0x00-sql注入" class="headerlink" title="0x00 sql注入"></a>0x00 sql注入</h2><p>SQL注入是用户从正常的www访问通过全局变量POST和GET提交一些sql语句对数据库的数据进行操作。  </p>
+<h2 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a>0x01 环境搭建</h2><p>安装MariaDB、PHP、Apache环境:  </p>
+<p>安装MariaDB：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y mysql mysql-server</span><br></pre></td></tr></table></figure></p>
+<p>安装apache：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y httpd</span><br></pre></td></tr></table></figure></p>
+<p>安装php：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y php</span><br></pre></td></tr></table></figure></p>
+<p>安装php的一些组件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y php-gd libjpeg* php-imap php-ldap php-odbc php-pear php-mysqlnd</span><br></pre></td></tr></table></figure></p>
+<p>安装完成后编辑配置文件，然后重启httpd和mariadb。  </p>
+<h2 id="0x02-搭载存在SQL注入的php页面"><a href="#0x02-搭载存在SQL注入的php页面" class="headerlink" title="0x02 搭载存在SQL注入的php页面"></a>0x02 搭载存在SQL注入的php页面</h2><p>首先输入mysql -u root -p<br>然后输入密码进入数据库，创建一个test的数据库，然后在test里创建一个名为users的表单，表单中写入如下三组数据作为测试数据。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%871.png" alt=""></p>
+<p>然后在/var/www/html目录创建select.php<br>在select.php中写入一个存在SQL注入的代码段<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$servername = &quot;localhost&quot;;</span><br><span class="line">$username = &quot;root&quot;;</span><br><span class="line">$password = &quot;123456&quot;;</span><br><span class="line">$dbname = &quot;test&quot;;</span><br><span class="line"></span><br><span class="line">// 创建连接</span><br><span class="line">$conn = new mysqli($servername, $username, $password, $dbname);</span><br><span class="line">// Check connection</span><br><span class="line">if ($conn-&gt;connect_error) &#123;</span><br><span class="line">    die(&quot;连接失败: &quot; . $conn-&gt;connect_error);</span><br><span class="line">&#125;</span><br><span class="line">$id= $_GET[&apos;x&apos;];//接受get传递的参数名x的值并赋值给变量id</span><br><span class="line">$sql = &quot;select * from users where id=$id&quot;;//定义sql语句并组合变量id</span><br><span class="line">$result = $conn-&gt;query($sql);</span><br><span class="line">while($row = $result-&gt;fetch_assoc()) &#123;</span><br><span class="line">        echo &quot;Id: &quot; . $row[&quot;id&quot;]. &quot;  Name: &quot; . $row[&quot;username&quot;]. &quot;&lt;br&gt;&quot;;</span><br><span class="line">&#125; </span><br><span class="line">$conn-&gt;close();</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码的作用是读取一个输入的变量id，然后通过id查询数据库中这个id对应的username。  </p>
+<p>测试一下效果，通过读入x=1出现下面结果说明成功。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%872.png" alt=""></p>
+<h2 id="0x03-手工注入"><a href="#0x03-手工注入" class="headerlink" title="0x03 手工注入"></a>0x03 手工注入</h2><p>(1)判断是否存在SQL注入  </p>
+<p>与一个正确的式子时，结果不变。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%873.png" alt=""></p>
+<p>与一个错误的式子，结果改变，说明存在注入点。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%874.png" alt=""></p>
+<p>(2)当前数据库权限判断<br>提交and ord(mid(user(),1,1))=114如果页面正常则为root权限，下图可以看出是root权限</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%875.png" alt=""></p>
+<p>(3)判断字段数<br>提交union select * from users order by 数字填猜测的字段数，下图可见，填4可以正常显示，填5不能，所以字段数是4个。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%876.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%877.png" alt=""></p>
+<p>(4)获取数据库库名<br>获取字段数之后，我们就构造 and 1=2 union select 1,schema_name,3,4 from information_schema.schemata来查询所有数据库名  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%878.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的schemata表中的schema_name字段就存着数据库名。</p>
+<p>(5)获取数据库表名<br>获取数据库名之后，我们就构造 and 1=2 union select 1,table_name,3,4 from information_schema.tables where table_schema=0x76657374来查询test数据库下的所有表名  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%879.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的tables表中的table_name字段就存着表名，where后面的限定条件用来选择数据库，等号后面填数据库ascii编码的十六进制（如test是0x76657374）。</p>
+<p>(6)获取数据库字段名<br>获取数据库名和表名之后，我们就构造 and 1=2 union select 1,column_name,3,4 from information_schema.columns where table_name=0x7573657273 and table_schema=0x76657374来查询test数据库下users表中的所有字段名。<br><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8710.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的columns表中的column_name字段就存着字段名，where后面的限定条件用来选择数据库和对应表，等号后面填数据库和表的ascii编码的十六进制（如test是0x76657374，users是0x7573657273）。</p>
+<p>(7)获取数据<br>已经获取了字段名和其顺序，我们知道了之前输出的位置是1，2号位的id和username，然后我们需要输出password和email到1，2号位，所以构造<br>and 1=2 union select email,password,3,4 from test.users<br>来查询test数据库下users表的email和password，获取这些数据。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8711.png" alt=""></p>
+<h2 id="0x04-sqlmap注入"><a href="#0x04-sqlmap注入" class="headerlink" title="0x04 sqlmap注入"></a>0x04 sqlmap注入</h2><p>使用sqlmap时我们有以下几种探测方式<br>参数：–technique<br>这个参数可以指定sqlmap使用的探测技术，默认情况下会测试所有的方式。<br>支持的探测方式如下：  </p>
+<ul>
+<li>B: Boolean-based blind SQL injection（布尔型注入）</li>
+<li>E: Error-based SQL injection（报错型注入）</li>
+<li>U: UNION query SQL injection（可联合查询注入）</li>
+<li>S: Stacked queries SQL injection（可多语句查询注入）</li>
+<li>T: Time-based blind SQL injection（基于时间延迟注入）</li>
+</ul>
+<p>我们先用默认方式测试一下：  </p>
+<p>先查看有哪些数据库：<br>sqlmap -u “192.168.0.104/select.php?x=1” –dbs</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8712.png" alt=""></p>
+<p>然后查看test数据库中的所有表:<br>sqlmap -u “192.168.0.104/select.php?x=1” -D test –tables</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8713.png" alt=""></p>
+<p>然后查看users表中所有字段:<br>sqlmap -u “192.168.0.104/select.php?x=1” –D test -T users –columns</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8714.png" alt=""></p>
+<p>然后查看password字段中所有值:<br>sqlmap -u “192.168.0.104/select.php?x=1” –D test -T users -C password –dump  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8715.png" alt=""></p>
+<h2 id="0x05-抓包分析"><a href="#0x05-抓包分析" class="headerlink" title="0x05 抓包分析"></a>0x05 抓包分析</h2><p>我们再对其中几种注入方式进行抓包分析：  </p>
+<ul>
+<li><p>sqlmap Union注入  </p>
+<p>  可联合查询注入，通过UNION查询获取到所有想要的数据。</p>
+<p>  使用场景：请求返回后能输出SQL执行后查询到的所有内容。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1” -D test –tables –technique=U</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8716.png" alt=""></p>
+<p>从wireshrak抓包可以看到，只通过http请求从返回的信息中获取数据。  </p>
+<ul>
+<li><p>sqlmap Boolean Based注入</p>
+<p>  布尔型注入，可以根据返回页面判断条件真假的注入。</p>
+<p>  使用场景：我们无法根据应用程序的返回页面得到我们需要的数据库信息。但是可以通过构造逻辑判断（比较大小）来得到我们需要的信息。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1”–dbs –technique=B</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8717.png" alt=""></p>
+<p>从wireshark抓包我们可以看到，sqlmap一直在构造逻辑，然后通过反回的Error（500）或者ok（200）来得到信息。  </p>
+<ul>
+<li><p>sqlmap Time Based注入</p>
+<p>  基于时间的盲注，即不能根据页面返回内容判断任何信息，用条件语句查看时间延迟语句是否执行（即页面返回时间是否增加）来判断。</p>
+<p>  应用场景 ： 页面不会返回错误信息，不会输出UNION注入所查出来的泄露的信息。类似搜索这类请求，boolean注入也无能为力，因为搜索返回空也属于正常的，这时就得采用time-based的注入了，即判断请求响应的时间，但该类型注入获取信息的速度非常慢。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1” –dbs –technique=T –flush-session</p>
+<p>  因为之前已经抓取到了数据库，为了防止结果影响，在这里加入–flush-session参数来清空之前的session，重新测试该目标。</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8718.png" alt=""></p>
+<p>从wireshark中可以看出，sqlmap在构造sleep函数，不通过返回来判断结果，而是通过返回的时间是否在预期内来判断是否存在注入点。  </p>
+<h2 id="0x08-危害"><a href="#0x08-危害" class="headerlink" title="0x08 危害"></a>0x08 危害</h2><ul>
+<li>入侵者可以通过网页来提交mysql语句对公司数据库敏感数据进行读取，配合python脚本可以获取整个数据库的数据。</li>
+<li>入侵者可以对公司数据库数据进行篡改，造成巨大损失。</li>
+<li>入侵者可以私自添加系统账号或是数据库使用者账号，拿到webshell，然后进而控制整个web服务器。</li>
+</ul>
+<h2 id="0x09-应对方案"><a href="#0x09-应对方案" class="headerlink" title="0x09 应对方案"></a>0x09 应对方案</h2><ul>
+<li><p>1.对输入参数进行验证</p>
+</li>
+<li><p>2.特殊字符过滤</p>
+</li>
+<li><p>3.使用参数化语句，不要拼接sql</p>
+</li>
+<li><p>4.编码输出</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/openssl心脏出血漏洞/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1723,666 +2383,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/12/基于python的网站后台扫描器/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/12/12/基于python的网站后台扫描器/" itemprop="url">
-                  基于python的网站后台扫描器
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-12T16:39:17+08:00">
-                2017-12-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/12/12/基于python的网站后台扫描器/" class="leancloud_visitors" data-flag-title="基于python的网站后台扫描器">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近没什么事情干，就把之前自己写的python工具写到博客里面  </p>
-<h2 id="0x00-需要用到的库"><a href="#0x00-需要用到的库" class="headerlink" title="0x00 需要用到的库"></a>0x00 需要用到的库</h2><ul>
-<li>requests： requests 是用Python语言编写，基于 urllib，采用 Apache2 Licensed 开源协议的 HTTP 库。它比 urllib 更加方便，可以节约我们大量的工作，完全满足 HTTP 测试需求。</li>
-<li>threading： 多线程的库，跟网页交互如果单线程会等很多时间。</li>
-<li>time： 统计运行时间的时候要用到。  </li>
-</ul>
-<h2 id="0x01-程序设计思路"><a href="#0x01-程序设计思路" class="headerlink" title="0x01 程序设计思路"></a>0x01 程序设计思路</h2><p>我们需要从字典文件中读入有可能的路径，然后循环访问，遇到返回状态码200代表可以访问，遇到其他的状态码代表不能访问。  </p>
-<h2 id="0x02-单线程实现"><a href="#0x02-单线程实现" class="headerlink" title="0x02 单线程实现"></a>0x02 单线程实现</h2><pre><code class="python"><span class="keyword">import</span> requests
-
-<span class="function"><span class="keyword">def</span> <span class="title">guesshtml</span><span class="params">(url_list,real_list)</span>:</span>
-    <span class="keyword">for</span> url <span class="keyword">in</span> url_list:
-        r = requests.get(url, timeout=<span class="number">30</span>)
-        <span class="keyword">if</span> r.status_code==<span class="number">200</span>:
-            print(<span class="string">"存在: "</span>+url)
-            real_list.append(url)
-        <span class="keyword">else</span>:
-            print(<span class="string">"不存在: %s 错误代码: %d"</span>% (url,r.status_code))
-    <span class="keyword">return</span> real_list
-
-<span class="function"><span class="keyword">def</span> <span class="title">add_url</span><span class="params">(html,dic,url_list)</span>:</span>
-    <span class="keyword">for</span> line <span class="keyword">in</span> dic:
-        line = line.replace(<span class="string">'\n'</span>,<span class="string">''</span>)
-        url = html + line
-        url_list.append(url)
-    <span class="keyword">return</span> url_list
-
-<span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span>
-    html = <span class="string">'http://www.uuzdaisuki.com/'</span>
-    dic = open(<span class="string">r"C:\Users\leticia\desktop\dic.txt"</span>,<span class="string">'r'</span>)
-    url_list = []
-    real_list = []
-    url_list = add_url(html,dic,url_list)
-    real_list = guesshtml(url_list,real_list)
-
-main()
-</code></pre>
-<p>单线程运行结果：<br><img src="http://oo3iot5oz.bkt.clouddn.com/pythonpython_houtai1.png" alt=""></p>
-<h2 id="0x03-多线程实现"><a href="#0x03-多线程实现" class="headerlink" title="0x03 多线程实现"></a>0x03 多线程实现</h2><pre><code class="python"><span class="keyword">import</span> requests
-<span class="keyword">from</span> threading <span class="keyword">import</span> Thread
-
-
-<span class="function"><span class="keyword">def</span> <span class="title">guesshtml</span><span class="params">(url,real_list)</span>:</span>
-    r = requests.get(url, timeout=<span class="number">30</span>)
-    <span class="keyword">if</span> r.status_code==<span class="number">200</span>:
-        print(<span class="string">"存在: "</span>+url)
-        real_list.append(url)
-    <span class="keyword">else</span>:
-         print(<span class="string">"不存在: %s 错误代码: %d"</span>% (url,r.status_code))
-    <span class="keyword">return</span> real_list
-
-<span class="function"><span class="keyword">def</span> <span class="title">add_url</span><span class="params">(html,dic,url_list)</span>:</span>
-    <span class="keyword">for</span> line <span class="keyword">in</span> dic:
-        line = line.replace(<span class="string">'\n'</span>,<span class="string">''</span>)
-        url = html + line
-        url_list.append(url)
-    <span class="keyword">return</span> url_list
-
-<span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span>
-    html = <span class="string">'http://www.uuzdaisuki.com/'</span>
-    dic = open(<span class="string">r"C:\Users\leticia\desktop\dic.txt"</span>,<span class="string">'r'</span>)
-    url_list = []
-    real_list = [] <span class="comment">#这个暂时没有用到，如果我们需要保存的时候，再用这里。</span>
-    url_list = add_url(html,dic,url_list)
-    <span class="keyword">for</span> url <span class="keyword">in</span> url_list:
-        t = Thread(target = guesshtml,args=(url,real_list))
-        t.start()
-
-main()
-</code></pre>
-<p>多线程运行结果:<br><img src="http://oo3iot5oz.bkt.clouddn.com/pythonpython_houtai2.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/25/https握手详解/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/11/25/https握手详解/" itemprop="url">
-                  https握手详解
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-25T17:25:35+08:00">
-                2017-11-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络协议/" itemprop="url" rel="index">
-                    <span itemprop="name">网络协议</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/11/25/https握手详解/" class="leancloud_visitors" data-flag-title="https握手详解">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-什么是https协议"><a href="#0x00-什么是https协议" class="headerlink" title="0x00 什么是https协议"></a>0x00 什么是https协议</h2><p>HTTPS（全称：Hyper Text Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。即HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。 它是一个URI scheme（抽象标识符体系），句法类同http:体系。用于安全的HTTP数据传输。  </p>
-<h2 id="0x01-HTTPS和HTTP的区别"><a href="#0x01-HTTPS和HTTP的区别" class="headerlink" title="0x01 HTTPS和HTTP的区别"></a>0x01 HTTPS和HTTP的区别</h2><p>HTTPS和HTTP的区别主要为以下四点：  </p>
-<ul>
-<li>https协议需要到ca申请证书，一般免费证书很少，需要交费。</li>
-<li>http是超文本传输协议，信息是明文传输，https 则是具有安全性的ssl加密传输协议。</li>
-<li>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</li>
-<li>http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。  </li>
-</ul>
-<h2 id="0x02-SSL协议"><a href="#0x02-SSL协议" class="headerlink" title="0x02 SSL协议"></a>0x02 SSL协议</h2><p>SSL(Secure Sockets Layer 安全套接层),及其继任者传输层安全（Transport Layer Security，TLS）是为网络通信提供安全及数据完整性的一种安全协议。TLS与SSL在传输层对网络连接进行加密。<br>所以SSL所具备的功能是：保证传输数据的保密性、完整性，并且实现通信双方的身份认证。<br>在协议栈种位置如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/1.png" alt=""><br>SSL协议是一个分层协议，共有两层组成。  </p>
-<p>高层协议包括：  </p>
-<ul>
-<li>SSL握手协议</li>
-<li>改变加密约定协议</li>
-<li>报警协议</li>
-</ul>
-<p>底层协议是SSL记录层协议，是一个简单的封装协议，用来记录协议的功能，保证协议的完整性，机密性。</p>
-<h2 id="0x03-SSL握手"><a href="#0x03-SSL握手" class="headerlink" title="0x03 SSL握手"></a>0x03 SSL握手</h2><p>这里主要分析一下高层协议中的握手协议。<br>SSL握手协议主要负责：</p>
-<ul>
-<li>算法协商</li>
-<li>身份验证</li>
-<li>确定密钥  </li>
-</ul>
-<p>为了很直观的看到它具体做了什么，采用wireshark抓包的方式来分析一次Full Handshake，即全流程握手。  </p>
-<h2 id="0x04-wireshark抓包分析"><a href="#0x04-wireshark抓包分析" class="headerlink" title="0x04 wireshark抓包分析"></a>0x04 wireshark抓包分析</h2><p>接下来我们抓包进行分析：  </p>
-<p>1.我们打开wireshark软件，监视正在使用的网卡，然后通过浏览器访问 <a href="http://www.github.com" target="_blank" rel="noopener">www.github.com</a> 抓取完成后我们停止捕获。  </p>
-<p>2.在过滤器输入ssl，过滤ssl协议，找到本机向 github.com 的ip地址发起的client hello。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/2.png" alt="">  </p>
-<p>3.右键追踪，选择ssl流。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/3.png" alt="">  </p>
-<p>4.首先是client hello，这个包携带着客户的SSL版本号，加密套件列表，压缩算法列表，客户端随机数，sessionid = 0，传送给服务器。<br>我们开始分析，首先展开client hello的SSL，找到Handshark。可以看到client hello里面包含的各项数据。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/4.png" alt=""></p>
-<p>  分别是：  </p>
-<ul>
-<li>SSL版本号:TLS 1.2</li>
-<li>压缩算法NULL</li>
-<li>sessionid = 0</li>
-<li>密码套件如下  </li>
-</ul>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/5.png" alt="">  </p>
-<ul>
-<li>server name，可以看到是 github.com。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/6.png" alt="">  </li>
-</ul>
-<p>5.然后找到server hello，这个包是服务器选择版本，确定要用的加密套件，压缩算法，计算sessionid以及随机数，发送给客户端。  </p>
-<p>同样展开SSL：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/7.png" alt=""><br>我们可以看到各项对应数据被放在server hello中，比如session ID，密码套件等。</p>
-<p>并且我们看到，除了server hello部分，这个包还有服务器发向客户端的证书的前一部分。然后下一个包TCP segment of a reassemble PDU，是证书的中间部分。  </p>
-<p>6.然后找到Certificate，这一步是服务端将自己的证书下发给客户端，让客户端验证自己的身份，客户端验证通过后取出证书中的公钥。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/8.png" alt="">  </p>
-<p>而我们看到的包中内容呢是证书结尾部分，包括GitHub 机构旗下github.com网站的证书及其颁发机构 DigiCert 的证书。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/9.png" alt="">  </p>
-<p>7.下一部分是Server Key Exchange，用于将服务器的临时ECDH公钥传送给客户端。 </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/10.png" alt="">  </p>
-<p>8.之后是Server Hello Done，此消息由服务器发送，以指示ServerHello和相关消息的结束。<br>发送此消息后，服务器将等待客户端响应。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/11.png" alt=""></p>
-<p>9.客户端收到服务端传来的证书后，先从 CA 验证该证书的合法性，验证通过后取出证书中的服务端公钥，再生成一个随机数 Random3，再用服务端公钥非对称加密 Random3 生成 PreMaster Key。  </p>
-<p>然后我们看到下个包包含Client Key Exchange, Change Cipher Spec, Hello Request, Hello Request  </p>
-<p>10.首先是Client Key Exchange，上面客户端根据服务器传来的公钥生成了 PreMaster Key，Client Key Exchange 就是将这个 key 传给服务端。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/12.png" alt="">  </p>
-<p>11.Change Cipher Spec(Client)，<br>这一步是客户端通知服务端后面再发送的消息都会使用前面协商出来的秘钥加密了。然后客户端发送握手验证报文确保消息的完整性。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/13.png" alt=""> </p>
-<p>12.Change Cipher Spec(Server)<br>这一步是服务端收到数据后，通知客户端后面再发送的消息都会使用加密。  </p>
-<p>13.Encrypted Handshake Message，表示服务器端的SSL成功结束，发送握手验证报文确保消息的完整性。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/14.png" alt="">  </p>
-<p>14.下面开始正式交换数据。</p>
-<p>所以总的过程如下图所示：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/15.png" alt="">  </p>
-<p>以上就是整个SSL握手过程，也是加密算法的典型应用之一。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/09/天体距离测量/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/11/09/天体距离测量/" itemprop="url">
-                  天体距离测量
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-09T22:47:05+08:00">
-                2017-11-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/天文学/" itemprop="url" rel="index">
-                    <span itemprop="name">天文学</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/11/09/天体距离测量/" class="leancloud_visitors" data-flag-title="天体距离测量">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>我们经常在新闻里听说：距离地球XX光年发生超新星爆炸，距离地球XX光年发现类地行星。且不管新闻真假，真空中电磁波速度是c，要真的用雷达测量几十光年几百光年的距离是不可能实现的，那我们看到这些报道的时候有没有曾怀疑过这些距离是怎么测算的呢？  </p>
-<h2 id="0x01-天文学距离单位介绍"><a href="#0x01-天文学距离单位介绍" class="headerlink" title="0x01 天文学距离单位介绍"></a>0x01 天文学距离单位介绍</h2><p>谈到距离，肯定离不开距离单位，我们平时用到的距离单位放在天体的层面运算的话实在是令人头疼的事情，所以我们经常使用天文单位、光年、秒差距这些单位。  </p>
-<ul>
-<li>天文单位（AU）：即太阳和地球之间的平均距离，约1.5亿公里。</li>
-<li>光年（ly）：光在宇宙真空中沿直线传播了一儒略年（365.25天）时间的距离，约94607亿千米.</li>
-<li>秒差距（pc）：以地球公转轨道的平均半径（一个天文单位）为底边所对应的三角形内角称为周年视差。当这个角的大小为1角秒时，这个三角形的一条边的长度（地球到这个恒星的距离）就称为1秒差距。约为3.26光年。</li>
-</ul>
-<p>前两个单位我们经常见到，第三个很多不了解的人看了上面的定义也很迷糊，简单的说，1秒差距是周年视差为1”时天体的距离。</p>
-<h2 id="0x02-周年视差"><a href="#0x02-周年视差" class="headerlink" title="0x02 周年视差"></a>0x02 周年视差</h2><p>而秒差距中所说的周年视差又是什么？在说周年视差的概念之前我们先来看看视差是什么。<br>视差就是从有一定距离的两个点上观察同一个目标所产生的方向差异。从目标看两个点之间的夹角，叫做这两个点的视差角，两点之间的距离称作基线。只要知道视差角度和基线长度，就可以计算出目标和观测者之间的距离。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/01.jpg" alt="">  </p>
-<p>就像当你伸出一个手指放在眼前，先闭上右眼，用左眼看它；再闭上左眼，用右眼看它，会发现手指相对远方的物体的位置有了变化，这就是从不同角度去看同一点的视差。<br>而周年视差则是地球绕太阳周年运动的直径作为这个“左右眼”的距离，看天体所产生的视差。<br>即当恒星与太阳的连线垂直地球轨道半径时，恒星对日地平均距离d所张的角ρ叫恒星的周年视差。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/02.jpg" alt="">  </p>
-<h2 id="0x03-天体距离的计算"><a href="#0x03-天体距离的计算" class="headerlink" title="0x03 天体距离的计算"></a>0x03 天体距离的计算</h2><p>介绍了上面的这些定义，我们来看看天体距离的计算<br>当ρ为被测天体相对地球轨道半长径的夹角，a为地球公转轨道半长轴，d为天体距离时，距离的计算是：<br><img src="http://oo3iot5oz.bkt.clouddn.com/03.png" alt=""></p>
-<p>在这里角度极小情况下sin（ρ）近似为ρ，a为一个天文单位，所以最终距离为周年视差（以秒为单位时）的倒数倍的秒差距。<br>比如我们的比邻星周年视差为0.76”，则计算距离时：<br>0.76的倒数为1.32，所以1.32倍的秒差距（3.26光年）为4.3光年。<br>而建立空间卫星能提升观测距离的真正原因就是因为地面上的望远镜受到大气层影响太大，角分辨率一般不到0.01”，而2013年发射的盖亚空间卫星的角分辨率可以达到0.00001”，大大的增加了观测距离。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/04.jpg" alt="盖亚卫星">  </p>
-<h2 id="0x04-宇宙距离阶梯"><a href="#0x04-宇宙距离阶梯" class="headerlink" title="0x04 宇宙距离阶梯"></a>0x04 宇宙距离阶梯</h2><p>虽然通过之前的办法可以观测到很远的地方，但是宇宙的广袤远远超出我们的想像，再远的地方怎么办呢？对于更远的地方，人类就有了其他的观测方案。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/05.png" alt="宇宙距离阶梯">  </p>
-<p>在一系列的方法之下，哈勃望远镜眼中的宇宙深处，我们能够观察的宇宙空间直径大约是930亿光年，这个数字是这样得出的：那些从138亿光年外发出的光线，产生这些光线的古老天体，由于宇宙的膨胀，今天它们和我们之间的距离已经达到了大约465亿光年左右。这是我们能观测到的极限半径，乘以二则是我们能够观察的宇宙空间直径，约930亿光年。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2432,7 +2432,7 @@ main()
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-count">46</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2443,7 +2443,7 @@ main()
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2454,7 +2454,7 @@ main()
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">40</span>
+                <span class="site-state-item-count">43</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
