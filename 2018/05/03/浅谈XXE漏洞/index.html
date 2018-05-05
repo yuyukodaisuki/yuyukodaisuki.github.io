@@ -388,9 +388,9 @@
       
         <h2 id="0x00-XML"><a href="#0x00-XML" class="headerlink" title="0x00 XML"></a>0x00 XML</h2><p>XML是可扩展标记语言，标准通用标记语言的子集，是一种用于标记电子文件使其具有结构性的标记语言，与HTML的不同在于XML被设计用来传输和存储数据而HTML被设计用来显示数据。</p>
 <p>XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。</p>
-<p>XML声明即是位于XML文档开始部分的第一行，规定了xml版本和编码格式。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>XML声明即是位于XML文档开始部分的第一行，规定了xml版本和编码格式。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span><span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure></p>
 <p>DTD(Document Type Definition) 即文档类型定义，用来为XML文档定义语义约束。可以嵌入在XML文档中(内部声明)，也可以独立的放在一个文件中(外部引用)。</p>
-<p>文档元素即下面例子中note中所有部分，每个xml文档必须包含一个根元素，下面的例子中根元素就是note<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">heading</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">heading</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>Don't forget me this weekend!<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>文档元素即下面例子中note中所有部分，每个xml文档必须包含一个根元素，下面的例子中根元素就是note<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span><span class="meta">?&gt;</span></span></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">heading</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">heading</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>Don't forget me this weekend!<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="0x01-DTD-Document-Type-Definition"><a href="#0x01-DTD-Document-Type-Definition" class="headerlink" title="0x01 DTD(Document Type Definition)"></a>0x01 DTD(Document Type Definition)</h2><p>上面我们只是简要说了一下XML的结构，下来我们拿出我们重点关注的DTD文档类型定义来详细说明一下。</p>
 <h4 id="DTD-引用方式"><a href="#DTD-引用方式" class="headerlink" title="DTD 引用方式"></a>DTD 引用方式</h4><ul>
 <li><p>1.DTD 内部声明</p>
@@ -503,6 +503,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/05/05/内网渗透常用命令总结（windows）/" rel="prev" title="内网渗透常用命令总结（windows）">
+                内网渗透常用命令总结（windows） <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -573,7 +577,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-count">47</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

