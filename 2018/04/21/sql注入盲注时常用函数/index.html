@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="渗透测试,sql注入,mysql," />
+  <meta name="keywords" content="渗透测试,mysql,sql注入," />
 
 
 
@@ -88,14 +88,14 @@
 
 
 <meta name="description" content="0x00 盲注盲注是不能通过直接显示的途径来获取数据库数据的方法，在盲注中，攻击者根据其返回页面的不同来判断信息。盲注一般可分为三类：Booleanbase、Timebase、Errorbase。 接下来介绍一些sql盲注中常用的函数。 0x01 limit()limit()函数的作用是限制由SELECT语句返回的数据数量，用法是123SELECT column1, column2, column">
-<meta name="keywords" content="渗透测试,sql注入,mysql">
+<meta name="keywords" content="渗透测试,mysql,sql注入">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sql注入盲注时常用函数">
 <meta property="og:url" content="http://yoursite.com/2018/04/21/sql注入盲注时常用函数/index.html">
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 盲注盲注是不能通过直接显示的途径来获取数据库数据的方法，在盲注中，攻击者根据其返回页面的不同来判断信息。盲注一般可分为三类：Booleanbase、Timebase、Errorbase。 接下来介绍一些sql盲注中常用的函数。 0x01 limit()limit()函数的作用是限制由SELECT语句返回的数据数量，用法是123SELECT column1, column2, column">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-04-26T15:16:26.690Z">
+<meta property="og:updated_time" content="2018-05-07T11:29:54.059Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sql注入盲注时常用函数">
 <meta name="twitter:description" content="0x00 盲注盲注是不能通过直接显示的途径来获取数据库数据的方法，在盲注中，攻击者根据其返回页面的不同来判断信息。盲注一般可分为三类：Booleanbase、Timebase、Errorbase。 接下来介绍一些sql盲注中常用的函数。 0x01 limit()limit()函数的作用是限制由SELECT语句返回的数据数量，用法是123SELECT column1, column2, column">
@@ -453,7 +453,13 @@
 <li>count ： 必要参数，重复的次数。</li>
 <li>expr : 必要参数，执行的语句。</li>
 </ul>
-<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>盲注是sql注入中十分常用的手段，而且盲注很多时候需要写脚本来实现，熟悉这些函数，结合前面的绕过方法，会让自己的脚本更加灵活。</p>
+<h2 id="0x08-grunp-concat"><a href="#0x08-grunp-concat" class="headerlink" title="0x08 grunp_concat()"></a>0x08 grunp_concat()</h2><p>grunp_concat()函数的作用是连接字段字符串。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">group_concat([DISTINCT] name [Order BY ASC/DESC 排序字段] [Separator &apos;分隔符&apos;])</span><br></pre></td></tr></table></figure></p>
+<p>其中各参数意义如下：</p>
+<ul>
+<li>name : 要连接的字段</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">substr((select group_concat(schema_name) from information_schema.schemata limit 0,1),1,1)=105</span><br></pre></td></tr></table></figure>
+<h2 id="0x09-总结"><a href="#0x09-总结" class="headerlink" title="0x09 总结"></a>0x09 总结</h2><p>盲注是sql注入中十分常用的手段，而且盲注很多时候需要写脚本来实现，熟悉这些函数，结合前面的绕过方法，会让自己的脚本更加灵活。</p>
 
       
     </div>
@@ -485,9 +491,9 @@
           
             <a href="/tags/渗透测试/" rel="tag"># 渗透测试</a>
           
-            <a href="/tags/sql注入/" rel="tag"># sql注入</a>
-          
             <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+            <a href="/tags/sql注入/" rel="tag"># sql注入</a>
           
         </div>
       
@@ -641,7 +647,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-盲注"><span class="nav-number">1.</span> <span class="nav-text">0x00 盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-limit"><span class="nav-number">2.</span> <span class="nav-text">0x01 limit()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-mid"><span class="nav-number">3.</span> <span class="nav-text">0x02 mid()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-substr-、substring"><span class="nav-number">4.</span> <span class="nav-text">0x03 substr()、substring()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-left"><span class="nav-number">5.</span> <span class="nav-text">0x04 left()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-ord"><span class="nav-number">6.</span> <span class="nav-text">0x05 ord()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-sleep"><span class="nav-number">7.</span> <span class="nav-text">0x06 sleep()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-benchmark"><span class="nav-number">8.</span> <span class="nav-text">0x07 benchmark()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-总结"><span class="nav-number">9.</span> <span class="nav-text">0x08 总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-盲注"><span class="nav-number">1.</span> <span class="nav-text">0x00 盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-limit"><span class="nav-number">2.</span> <span class="nav-text">0x01 limit()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-mid"><span class="nav-number">3.</span> <span class="nav-text">0x02 mid()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-substr-、substring"><span class="nav-number">4.</span> <span class="nav-text">0x03 substr()、substring()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-left"><span class="nav-number">5.</span> <span class="nav-text">0x04 left()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-ord"><span class="nav-number">6.</span> <span class="nav-text">0x05 ord()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-sleep"><span class="nav-number">7.</span> <span class="nav-text">0x06 sleep()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-benchmark"><span class="nav-number">8.</span> <span class="nav-text">0x07 benchmark()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-grunp-concat"><span class="nav-number">9.</span> <span class="nav-text">0x08 grunp_concat()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x09-总结"><span class="nav-number">10.</span> <span class="nav-text">0x09 总结</span></a></li></ol></div>
             
 
           </div>
