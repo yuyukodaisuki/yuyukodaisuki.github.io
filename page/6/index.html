@@ -258,6 +258,387 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/15/python多线程暴力破解压缩包/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/05/15/python多线程暴力破解压缩包/" itemprop="url">
+                  python多线程暴力破解压缩包
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-15T19:04:44+08:00">
+                2017-05-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/05/15/python多线程暴力破解压缩包/" class="leancloud_visitors" data-flag-title="python多线程暴力破解压缩包">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="python多线程暴力破解压缩包"><a href="#python多线程暴力破解压缩包" class="headerlink" title="python多线程暴力破解压缩包"></a>python多线程暴力破解压缩包</h1><p>网上下载下来别人共享的压缩包有时会有密码，而且多半是弱口令；有人经常会忘记自己的几位密码，只记得大概格式…遇到诸如此类情况的时候，你或许就需要一个暴力破解工具了。</p>
+<h2 id="0x01-基于python2-7的暴力破解脚本"><a href="#0x01-基于python2-7的暴力破解脚本" class="headerlink" title="0x01 基于python2.7的暴力破解脚本"></a>0x01 基于python2.7的暴力破解脚本</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">import</span> optparse</span><br><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">extractFile</span><span class="params">(zipFile,password)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        zipFile.extractall(pwd=password)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'password is:'</span>+password + <span class="string">'\n'</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    parser = optparse.OptionParser()</span><br><span class="line">    parser.add_option(<span class="string">'-f'</span>,dest=<span class="string">'zname'</span>,type=<span class="string">'string'</span>,help=<span class="string">"zipfile name"</span>)</span><br><span class="line">    parser.add_option(<span class="string">'-d'</span>,dest=<span class="string">'dname'</span>,type=<span class="string">'string'</span>,help=<span class="string">"dictionary name"</span>)</span><br><span class="line">    (options,args)= parser.parse_args()</span><br><span class="line">    <span class="keyword">if</span>(options.zname==<span class="keyword">None</span>)|(options.dname==<span class="keyword">None</span>):</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'---wrong input!---'</span>+<span class="string">'\n'</span></span><br><span class="line">        exit(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        zname = options.zname</span><br><span class="line">        dname = options.dname</span><br><span class="line">    zipFile = zipfile.ZipFile(zname)</span><br><span class="line">    passFile = open(dname)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> passFile.readlines():</span><br><span class="line">        password = line.strip(<span class="string">'\n'</span>)</span><br><span class="line">        t = Thread(target=extractFile,args=(zipFile,password))</span><br><span class="line">        t.start()</span><br><span class="line"><span class="keyword">if</span> __name__ ==<span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>代码如上，我们用到了三个库：  </p>
+<ul>
+<li>zipfile模块用来做zip格式编码的压缩和解压缩的，要解压zip文件当然需要用到这个库。</li>
+<li>threading模块是用来创建线程的，我们为了加快破解速度要使用多线程。</li>
+<li>optparse模块用来处理命令行参数，这样就不会出现每次需要改代码或者交到别人手中不会用的问题。</li>
+</ul>
+<p>我们在main函数中读取命令行传递过来的压缩文件名和字典文件名，用open命令读取字典，然后创建线程并在extractFile函数中尝试字典，密码正确则返回密码的值。<br>一些函数的具体用法  ：</p>
+<ul>
+<li><p><a href="http://blog.chinaunix.net/uid-27571599-id-3484048.html" target="_blank" rel="noopener">python多线程模块threading详解</a>  </p>
+</li>
+<li><p><a href="http://www.cnblogs.com/captain_jack/archive/2011/01/11/1933366.html" target="_blank" rel="noopener">python模块学习–optparse</a></p>
+</li>
+</ul>
+<h2 id="0x02-制作字典"><a href="#0x02-制作字典" class="headerlink" title="0x02 制作字典"></a>0x02 制作字典</h2><p>首先，我们下载一个名为“木头超级字典工具集”的软件，这里可以生成各种各样类型的字典，可以选择密码包含的字符集以及设定已知的每一位，还有一些特殊的字典。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/01.jpg" alt="">  </p>
+<p>我在这里创建了一个一到四位的纯数字密码做实验，字典里面也可以随意加入自己想测试的密码，但要注意字典的最后面要空一行。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/02.png" alt=""></p>
+<h2 id="0x03-测试"><a href="#0x03-测试" class="headerlink" title="0x03 测试"></a>0x03 测试</h2><p>我们先添加一个压缩文件，嗯，为了节约时间密码就设置成紫的年龄了。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/03.png" alt="">  </p>
+<p>然后在压缩文件和字典的目录按shift+鼠标右键在当前目录打开命令行  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/04.jpg" alt="">  </p>
+<p>然后测试一下，成功得到密码  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/05.png" alt="">  </p>
+<p>实际上，真正用到暴力破解的时候不多，因为穷举法十分耗费时间，而且现今稍具严密度的密码验证机制都会设下试误的可容许次数以应对使用密码穷举法的破解者。当试误次数达到可容许次数时，密码验证系统会自动拒绝继续验证，有的甚至还会自动启动入侵警报机制。不过在面对弱口令的时候还是十分有效的。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/使用python-pyinstaller打包python程序为exe/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/05/11/使用python-pyinstaller打包python程序为exe/" itemprop="url">
+                  使用python pyinstaller打包python程序为exe
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T11:32:41+08:00">
+                2017-05-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/05/11/使用python-pyinstaller打包python程序为exe/" class="leancloud_visitors" data-flag-title="使用python pyinstaller打包python程序为exe">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="使用python-pyinstaller打包python程序为exe"><a href="#使用python-pyinstaller打包python程序为exe" class="headerlink" title="使用python pyinstaller打包python程序为exe"></a>使用python pyinstaller打包python程序为exe</h1><h2 id="0x01-为什么要把python程序打包成exe"><a href="#0x01-为什么要把python程序打包成exe" class="headerlink" title="0x01 为什么要把python程序打包成exe"></a>0x01 为什么要把python程序打包成exe</h2><p>自己写出的python程序在自己电脑上当然可以完美运行，可是当我们想提供给别人使用的时候，直接给他.py文件，多半是不行的，因为对方的电脑很可能没有python环境，就算有python环境，也可能没有这个程序所需要的库，所以最方便的办法是给对方一个exe文件。</p>
+<h2 id="0x02-安装python-pyinstaller库"><a href="#0x02-安装python-pyinstaller库" class="headerlink" title="0x02 安装python pyinstaller库"></a>0x02 安装python pyinstaller库</h2><p>在win下的命令行输入<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pyinstaller</span><br></pre></td></tr></table></figure></p>
+<p>就会自动安装pyinstaller库，如果出现错误，可以尝试下更新自己的pip<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install --upgrade pip</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x03-打包成exe"><a href="#0x03-打包成exe" class="headerlink" title="0x03 打包成exe"></a>0x03 打包成exe</h2><p>首先，我们在pyinstaller.exe（或pyinstaller.py）的目录下打开cmd，然后输入<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyinstaller.exe -F -c -i 你的图标.ico 你的python程序.py</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>-F是打包成一个独立的exe</li>
+<li>-c是打包成控制台文件，如果不想让他显示命令行窗口，可以把-c换成-w</li>
+<li>-i是加入你自己的图标，图标文件可以百度ico转换器来自己制作</li>
+<li>后面的两个文件名分别为你的图标名和程序名，如果你的图标和程序不在当前目录，可以在他们前面分别加上各自的目录  </li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/pythonQQ%E5%9B%BE%E7%89%8720170511112907.png" alt=""></p>
+<p>即可打包成功</p>
+<p>这个时候exe文件被生成在dist文件夹中<br><img src="http://oo3iot5oz.bkt.clouddn.com/pythonQQ%E5%9B%BE%E7%89%8720170511113043.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/06/arp入侵/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1009,7 +1390,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">56</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1020,7 +1401,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
