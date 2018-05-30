@@ -258,6 +258,237 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/23/SSRF服务端请求伪造/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/23/SSRF服务端请求伪造/" itemprop="url">
+                  SSRF服务端请求伪造
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-23T23:06:44+08:00">
+                2018-04-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/23/SSRF服务端请求伪造/" class="leancloud_visitors" data-flag-title="SSRF服务端请求伪造">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-SSRF服务端请求伪造"><a href="#0x00-SSRF服务端请求伪造" class="headerlink" title="0x00 SSRF服务端请求伪造"></a>0x00 SSRF服务端请求伪造</h2><p>SSRF(Server-Side Request Forgery:服务器端请求伪造) 是一种由攻击者构造形成由服务端发起请求的一个安全漏洞。与CSRF跨站请求伪造不同,它是利用服务端向其他内外网服务器发送请求。</p>
+<h2 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h2><p>很多web应用都提供了从其他的服务器上获取数据的功能。使用用户指定的URL，web应用可以获取图片，下载文件，读取文件内容等。如果应用程序对用户提供的URL和远端服务器返回的信息没有进行合适的验证和过滤，就可能存在服务端请求伪造的缺陷。这个功能如果被恶意使用，可以利用存在缺陷的web应用作为代理攻击远程和本地的服务器。</p>
+<h2 id="0x02-危害"><a href="#0x02-危害" class="headerlink" title="0x02 危害"></a>0x02 危害</h2><ul>
+<li><p>1.可以对外网、服务器所在内网、本地进行端口扫描，获取一些服务的banner信息;</p>
+</li>
+<li><p>2.攻击运行在内网或本地的应用程序（比如溢出）;</p>
+</li>
+<li><p>3.对内网web应用进行指纹识别，通过访问默认文件实现;</p>
+</li>
+<li><p>4.攻击内外网的web应用，主要是使用get参数就可以实现的攻击（比如struts2，sqli等）;</p>
+</li>
+<li><p>5.利用file协议读取本地文件等。</p>
+</li>
+</ul>
+<h2 id="0x03-环境搭建"><a href="#0x03-环境搭建" class="headerlink" title="0x03 环境搭建"></a>0x03 环境搭建</h2><p>首先我们创建一个test.html,输入如下内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form name=&quot;ssrf&quot; method=&quot;post&quot; action=&quot;http://127.0.0.1/ssrf/test.php&quot;&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; name=&quot;url&quot; value=&quot;&quot; style=&quot;width:500px&quot;&gt;</span><br><span class="line">&lt;input type=&quot;submit&quot; name=&quot;commit&quot; value=&quot;submit&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>ps:这里我修改css是为了截图时候能截取的全面点，可以不加。</p>
+<p>然后写他对应的后台文件test.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">error_reporting(0);</span><br><span class="line">if (isset($_POST[&apos;url&apos;]))</span><br><span class="line">&#123;</span><br><span class="line">$link = $_POST[&apos;url&apos;];</span><br><span class="line">$filename = &apos;./curled/&apos;.rand().&apos;txt&apos;;</span><br><span class="line">$curlobj = curl_init($link);</span><br><span class="line">$fp = fopen($filename,&quot;w&quot;);</span><br><span class="line">curl_setopt($curlobj, CURLOPT_FILE, $fp);</span><br><span class="line">curl_setopt($curlobj, CURLOPT_HEADER, 0);</span><br><span class="line">curl_exec($curlobj);</span><br><span class="line">curl_close($curlobj);</span><br><span class="line">fclose($fp);</span><br><span class="line">$fp = fopen($filename,&quot;r&quot;);</span><br><span class="line">$result = fread($fp, filesize($filename)); </span><br><span class="line">fclose($fp);</span><br><span class="line">echo $result;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>其中：</p>
+<ul>
+<li>curl_init — 初始化一个cURL会话</li>
+<li>curl_setopt — 设置一个cURL传输选项。</li>
+<li>CURLOPT_FILE — 设置输出文件的位置，值是一个资源类型，默认为STDOUT (浏览器)。</li>
+<li>CURLOPT_HEADER — 启用时会将头文件的信息作为数据流输出。</li>
+<li>curl_exec — 执行一个cURL会话（在初始和设置选项完成后使用）</li>
+</ul>
+<p>然后我们通过输入框输入想要访问的url，就会加载对应的url过来，比如我们输入百度主页：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf01.png" alt=""></p>
+<p>就会返回：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf02.png" alt=""></p>
+<p>至此我们环境搭建完成。</p>
+<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>我们上面提到了五种利用方式，我们拿其中的几种做一次实验。</p>
+<p>首先是端口扫描，如果我们要对内网端口进行扫描，就可以在这里输入127.0.0.1和对应端口进行尝试。</p>
+<p>如我们想查看mysql的banner信息，我们就可以输入127.0.0.1:3306</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf03.png" alt=""></p>
+<p>就可以看到一部分信息。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf04.png" alt=""></p>
+<p>然后是访问web应用默认文件，比如我们尝试wamp默认界面。直接输入127.0.0.1，访问wamp的默认信息，可以搜集到很多有用的信息。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf05.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf06.png" alt=""></p>
+<p>最后再来尝试一下利用file协议访问本地文件，file协议具体用法是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file///c:/abc/filename.txt</span><br></pre></td></tr></table></figure></p>
+<p>file后面与http不同，有三个斜杠，然后跟本地路径和文件，这里可以是任何格式的文件，虽然在网页上显示的时候会有部分无法显示。</p>
+<p>我们尝试一个txt文件，发现可以读取。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf07.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf08.png" alt=""></p>
+<p>再尝试一个存放ssh密钥的敏感目录，发现，配置文件和密钥内容其实都可以访问。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf09.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf10.png" alt=""></p>
+<h2 id="0x05-应对"><a href="#0x05-应对" class="headerlink" title="0x05 应对"></a>0x05 应对</h2><ul>
+<li><p>1.过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件,那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。</p>
+</li>
+<li><p>2.统一设置错误信息，避免用户可以根据错误信息来判断远端服务器的端口状态。</p>
+</li>
+<li><p>3.限制请求的端口仅为http常用的端口，比如，80,443,8080,8090。</p>
+</li>
+<li><p>4.将内网ip加入黑名单。</p>
+</li>
+<li><p>5.禁用不需要的协议。仅仅允许http和https请求。可以防止类似于file:///,gopher://,ftp:// 等。</p>
+</li>
+</ul>
+<h2 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h2><p>SSRF漏洞不如sql注入，xss，文件上传等漏洞有名，所以在很多地方疏于防范，其造成的危害不可小觑。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/23/常用端口笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2098,189 +2329,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/基于python的u盘自动拷贝工具/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/24/基于python的u盘自动拷贝工具/" itemprop="url">
-                  基于python的u盘自动拷贝工具
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T21:54:18+08:00">
-                2018-03-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/03/24/基于python的u盘自动拷贝工具/" class="leancloud_visitors" data-flag-title="基于python的u盘自动拷贝工具">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-需要用到的库"><a href="#0x00-需要用到的库" class="headerlink" title="0x00 需要用到的库"></a>0x00 需要用到的库</h2><ul>
-<li>OS：OS库提供了使用各种操作系统功能的接口。主要有对目录或者文件的新建，删除，查看文件属性，还提供了对文件以及目录的路径操作。</li>
-<li>shutil：对文件提供了移动，复制，打包，压缩等功能，这里主要用到复制功能。</li>
-<li>time： 时间处理的库，在这里用来程序休眠的时间。  </li>
-</ul>
-<h2 id="0x01-程序设计思路"><a href="#0x01-程序设计思路" class="headerlink" title="0x01 程序设计思路"></a>0x01 程序设计思路</h2><p>我们需要每隔一段时间检查是否有u盘插入，如果检测到有u盘，则将u盘的内容全部拷贝到本机的指定文件夹。  </p>
-<h2 id="0x02-最简单模式编程实现"><a href="#0x02-最简单模式编程实现" class="headerlink" title="0x02 最简单模式编程实现"></a>0x02 最简单模式编程实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line">USB = <span class="string">'D:\\'</span>  <span class="comment"># u盘目录</span></span><br><span class="line">SAVE = <span class="string">'C:\\Users\Leticia\Desktop\copy'</span>  <span class="comment"># 保存目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">usbcopy</span><span class="params">()</span>:</span></span><br><span class="line">    shutil.copytree(USB, SAVE)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> os.path.exists(USB):</span><br><span class="line">            usbcopy()</span><br><span class="line">        time.sleep(<span class="number">200</span>)  <span class="comment"># 休眠时间</span></span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
-<p>此程序中，USB变量是u盘目录，根据个人电脑来填写，SAVE变量是将拷贝出来的文件保存的目录，time.sleep(200)代表每次判断完之后休眠200秒。<br>此时测试程序已经可以自动拷贝了，但是还存在一些问题，比如我们已经拷贝完成了，然后休眠完成之后u盘没有拔，这个时候会重新复制一遍。但是我们如果写成检测到u盘，拷贝一遍程序就停止运行，那么u盘内容发生变化我们要怎么做，所以我们还要加几个功能。  </p>
-<h2 id="0x03-增加检测变化模块的编程实现"><a href="#0x03-增加检测变化模块的编程实现" class="headerlink" title="0x03 增加检测变化模块的编程实现"></a>0x03 增加检测变化模块的编程实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join,getsize</span><br><span class="line">USB = <span class="string">'D:\\'</span>  <span class="comment"># u盘目录</span></span><br><span class="line">SAVE = <span class="string">'C:\\Users\Leticia\Desktop\copy'</span>  <span class="comment"># 保存目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getdirsize</span><span class="params">(dir)</span>:</span></span><br><span class="line">    size=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> root,dirs,files <span class="keyword">in</span> os.walk(dir):</span><br><span class="line">        size+=sum([getsize(join(root,name)) <span class="keyword">for</span> name <span class="keyword">in</span> files])</span><br><span class="line">    print(size)</span><br><span class="line">    <span class="keyword">return</span> size</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">usbcopy</span><span class="params">()</span>:</span></span><br><span class="line">    shutil.copytree(USB, SAVE)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    old_dirsize = <span class="number">0</span></span><br><span class="line">    new_dirsize = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> os.path.exists(USB):</span><br><span class="line">            print(<span class="string">"检测到U盘"</span>)</span><br><span class="line">            new_dirsize = getdirsize(USB)</span><br><span class="line">            <span class="keyword">if</span> old_dirsize != new_dirsize:</span><br><span class="line">                usbcopy()</span><br><span class="line">                old_dirsize = new_dirsize</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                print(<span class="string">"没有变化"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">"暂时没有U盘"</span>)</span><br><span class="line">        print(<span class="string">"开始休眠"</span>)</span><br><span class="line">        time.sleep(<span class="number">5</span>)  <span class="comment"># 休眠时间</span></span><br><span class="line"></span><br><span class="line">        print(<span class="string">"休眠结束"</span>)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
-<p>这里我们新加了一个getdirsize函数来遍历u盘文件并统计总大小，然后如果总大小改变，则拷贝，如果没变，就不重新拷贝。<br>这样就解决了文件更新的问题，根据下图print的提示我们可以看到大概的工作流程。  </p>
-<h2 id="0x04-其他"><a href="#0x04-其他" class="headerlink" title="0x04 其他"></a>0x04 其他</h2><p>此时我们的代码可以运行了，但是如果我们拿到其他人电脑里，因为python环境等问题很大可能无法执行，所以我们可以借助前面一篇博客说过的  <a href="http://uuzdaisuki.com/2017/05/11/%E4%BD%BF%E7%94%A8python-pyinstaller%E6%89%93%E5%8C%85python%E7%A8%8B%E5%BA%8F%E4%B8%BAexe/" target="_blank" rel="noopener">http://uuzdaisuki.com/2017/05/11/%E4%BD%BF%E7%94%A8python-pyinstaller%E6%89%93%E5%8C%85python%E7%A8%8B%E5%BA%8F%E4%B8%BAexe/</a> 将python程序打包成exe在其他电脑中使用。  </p>
-<p>如果这样还觉得不方便的话，在这里再提供一个vbs的拷贝小脚本，同样能达到我们的功能，在txt中输入如下代码，然后根据个人路径稍作更改，然后讲后缀改成vbs，双击运行，就可以在后台自动拷贝了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">set fso=createobject(&quot;scripting.filesystemobject&quot;)</span><br><span class="line">set ws=createobject(&quot;wscript.shell&quot;)</span><br><span class="line">on error resume next</span><br><span class="line">do</span><br><span class="line">wscript.sleep 1000</span><br><span class="line">if fso.driveexists(&quot;D:&quot;) then</span><br><span class="line">fso.copyfile &quot;D:*&quot;,&quot;C:\Users\Leticia\Desktop\copy&quot;</span><br><span class="line">fso.copyfolder &quot;D:*&quot;,&quot;C:\Users\Leticia\Desktop\copy&quot;</span><br><span class="line">wscript.sleep 20000</span><br><span class="line">end if</span><br><span class="line">loop</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2330,7 +2378,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-count">58</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

