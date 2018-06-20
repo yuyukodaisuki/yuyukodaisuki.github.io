@@ -1,0 +1,1005 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="机器学习," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言第一篇记录了机器学习的定义、分类和范围，这一篇开始从机器学习的方法学起，总结机器学习的经典方法，然后尽量自己写代码实现。 0x01 回归算法回归算法属于机器学习中监督学习类的算法，是入门机器学习最基础的算法。 回归分析是研究自变量和因变量之间关系的一种预测模型技术。这些技术应用于预测，时间序列模型和找到变量之间关系。 回归算法就是量化因变量受自变量影响的大小，建立线性回归方程或者非线">
+<meta name="keywords" content="机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习(2)——线性回归">
+<meta property="og:url" content="http://yoursite.com/2018/06/20/机机器学习-2-——线性回归/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 前言第一篇记录了机器学习的定义、分类和范围，这一篇开始从机器学习的方法学起，总结机器学习的经典方法，然后尽量自己写代码实现。 0x01 回归算法回归算法属于机器学习中监督学习类的算法，是入门机器学习最基础的算法。 回归分析是研究自变量和因变量之间关系的一种预测模型技术。这些技术应用于预测，时间序列模型和找到变量之间关系。 回归算法就是量化因变量受自变量影响的大小，建立线性回归方程或者非线">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_01.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_02.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_03.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_04.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_05.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_06.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_07.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_08.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_09.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_10.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_11.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_12.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_13.png?raw=true">
+<meta property="og:updated_time" content="2018-06-20T04:49:27.178Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习(2)——线性回归">
+<meta name="twitter:description" content="0x00 前言第一篇记录了机器学习的定义、分类和范围，这一篇开始从机器学习的方法学起，总结机器学习的经典方法，然后尽量自己写代码实现。 0x01 回归算法回归算法属于机器学习中监督学习类的算法，是入门机器学习最基础的算法。 回归分析是研究自变量和因变量之间关系的一种预测模型技术。这些技术应用于预测，时间序列模型和找到变量之间关系。 回归算法就是量化因变量受自变量影响的大小，建立线性回归方程或者非线">
+<meta name="twitter:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_01.png?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/20/机机器学习-2-——线性回归/"/>
+
+
+
+
+
+  <title> 机器学习(2)——线性回归 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/20/机机器学习-2-——线性回归/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                机器学习(2)——线性回归
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-20T12:44:06+08:00">
+                2018-06-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/06/20/机机器学习-2-——线性回归/" class="leancloud_visitors" data-flag-title="机器学习(2)——线性回归">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>第一篇记录了机器学习的定义、分类和范围，这一篇开始从机器学习的方法学起，总结机器学习的经典方法，然后尽量自己写代码实现。</p>
+<h2 id="0x01-回归算法"><a href="#0x01-回归算法" class="headerlink" title="0x01 回归算法"></a>0x01 回归算法</h2><p>回归算法属于机器学习中监督学习类的算法，是入门机器学习最基础的算法。</p>
+<p>回归分析是研究自变量和因变量之间关系的一种预测模型技术。这些技术应用于预测，时间序列模型和找到变量之间关系。</p>
+<p>回归算法就是量化因变量受自变量影响的大小，建立线性回归方程或者非线性回归方程，从而达对因变量的预测，或者对因变量的解释作用。</p>
+<h2 id="0x02-回归分析流程"><a href="#0x02-回归分析流程" class="headerlink" title="0x02 回归分析流程"></a>0x02 回归分析流程</h2><p>①探索性分析，画不同变量之间的散点图，进行相关性检验等，了解数据的大致情况，以及得知重点关注那几个变量；</p>
+<p>②变量和模型选择；</p>
+<p>③回归分析假设条件验证；</p>
+<p>④共线性和强影响点检查；</p>
+<p>⑤模型修改，并且重复③④；</p>
+<p>⑥模型验证。</p>
+<h2 id="0x03-回归算法分类"><a href="#0x03-回归算法分类" class="headerlink" title="0x03 回归算法分类"></a>0x03 回归算法分类</h2><p>回归算法主要通过三种方法分类：自变量的个数、因变量的类型和回归线的形状。</p>
+<p>常见的回归算法有：</p>
+<ul>
+<li>线性回归</li>
+<li>逻辑回归</li>
+<li>多项式回归</li>
+<li>逐步回归</li>
+<li>岭回归</li>
+<li>Lasso回归</li>
+<li>ElasticNet回归</li>
+</ul>
+<h2 id="0x04-线性回归-Linear-Regression"><a href="#0x04-线性回归-Linear-Regression" class="headerlink" title="0x04 线性回归(Linear Regression)"></a>0x04 线性回归(Linear Regression)</h2><p>线性回归是世界上最知名的建模方法之一，在线性回归模型中，因变量是连续型的，自变量可以使连续型或离散型的，回归线是线性的。</p>
+<p>线性回归用最适直线(回归线)去建立因变量Y和一个或多个自变量X之间的关系。可以用公式来表示：</p>
+<p>Y=A+B*X+e</p>
+<p>A为截距，B为回归线的斜率，e是误差项。</p>
+<p>简单线性回归与多元线性回归的差别在于：多元线性回归有多个(&gt;1)自变量，而简单线性回归只有一个自变量。</p>
+<h4 id="简单线性回归"><a href="#简单线性回归" class="headerlink" title="简单线性回归"></a>简单线性回归</h4><p>我们首先实现一个只有单一自变量的简单线性回归</p>
+<p>我们实现这个算法，可以先以Andrew Ng机器学习讲义中美国俄亥俄州Portland Oregon城市房屋价格为例：</p>
+<p>这个例子中近简化使用房屋面积一个因子作为自变量，y轴对应其因变量房屋价格。所以我们机器学习的线性回归就变为对于给定有限的数据集，进行一元线性回归，即找到一个一次函数y=y(x) + e，使得y满足</p>
+<p>当x={2104, 1600, 2400, 1416, 3000, … }, y={400, 330, 369, 232, 540, … } </p>
+<table>
+<thead>
+<tr>
+<th>面积(feet²)</th>
+<th>价格(1000$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2104</td>
+<td>400</td>
+</tr>
+<tr>
+<td>1600</td>
+<td>330</td>
+</tr>
+<tr>
+<td>2400</td>
+<td>369</td>
+</tr>
+<tr>
+<td>1416</td>
+<td>232</td>
+</tr>
+<tr>
+<td>3000</td>
+<td>540</td>
+</tr>
+<tr>
+<td>···</td>
+<td>···</td>
+</tr>
+</tbody>
+</table>
+<p>对这个问题我们先给出假设函数即需要拟合的直线：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_01.png?raw=true" alt=""></p>
+<p>其中a和b是我们要求得的参数，参数得变化会引起函数的变化。</p>
+<p>而我们解出参数之后的函数是否为最优解，我们需要引入一个概念：Cost Function，即代价函数或成本函数。</p>
+<h4 id="代价函数-Cost-Function"><a href="#代价函数-Cost-Function" class="headerlink" title="代价函数(Cost Function)"></a>代价函数(Cost Function)</h4><p>在回归问题中，衡量最优解的常用代价函数为平方误差。</p>
+<p>平方误差在高中和大学的概率论、统计学等课程中我们都有所了解，就是用样本数据和拟合出的线做差值，然后对差值进行平方和并除以点数m计算平均值。</p>
+<p>而在这里，我们要导出代价函数，额外除以1/2做数学简化，形成以下代价函数：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_02.png?raw=true" alt=""></p>
+<p>ps：这里额外除以1/2，是为了之后平方函数的微分项将抵消1/2项，以方便计算梯度下降。</p>
+<p>下来我们求解最优解的问题就转变为了求解代价函数的最小值。</p>
+<p>其中J是基于θ的函数，我们可以先将其简化成只有θ1的函数，令θ0=0.</p>
+<p>然后我们不断给定θ1的值，基于样本值进行计算代价函数J，就可以得到一个θ1和J的函数，并在某一点取得极小值。</p>
+<p>如样本数据为y ={(1,1), (2,2),(3,3)}时，可以得到如下的J-θ1图形：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_03.png?raw=true" alt=""></p>
+<p>我们求解线性回归最优解的方法一般是梯度下降法和最小二乘法</p>
+<h4 id="最小二乘法"><a href="#最小二乘法" class="headerlink" title="最小二乘法"></a>最小二乘法</h4><p>代价函数中使用的均方误差，其实对应了我们常用的欧几里得的距离（欧式距离，Euclidean Distance）, 基于均方误差最小化进行模型求解的方法称为“最小二乘法”（least square method），即通过最小化误差的平方和寻找数据的最佳函数匹配。</p>
+<p>当函数子变量为一维时，最小二乘法就蜕变成寻找一条直线。</p>
+<p>如我们上例中的模型，寻找J极小值就是分别用J对θ1和θ0求偏导，然后寻找偏导为零的点。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_04.png?raw=true" alt=""></p>
+<p>解得：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_05.png?raw=true" alt=""></p>
+<h5 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h5><p>最小二乘法算法简单，容易理解，而然在现实机器学习却有其局限性：</p>
+<ul>
+<li><p>并非所有函数都可以求出驻点，即导数为0的点，f(x)=0</p>
+</li>
+<li><p>求解方程困难，或求根公式复杂</p>
+</li>
+<li><p>导数并无解析解</p>
+</li>
+<li><p>最小二乘法的矩阵公式,计算一个矩阵的逆是相当耗费时间的, 而且求逆也会存在数值不稳定的情况</p>
+</li>
+</ul>
+<h4 id="梯度下降法"><a href="#梯度下降法" class="headerlink" title="梯度下降法"></a>梯度下降法</h4><p>正是由于在实际中，最小二乘法遇到的困难和局限性，尤其是多数超定方程组不存在解，我们由求导转向迭代逼近。也就是梯度下降算法。</p>
+<p>首先我们了解一下什么是梯度，这在复变函数等大学课程中都曾经学过。</p>
+<h5 id="方向导数"><a href="#方向导数" class="headerlink" title="方向导数"></a>方向导数</h5><p>方向导数即研究在某一点的任意方向的变化率，是偏导数的广义扩展。</p>
+<h5 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h5><p>梯度则基于方向导数，是一个向量而非数，梯度代表了各个方向导数中，变化趋势最大的那个方向。</p>
+<p>那么，梯度方向就是增长最快的方向，负梯度方向就是减小最快的方向。</p>
+<h5 id="梯度下降算法"><a href="#梯度下降算法" class="headerlink" title="梯度下降算法"></a>梯度下降算法</h5><p>梯度下降算法通常也被称作最速下降法。其目的是找到一个局部极小值点；其目标与最小二乘法相同，都是使得估算值与实际值的总平方差尽量小。</p>
+<p>其方法是采用计算数学的迭代法，先给定一初始点，然后向下降最快的方向调整，在若干次迭代之后找到局部最小。</p>
+<p>比如我们给定上面的方程，初始参数是θ0,θ1，我们不断改变θ0,θ1从而减少J(θ0,θ1)的值，具体做法是求导。直到最终收敛。</p>
+<p>迭代公式如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_06.png?raw=true" alt=""></p>
+<p>其中θj可以是θ0和θ1这两个参数，α为步长，整个式子的意义为，θ0,θ1每次向J(θ0,θ1)负梯度方向下降步长α。</p>
+<h5 id="学习率"><a href="#学习率" class="headerlink" title="学习率"></a>学习率</h5><p>公式中的步长α，也称为学习率，用来控制每次下降的幅度。</p>
+<p>我们应该调整参数α以确保梯度下降算法在合理的时间内收敛。</p>
+<ul>
+<li>如果α过小，每步会移动非常近，收敛时间就会很长。</li>
+<li>如果α过大，每步会移动比较远，会导致直接越过极小值，甚至无法收敛到最低点。</li>
+</ul>
+<p>如果我们时间耗费较长或无法收敛，那就说明我们要重新制定学习率α。</p>
+<h5 id="线性回归梯度下降"><a href="#线性回归梯度下降" class="headerlink" title="线性回归梯度下降"></a>线性回归梯度下降</h5><p>对于线性模型，我们可以这样写梯度下降函数。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_07.png?raw=true" alt=""></p>
+<p>h(x)是需要拟合的函数。<br>J(θ)称为均方误差或cost function。用来衡量训练集众的样本对线性模式的拟合程度。<br>m为训练集众样本的个数。<br>θ是我们最终需要通过梯度下降法来求得的参数。</p>
+<p>接下来的梯度下降法就有两种不同的迭代思路。</p>
+<h5 id="批量梯度下降（Batch-Gradient-Descent）"><a href="#批量梯度下降（Batch-Gradient-Descent）" class="headerlink" title="批量梯度下降（Batch Gradient Descent）"></a>批量梯度下降（Batch Gradient Descent）</h5><p>可以看到上述每次迭代都需要计算所有样本的残差并加和，批量梯度下降是梯度下降法最原始的形式，它的具体思路是在更新每一参数时都使用所有的样本来进行更新。</p>
+<p>1.计算J(θ)关于θT的偏导数,也就得到了向量中每一个θ的梯度。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_08.png?raw=true" alt=""></p>
+<p>2.沿着梯度的反方向更新参数θ的值</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_09.png?raw=true" alt=""></p>
+<p>3.迭代直到收敛。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_10.png?raw=true" alt=""></p>
+<ul>
+<li><p>优点：全局最优解，易于并行实现。</p>
+</li>
+<li><p>缺点：当样本数目很多时，训练过程会很慢。</p>
+</li>
+</ul>
+<h5 id="随机梯度下降（Stochastic-gradient-descent）"><a href="#随机梯度下降（Stochastic-gradient-descent）" class="headerlink" title="随机梯度下降（Stochastic gradient descent）"></a>随机梯度下降（Stochastic gradient descent）</h5><p>和批量梯度有所不同的地方在于，每次迭代只选取一个样本的数据，一旦到达最大的迭代次数或是满足预期的精度，就停止。</p>
+<p>随机梯度下降法的θ更新表达式。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_11.png?raw=true" alt=""></p>
+<p>迭代直到收敛。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_12.png?raw=true" alt=""></p>
+<ul>
+<li><p>优点：训练速度快。</p>
+</li>
+<li><p>缺点：准确度下降，并不是全局最优，不易于并行实现。</p>
+</li>
+</ul>
+<h5 id="视觉效果"><a href="#视觉效果" class="headerlink" title="视觉效果"></a>视觉效果</h5><p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_13.png?raw=true" alt=""></p>
+<p>当我们的成本函数处于图的坑底时，J值最小，为最佳解。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/19/机器学习-1-——定义与分类/" rel="next" title="机器学习(1)——定义与分类">
+                <i class="fa fa-chevron-left"></i> 机器学习(1)——定义与分类
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">63</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">52</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-回归算法"><span class="nav-number">2.</span> <span class="nav-text">0x01 回归算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-回归分析流程"><span class="nav-number">3.</span> <span class="nav-text">0x02 回归分析流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-回归算法分类"><span class="nav-number">4.</span> <span class="nav-text">0x03 回归算法分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-线性回归-Linear-Regression"><span class="nav-number">5.</span> <span class="nav-text">0x04 线性回归(Linear Regression)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简单线性回归"><span class="nav-number">5.0.1.</span> <span class="nav-text">简单线性回归</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代价函数-Cost-Function"><span class="nav-number">5.0.2.</span> <span class="nav-text">代价函数(Cost Function)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最小二乘法"><span class="nav-number">5.0.3.</span> <span class="nav-text">最小二乘法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#局限性"><span class="nav-number">5.0.3.1.</span> <span class="nav-text">局限性</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#梯度下降法"><span class="nav-number">5.0.4.</span> <span class="nav-text">梯度下降法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#方向导数"><span class="nav-number">5.0.4.1.</span> <span class="nav-text">方向导数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#梯度"><span class="nav-number">5.0.4.2.</span> <span class="nav-text">梯度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#梯度下降算法"><span class="nav-number">5.0.4.3.</span> <span class="nav-text">梯度下降算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#学习率"><span class="nav-number">5.0.4.4.</span> <span class="nav-text">学习率</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#线性回归梯度下降"><span class="nav-number">5.0.4.5.</span> <span class="nav-text">线性回归梯度下降</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#批量梯度下降（Batch-Gradient-Descent）"><span class="nav-number">5.0.4.6.</span> <span class="nav-text">批量梯度下降（Batch Gradient Descent）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#随机梯度下降（Stochastic-gradient-descent）"><span class="nav-number">5.0.4.7.</span> <span class="nav-text">随机梯度下降（Stochastic gradient descent）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#视觉效果"><span class="nav-number">5.0.4.8.</span> <span class="nav-text">视觉效果</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>

