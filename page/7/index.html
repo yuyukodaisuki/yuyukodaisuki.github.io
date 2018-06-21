@@ -258,6 +258,182 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/06/arp入侵/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/05/06/arp入侵/" itemprop="url">
+                  arp入侵
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-06T22:05:03+08:00">
+                2017-05-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络安全/" itemprop="url" rel="index">
+                    <span itemprop="name">网络安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/05/06/arp入侵/" class="leancloud_visitors" data-flag-title="arp入侵">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="什么是arp入侵"><a href="#什么是arp入侵" class="headerlink" title="什么是arp入侵"></a>什么是arp入侵</h1><p>ARP毒化也被称为ARP缓存中毒和ARP欺骗攻击,这是在内网的中间人攻击。ARP欺骗采取的优势是通过ARP协议欺骗,达到对整个网络进行欺骗。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>首先，实验中所有主机在同一个局域网下，比如我的电脑，手机同时连接到寝室的wifi，他们就处于同一个局域网。<br>这次我使用的攻击者是电脑中安装有kali linux系统的虚拟机，受害者是我的手机。（这里用虚拟机做攻击者，就需要将虚拟机与主机连接模式改为桥接模式，具体方法百度上很多，就不在这里描述）</p>
+<h2 id="扫描局域网内存活主机"><a href="#扫描局域网内存活主机" class="headerlink" title="扫描局域网内存活主机"></a>扫描局域网内存活主机</h2><p>我要攻击一个受害者，肯定要知道他的ip地址，而怎么能获取他的ip地址呢？这里就需要kali中的一个强大的工具——nmap。<br>这里我先查看自己虚拟机的ip地址和子网掩码，就能知道同一wifi下的主机的ip区间了。<br><img src="http://img.blog.csdn.net/20161106115018207" alt="查看自己的ip"><br>然后我发现自己的ip是192.168.0.108，子网掩码是255.255.255.0，所以我就知道了同一wifi下的主机肯定在192.168.0.1到192.168.0.255之间了。接下来就可以用nmap中的一个扫描方式扫描给定ip区间所有存活主机了。（nmap还有很多用途，可以去百度了解）<br><img src="http://img.blog.csdn.net/20161106115054199" alt="扫描存活主机"><br>这里扫出来六台主机，其中192.168.0.1是路由器地址，然后可以看到我的手机meizu对应的ip地址是192.168.0.103。</p>
+<h2 id="进行arp毒化"><a href="#进行arp毒化" class="headerlink" title="进行arp毒化"></a>进行arp毒化</h2><p>接下来就是攻击过程了，首先开启linux的ip转发功能。<br><img src="http://img.blog.csdn.net/20161106115122512" alt="开启ip转发并检查一次"><br>下来这两句arpspoof指令是让手机发往路由器和路由器发往手机的数据先通过我的虚拟机（攻击者）再发送出去。这样他的所有数据都要通过我。<br><img src="http://img.blog.csdn.net/20161106115148270" alt="劫持"><br>接下来我们可以用个图片捕获工具driftnet来试试效果。<br>我的手机搜索蕾蒂西亚有关的图片<br><img src="http://img.blog.csdn.net/20161106115220020" alt="手机搜索"><br>然后用driftnet来查看<br><img src="http://img.blog.csdn.net/20161106115244082" alt="deiftnet窗口"><br>可以看到我们捕获到了手机正在搜索的图片，已经劫持成功了，我们可以做到的不止这些，kali中还有很多强大的工具可以去尝试。</p>
+<p>  这篇博客是从自己的CSDN博客搬运过来的<a href="http://blog.csdn.net/echo_hun/article/details/53053665" target="_blank" rel="noopener">手机连接着公共wifi到底安全吗——一次简单arp毒化 </a>不是抄袭哦。现在主要就用这个博客了，所以我自己在各个网站的博客都会搬运来这里。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/26/用字符数组实现2的n次方（大数问题）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -833,7 +1009,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">63</span>
+                <span class="site-state-item-count">64</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

