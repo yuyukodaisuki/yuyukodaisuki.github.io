@@ -258,6 +258,481 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/12/基于python的网站后台扫描器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/12/12/基于python的网站后台扫描器/" itemprop="url">
+                  基于python的网站后台扫描器
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-12T16:39:17+08:00">
+                2017-12-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/12/基于python的网站后台扫描器/" class="leancloud_visitors" data-flag-title="基于python的网站后台扫描器">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近没什么事情干，就把之前自己写的python工具写到博客里面  </p>
+<h2 id="0x00-需要用到的库"><a href="#0x00-需要用到的库" class="headerlink" title="0x00 需要用到的库"></a>0x00 需要用到的库</h2><ul>
+<li>requests： requests 是用Python语言编写，基于 urllib，采用 Apache2 Licensed 开源协议的 HTTP 库。它比 urllib 更加方便，可以节约我们大量的工作，完全满足 HTTP 测试需求。</li>
+<li>threading： 多线程的库，跟网页交互如果单线程会等很多时间。</li>
+<li>time： 统计运行时间的时候要用到。  </li>
+</ul>
+<h2 id="0x01-程序设计思路"><a href="#0x01-程序设计思路" class="headerlink" title="0x01 程序设计思路"></a>0x01 程序设计思路</h2><p>我们需要从字典文件中读入有可能的路径，然后循环访问，遇到返回状态码200代表可以访问，遇到其他的状态码代表不能访问。  </p>
+<h2 id="0x02-单线程实现"><a href="#0x02-单线程实现" class="headerlink" title="0x02 单线程实现"></a>0x02 单线程实现</h2><pre><code class="python"><span class="keyword">import</span> requests
+
+<span class="function"><span class="keyword">def</span> <span class="title">guesshtml</span><span class="params">(url_list,real_list)</span>:</span>
+    <span class="keyword">for</span> url <span class="keyword">in</span> url_list:
+        r = requests.get(url, timeout=<span class="number">30</span>)
+        <span class="keyword">if</span> r.status_code==<span class="number">200</span>:
+            print(<span class="string">"存在: "</span>+url)
+            real_list.append(url)
+        <span class="keyword">else</span>:
+            print(<span class="string">"不存在: %s 错误代码: %d"</span>% (url,r.status_code))
+    <span class="keyword">return</span> real_list
+
+<span class="function"><span class="keyword">def</span> <span class="title">add_url</span><span class="params">(html,dic,url_list)</span>:</span>
+    <span class="keyword">for</span> line <span class="keyword">in</span> dic:
+        line = line.replace(<span class="string">'\n'</span>,<span class="string">''</span>)
+        url = html + line
+        url_list.append(url)
+    <span class="keyword">return</span> url_list
+
+<span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span>
+    html = <span class="string">'http://www.uuzdaisuki.com/'</span>
+    dic = open(<span class="string">r"C:\Users\leticia\desktop\dic.txt"</span>,<span class="string">'r'</span>)
+    url_list = []
+    real_list = []
+    url_list = add_url(html,dic,url_list)
+    real_list = guesshtml(url_list,real_list)
+
+main()
+</code></pre>
+<p>单线程运行结果：<br><img src="http://oo3iot5oz.bkt.clouddn.com/pythonpython_houtai1.png" alt=""></p>
+<h2 id="0x03-多线程实现"><a href="#0x03-多线程实现" class="headerlink" title="0x03 多线程实现"></a>0x03 多线程实现</h2><pre><code class="python"><span class="keyword">import</span> requests
+<span class="keyword">from</span> threading <span class="keyword">import</span> Thread
+
+
+<span class="function"><span class="keyword">def</span> <span class="title">guesshtml</span><span class="params">(url,real_list)</span>:</span>
+    r = requests.get(url, timeout=<span class="number">30</span>)
+    <span class="keyword">if</span> r.status_code==<span class="number">200</span>:
+        print(<span class="string">"存在: "</span>+url)
+        real_list.append(url)
+    <span class="keyword">else</span>:
+         print(<span class="string">"不存在: %s 错误代码: %d"</span>% (url,r.status_code))
+    <span class="keyword">return</span> real_list
+
+<span class="function"><span class="keyword">def</span> <span class="title">add_url</span><span class="params">(html,dic,url_list)</span>:</span>
+    <span class="keyword">for</span> line <span class="keyword">in</span> dic:
+        line = line.replace(<span class="string">'\n'</span>,<span class="string">''</span>)
+        url = html + line
+        url_list.append(url)
+    <span class="keyword">return</span> url_list
+
+<span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span>
+    html = <span class="string">'http://www.uuzdaisuki.com/'</span>
+    dic = open(<span class="string">r"C:\Users\leticia\desktop\dic.txt"</span>,<span class="string">'r'</span>)
+    url_list = []
+    real_list = [] <span class="comment">#这个暂时没有用到，如果我们需要保存的时候，再用这里。</span>
+    url_list = add_url(html,dic,url_list)
+    <span class="keyword">for</span> url <span class="keyword">in</span> url_list:
+        t = Thread(target = guesshtml,args=(url,real_list))
+        t.start()
+
+main()
+</code></pre>
+<p>多线程运行结果:<br><img src="http://oo3iot5oz.bkt.clouddn.com/pythonpython_houtai2.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/25/https握手详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/11/25/https握手详解/" itemprop="url">
+                  https握手详解
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-25T17:25:35+08:00">
+                2017-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络协议/" itemprop="url" rel="index">
+                    <span itemprop="name">网络协议</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/11/25/https握手详解/" class="leancloud_visitors" data-flag-title="https握手详解">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-什么是https协议"><a href="#0x00-什么是https协议" class="headerlink" title="0x00 什么是https协议"></a>0x00 什么是https协议</h2><p>HTTPS（全称：Hyper Text Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。即HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。 它是一个URI scheme（抽象标识符体系），句法类同http:体系。用于安全的HTTP数据传输。  </p>
+<h2 id="0x01-HTTPS和HTTP的区别"><a href="#0x01-HTTPS和HTTP的区别" class="headerlink" title="0x01 HTTPS和HTTP的区别"></a>0x01 HTTPS和HTTP的区别</h2><p>HTTPS和HTTP的区别主要为以下四点：  </p>
+<ul>
+<li>https协议需要到ca申请证书，一般免费证书很少，需要交费。</li>
+<li>http是超文本传输协议，信息是明文传输，https 则是具有安全性的ssl加密传输协议。</li>
+<li>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</li>
+<li>http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。  </li>
+</ul>
+<h2 id="0x02-SSL协议"><a href="#0x02-SSL协议" class="headerlink" title="0x02 SSL协议"></a>0x02 SSL协议</h2><p>SSL(Secure Sockets Layer 安全套接层),及其继任者传输层安全（Transport Layer Security，TLS）是为网络通信提供安全及数据完整性的一种安全协议。TLS与SSL在传输层对网络连接进行加密。<br>所以SSL所具备的功能是：保证传输数据的保密性、完整性，并且实现通信双方的身份认证。<br>在协议栈种位置如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/1.png" alt=""><br>SSL协议是一个分层协议，共有两层组成。  </p>
+<p>高层协议包括：  </p>
+<ul>
+<li>SSL握手协议</li>
+<li>改变加密约定协议</li>
+<li>报警协议</li>
+</ul>
+<p>底层协议是SSL记录层协议，是一个简单的封装协议，用来记录协议的功能，保证协议的完整性，机密性。</p>
+<h2 id="0x03-SSL握手"><a href="#0x03-SSL握手" class="headerlink" title="0x03 SSL握手"></a>0x03 SSL握手</h2><p>这里主要分析一下高层协议中的握手协议。<br>SSL握手协议主要负责：</p>
+<ul>
+<li>算法协商</li>
+<li>身份验证</li>
+<li>确定密钥  </li>
+</ul>
+<p>为了很直观的看到它具体做了什么，采用wireshark抓包的方式来分析一次Full Handshake，即全流程握手。  </p>
+<h2 id="0x04-wireshark抓包分析"><a href="#0x04-wireshark抓包分析" class="headerlink" title="0x04 wireshark抓包分析"></a>0x04 wireshark抓包分析</h2><p>接下来我们抓包进行分析：  </p>
+<p>1.我们打开wireshark软件，监视正在使用的网卡，然后通过浏览器访问 <a href="http://www.github.com" target="_blank" rel="noopener">www.github.com</a> 抓取完成后我们停止捕获。  </p>
+<p>2.在过滤器输入ssl，过滤ssl协议，找到本机向 github.com 的ip地址发起的client hello。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/2.png" alt="">  </p>
+<p>3.右键追踪，选择ssl流。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/3.png" alt="">  </p>
+<p>4.首先是client hello，这个包携带着客户的SSL版本号，加密套件列表，压缩算法列表，客户端随机数，sessionid = 0，传送给服务器。<br>我们开始分析，首先展开client hello的SSL，找到Handshark。可以看到client hello里面包含的各项数据。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/4.png" alt=""></p>
+<p>  分别是：  </p>
+<ul>
+<li>SSL版本号:TLS 1.2</li>
+<li>压缩算法NULL</li>
+<li>sessionid = 0</li>
+<li>密码套件如下  </li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/5.png" alt="">  </p>
+<ul>
+<li>server name，可以看到是 github.com。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/6.png" alt="">  </li>
+</ul>
+<p>5.然后找到server hello，这个包是服务器选择版本，确定要用的加密套件，压缩算法，计算sessionid以及随机数，发送给客户端。  </p>
+<p>同样展开SSL：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/7.png" alt=""><br>我们可以看到各项对应数据被放在server hello中，比如session ID，密码套件等。</p>
+<p>并且我们看到，除了server hello部分，这个包还有服务器发向客户端的证书的前一部分。然后下一个包TCP segment of a reassemble PDU，是证书的中间部分。  </p>
+<p>6.然后找到Certificate，这一步是服务端将自己的证书下发给客户端，让客户端验证自己的身份，客户端验证通过后取出证书中的公钥。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/8.png" alt="">  </p>
+<p>而我们看到的包中内容呢是证书结尾部分，包括GitHub 机构旗下github.com网站的证书及其颁发机构 DigiCert 的证书。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/9.png" alt="">  </p>
+<p>7.下一部分是Server Key Exchange，用于将服务器的临时ECDH公钥传送给客户端。 </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/10.png" alt="">  </p>
+<p>8.之后是Server Hello Done，此消息由服务器发送，以指示ServerHello和相关消息的结束。<br>发送此消息后，服务器将等待客户端响应。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/11.png" alt=""></p>
+<p>9.客户端收到服务端传来的证书后，先从 CA 验证该证书的合法性，验证通过后取出证书中的服务端公钥，再生成一个随机数 Random3，再用服务端公钥非对称加密 Random3 生成 PreMaster Key。  </p>
+<p>然后我们看到下个包包含Client Key Exchange, Change Cipher Spec, Hello Request, Hello Request  </p>
+<p>10.首先是Client Key Exchange，上面客户端根据服务器传来的公钥生成了 PreMaster Key，Client Key Exchange 就是将这个 key 传给服务端。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/12.png" alt="">  </p>
+<p>11.Change Cipher Spec(Client)，<br>这一步是客户端通知服务端后面再发送的消息都会使用前面协商出来的秘钥加密了。然后客户端发送握手验证报文确保消息的完整性。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/13.png" alt=""> </p>
+<p>12.Change Cipher Spec(Server)<br>这一步是服务端收到数据后，通知客户端后面再发送的消息都会使用加密。  </p>
+<p>13.Encrypted Handshake Message，表示服务器端的SSL成功结束，发送握手验证报文确保消息的完整性。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/14.png" alt="">  </p>
+<p>14.下面开始正式交换数据。</p>
+<p>所以总的过程如下图所示：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/15.png" alt="">  </p>
+<p>以上就是整个SSL握手过程，也是加密算法的典型应用之一。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/09/天体距离测量/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1743,387 +2218,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/15/python多线程暴力破解压缩包/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/05/15/python多线程暴力破解压缩包/" itemprop="url">
-                  python多线程暴力破解压缩包
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-15T19:04:44+08:00">
-                2017-05-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/05/15/python多线程暴力破解压缩包/" class="leancloud_visitors" data-flag-title="python多线程暴力破解压缩包">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="python多线程暴力破解压缩包"><a href="#python多线程暴力破解压缩包" class="headerlink" title="python多线程暴力破解压缩包"></a>python多线程暴力破解压缩包</h1><p>网上下载下来别人共享的压缩包有时会有密码，而且多半是弱口令；有人经常会忘记自己的几位密码，只记得大概格式…遇到诸如此类情况的时候，你或许就需要一个暴力破解工具了。</p>
-<h2 id="0x01-基于python2-7的暴力破解脚本"><a href="#0x01-基于python2-7的暴力破解脚本" class="headerlink" title="0x01 基于python2.7的暴力破解脚本"></a>0x01 基于python2.7的暴力破解脚本</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">import</span> optparse</span><br><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">extractFile</span><span class="params">(zipFile,password)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        zipFile.extractall(pwd=password)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'password is:'</span>+password + <span class="string">'\n'</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    parser = optparse.OptionParser()</span><br><span class="line">    parser.add_option(<span class="string">'-f'</span>,dest=<span class="string">'zname'</span>,type=<span class="string">'string'</span>,help=<span class="string">"zipfile name"</span>)</span><br><span class="line">    parser.add_option(<span class="string">'-d'</span>,dest=<span class="string">'dname'</span>,type=<span class="string">'string'</span>,help=<span class="string">"dictionary name"</span>)</span><br><span class="line">    (options,args)= parser.parse_args()</span><br><span class="line">    <span class="keyword">if</span>(options.zname==<span class="keyword">None</span>)|(options.dname==<span class="keyword">None</span>):</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'---wrong input!---'</span>+<span class="string">'\n'</span></span><br><span class="line">        exit(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        zname = options.zname</span><br><span class="line">        dname = options.dname</span><br><span class="line">    zipFile = zipfile.ZipFile(zname)</span><br><span class="line">    passFile = open(dname)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> passFile.readlines():</span><br><span class="line">        password = line.strip(<span class="string">'\n'</span>)</span><br><span class="line">        t = Thread(target=extractFile,args=(zipFile,password))</span><br><span class="line">        t.start()</span><br><span class="line"><span class="keyword">if</span> __name__ ==<span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-<p>代码如上，我们用到了三个库：  </p>
-<ul>
-<li>zipfile模块用来做zip格式编码的压缩和解压缩的，要解压zip文件当然需要用到这个库。</li>
-<li>threading模块是用来创建线程的，我们为了加快破解速度要使用多线程。</li>
-<li>optparse模块用来处理命令行参数，这样就不会出现每次需要改代码或者交到别人手中不会用的问题。</li>
-</ul>
-<p>我们在main函数中读取命令行传递过来的压缩文件名和字典文件名，用open命令读取字典，然后创建线程并在extractFile函数中尝试字典，密码正确则返回密码的值。<br>一些函数的具体用法  ：</p>
-<ul>
-<li><p><a href="http://blog.chinaunix.net/uid-27571599-id-3484048.html" target="_blank" rel="noopener">python多线程模块threading详解</a>  </p>
-</li>
-<li><p><a href="http://www.cnblogs.com/captain_jack/archive/2011/01/11/1933366.html" target="_blank" rel="noopener">python模块学习–optparse</a></p>
-</li>
-</ul>
-<h2 id="0x02-制作字典"><a href="#0x02-制作字典" class="headerlink" title="0x02 制作字典"></a>0x02 制作字典</h2><p>首先，我们下载一个名为“木头超级字典工具集”的软件，这里可以生成各种各样类型的字典，可以选择密码包含的字符集以及设定已知的每一位，还有一些特殊的字典。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/01.jpg" alt="">  </p>
-<p>我在这里创建了一个一到四位的纯数字密码做实验，字典里面也可以随意加入自己想测试的密码，但要注意字典的最后面要空一行。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/02.png" alt=""></p>
-<h2 id="0x03-测试"><a href="#0x03-测试" class="headerlink" title="0x03 测试"></a>0x03 测试</h2><p>我们先添加一个压缩文件，嗯，为了节约时间密码就设置成紫的年龄了。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/03.png" alt="">  </p>
-<p>然后在压缩文件和字典的目录按shift+鼠标右键在当前目录打开命令行  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/04.jpg" alt="">  </p>
-<p>然后测试一下，成功得到密码  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/05.png" alt="">  </p>
-<p>实际上，真正用到暴力破解的时候不多，因为穷举法十分耗费时间，而且现今稍具严密度的密码验证机制都会设下试误的可容许次数以应对使用密码穷举法的破解者。当试误次数达到可容许次数时，密码验证系统会自动拒绝继续验证，有的甚至还会自动启动入侵警报机制。不过在面对弱口令的时候还是十分有效的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/使用python-pyinstaller打包python程序为exe/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/05/11/使用python-pyinstaller打包python程序为exe/" itemprop="url">
-                  使用python pyinstaller打包python程序为exe
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T11:32:41+08:00">
-                2017-05-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/05/11/使用python-pyinstaller打包python程序为exe/" class="leancloud_visitors" data-flag-title="使用python pyinstaller打包python程序为exe">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="使用python-pyinstaller打包python程序为exe"><a href="#使用python-pyinstaller打包python程序为exe" class="headerlink" title="使用python pyinstaller打包python程序为exe"></a>使用python pyinstaller打包python程序为exe</h1><h2 id="0x01-为什么要把python程序打包成exe"><a href="#0x01-为什么要把python程序打包成exe" class="headerlink" title="0x01 为什么要把python程序打包成exe"></a>0x01 为什么要把python程序打包成exe</h2><p>自己写出的python程序在自己电脑上当然可以完美运行，可是当我们想提供给别人使用的时候，直接给他.py文件，多半是不行的，因为对方的电脑很可能没有python环境，就算有python环境，也可能没有这个程序所需要的库，所以最方便的办法是给对方一个exe文件。</p>
-<h2 id="0x02-安装python-pyinstaller库"><a href="#0x02-安装python-pyinstaller库" class="headerlink" title="0x02 安装python pyinstaller库"></a>0x02 安装python pyinstaller库</h2><p>在win下的命令行输入<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pyinstaller</span><br></pre></td></tr></table></figure></p>
-<p>就会自动安装pyinstaller库，如果出现错误，可以尝试下更新自己的pip<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install --upgrade pip</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x03-打包成exe"><a href="#0x03-打包成exe" class="headerlink" title="0x03 打包成exe"></a>0x03 打包成exe</h2><p>首先，我们在pyinstaller.exe（或pyinstaller.py）的目录下打开cmd，然后输入<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyinstaller.exe -F -c -i 你的图标.ico 你的python程序.py</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>-F是打包成一个独立的exe</li>
-<li>-c是打包成控制台文件，如果不想让他显示命令行窗口，可以把-c换成-w</li>
-<li>-i是加入你自己的图标，图标文件可以百度ico转换器来自己制作</li>
-<li>后面的两个文件名分别为你的图标名和程序名，如果你的图标和程序不在当前目录，可以在他们前面分别加上各自的目录  </li>
-</ul>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/pythonQQ%E5%9B%BE%E7%89%8720170511112907.png" alt=""></p>
-<p>即可打包成功</p>
-<p>这个时候exe文件被生成在dist文件夹中<br><img src="http://oo3iot5oz.bkt.clouddn.com/pythonQQ%E5%9B%BE%E7%89%8720170511113043.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2173,7 +2267,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">64</span>
+                <span class="site-state-item-count">66</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

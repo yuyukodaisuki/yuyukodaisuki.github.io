@@ -1,0 +1,948 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="机器学习," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 逻辑回归(Logistic Regression)逻辑回归就是这样的一个过程：面对一个回归或者分类问题，建立代价函数，然后通过优化方法迭代求解出最优的模型参数，然后测试验证我们这个求解的模型的好坏。 Logistic回归虽然名字里带“回归”，但是它实际上是一种分类方法，主要用于两分类问题（即输出只有两种，分别代表两个类别） 回归模型中，y是一个定性变量，比如y=0或1，logistic方">
+<meta name="keywords" content="机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习(3)——逻辑回归">
+<meta property="og:url" content="http://yoursite.com/2018/06/25/机器学习-3-——逻辑回归/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 逻辑回归(Logistic Regression)逻辑回归就是这样的一个过程：面对一个回归或者分类问题，建立代价函数，然后通过优化方法迭代求解出最优的模型参数，然后测试验证我们这个求解的模型的好坏。 Logistic回归虽然名字里带“回归”，但是它实际上是一种分类方法，主要用于两分类问题（即输出只有两种，分别代表两个类别） 回归模型中，y是一个定性变量，比如y=0或1，logistic方">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_01.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_02.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_03.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_04.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_05.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_06.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_07.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_08.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_09.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_10.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_11.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_12.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_13.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_14.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_15.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_16.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_17.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_18.png?raw=true">
+<meta property="og:updated_time" content="2018-06-25T15:39:40.921Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习(3)——逻辑回归">
+<meta name="twitter:description" content="0x00 逻辑回归(Logistic Regression)逻辑回归就是这样的一个过程：面对一个回归或者分类问题，建立代价函数，然后通过优化方法迭代求解出最优的模型参数，然后测试验证我们这个求解的模型的好坏。 Logistic回归虽然名字里带“回归”，但是它实际上是一种分类方法，主要用于两分类问题（即输出只有两种，分别代表两个类别） 回归模型中，y是一个定性变量，比如y=0或1，logistic方">
+<meta name="twitter:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_01.png?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/25/机器学习-3-——逻辑回归/"/>
+
+
+
+
+
+  <title> 机器学习(3)——逻辑回归 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/25/机器学习-3-——逻辑回归/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                机器学习(3)——逻辑回归
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-25T23:39:05+08:00">
+                2018-06-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/06/25/机器学习-3-——逻辑回归/" class="leancloud_visitors" data-flag-title="机器学习(3)——逻辑回归">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-逻辑回归-Logistic-Regression"><a href="#0x00-逻辑回归-Logistic-Regression" class="headerlink" title="0x00 逻辑回归(Logistic Regression)"></a>0x00 逻辑回归(Logistic Regression)</h2><p>逻辑回归就是这样的一个过程：面对一个回归或者分类问题，建立代价函数，然后通过优化方法迭代求解出最优的模型参数，然后测试验证我们这个求解的模型的好坏。</p>
+<p>Logistic回归虽然名字里带“回归”，但是它实际上是一种分类方法，主要用于两分类问题（即输出只有两种，分别代表两个类别）</p>
+<p>回归模型中，y是一个定性变量，比如y=0或1，logistic方法主要应用于研究某些事件发生的概率。</p>
+<h2 id="0x01-逻辑回归模型"><a href="#0x01-逻辑回归模型" class="headerlink" title="0x01 逻辑回归模型"></a>0x01 逻辑回归模型</h2><p>它的核心思想是，如果线性回归的结果输出是一个连续值，而值的范围是无法限定的，那我们有没有办法把这个结果值映射为可以帮助我们判断的结果呢。而如果输出结果是 (0,1) 的一个概率值，这个问题就很清楚了。</p>
+<p>在数学上有sigmoid函数可以帮助我们实现这一思想。</p>
+<p>sigmoid函数表达式：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_01.png?raw=true" alt=""></p>
+<p>二元逻辑回归时，将t换成ax+b，可以得到二元逻辑回归模型的参数形式：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_02.png?raw=true" alt=""></p>
+<p>sigmoid函数图形：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_03.png?raw=true" alt=""></p>
+<p>其中，如果是二元回归时，我们P(x)的值可以理解为某一分类概率的大小，如果P(x)值为0.6，代表输出为1的概率是60%，补集部分是输出为0的概率40%。</p>
+<p>此时P(x)的值越小，而分类为0的的概率越高，反之，值越大的话分类为1的的概率越高。如果靠近临界点即靠近0.6时，分类准确率会下降。</p>
+<h2 id="0x02-决策边界-decision-boundary"><a href="#0x02-决策边界-decision-boundary" class="headerlink" title="0x02 决策边界(decision boundary)"></a>0x02 决策边界(decision boundary)</h2><p>决策边界就是能够把样本正确分类的一条边界，从图像上可以直观的看到</p>
+<p>如线性决策边界：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_04.png?raw=true" alt=""></p>
+<p>非线性决策边界：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_05.png?raw=true" alt=""></p>
+<p>在上面二元逻辑回归的例子中，我们用y表示输出的离散值0或1，写为函数形式为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_06.png?raw=true" alt=""></p>
+<p>然后我们逻辑函数g要做到，在输入大于等于零时，输出大于等于0.6；在输入小于零时，输出小于等于0.6。即：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_07.png?raw=true" alt=""></p>
+<p>决策边界是假设函数的属性，由参数决定，而不是由数据集的特征决定。</p>
+<h2 id="0x03-成本函数-Cost-Function"><a href="#0x03-成本函数-Cost-Function" class="headerlink" title="0x03 成本函数(Cost Function)"></a>0x03 成本函数(Cost Function)</h2><p>线性回归中也说过成本函数，也叫代价函数,在逻辑回归中，我们也需要定义成本函数对其取值的好坏进行评估。</p>
+<p>而逻辑回归如果取用和线性回归一样的方式计算成本函数，那么图形是“非凸”的。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_08.png?raw=true" alt=""></p>
+<p>这样就会产生很多个局部最小值，无法使用梯度下降算法。所以我们需要一个新的成本函数。</p>
+<p>在逻辑回归中，损失函数是用来估计预测值（y^(i)）与期望输出值（y(i)）之间的差异。</p>
+<p>统计学习中常用的损失函数有以下几种：</p>
+<p>(1) 0-1损失函数(0-1 loss function):</p>
+<p>(2) 平方损失函数(quadratic loss function)</p>
+<p>(3) 绝对损失函数(absolute loss function)</p>
+<p>(4) 对数损失函数(logarithmic loss function) 或对数似然损失函数(log-likelihood loss function)</p>
+<p>损失函数越小，模型就越好。</p>
+<p>所以在逻辑回归中，为了保证全局收敛，我们采用对数似然损失函数。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_09.png?raw=true" alt=""></p>
+<p>也就是说，如下两个情况：</p>
+<p>如果是正确答案为y=1的情况：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_10.png?raw=true" alt=""></p>
+<p>当y=1, 则Cost=0，也就是预测的值和真实的值完全相等的时候成本为0;但是如果y=0，Cost接近无穷大，也就是说此时成本会非常大。</p>
+<p>如果是正确答案为y=0的情况：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_11.png?raw=true" alt=""></p>
+<p>当y=0, 则Cost=0，也就是预测的值和真实的值完全相等的时候成本为0;但是如果y=1，Cost接近无穷大，也就是说此时成本会非常大。</p>
+<h2 id="0x04-简化成本函数"><a href="#0x04-简化成本函数" class="headerlink" title="0x04 简化成本函数"></a>0x04 简化成本函数</h2><p>在上面式子中，由于y 只能等于0或1，所以可以将逻辑回归中的Cost function的两个公式合并可以将我们的成本函数的两个条件案例压缩成一个案例：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_12.png?raw=true" alt=""></p>
+<p>当y等于1时，第二项（1-y）log（1- hθ（x））将为零，并且不会影响结果。如果y等于0，则所述第一术语-ylog（1-hθ（X））将为零，且不会影响结果。</p>
+<p>所以最终整个逻辑回归的成本函数如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_13.png?raw=true" alt=""></p>
+<h2 id="0x05-梯度下降"><a href="#0x05-梯度下降" class="headerlink" title="0x05 梯度下降"></a>0x05 梯度下降</h2><p>与线性回归相似，这里我们同样采用梯度下降算法来学习参数</p>
+<p>迭代函数</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_14.png?raw=true" alt=""></p>
+<p>算法就是迭代这个公式每次更新参数值，上篇已经详细说过</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_15.png?raw=true" alt=""></p>
+<h2 id="0x06-优化-Advanced-Optimization"><a href="#0x06-优化-Advanced-Optimization" class="headerlink" title="0x06 优化(Advanced Optimization)"></a>0x06 优化(Advanced Optimization)</h2><p>优化算法除了梯度下降算法外，还包括：</p>
+<ul>
+<li>Conjugate gradient method(共轭梯度法)</li>
+<li>Quasi-Newton method(拟牛顿法)</li>
+<li>BFGS method</li>
+<li>L-BFGS(Limited-memory BFGS)</li>
+</ul>
+<p>后二者由拟牛顿法引申出来，与梯度下降算法相比，这些算法的优点是：</p>
+<ul>
+<li>1.不需要手动的选择步长</li>
+<li>2.通常比梯度下降算法快</li>
+</ul>
+<p>因为算法太过复杂，我们不需要手动编写代码，只需要在库中调用相关的函数即可。</p>
+<h2 id="0x07-多分类问题-Multiclass-Classification-One-vs-all"><a href="#0x07-多分类问题-Multiclass-Classification-One-vs-all" class="headerlink" title="0x07 多分类问题(Multiclass Classification: One-vs-all)"></a>0x07 多分类问题(Multiclass Classification: One-vs-all)</h2><p>我们大多时候遇到的分类并不止两类，这个时候就产生了多分类问题。</p>
+<p>首先，二分类问题时候图形如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_16.png?raw=true" alt=""></p>
+<p>那么多分类问题的图形就如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_17.png?raw=true" alt=""></p>
+<p>对于多分类问题，我们可以将其先看成二分类问题，保留一类之后剩余的划作另一类。</p>
+<p>对上面的三类问题，我们需要三次划分，如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_18.png?raw=true" alt=""></p>
+<p>最终的One-vs-all方法：</p>
+<ul>
+<li><p>对于每一个类i训练一个逻辑回归模型的分类器，并且预测 y = i时的概率。</p>
+</li>
+<li><p>对于一个新的输入变量x,分别对每一个类进行预测，取概率最大的那个类作为分类结果。</p>
+</li>
+</ul>
+<p>也就是说，如果输入一个x，此时分类器A概率为0.3，分类器B概率为0.4，分类器C概率为0.5，那么他就属于C这个分类。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/22/phpmyadmin注入webshell总结/" rel="next" title="phpmyadmin注入webshell总结">
+                <i class="fa fa-chevron-left"></i> phpmyadmin注入webshell总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">66</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">52</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-逻辑回归-Logistic-Regression"><span class="nav-number">1.</span> <span class="nav-text">0x00 逻辑回归(Logistic Regression)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-逻辑回归模型"><span class="nav-number">2.</span> <span class="nav-text">0x01 逻辑回归模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-决策边界-decision-boundary"><span class="nav-number">3.</span> <span class="nav-text">0x02 决策边界(decision boundary)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-成本函数-Cost-Function"><span class="nav-number">4.</span> <span class="nav-text">0x03 成本函数(Cost Function)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-简化成本函数"><span class="nav-number">5.</span> <span class="nav-text">0x04 简化成本函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-梯度下降"><span class="nav-number">6.</span> <span class="nav-text">0x05 梯度下降</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-优化-Advanced-Optimization"><span class="nav-number">7.</span> <span class="nav-text">0x06 优化(Advanced Optimization)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-多分类问题-Multiclass-Classification-One-vs-all"><span class="nav-number">8.</span> <span class="nav-text">0x07 多分类问题(Multiclass Classification: One-vs-all)</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>
