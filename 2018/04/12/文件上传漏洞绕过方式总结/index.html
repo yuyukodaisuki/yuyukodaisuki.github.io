@@ -95,7 +95,7 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 文件上传漏洞在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。上一篇文件上传漏洞的博客介绍了文件上传漏洞的原理和实战，这里来记录一些常见的绕过方法。 0x01 绕过前端验证我们都知道，任何基于前端的验证都是不安全的，因为用户能直接修改它进行绕过。 如果在前端对上传文件的格式进行了限制，我们可以通过以下的办法进行绕过:  禁用js我们通过fire">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-04-26T15:18:18.282Z">
+<meta property="og:updated_time" content="2018-07-17T12:17:20.566Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="文件上传漏洞绕过方式总结">
 <meta name="twitter:description" content="0x00 文件上传漏洞在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。上一篇文件上传漏洞的博客介绍了文件上传漏洞的原理和实战，这里来记录一些常见的绕过方法。 0x01 绕过前端验证我们都知道，任何基于前端的验证都是不安全的，因为用户能直接修改它进行绕过。 如果在前端对上传文件的格式进行了限制，我们可以通过以下的办法进行绕过:  禁用js我们通过fire">
@@ -405,7 +405,12 @@
 <li>双写后缀<br>在一些系统中，仅仅匹配非法后缀删除，这个时候我们构造.pphphp，当它将第一个php匹配删除之后，剩下的字符又重新组合成了.php。</li>
 <li>同义后缀名<br>很多文件的后缀名不止一个，一些不常用的后缀名如果没有加入黑名单，就可以通过其他的同义后缀绕过。</li>
 </ul>
-<h2 id="0x05-后端检测-iis解析漏洞"><a href="#0x05-后端检测-iis解析漏洞" class="headerlink" title="0x05 后端检测-iis解析漏洞"></a>0x05 后端检测-iis解析漏洞</h2><p>在iis6中，如果提交图片格式为1.asp;.jpg，后缀是jpg可以绕过检测，然后在上传后就会被解析成asp格式的文件，这个时候通过上面的办法制作图片马，然后上传后通过菜刀连接上传后的图片马即可。</p>
+<p>如下是几种常见的扩展名绕过：</p>
+<p>Asp: asa  cer  cdx </p>
+<p>Aspx: ashx  asmx ascx</p>
+<p>Php:  php3 phtml</p>
+<p>Jsp:   jspx  jspf</p>
+<h2 id="0x05-后端检测-iis解析漏洞"><a href="#0x05-后端检测-iis解析漏洞" class="headerlink" title="0x05 后端检测-iis解析漏洞"></a>0x05 后端检测-iis解析漏洞</h2><p>在iis6中，如果提交图片格式为1.asp;.jpg，后缀是asp可以绕过检测，然后在上传后就会被解析成asp格式的文件，这个时候通过上面的办法制作图片马，然后上传后通过菜刀连接上传后的图片马即可。</p>
 <h2 id="0x06-目录禁止执行"><a href="#0x06-目录禁止执行" class="headerlink" title="0x06 目录禁止执行"></a>0x06 目录禁止执行</h2><p>在一些存放上传文件的目录，禁止执行脚本，这个时候我们可以通过在这个目录创建新的子目录，然后将脚本写入子目录中，即可执行。</p>
 <h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>文件上传漏洞带来的危害十分巨大，在有文件上传的位置，一定要做严格的检查，不能因为开发一时的方便而忽视危害，建议在开发时遵循如下几点：</p>
 <ul>
@@ -543,7 +548,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">71</span>
+                <span class="site-state-item-count">74</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -565,7 +570,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

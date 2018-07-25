@@ -258,6 +258,545 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/06/arp入侵/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/05/06/arp入侵/" itemprop="url">
+                  arp入侵
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-06T22:05:03+08:00">
+                2017-05-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络安全/" itemprop="url" rel="index">
+                    <span itemprop="name">网络安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/05/06/arp入侵/" class="leancloud_visitors" data-flag-title="arp入侵">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="什么是arp入侵"><a href="#什么是arp入侵" class="headerlink" title="什么是arp入侵"></a>什么是arp入侵</h1><p>ARP毒化也被称为ARP缓存中毒和ARP欺骗攻击,这是在内网的中间人攻击。ARP欺骗采取的优势是通过ARP协议欺骗,达到对整个网络进行欺骗。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>首先，实验中所有主机在同一个局域网下，比如我的电脑，手机同时连接到寝室的wifi，他们就处于同一个局域网。<br>这次我使用的攻击者是电脑中安装有kali linux系统的虚拟机，受害者是我的手机。（这里用虚拟机做攻击者，就需要将虚拟机与主机连接模式改为桥接模式，具体方法百度上很多，就不在这里描述）</p>
+<h2 id="扫描局域网内存活主机"><a href="#扫描局域网内存活主机" class="headerlink" title="扫描局域网内存活主机"></a>扫描局域网内存活主机</h2><p>我要攻击一个受害者，肯定要知道他的ip地址，而怎么能获取他的ip地址呢？这里就需要kali中的一个强大的工具——nmap。<br>这里我先查看自己虚拟机的ip地址和子网掩码，就能知道同一wifi下的主机的ip区间了。<br><img src="http://img.blog.csdn.net/20161106115018207" alt="查看自己的ip"><br>然后我发现自己的ip是192.168.0.108，子网掩码是255.255.255.0，所以我就知道了同一wifi下的主机肯定在192.168.0.1到192.168.0.255之间了。接下来就可以用nmap中的一个扫描方式扫描给定ip区间所有存活主机了。（nmap还有很多用途，可以去百度了解）<br><img src="http://img.blog.csdn.net/20161106115054199" alt="扫描存活主机"><br>这里扫出来六台主机，其中192.168.0.1是路由器地址，然后可以看到我的手机meizu对应的ip地址是192.168.0.103。</p>
+<h2 id="进行arp毒化"><a href="#进行arp毒化" class="headerlink" title="进行arp毒化"></a>进行arp毒化</h2><p>接下来就是攻击过程了，首先开启linux的ip转发功能。<br><img src="http://img.blog.csdn.net/20161106115122512" alt="开启ip转发并检查一次"><br>下来这两句arpspoof指令是让手机发往路由器和路由器发往手机的数据先通过我的虚拟机（攻击者）再发送出去。这样他的所有数据都要通过我。<br><img src="http://img.blog.csdn.net/20161106115148270" alt="劫持"><br>接下来我们可以用个图片捕获工具driftnet来试试效果。<br>我的手机搜索蕾蒂西亚有关的图片<br><img src="http://img.blog.csdn.net/20161106115220020" alt="手机搜索"><br>然后用driftnet来查看<br><img src="http://img.blog.csdn.net/20161106115244082" alt="deiftnet窗口"><br>可以看到我们捕获到了手机正在搜索的图片，已经劫持成功了，我们可以做到的不止这些，kali中还有很多强大的工具可以去尝试。</p>
+<p>  这篇博客是从自己的CSDN博客搬运过来的<a href="http://blog.csdn.net/echo_hun/article/details/53053665" target="_blank" rel="noopener">手机连接着公共wifi到底安全吗——一次简单arp毒化 </a>不是抄袭哦。现在主要就用这个博客了，所以我自己在各个网站的博客都会搬运来这里。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/26/用字符数组实现2的n次方（大数问题）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/26/用字符数组实现2的n次方（大数问题）/" itemprop="url">
+                  用字符数组实现2的n次方（大数问题）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-26T21:56:05+08:00">
+                2017-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/04/26/用字符数组实现2的n次方（大数问题）/" class="leancloud_visitors" data-flag-title="用字符数组实现2的n次方（大数问题）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="用字符数组实现2的n次方（大数问题）"><a href="#用字符数组实现2的n次方（大数问题）" class="headerlink" title="用字符数组实现2的n次方（大数问题）"></a>用字符数组实现2的n次方（大数问题）</h1><h2 id="为什么要用字符数组实现"><a href="#为什么要用字符数组实现" class="headerlink" title="为什么要用字符数组实现"></a>为什么要用字符数组实现</h2><p>在c/c++中，各个类型的数据的精度是有限的，我们可以写一个程序看看各种数据类型可以记录多大范围的数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt; </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;float.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;limits.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"char的位数:%u\n"</span>,CHAR_BIT);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"char类型的最大值:%d\n"</span>,CHAR_MAX);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"char类型的最小值:%d\n"</span>,CHAR_MIN);</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"short类型的最大值:%hd\n"</span>,SHRT_MAX);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"short类型的最小值:%hd\n"</span>,SHRT_MIN);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"int类型的最大值:%d\n"</span>,INT_MAX);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"int类型的最小值:%d\n"</span>,INT_MIN);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"long类型的最大值:%ld\n"</span>,LONG_MAX);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"long类型的最小值:%ld\n"</span>,LONG_MIN);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"unsigned long类型的最小值:%lu\n"</span>,ULONG_MAX);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"float类型的尾数位数:%u\n"</span>,FLT_MANT_DIG);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"float类型的最小有效数字位数:%u\n"</span>,FLT_DIG);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"带有全部有效数字位数的float类型的负指数的最小值:%d\n"</span>,FLT_MAX_10_EXP);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"带有全部有效数字位数的float类型的正指数的最大值:%d\n"</span>,FLT_MIN_10_EXP);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"double类型的尾数位数:%u\n"</span>,DBL_MANT_DIG);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"double类型的最小有效数字位数:%u\n"</span>,DBL_DIG);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"带有全部有效数字位数的double类型的负指数的最小值:%u\n"</span>,DBL_MAX_10_EXP);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"带有全部有效数字位数的double类型的正指数的最大值:%d\n"</span>,DBL_MIN_10_EXP);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"long double类型的尾数位数:%d\n"</span>,LDBL_MANT_DIG);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"long double类型的最小有效数字位数:%d\n"</span>,LDBL_DIG);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"带有全部有效数字位数的long double类型的负指数的最大值:%d\n"</span>,LDBL_MAX_10_EXP);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"带有全部有效数字位数的long double类型的正指数的最小值:%d\n"</span>,LDBL_MIN_10_EXP);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行以上代码就可以得到各种类型数据的范围，我们可以看出，如果要对整数进行运算，那么2的100次方就已经远远超出long long int所能存储的范围了，这时侯仍然使用long long int就会出错。<br><img src="http://oo3iot5oz.bkt.clouddn.com/a1.jpg" alt=""></p>
+<h2 id="如何实现"><a href="#如何实现" class="headerlink" title="如何实现"></a>如何实现</h2><p>这个时候，一个int存不下，但我们可以用很多个int串起来存，这个时候自然而然的想到了使用字符串，那么如何用字符串实现呢？<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> x=<span class="number">2</span>;<span class="comment">//计算x的n次方</span></span><br><span class="line">	<span class="keyword">int</span> a[<span class="number">1000</span>] = &#123;<span class="number">0</span>&#125;;<span class="comment">//开一个长度为1000的数组</span></span><br><span class="line">	<span class="keyword">int</span> b = <span class="number">0</span>;<span class="comment">//用来计算向前进的数字，并且第一个数得到的进位是零</span></span><br><span class="line">	a[<span class="number">999</span>] = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">int</span> n;</span><br><span class="line">	<span class="built_in">cin</span> &gt;&gt; n;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> j=<span class="number">999</span>;</span><br><span class="line">		<span class="keyword">while</span>(j&gt;=<span class="number">0</span>)&#123;</span><br><span class="line">		<span class="keyword">int</span> k=a[j]*x+b;<span class="comment">//这一位乘2之后加上进位</span></span><br><span class="line">		a[j]=k%<span class="number">10</span>;<span class="comment">//除以10取余，实际上是获取本位的数</span></span><br><span class="line">		b=k/<span class="number">10</span>;<span class="comment">//进位的数</span></span><br><span class="line">		j--;</span><br><span class="line">	&#125;</span><br><span class="line">	&#125;<span class="comment">//乘n遍的2</span></span><br><span class="line">	<span class="keyword">int</span> s;</span><br><span class="line">	<span class="keyword">for</span> (s=<span class="number">0</span>;s&lt;<span class="number">1000</span>;s++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(a[s]!=<span class="number">0</span>)</span><br><span class="line">			<span class="keyword">break</span>;<span class="comment">//先循环到不是零的地方</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (;s&lt;<span class="number">1000</span>;s++)&#123;</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;a[s];</span><br><span class="line">	&#125;<span class="comment">//从这里开始输出这个数组</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>具体实现方法注释中已经写的很明白了，其实就是循环n次乘法，不过每次乘法的每一位运算，都由自己写出的加法程序运算，这样就能在数组中保存这个大数。<br>const是用来保存一些全局常量的，这些常量在编译期可以改，在运行期不能改，听起来像宏，其实是用来取代宏的，所以在这里更改x的值，再重新编译，就可以计算其他数的n次冥。<br>这就是acm中常见的大数问题的一种解决方法，高精度加减乘除在CSDN上也有很多教程，感兴趣的朋友可以去看一看。<br><img src="http://oo3iot5oz.bkt.clouddn.com/a2.png" alt="">  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/a3.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/08/细数用github-pages和hexo搭建博客遇到的那些坑/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/08/细数用github-pages和hexo搭建博客遇到的那些坑/" itemprop="url">
+                  细数用github-pages和hexo搭建博客遇到的那些坑
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T22:28:57+08:00">
+                2017-04-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/搭建博客/" itemprop="url" rel="index">
+                    <span itemprop="name">搭建博客</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/04/08/细数用github-pages和hexo搭建博客遇到的那些坑/" class="leancloud_visitors" data-flag-title="细数用github-pages和hexo搭建博客遇到的那些坑">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="细数用github-pages和hexo搭建博客遇到的那些坑"><a href="#细数用github-pages和hexo搭建博客遇到的那些坑" class="headerlink" title="细数用github-pages和hexo搭建博客遇到的那些坑"></a>细数用github-pages和hexo搭建博客遇到的那些坑</h1><p>上次搭建博客时，踩了很多坑，为了接下来搭建个人博客的朋友们在遇到同样的问题时能够少走弯路，我就在这里谈谈之前踩到的一些比较重要的坑和对应的解决办法  </p>
+<p>搭建博客的具体过程我就不在赘述，有需要的朋友可以参考达壕的教程<a href="http://www.saberismywife.com/2016/06/27/%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B%E2%80%94%E7%94%A8github-pages%E4%B8%8Ehexo%E6%90%AD%E5%BB%BA%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%85%8D%E8%B4%B9%E5%8D%9A%E5%AE%A2/" target="_blank" rel="noopener">详细教程—用github-pages与hexo搭建属于自己的免费博客</a></p>
+<p>首先配置git环境和node.js的环境都没有出现问题，从官网上下载安装包安装完成就可以了，我遇到的第一个问题是hexo的安装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+<p>当在git-bush中输入以上代码时，长时间不进入下一步只能用ctrl+c退出。这里我一开始认为是node.js和git的版本出错，找了很多解决方法都不奏效，最后发现其实是npm官方镜像连不通，在这里只需要把源换成taobao的就可以，代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config set registry &quot;https://registry.npm.taobao.org&quot;</span><br></pre></td></tr></table></figure>
+<p>之后重新输入安装hexo的代码就可以<br><img src="http://oo3iot5oz.bkt.clouddn.com/1.png" alt=""></p>
+<p>第二个问题是在部署hexo的时候，出现如下错误：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/2.png" alt=""></p>
+<p>这个错误是因为hexo3.0后需要在_config.yml中设置 deploy中的type为git，这里需要在本地仓库输入以下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>最后一个问题是在域名解析的时候，ping自己的github页面，返回地址可以当作A类解析指向的ipv4地址，但是这个地址有时会改变，会使域名解析失效：<br><img src="http://oo3iot5oz.bkt.clouddn.com/3.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/0004.png" alt=""><br>所以这里使用CNAME的解析方式更好，在你的github仓库创建一个CNAME文件，里面写着你的域名，然后再在你的域名提供商那里设置解析如下就可以解决问题</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/5.png" alt=""></p>
+<p>第一次尝试的朋友应该还会犯很多错误，比如ssh-key的创建和使用过程的问题，还有因为readme.md文件没有同步到本地引发的一些git上传时候的错误，这些问题的解决方案百度有很多，都很容易解决。</p>
+<p>冰心曾说:“成功的花,人们只惊慕她现时的明艳,然而当初它的芽儿,浸透了奋斗的泪泉,洒遍了牺牲的血雨”。尝试的道路上充满着荆棘，错误在所难免，希望这篇博客能帮到同样在尝试的你们。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/03/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -470,7 +1009,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">71</span>
+                <span class="site-state-item-count">74</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -492,7 +1031,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">54</span>
+                <span class="site-state-item-count">55</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
