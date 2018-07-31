@@ -113,7 +113,7 @@
 <meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_16.png?raw=true">
 <meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_17.png?raw=true">
 <meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_18.png?raw=true">
-<meta property="og:updated_time" content="2018-07-31T02:27:35.139Z">
+<meta property="og:updated_time" content="2018-07-31T02:44:34.621Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="机器学习(8)——支持向量机(SVM)">
 <meta name="twitter:description" content="0x00 支持向量机在机器学习中，支持向量机（support vector machine，常简称为SVM，又名支持向量网络）是在分类与回归分析中分析数据的监督式学习模型与相关的学习算法。给定一组训练实例，每个训练实例被标记为属于两个类别中的一个或另一个，SVM训练算法建立一个将新的实例分配给两个类别之一的模型，使其成为非概率二元（binary classifier）线性分类器。SVM模型是将实例">
@@ -455,6 +455,24 @@
 <p>我们也有其他几种替代损失函数可供选择：</p>
 <p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_18.png?raw=true" alt=""></p>
 <p>在软间隔情况中，只使满足最终优化目标的值优化到最小即可。</p>
+<h2 id="0x05-支持向量机的优缺点"><a href="#0x05-支持向量机的优缺点" class="headerlink" title="0x05 支持向量机的优缺点"></a>0x05 支持向量机的优缺点</h2><p>支持向量机的优势在于:</p>
+<ul>
+<li><p>在高维空间中非常高效</p>
+</li>
+<li><p>即使在数据维度比样本数量大的情况下仍然有效</p>
+</li>
+<li><p>在决策函数（称为支持向量）中使用训练集的子集,因此它也是高效利用内存的</p>
+</li>
+<li><p>通用性: 不同的核函数 核函数与特定的决策函数一一对应，常见的kernel已<br>经提供,也可以指定定制的内核</p>
+</li>
+</ul>
+<p>支持向量机的缺点包括:</p>
+<ul>
+<li><p>如果特征数量比样本数量大得多,在选择核函数 核函数 时要避免过拟合,<br>而且正则化项是非常重要的</p>
+</li>
+<li><p>支持向量机不直接提供概率估计</p>
+</li>
+</ul>
 
       
     </div>
@@ -634,7 +652,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-支持向量机"><span class="nav-number">1.</span> <span class="nav-text">0x00 支持向量机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-间隔与支持向量"><span class="nav-number">2.</span> <span class="nav-text">0x01 间隔与支持向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-对偶问题"><span class="nav-number">3.</span> <span class="nav-text">0x02 对偶问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-核函数"><span class="nav-number">4.</span> <span class="nav-text">0x03 核函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-硬间隔和软间隔"><span class="nav-number">5.</span> <span class="nav-text">0x04 硬间隔和软间隔</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-支持向量机"><span class="nav-number">1.</span> <span class="nav-text">0x00 支持向量机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-间隔与支持向量"><span class="nav-number">2.</span> <span class="nav-text">0x01 间隔与支持向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-对偶问题"><span class="nav-number">3.</span> <span class="nav-text">0x02 对偶问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-核函数"><span class="nav-number">4.</span> <span class="nav-text">0x03 核函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-硬间隔和软间隔"><span class="nav-number">5.</span> <span class="nav-text">0x04 硬间隔和软间隔</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-支持向量机的优缺点"><span class="nav-number">6.</span> <span class="nav-text">0x05 支持向量机的优缺点</span></a></li></ol></div>
             
 
           </div>
