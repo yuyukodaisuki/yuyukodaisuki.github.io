@@ -258,6 +258,189 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/基于python的u盘自动拷贝工具/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/03/24/基于python的u盘自动拷贝工具/" itemprop="url">
+                  基于python的u盘自动拷贝工具
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T21:54:18+08:00">
+                2018-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/24/基于python的u盘自动拷贝工具/" class="leancloud_visitors" data-flag-title="基于python的u盘自动拷贝工具">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-需要用到的库"><a href="#0x00-需要用到的库" class="headerlink" title="0x00 需要用到的库"></a>0x00 需要用到的库</h2><ul>
+<li>OS：OS库提供了使用各种操作系统功能的接口。主要有对目录或者文件的新建，删除，查看文件属性，还提供了对文件以及目录的路径操作。</li>
+<li>shutil：对文件提供了移动，复制，打包，压缩等功能，这里主要用到复制功能。</li>
+<li>time： 时间处理的库，在这里用来程序休眠的时间。  </li>
+</ul>
+<h2 id="0x01-程序设计思路"><a href="#0x01-程序设计思路" class="headerlink" title="0x01 程序设计思路"></a>0x01 程序设计思路</h2><p>我们需要每隔一段时间检查是否有u盘插入，如果检测到有u盘，则将u盘的内容全部拷贝到本机的指定文件夹。  </p>
+<h2 id="0x02-最简单模式编程实现"><a href="#0x02-最简单模式编程实现" class="headerlink" title="0x02 最简单模式编程实现"></a>0x02 最简单模式编程实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line">USB = <span class="string">'D:\\'</span>  <span class="comment"># u盘目录</span></span><br><span class="line">SAVE = <span class="string">'C:\\Users\Leticia\Desktop\copy'</span>  <span class="comment"># 保存目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">usbcopy</span><span class="params">()</span>:</span></span><br><span class="line">    shutil.copytree(USB, SAVE)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> os.path.exists(USB):</span><br><span class="line">            usbcopy()</span><br><span class="line">        time.sleep(<span class="number">200</span>)  <span class="comment"># 休眠时间</span></span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<p>此程序中，USB变量是u盘目录，根据个人电脑来填写，SAVE变量是将拷贝出来的文件保存的目录，time.sleep(200)代表每次判断完之后休眠200秒。<br>此时测试程序已经可以自动拷贝了，但是还存在一些问题，比如我们已经拷贝完成了，然后休眠完成之后u盘没有拔，这个时候会重新复制一遍。但是我们如果写成检测到u盘，拷贝一遍程序就停止运行，那么u盘内容发生变化我们要怎么做，所以我们还要加几个功能。  </p>
+<h2 id="0x03-增加检测变化模块的编程实现"><a href="#0x03-增加检测变化模块的编程实现" class="headerlink" title="0x03 增加检测变化模块的编程实现"></a>0x03 增加检测变化模块的编程实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join,getsize</span><br><span class="line">USB = <span class="string">'D:\\'</span>  <span class="comment"># u盘目录</span></span><br><span class="line">SAVE = <span class="string">'C:\\Users\Leticia\Desktop\copy'</span>  <span class="comment"># 保存目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getdirsize</span><span class="params">(dir)</span>:</span></span><br><span class="line">    size=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> root,dirs,files <span class="keyword">in</span> os.walk(dir):</span><br><span class="line">        size+=sum([getsize(join(root,name)) <span class="keyword">for</span> name <span class="keyword">in</span> files])</span><br><span class="line">    print(size)</span><br><span class="line">    <span class="keyword">return</span> size</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">usbcopy</span><span class="params">()</span>:</span></span><br><span class="line">    shutil.copytree(USB, SAVE)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    old_dirsize = <span class="number">0</span></span><br><span class="line">    new_dirsize = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> os.path.exists(USB):</span><br><span class="line">            print(<span class="string">"检测到U盘"</span>)</span><br><span class="line">            new_dirsize = getdirsize(USB)</span><br><span class="line">            <span class="keyword">if</span> old_dirsize != new_dirsize:</span><br><span class="line">                usbcopy()</span><br><span class="line">                old_dirsize = new_dirsize</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                print(<span class="string">"没有变化"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">"暂时没有U盘"</span>)</span><br><span class="line">        print(<span class="string">"开始休眠"</span>)</span><br><span class="line">        time.sleep(<span class="number">5</span>)  <span class="comment"># 休眠时间</span></span><br><span class="line"></span><br><span class="line">        print(<span class="string">"休眠结束"</span>)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<p>这里我们新加了一个getdirsize函数来遍历u盘文件并统计总大小，然后如果总大小改变，则拷贝，如果没变，就不重新拷贝。<br>这样就解决了文件更新的问题，根据下图print的提示我们可以看到大概的工作流程。  </p>
+<h2 id="0x04-其他"><a href="#0x04-其他" class="headerlink" title="0x04 其他"></a>0x04 其他</h2><p>此时我们的代码可以运行了，但是如果我们拿到其他人电脑里，因为python环境等问题很大可能无法执行，所以我们可以借助前面一篇博客说过的  <a href="http://uuzdaisuki.com/2017/05/11/%E4%BD%BF%E7%94%A8python-pyinstaller%E6%89%93%E5%8C%85python%E7%A8%8B%E5%BA%8F%E4%B8%BAexe/" target="_blank" rel="noopener">http://uuzdaisuki.com/2017/05/11/%E4%BD%BF%E7%94%A8python-pyinstaller%E6%89%93%E5%8C%85python%E7%A8%8B%E5%BA%8F%E4%B8%BAexe/</a> 将python程序打包成exe在其他电脑中使用。  </p>
+<p>如果这样还觉得不方便的话，在这里再提供一个vbs的拷贝小脚本，同样能达到我们的功能，在txt中输入如下代码，然后根据个人路径稍作更改，然后讲后缀改成vbs，双击运行，就可以在后台自动拷贝了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">set fso=createobject(&quot;scripting.filesystemobject&quot;)</span><br><span class="line">set ws=createobject(&quot;wscript.shell&quot;)</span><br><span class="line">on error resume next</span><br><span class="line">do</span><br><span class="line">wscript.sleep 1000</span><br><span class="line">if fso.driveexists(&quot;D:&quot;) then</span><br><span class="line">fso.copyfile &quot;D:*&quot;,&quot;C:\Users\Leticia\Desktop\copy&quot;</span><br><span class="line">fso.copyfolder &quot;D:*&quot;,&quot;C:\Users\Leticia\Desktop\copy&quot;</span><br><span class="line">wscript.sleep 20000</span><br><span class="line">end if</span><br><span class="line">loop</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/BurpSuite使用笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2201,211 +2384,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/22/密码学-一-——古典密码-上/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/12/22/密码学-一-——古典密码-上/" itemprop="url">
-                  密码学(一)——古典密码(上)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-22T22:10:23+08:00">
-                2017-12-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/密码学/" itemprop="url" rel="index">
-                    <span itemprop="name">密码学</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/12/22/密码学-一-——古典密码-上/" class="leancloud_visitors" data-flag-title="密码学(一)——古典密码(上)">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-信息加密原理"><a href="#0x00-信息加密原理" class="headerlink" title="0x00 信息加密原理"></a>0x00 信息加密原理</h2><p>信息加密是保证数据安全的一种方式。<br>信息加密的原理是：把明文用加密方法和密钥生成保密的密文，只有使用正确的解密方法和密钥后才能还原出明文。<br>一个完善的密码体制至少应该满足两个条件：  </p>
-<ul>
-<li>1.已知明文和加密密钥时，容易算出密文和解密过程。</li>
-<li>2.未知解密密钥时，难以由密文推出明文。  </li>
-</ul>
-<p>这里介绍几种古典密码的加密方式:  </p>
-<h2 id="0x01-Greece密码"><a href="#0x01-Greece密码" class="headerlink" title="0x01 Greece密码"></a>0x01 Greece密码</h2><p>希腊密码出现于公元前2世纪，是一种二维字母表编码方法(字母i和j算一个字母)。<br>如图将26个字母分为5×5的矩阵，用行列号作为字母的编码。<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/01.png" alt=""><br>如上图，GREECE可以编码为22 42 15 15 13 15<br>因为几乎是一一对应的关系，通过统计的方法可以很轻松的得出规律。  </p>
-<h2 id="0x02-Caesar密码"><a href="#0x02-Caesar密码" class="headerlink" title="0x02 Caesar密码"></a>0x02 Caesar密码</h2><p>凯撒密码是一种古老的单表置换密码。方法是把字母表种每个字母用后面第n个字母进行替换。<br>如n=5：</p>
-<ul>
-<li>字母表为：abcdefghijklmnopqrstuvwxyz</li>
-<li>置换表为：fghijklmnopqrstuvwxyzabcde</li>
-</ul>
-<p>如caesar可以编码为hfjxfw<br>但是我们显然可以看到凯撒密码暴力破解最多只需要25次穷举就可以看到所有结果，是非常不安全的。  </p>
-<h2 id="0x03-Prefix密码"><a href="#0x03-Prefix密码" class="headerlink" title="0x03 Prefix密码"></a>0x03 Prefix密码</h2><p>标准字头密码又称为密钥短语密码，属于单表置换密码，与凯撒密码类似，但利用一个标准密钥字来做表头，构造变换表。密钥字通常是单词或者词组，便于记忆。<br>如密钥字 K = big，则变换规则如下：</p>
-<ul>
-<li>字母表为：abcdefghijklmnopqrstuvwxyz</li>
-<li>置换表为：bigacdefhjklmnopqrstuvwxyz  </li>
-</ul>
-<p>我们可以看到，big三个字母被放在了表头，然后剩下的字母依次排布。<br>如link的编码是lhnk，可以看到，这种方式如果选择的关键字太少且位于太前，后面的字母本身就对应明文，所以安全性也是很差的。并且所有的字母一一对应的加密方式，都可以用统计的方法破解。</p>
-<h2 id="0x04-Playfair密码"><a href="#0x04-Playfair密码" class="headerlink" title="0x04 Playfair密码"></a>0x04 Playfair密码</h2><p>公平竞赛密码属于多表加密体制，将明文中的双字母组合作为一个单元对待，并将这些单元转换为密文双字母组合。<br>Playfair算法使用一个5×5字母矩阵，该矩阵使用一个关键词构造。<br>例如关键词是big，那么排布规则和Prefix密码一致，只是要按照从左到右，从上到下的顺序把变换表写出来：<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/02.png" alt=""><br>生成矩阵之后，根据以下规则依次对明文的两个字母加密。  </p>
-<ul>
-<li>1.属于相同对中的重复明文字母将使用一个填充字母进行分隔。</li>
-<li>2.属于矩阵同行的明文字母将由其右边的字母代替，而行的最后一个字母由行的第一个字母代替。</li>
-<li>3.属于矩阵同列的明文字母将由它下面的字母代替，而列的最后一个字母由列的第一个字母代替。</li>
-<li>4.明文的其他字母将由与其同行，其与下一个字母同列的字母代替。（也可以理解成以两个明文字母为顶角画矩形，矩形的另一对顶角即为密文字母对）  </li>
-</ul>
-<p>Playfair密码比起单字母替换的优势在于，26个字母衍生出26×26=676种双字母组合，频率分布也不规则，使分析起来要难很多。所以一战中被英国陆军作为顶级加密系统，二战中也被同盟国大量使用。</p>
-<h2 id="0x05-Vigenere密码"><a href="#0x05-Vigenere密码" class="headerlink" title="0x05 Vigenere密码"></a>0x05 Vigenere密码</h2><p>维吉尼亚密码是一种简单的单字符多表替换密码。其加密方法是：<br>为了加密一个消息，需要一个与该消息长度一致的密钥。通常该密钥为一重复的关键词。<br>如我们事先构造一个维吉尼亚矩阵，由步长为0到25的26行凯撒密码构成。<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/03.png" alt=""><br>如图我们给定密钥字母d和明文字母w，密文字母就位于（d,w）位置。<br>如我们给出密钥关键字是fun，明文是exciting，则：</p>
-<ul>
-<li>密钥为：funfunfu</li>
-<li>明文为：exciting</li>
-<li>密文为：jrpnnvsa</li>
-</ul>
-<p>解密方法则是以密钥字母标识行，密文字母标识列，明文字母位于该列首部。<br>Vigenere密码的强度在于每个明文字母由多个密文字母对应，字母的频率信息变得模糊了，但是并不是所有明文得出的频率信息都丢失了，比起Playfair更优，但是还是会保留大量的频率信息。  </p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2455,7 +2433,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">77</span>
+                <span class="site-state-item-count">78</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

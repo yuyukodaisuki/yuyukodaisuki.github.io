@@ -1,0 +1,933 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python,机器学习," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 scikit-learnScikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。 0x01 模型属性与功能sklearn库中所有机器">
+<meta name="keywords" content="python,机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python-scikit learn学习(2)">
+<meta property="og:url" content="http://yoursite.com/2018/08/01/python-scikit-learn学习-2/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 scikit-learnScikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。 0x01 模型属性与功能sklearn库中所有机器">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn07.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn08.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn09.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn10.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn11.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn12.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn13.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn14.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn15.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn16.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn17.png?raw=true">
+<meta property="og:updated_time" content="2018-08-01T09:07:00.419Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python-scikit learn学习(2)">
+<meta name="twitter:description" content="0x00 scikit-learnScikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。 0x01 模型属性与功能sklearn库中所有机器">
+<meta name="twitter:image" content="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn07.png?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/01/python-scikit-learn学习-2/"/>
+
+
+
+
+
+  <title> python-scikit learn学习(2) | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/01/python-scikit-learn学习-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                python-scikit learn学习(2)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-01T17:06:38+08:00">
+                2018-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/01/python-scikit-learn学习-2/" class="leancloud_visitors" data-flag-title="python-scikit learn学习(2)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-scikit-learn"><a href="#0x00-scikit-learn" class="headerlink" title="0x00 scikit-learn"></a>0x00 scikit-learn</h2><p>Scikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。</p>
+<h2 id="0x01-模型属性与功能"><a href="#0x01-模型属性与功能" class="headerlink" title="0x01 模型属性与功能"></a>0x01 模型属性与功能</h2><p>sklearn库中所有机器学习的模型对象中都有一些属性与功能，假设模型对象名为mod，那么就可以这样表示mod模型的一些属性与功能：</p>
+<ul>
+<li>mod.coef_  x前的系数</li>
+<li>mod.intercept_  截距</li>
+<li>mod.predict() 预测</li>
+<li>mod.get_params() 定义的参数</li>
+<li>mod.score(data_x,data_y) 用data_x做预测，用data_y做比较给模型打分</li>
+</ul>
+<p>我们以上一篇中的线性回归模型为例查看一下这些属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">example_x,example_y = datasets.make_regression(n_samples=100,n_features=2,n_targets=1,noise=3)</span><br><span class="line"></span><br><span class="line">lr = LinearRegression()</span><br><span class="line">lr.fit(example_x,example_y)</span><br><span class="line"></span><br><span class="line">print(lr.coef_)</span><br><span class="line">print(lr.intercept_)</span><br><span class="line">print(lr.predict(example_x[:5,:]))</span><br><span class="line">print(lr.get_params())</span><br><span class="line">print(lr.score(example_x,example_y))</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn07.png?raw=true" alt=""></p>
+<p>可以从输出中看到：</p>
+<ul>
+<li>lr.coef_输出一个list代表每一种特征前的系数</li>
+<li>lr.intercept_输出截距</li>
+<li>lr.predict()方法可以输入样本进行预测</li>
+<li>lr.get_params()方法可以输出模型的配置信息</li>
+<li>lr.score()方法通过对比预测的数据和原始标签对模型打分</li>
+</ul>
+<h2 id="0x02-标准化"><a href="#0x02-标准化" class="headerlink" title="0x02 标准化"></a>0x02 标准化</h2><p>在训练模型时，某些特征可能会在不同的样本中相差特别大，有一些异常大或者异常小的数据会对模型训练结果造成较大误差，并且数据分布很分散也会影响训练结果，所以一般在训练之前，我们都会对特征数值进行标准化。</p>
+<p>基本的标准化流程是去除每个特征的平均值来转换数据使其居中，然后通过将非常数特征除以它们的标准差来对其进行缩放。</p>
+<p>在scikit-learn库中，有用于预处理数据的模块sklearn.preprocessing，其中scale方法可以快速简便的实现上述标准化操作。用一段代码来尝试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x_train = np.array([[1, -100, 0.03],</span><br><span class="line">              [-1, 500, -0.02],</span><br><span class="line">              [0.2, 200, 0.04]], dtype=np.float64)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(preprocessing.scale(x_train))</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn08.png?raw=true" alt=""></p>
+<p>可以看到，数据都被标准化到很接近的位置，这样就更利于学习器训练了。</p>
+<p>具体能产生多大的影响，我们可以通过datasets产生一组数据，对比直接训练和标准化之后训练的精度：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.datasets.samples_generator import make_classification</span><br><span class="line">from sklearn.svm import SVC</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line">X, y = make_classification(</span><br><span class="line">    n_samples=300, n_features=2,</span><br><span class="line">    n_redundant=0, n_informative=2,</span><br><span class="line">    n_clusters_per_class=1,scale=100)</span><br><span class="line"></span><br><span class="line">#可视化数据</span><br><span class="line">plt.scatter(X[:, 0], X[:, 1], c=y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</span><br><span class="line">clf = SVC()</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">print(clf.score(X_test, y_test))</span><br><span class="line"></span><br><span class="line">X = preprocessing.scale(X)</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</span><br><span class="line">clf = SVC()</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">print(clf.score(X_test, y_test))</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn09.png?raw=true" alt=""></p>
+<p>在这个程序中使用datasets中的make_classification方法产生拥有两个特征值的分类数据，然后就可以将两个特征值分别放在横轴和纵轴来观察数据分布</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn10.png?raw=true" alt=""></p>
+<p>接着对比直接训练和标准化之后训练的精度，发现前后差距非常大。</p>
+<h2 id="0x03-交叉验证"><a href="#0x03-交叉验证" class="headerlink" title="0x03 交叉验证"></a>0x03 交叉验证</h2><p>之前在机器学习的模型评估方法里面学过几种模型验证的方法，其中也提到了，学习器训练完成后仍然在训练集种测试实际上是一种错误的方法，因为这个学习器在自身的训练集上很容易得到一个很高的分数，但是对新样本无法预测出任何有用的信息，这种情况被称为过拟合。</p>
+<p>所以为了避免这种情况，我们一般在验证的时候会将样本分为训练集和测试集，在之前的博客（ <a href="http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/</a> ）介绍了留数法、交叉验证法、自助法这几种方法来分割训练集与测试集。</p>
+<p>前面的程序我们大多使用train_test_split方法将样本分为两部分，也就是留数法，那么这里就使用sklearn实现交叉验证法。</p>
+<p>交叉验证法需要用到sklearn的cross_val_score模块，我们就在刚才svm分类算法的基础上写出交叉验证：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.datasets.samples_generator import make_classification</span><br><span class="line">from sklearn.svm import SVC</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">from sklearn.model_selection import cross_val_score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#生成具有2种属性的300笔数据</span><br><span class="line">X, y = make_classification(</span><br><span class="line">    n_samples=300, n_features=2,</span><br><span class="line">    n_redundant=0, n_informative=2,</span><br><span class="line">    n_clusters_per_class=1,scale=100)</span><br><span class="line"></span><br><span class="line">#可视化数据</span><br><span class="line">plt.scatter(X[:, 0], X[:, 1], c=y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">X = preprocessing.scale(X)</span><br><span class="line">clf = SVC()</span><br><span class="line"></span><br><span class="line">scores=cross_val_score(clf,X,y,cv=10,scoring=&apos;accuracy&apos;)</span><br><span class="line"></span><br><span class="line">print(scores)</span><br><span class="line">print(scores.mean())</span><br></pre></td></tr></table></figure></p>
+<p>数据分布如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn11.png?raw=true" alt=""></p>
+<p>输出十组分别的分数和平均分数：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn12.png?raw=true" alt=""></p>
+<p>交叉验证因为抽取的测试集更随机化且全部抽到，所以平均后的评估得分更令人信服。</p>
+<p>其中cross_val_score种的clf是模型，X样本特征，y是样本标签，cv是交叉验证的分组数量，scoring参数是计分指标，可以根据实际情况在官方文档选取合适的计分指标：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn13.png?raw=true" alt=""></p>
+<h2 id="0x04-模型保存"><a href="#0x04-模型保存" class="headerlink" title="0x04 模型保存"></a>0x04 模型保存</h2><p>在实际的机器学习运用中，训练用的样本量是十分大的，也就是说训练一个模型需要的时间开销非常大，我们要使用一个训练好的模型，每次都去重新训练一遍是不现实的，所以在训练好之后我们需要保存模型。</p>
+<p>我们常用的存取模型方法有如下两种</p>
+<h3 id="使用pickle保存模型"><a href="#使用pickle保存模型" class="headerlink" title="使用pickle保存模型"></a>使用pickle保存模型</h3><p>第一种方法是使用pickle库保存和读取模型，以上一篇博客中的k近邻算法为例：</p>
+<p>保存模型：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(iris_x,iris_y)</span><br><span class="line"></span><br><span class="line">file = open(&quot;model/knn.pickle&quot;,&quot;wb&quot;)</span><br><span class="line">pickle.dump(knn,file)</span><br></pre></td></tr></table></figure></p>
+<p>然后当前程序目录中model子目录下就会产生一个knn.pickle的文件。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn14.png?raw=true" alt=""></p>
+<p>读取模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line"></span><br><span class="line">file = open(&quot;model/knn.pickle&quot;,&quot;rb&quot;)</span><br><span class="line">knn=pickle.load(file)</span><br><span class="line"></span><br><span class="line">pred = knn.predict(iris_x[0:5])</span><br><span class="line">print(pred)</span><br></pre></td></tr></table></figure>
+<p>读取模型时直接读取这个文件，就可以使用现有模型，在以上代码中使用这个模型预测了前五个数据，我们都知道鸢尾花数据集前五个样本分类都是0，将它们放在这个模型中预测输出，发现也都是0。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn15.png?raw=true" alt=""></p>
+<h3 id="使用joblib保存模型"><a href="#使用joblib保存模型" class="headerlink" title="使用joblib保存模型"></a>使用joblib保存模型</h3><p>第二种方法是用sklearn的joblib模块保存，joblib库会自动多线程运行，所以在面对大数据的时候性能要优于pickle模块，但是joblib模块只能将文件保存在磁盘中，而且会产生多个文件。</p>
+<p>保存模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line">from sklearn.externals import joblib</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(iris_x,iris_y)</span><br><span class="line"></span><br><span class="line">joblib.dump(knn,&apos;model/knn.pkl&apos;)</span><br></pre></td></tr></table></figure>
+<p>然后当前程序目录中model子目录下就会产生一个knn.pkl的文件，有时会产生多个文件，但是读取时只用读取第一个。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn16.png?raw=true" alt=""></p>
+<p>读取模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.externals import joblib</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">knn=joblib.load(&apos;model/knn.pkl&apos;)</span><br><span class="line"></span><br><span class="line">pred = knn.predict(iris_x[0:5])</span><br><span class="line">print(pred)</span><br></pre></td></tr></table></figure>
+<p>测试结果仍然成立。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn17.png?raw=true" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/31/机器学习-8-——支持向量机-SVM/" rel="next" title="机器学习(8)——支持向量机(SVM)">
+                <i class="fa fa-chevron-left"></i> 机器学习(8)——支持向量机(SVM)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">78</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-scikit-learn"><span class="nav-number">1.</span> <span class="nav-text">0x00 scikit-learn</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-模型属性与功能"><span class="nav-number">2.</span> <span class="nav-text">0x01 模型属性与功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-标准化"><span class="nav-number">3.</span> <span class="nav-text">0x02 标准化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-交叉验证"><span class="nav-number">4.</span> <span class="nav-text">0x03 交叉验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-模型保存"><span class="nav-number">5.</span> <span class="nav-text">0x04 模型保存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用pickle保存模型"><span class="nav-number">5.1.</span> <span class="nav-text">使用pickle保存模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用joblib保存模型"><span class="nav-number">5.2.</span> <span class="nav-text">使用joblib保存模型</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>
