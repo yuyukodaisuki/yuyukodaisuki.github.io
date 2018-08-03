@@ -1,0 +1,885 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C&C," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言在前面的博客中写过一次用python实现的后门 http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/ 里面的代码用最简单的例子来实现了远程控制。 但是当我们想要构建大规模僵尸网络的时候">
+<meta name="keywords" content="C&amp;C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C&amp;C控制服务思路浅析">
+<meta property="og:url" content="http://yoursite.com/2018/08/03/C-C控制服务思路浅析/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 前言在前面的博客中写过一次用python实现的后门 http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/ 里面的代码用最简单的例子来实现了远程控制。 但是当我们想要构建大规模僵尸网络的时候">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-08-03T02:49:45.717Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C&amp;C控制服务思路浅析">
+<meta name="twitter:description" content="0x00 前言在前面的博客中写过一次用python实现的后门 http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/ 里面的代码用最简单的例子来实现了远程控制。 但是当我们想要构建大规模僵尸网络的时候">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/03/C-C控制服务思路浅析/"/>
+
+
+
+
+
+  <title> C&C控制服务思路浅析 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/03/C-C控制服务思路浅析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                C&C控制服务思路浅析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T10:48:49+08:00">
+                2018-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/03/C-C控制服务思路浅析/" class="leancloud_visitors" data-flag-title="C&C控制服务思路浅析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>在前面的博客中写过一次用python实现的后门 <a href="http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/</a> 里面的代码用最简单的例子来实现了远程控制。</p>
+<p>但是当我们想要构建大规模僵尸网络的时候，就会发现这类简单的后门很不方便，我们不可能有时间一个一个手动的进行控制。而且大部分的肉鸡ip都是一直在变动而且无法直接访问的，所以远控中基本都使用反弹式通信，反弹式通信需要肉鸡每隔一段时间对我们的控制机发送心跳包，但是我们自己的电脑，ip很多情况也都是一直在变动的，我们很难保证自己拥有一个不变的公网ip。为了避免这些问题，我们就需要一台能够集中统一控制僵尸网络的主机，也就是C&amp;C服务器。</p>
+<ul>
+<li>C&amp;C服务器：command and control server(命令与控制服务器)。一般是指挥控制僵尸网络的主控服务器，用来和每个肉鸡进行通信并指挥它们的攻击行为。</li>
+</ul>
+<p>当然我这篇并不打算写一个简单的主控脚本和远控脚本，然后把它部署到公网服务器中，毕竟这些步骤只需要稍微改一下最开始那个链接里面脚本的代码就可以了。这篇我想要对通过各种方法部署和隐藏C&amp;C服务器的方法做一个总结。</p>
+<h2 id="0x01-通过IP地址访问C-amp-C服务器"><a href="#0x01-通过IP地址访问C-amp-C服务器" class="headerlink" title="0x01 通过IP地址访问C&amp;C服务器"></a>0x01 通过IP地址访问C&amp;C服务器</h2><p>最简单的方法就是租用一台云服务器，将服务器ip直接写远控脚本中反弹的ip中，然后所有肉鸡都会每隔一段时间与这个ip进行一次通信，我们也就可以在服务器上用脚本控制僵尸网络发动攻击。</p>
+<p>但是由于ip地址是直接写死在远控脚本或远控程序中的，如果对方捕获了远控脚本或者远控程序，进行简单的二进制逆向扫描就可以得到我们服务器ip地址，并且对方机器经常访问同一个ip也会增加被发现的几率。一旦被发现，对方直接将ip加入黑名单，并且将ip提交给我们购买云服务器的提供商，服务器被封禁就会使远控全部失效。</p>
+<p>优点：简单易实现、耗费小(仅服务器开销)。</p>
+<p>缺点：极易被发现、很容易大规模失效。</p>
+<h2 id="0x02-通过域名访问C-amp-C服务器"><a href="#0x02-通过域名访问C-amp-C服务器" class="headerlink" title="0x02 通过域名访问C&amp;C服务器"></a>0x02 通过域名访问C&amp;C服务器</h2><p>通过域名再指向服务器比起直接指向服务器只是将反弹ip改为反弹的域名。如果注册一些较正常的域名并且做一个伪装的主页，被发现的几率就会降低，而且直接二进制扫描不会被发现。但是逆向程序或着搭建蜜罐进行动态测试，很容易就能追踪到这些域名，将域名丢给运营商的黑名单就会造成大规模的远控失效。</p>
+<p>不过比起仅通过ip地址访问这种方式要多花去安全人员的一点时间，如果在这个时间内达成目的，也算是成功了。</p>
+<p>优点：简单易实现、耗费小(服务器和域名开销)。</p>
+<p>缺点：易被发现、很容易大规模失效。</p>
+<h2 id="0x03-Fast-flux"><a href="#0x03-Fast-flux" class="headerlink" title="0x03 Fast flux"></a>0x03 Fast flux</h2><p>如果一个域名很容易被蜜罐捕获的话，我们可以将几十个域名分散的写在代码中，这些域名都指向同一台服务器的ip地址，程序会对域名轮换访问，然后提供一个较短的ttl使域名对ip的解析记录也会不断的更换。</p>
+<p>这样被捕获某一部分域名添加黑名单并没有办法阻止恶意软件。而且因为ip解析记录一直变更也无法直接举报服务器，所以需要安全人员很高的逆向能力将恶意域名全部找出来。</p>
+<p>不过这个方式有两个缺陷，一个是将捕获的一部分恶意域名的ip解析历史记录进行统计、数据分析，也会很快找到服务器的ip地址。另一个缺陷是域名记录的TTL相比正常的过短，容易被抓住特征。</p>
+<p>优点：被发现后较难快速处理、被屏蔽一部分域名不会造成僵尸网络失效。</p>
+<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费较大(多个域名的开销)、一旦服务器ip被发现仍然会大规模失效。</p>
+<h2 id="0x04-Double-flux、Triple-flux"><a href="#0x04-Double-flux、Triple-flux" class="headerlink" title="0x04 Double flux、Triple flux"></a>0x04 Double flux、Triple flux</h2><p>既然Fast flux容易被捕获一部分恶意域名进行数据分析而发现ip，那域名能增加ip也能增加，Double flux就是在一般的fast flux过程中除了轮换域名，也让ip可以轮换，如果我们有M个域名和N个ip这样就产生了M*N组的C&amp;C通道，还有更多的干扰项。</p>
+<p>Triple flux在Double flux的基础上，增加一层Name Server通过CNAME方式解析，这样域名有可能指向ip也有可能指向别的域名，然后再指向ip，这些Name Server也会定期轮换，就增加了更多C&amp;C通道和干扰项。</p>
+<p>这两种方法都增加了安全人员分析的难度，而且不会因为个别的服务器或域名被封禁导致僵尸网络失效，但是仍然存在着和普通Fast flux一样的问题，那就是因为域名到ip的解析一直轮换导致TTL需要设置很短，很容易被抓取特征而捕获。</p>
+<p>优点：被发现后较难快速处理、被屏蔽一部分域名、封禁一部分ip都不会造成僵尸网络失效。</p>
+<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费很大(多个域名和多个服务器的开销)。</p>
+<h2 id="0x05-使用论坛等作为C-amp-C服务器"><a href="#0x05-使用论坛等作为C-amp-C服务器" class="headerlink" title="0x05 使用论坛等作为C&amp;C服务器"></a>0x05 使用论坛等作为C&amp;C服务器</h2><p>自己架设服务器很容易被封禁，然后丢失僵尸网络的控制权，有的攻击者想到一个绝佳的办法：通过在一些论坛的冷门区域发一些C&amp;C控制指令，然后让恶意软件通过爬虫在访问这些论坛的时候获取指令，最开始主要是在twitter上进行C&amp;C控制，这种情况一开始很让安全人员头疼，因为访问这些论坛的请求本就和正常数据包差不多很难被发现，而且就算发现了，总不能把twitter的域名或者服务器添加很名单吧，这会影响网络的正常使用。后来发现了这种情况可以进行举报，从而封禁对应的账号。</p>
+<p>优点：耗费低、不是特别容易被发现。</p>
+<p>缺点：被发现后会被直接封禁账号损失僵尸网络。</p>
+<h2 id="0x06-使用随机域名生成算法"><a href="#0x06-使用随机域名生成算法" class="headerlink" title="0x06 使用随机域名生成算法"></a>0x06 使用随机域名生成算法</h2><p>比起注册一堆域名耗费巨大，更好的办法是使用DGA(Domain Generation Algorithm)算法，这种C&amp;C控制方法的思路就是控制一个确定的随机域名生成算法，用约定好的随机数种子生成大量的随机域名（如当天日期时间），恶意软件对这些域名全部进行访问，我们只需要按照规律注册其中个别有可能的域名就可以进行控制。</p>
+<p>这个方法的重点在于没有任何确定的域名写入到恶意软件里，即使逆向也找不到真正的域名，而且逆向出这个随机算法的难度非常大。并且生成的随机域名数量十分巨大对方无法得知究竟我们注册了哪个域名。由于随机算法(提前设定好)和随机种子(可以根据时间等生成)都是我们不需要通信就可以得知的信息，我们任何时候都可以知道该注册那种类型的域名可以进行控制。</p>
+<p>除非源码泄露，安全人员要逆向出DGA算法是非常困难的，也很难用黑名单的方式屏蔽掉所有的域名。目前应对这种C&amp;C的方法一般是利用机器学习算法去判定域名的随机性，然后筛选出有可能是恶意域名的域名进行分析找出ip，或者利用机器学习算法智能的屏蔽对这些域名的访问。</p>
+<p>天下没有免费的午餐，这种方式比起前面的方法也有一个缺陷，产生的随机域名过多且访问频率有限的时候，想通过C&amp;C服务器进行控制就需要等待较长的时间，所以在攻击时灵活度不足。强行减少等待的时间就得增加访问频率，就会增加被发现的概率。</p>
+<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
+<p>缺点：控制延迟很高、灵活度不足。</p>
+<h2 id="0x07-使用变形DGA算法"><a href="#0x07-使用变形DGA算法" class="headerlink" title="0x07 使用变形DGA算法"></a>0x07 使用变形DGA算法</h2><p>这个方法是为了对抗检测域名随机性的机器学习算法而产生的，大体步骤和上面相似，不同处是比起使用域名随机算法，添加一些英文单词作为字典构成域名，就比较接近正常的网页，不会被普通的机器学习算法检测出来。</p>
+<p>还是那句话，天下没有免费的午餐，添加字典减少了随机性，必然会缩小产生域名的数量，很快就会用完所有的域名。</p>
+<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
+<p>缺点：控制延迟很高、灵活度不足。</p>
+<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>C&amp;C的设计与防御是目前攻防中很重要的一部分，围绕着C&amp;C，双方在攻防博弈中各显神通，完美的结合了机器学习、数据科学等知识，是非常有学习和研究价值的。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C&C</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/01/python-scikit-learn学习-2/" rel="next" title="python-scikit learn学习(2)">
+                <i class="fa fa-chevron-left"></i> python-scikit learn学习(2)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-通过IP地址访问C-amp-C服务器"><span class="nav-number">2.</span> <span class="nav-text">0x01 通过IP地址访问C&amp;C服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-通过域名访问C-amp-C服务器"><span class="nav-number">3.</span> <span class="nav-text">0x02 通过域名访问C&amp;C服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-Fast-flux"><span class="nav-number">4.</span> <span class="nav-text">0x03 Fast flux</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-Double-flux、Triple-flux"><span class="nav-number">5.</span> <span class="nav-text">0x04 Double flux、Triple flux</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-使用论坛等作为C-amp-C服务器"><span class="nav-number">6.</span> <span class="nav-text">0x05 使用论坛等作为C&amp;C服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-使用随机域名生成算法"><span class="nav-number">7.</span> <span class="nav-text">0x06 使用随机域名生成算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-使用变形DGA算法"><span class="nav-number">8.</span> <span class="nav-text">0x07 使用变形DGA算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-总结"><span class="nav-number">9.</span> <span class="nav-text">0x08 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>

