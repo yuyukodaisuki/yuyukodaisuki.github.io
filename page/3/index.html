@@ -258,6 +258,246 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/18/windows常用后门技术及防范/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/06/18/windows常用后门技术及防范/" itemprop="url">
+                  windows常用后门技术及防范
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-18T22:47:29+08:00">
+                2018-06-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/06/18/windows常用后门技术及防范/" class="leancloud_visitors" data-flag-title="windows常用后门技术及防范">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>维持权限同样是渗透测试非常重要的一环，他可以让我们方便的再次进入系统并且降低被发现的概率，而维持权限的方式也就是留后门，了解一些常见的后门技术，不仅可以在进攻时提供维持权限的思路，同时，在防守时也可以更准确的发现隐患。</p>
+<h2 id="0x01-隐藏账户"><a href="#0x01-隐藏账户" class="headerlink" title="0x01 隐藏账户"></a>0x01 隐藏账户</h2><p>隐藏账户应该是最常见的后门方式，其设置方式如下：</p>
+<p>首先我们在命令行输入，如下命令创建一个隐藏账号<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net user leticia$ 123456 /add</span><br></pre></td></tr></table></figure></p>
+<p>这个时候，通过net user并不能看到这个账户。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor01.png?raw=true" alt=""></p>
+<p>然后我们将它添加到管理员权限。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net localgroup administrators leticia$ /add</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor02.png?raw=true" alt=""></p>
+<p>但是这个“隐藏账户”在用户账户中可以看到，并不能骗过细心的管理员。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor03.png?raw=true" alt=""></p>
+<p>这个时候我们可以通过操作注册表，使这个账户在用户账户中也不显示。首先我们输入regedit打开注册表编辑器，找到HKEY_LOCAL_MACHINE\SAM\SAM，我们发现这个时候它是空白的，没有权限进行操作，所以我们要右键权限，将读写权限赋予administrator。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor04.png?raw=true" alt=""></p>
+<p>然后我们重启注册表编辑器，发现这个时候已经可以访问了，我们在里面找到刚才创建的leticia$账号和administrator账号对应的键值类型。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor05.png?raw=true" alt=""></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor06.png?raw=true" alt=""></p>
+<p>然后在上一级文件中找键值类型对应的目录，将administrator对应目录中的F值复制到leticia$对应目录中的F值。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor07.png?raw=true" alt=""></p>
+<p>复制完成后，把leticia$和其对应的0000003EA目录先导出并保存。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor08.png?raw=true" alt=""></p>
+<p>然后在命令行中删除刚才的账号<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net user leticia$ /del</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor09.png?raw=true" alt=""></p>
+<p>最后将刚才导出的注册表文件重新导入，隐藏账户就添加成功了。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor10.png?raw=true" alt=""></p>
+<p>此时在用户账户中看不到这个隐藏账户。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor11.png?raw=true" alt=""></p>
+<p>这个时候其实已经完成了，但是我们还可以再走一步操作，那就是把注册表刚才赋予administrator的权限禁止掉，这样这个账户就很难被发现了。</p>
+<p>防范：</p>
+<ul>
+<li>经常检查用户账户、注册表关键位置。</li>
+<li>将计算机对用户登陆事件的审核策略打开。</li>
+</ul>
+<h2 id="0x02-shift后门"><a href="#0x02-shift后门" class="headerlink" title="0x02 shift后门"></a>0x02 shift后门</h2><p>shift后门是很常见的留后门手法，其原理是用cmd.exe替换原先粘滞键，粘滞键的程序sethc.exe可以通过五次shift键调用，这样我们就可以直接通过按五次shift来调用一个system权限的命令行来执行命令、创建用户等。</p>
+<p>shift后门有着非常丰富的骚操作，我们先来通过一个最基础的shift后门来学习原理。</p>
+<p>制作方法如下：</p>
+<p>我们先进入C:\WINDOWS\system32目录,在这里右键打开命令行，依次输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">move sethc.exe sethc.exe.bak</span><br><span class="line">copy cmd.exe sethc.exe</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor12.png?raw=true" alt=""></p>
+<p>这两句命令分别是将粘滞键程序备份，然后用cmd.exe覆盖原本的粘滞键程序。</p>
+<p>然后我们每次要使用时按5次shift键弹出cmd窗口，可直接以system权限执行系统命令，创建管理员用户，登录服务器等。最后每次删除掉新建的账户，减少被发现的概率。</p>
+<p>如图，我们可以在登陆界面就直接调用cmd：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor13.png?raw=true" alt=""></p>
+<p>防范：</p>
+<ul>
+<li>自行呼出粘滞键检查问题。</li>
+<li>禁用粘滞键。</li>
+</ul>
+<h2 id="0x03-启动项后门"><a href="#0x03-启动项后门" class="headerlink" title="0x03 启动项后门"></a>0x03 启动项后门</h2><p>我们可以让目标机器在每次启动的时候创建一个账户，在这个思路下有很多可以采取的措施，第一种是启动项：</p>
+<p>在C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup目录中，放入我们启动时要运行的批处理代码或其他可运行文件，一般是创建一个管理员账户：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@echo off</span><br><span class="line">net user leticia$ 123456 /add </span><br><span class="line">net localgroup administrators leticia$ /add</span><br></pre></td></tr></table></figure></p>
+<p>防范：</p>
+<ul>
+<li>定期检查启动文件夹内容。</li>
+</ul>
+<h2 id="0x04-组策略"><a href="#0x04-组策略" class="headerlink" title="0x04 组策略"></a>0x04 组策略</h2><p>第二种方法是组策略，可以在gpedit.msc中的windows设置-脚本(启动/关机)中添加新的启动脚本，在开机时就会自动运行。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/windows_backdoor/backdoor14.png?raw=true" alt=""></p>
+<p>相比于第一种放在启动目录中，放在组策略中更加隐蔽，一般不容易引起管理员察觉，从而降低被删除的概率。</p>
+<p>防范：</p>
+<ul>
+<li>定期检查组策略。</li>
+</ul>
+<h2 id="0x05-放大镜后门"><a href="#0x05-放大镜后门" class="headerlink" title="0x05 放大镜后门"></a>0x05 放大镜后门</h2><p>放大镜后门其实和shift后门很相似，我们可以先备份放大镜程序magnify.exe为magnify2.exe，然后写一个创建新用户并打开真正的放大镜的程序(防止被管理员发现放大镜程序失效),再将其转换为exe文件，并重命名成magnify.exe，然后通过调用放大镜程序来创建新用户供我们登陆。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@echo off</span><br><span class="line">net user leticia$ 123456 /add </span><br><span class="line">net localgroup administrators leticia$ /add</span><br><span class="line">c:\windows\system32\magnify2.exe</span><br><span class="line">exit</span><br></pre></td></tr></table></figure></p>
+<p>防范：</p>
+<ul>
+<li>调用放大镜检查。</li>
+<li>定期检查用户组。</li>
+</ul>
+<h2 id="0x06-telnet后门"><a href="#0x06-telnet后门" class="headerlink" title="0x06 telnet后门"></a>0x06 telnet后门</h2><p>如果我们直接打开远程桌面的3389很容易就会被发现，但是我们打开telnet服务并改变默认端口(23)，就可以做一定程度的隐藏，我们在服务中打开telnet服务，然后将windows服务中的telnet客户端打开，然后在我们本机打开telnet服务端，访问目标主机ip和端口并登陆我们的用户名密码即可。</p>
+<p>防范：</p>
+<ul>
+<li>定期检查服务器的进程端口有没有存在后门程序。</li>
+</ul>
+<h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>留后门的方法有很多很多，但是大部分人会首先从这些方面入手，所以在检查系统有没有被留后门，也可以换位思考，在自己可能留后门的点上多注意一下，或许就会有收获。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/17/基于python的直连shell和反射shell/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2378,221 +2618,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/14/sql注入之代码层防御策略/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/14/sql注入之代码层防御策略/" itemprop="url">
-                  sql注入之代码层防御策略
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-14T22:47:07+08:00">
-                2018-05-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/防御策略/" itemprop="url" rel="index">
-                    <span itemprop="name">防御策略</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/14/sql注入之代码层防御策略/" class="leancloud_visitors" data-flag-title="sql注入之代码层防御策略">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>之前写sql注入的博客都是站在攻击者角度上的，这次站在防御方的角度上，总结一下代码层防御sql注入的一些方法。</p>
-<h2 id="0x01-代码层防御"><a href="#0x01-代码层防御" class="headerlink" title="0x01 代码层防御"></a>0x01 代码层防御</h2><p>在易受sql注入攻击的应用程序开发过程中，如果我们在代码里面进行一些合理的过滤和安全措施，就可以防范绝大多数的sql注入。</p>
-<h2 id="0x02-参数化语句"><a href="#0x02-参数化语句" class="headerlink" title="0x02 参数化语句"></a>0x02 参数化语句</h2><p>引发sql注入最根本的原因是将sql语句创建成字符串发送给数据库，即动态sql。</p>
-<p>而现在大多数程序在访问数据库时已然采用了参数化语句的方式，即用占位符或者绑定变量来向sql查询提供参数，而非直接让用户使用sql语句。显然，这种方式提升了安全性。</p>
-<p>我们给出一段代码来说明参数化：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$servername = &quot;localhost&quot;;</span><br><span class="line">$username = &quot;root&quot;;</span><br><span class="line">$password = &quot;xxxxx&quot;;</span><br><span class="line">$dbname = &quot;xxxxx&quot;;</span><br><span class="line">$conn = new mysqli($servername, $username, $password, $dbname);</span><br><span class="line">$username = request(&quot;username&quot;);</span><br><span class="line">$password = request(&quot;password&quot;);</span><br><span class="line">sql = &quot;select * from user where username = &apos;&quot;.$username.&quot;&apos;and password = &apos;&quot;.$password.&quot;&apos;&quot;;</span><br><span class="line">$result = $conn-&gt;query($sql);</span><br></pre></td></tr></table></figure>
-<p>我们可以看到，这是如今大多数后台都会采用的书写方式，他比起直接让用户控制sql语句减少了一定的风险，但是在之前写的渗透测试方式中，仍然有无数种方法成功注入。所以我们还得继续加一层保险——对参数进行输入验证。</p>
-<h2 id="0x03-php中输入验证"><a href="#0x03-php中输入验证" class="headerlink" title="0x03 php中输入验证"></a>0x03 php中输入验证</h2><p>我们首先看一下在php中怎么进行输入验证。<br>php中我们能用到的函数如下：</p>
-<ul>
-<li>preg_match(reg,match): 使用正则表达式reg对match字符串进行正则匹配。</li>
-<li>is_<type>(input): 检查输入input是否为<type>，如检查数字is_numeric()。</type></type></li>
-<li>strlen(input): 检查输入的长度。</li>
-</ul>
-<p>其中preg_match如果用/i可以匹配大小写不敏感的数据，所以大小写混用也是无法绕过的。</p>
-<p>假如黑名单过滤，我们只要匹配出任意违法字符，就禁止入库并且返回违法输入的提示。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$username=$_POST[&apos;username&apos;];</span><br><span class="line">if(preg_match(&quot;/*|#|;|,|is|file|drop|union|select|ascii|mid|from|(|)|or|\^|=|&lt;|&gt;|like|regexp|for|and|limit|file|--|||&amp;|&quot;.urldecode(&apos;%09&apos;).&quot;|&quot;.urldecode(&quot;%0b&quot;).&quot;|&quot;.urldecode(&apos;%0c&apos;).&quot;|&quot;.urldecode(&apos;%0d&apos;).&quot;|&quot;.urldecode(&apos;%a0&apos;).&quot;/i&quot;,$username))&#123;</span><br><span class="line">die(&apos;illegal input!&apos;);</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">    echo &quot;success!&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>再比如白名单过滤，我们可以仅允许数字字母，如果有超出数字字母的字符使匹配失败，就禁止入库并且返回违法输入的提示。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$username=$_POST[&apos;username&apos;];</span><br><span class="line">if(!preg_match(&quot;/^[a-z\d]*$/i&quot;,$username))</span><br><span class="line">&#123;</span><br><span class="line">    die(&apos;illegal input!&apos;);</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">	echo &quot;success!&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x04-java中输入验证"><a href="#0x04-java中输入验证" class="headerlink" title="0x04 java中输入验证"></a>0x04 java中输入验证</h2><p> Java中的输入验证支持专属于正在使用的框架，如下是使用构建Web应用的框架JSF(Java Server Faces)对输入验证提供支持的示例代码，定义了一个输入验证类，实现了javax.faces.validator.Validator接口。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public class UsernameValidator implements Validator &#123;</span><br><span class="line">    public void validate(FacesContent faceContext, UIComponent uiComponent, Object value) throws ValidatorException</span><br><span class="line">&#123;</span><br><span class="line">    // get the username and transform it to a string</span><br><span class="line">    String username = (String) value;</span><br><span class="line"></span><br><span class="line">    // build a regexp</span><br><span class="line">    Pattern p = Pattern.compile(&quot;^[a-zA-Z]&#123;8,12&#125;$&quot;);</span><br><span class="line"></span><br><span class="line">    // match the user name</span><br><span class="line">    Matcher m = p.matcher(username);</span><br><span class="line">    </span><br><span class="line">    if(!matchFound) &#123;</span><br><span class="line">    　　FacesMessage message = new FacesMessage();</span><br><span class="line">   　　 message.setDetail(&quot;Invalid Input-- Must be 8-12 letters&quot;);</span><br><span class="line">　　　　message.setSummary(&quot;Username invalid&quot;);</span><br><span class="line">　　　　message.setServerity(FacesMessage.SERVERITY_ERROR);</span><br><span class="line">　　　　throw new validatorException(message);</span><br><span class="line">　　&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>需要将以下内容添加到faces-config.xml中以便启用上述验证器:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;validator&gt;</span><br><span class="line">    &lt;validator-id&gt;namespace.UsernameValidator&lt;/validator-id&gt;</span><br><span class="line">    &lt;validator-class&gt;namespace.package.UsernameValidator&lt;/validator-class&gt;</span><br><span class="line">&lt;/validator&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后在相关JSP文件中引用在faces-config.xml中添加的内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;h:inputText value=&quot;username&quot; id=&quot;username&quot; required=&quot;true&quot;&gt;&lt;f:validator validatorId=&quot;namespace.UsernameValidator&quot; /&gt;&lt;/h:input&gt;</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x05-net中输入验证"><a href="#0x05-net中输入验证" class="headerlink" title="0x05 .net中输入验证"></a>0x05 .net中输入验证</h2><p>ASP.NET提供了很多用于输入验证的内置控件，其中最有用的是RegularExpressionValidator控件和CustomValidator控件，下面示例代码是RegularExpressionValidator验证用户名的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;asp:textbox id=&quot;userName&quot; runat=&quot;server&quot;/&gt;</span><br><span class="line">&lt;asp:RegularExpressionValidator id=&quot;userNameRegEx&quot; runat=&quot;server&quot; ControlToValidate=&quot;userName&quot;</span><br><span class="line">ErrorMessage = &quot;Username must contain 8-12 letters.&quot; ValidationExpression=&quot;^[a-zA-Z]&#123;8-12&#125;$&quot; /&gt;</span><br></pre></td></tr></table></figure></p>
-<p>下面的代码是使用CustomValidator验证口令是否为正确格式的示例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;asp:textbox id=&quot;txtPassword&quot; runat=&quot;server&quot;/&gt;</span><br><span class="line">&lt;asp:CustomerValidator runat=&quot;server&quot; Controlvalidate=&quot;txtPassword&quot; CLientValidationFunction=&quot;clientPwdValidate&quot;</span><br><span class="line">ErrorMessage=&quot;Password does not meet the requirements.&quot; onServerValidate=&quot;PwdValidate&quot;&gt;</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x06-html中输入验证"><a href="#0x06-html中输入验证" class="headerlink" title="0x06 html中输入验证"></a>0x06 html中输入验证</h2><p>在写html输入验证之前先强调一点，html中的验证是基于前端的，而基于前端的验证就是客户端可以在浏览器直接更改的，所以他是不可靠的，没有实际作用的。在html验证之后，一定还要在后端重新验证。</p>
-<p>但是为什么还要提他呢？因为在很多情况，如果我们过滤十分严格，输入一些敏感参数的人并不一定都是攻击者，这个时候每条语句都拿到后端判断然后跳转十分浪费时间，所以在前端给出一定的限制和提示，就能提升正常用户的体验。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input type=&quot;text&quot; required=&quot;required&quot; patter=&quot;^[a-zA-Z\d]*&quot; ...&gt;</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x07-编码输出"><a href="#0x07-编码输出" class="headerlink" title="0x07 编码输出"></a>0x07 编码输出</h2><p>我们都清楚，白名单过滤要比黑名单过滤安全的多，在能使用白名单的时候尽量使用白名单，但是很多时候业务需求不能让我们使用白名单，这个时候我们就要使用黑名单结合编码的方式，提升安全性。</p>
-<p>我对其他几个语言不是非常熟悉，这里就只介绍一下php的编码函数。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_defense/SQL%20defense01.png" alt=""></p>
-<p>这些编码函数，能够将允许范围内的违法字符编码后再存入数据库，能一定程度的防止我们构造语句逃逸，提升了安全性。</p>
-<p>但是这些函数没有用对，仍然会出现一些问题，接下来我分享一下上图中我所了解的一些编码函数会存在的安全问题：</p>
-<ul>
-<li><p>其中htmlspecialchars() 这个函数对xss的过滤十分有效，但是直接使用它时，它只会转义&lt;&gt;符号，对sql注入是没有任何防御效果的，只有加入ENT_COMPAT参数过滤单引号或者加入ENT_QUOTES参数过滤单、双引号，才能用在sql注入的防御中。</p>
-</li>
-<li><p>其中addslashes()函数，如果在设置了编码的页面如“set character_set_client=gbk” ，就可能造成宽字节注入，在编码时将反斜杠吃掉。</p>
-</li>
-</ul>
-<ul>
-<li>其中addslashes()函数和urlencode()或者一些其他的编码函数如big5码的编码函数组合使用时，就可能造成二次注入，用编码产生新的单引号。</li>
-</ul>
-<p>目前我最常见到的就是这几种，以后遇到新的还会及时补充。</p>
-<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>开发人员在代码层稍微多费一点时间增加一些函数，就可以抵御绝大多数的攻击，所以在代码层做防御是十分必要的，但是并不是说做了一些措施就一定能高枕无忧。要想提升整个系统的安全性，需要的是多种技术多个层面的防御相互结合。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2637,7 +2667,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-count">81</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
