@@ -258,6 +258,213 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/23/xml注入攻击总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/23/xml注入攻击总结/" itemprop="url">
+                  xml注入攻击总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-23T18:50:05+08:00">
+                2018-07-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/23/xml注入攻击总结/" class="leancloud_visitors" data-flag-title="xml注入攻击总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>之前的博客中，详细的讲了xxe(外部实体注入攻击)，那是一种典型的xml注入攻击，但是xml注入利用的手法还有很多，下来详细的介绍一下xml的其他利用手法。</p>
+<h2 id="0x01-xml数据注入"><a href="#0x01-xml数据注入" class="headerlink" title="0x01 xml数据注入"></a>0x01 xml数据注入</h2><p>xml数据注入，就是通过一些方式，将本来无法更改的xml中的数据更改。</p>
+<p>我们假设一种情况，比如一个购物网站的某处xml代码如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phone</span>&gt;</span>13200000000<span class="tag">&lt;/<span class="name">phone</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">price</span>&gt;</span>200<span class="tag">&lt;/<span class="name">price</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">address</span>&gt;</span>shanghai<span class="tag">&lt;/<span class="name">address</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>假如这里phone中是电话号码，price中是价格，address中是地址。购物网站中，电话号码和地址是用户可控的，价格是用户不可控的。</p>
+<p>但是如果用户的输入没有经过严格的过滤就写入xml，然后再提取出来使用时，我们就可以通过控制phone和address来更改price的值。</p>
+<p>我们可以在phone中手动闭合前面的phone并构造注释符：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">13200000000&lt;/phone&gt;&lt;!--</span><br></pre></td></tr></table></figure></p>
+<p>然后在address的值中闭合注释符，然后构造一个新的price，输入我们想要的价格：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--&gt;&lt;price&gt;1&lt;/price&gt;&lt;address&gt;shanghai&lt;/address&gt;</span><br></pre></td></tr></table></figure></p>
+<p>拼接起来就是<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phone</span>&gt;</span>13200000000<span class="tag">&lt;/<span class="name">phone</span>&gt;</span><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">&lt;price&gt;200&lt;/price&gt;</span></span><br><span class="line"><span class="comment">&lt;address&gt;--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">price</span>&gt;</span>1<span class="tag">&lt;/<span class="name">price</span>&gt;</span><span class="tag">&lt;<span class="name">address</span>&gt;</span>shanghai<span class="tag">&lt;/<span class="name">address</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>然后注释符注释掉中间的部分，剩下的价格就变成了1元。</p>
+<p>这就是xml数据注入攻击。</p>
+<h3 id="应对"><a href="#应对" class="headerlink" title="应对"></a>应对</h3><ul>
+<li>严格过滤用户输入</li>
+</ul>
+<h2 id="0x02-xml样式表注入"><a href="#0x02-xml样式表注入" class="headerlink" title="0x02 xml样式表注入"></a>0x02 xml样式表注入</h2><p>在xml文件中允许使用样式表，这种样式表能够将已有的xml数据转换成新的xml数据，然后以html方式在web浏览器中展示。</p>
+<p>假设xml引用了一个超链接，而链接内容用户可控<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;link&gt;test&lt;/link&gt;</span><br></pre></td></tr></table></figure></p>
+<p>web服务器利用xstl语言将上面的xml转换成这样的html：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;A href=&quot;test&quot;&gt;test&lt;/A&gt;</span><br></pre></td></tr></table></figure></p>
+<p>那么如果我们将test改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;#&quot; onclick=&quot;alert(1)&quot; /&gt;&lt;!--</span><br></pre></td></tr></table></figure></p>
+<p>那么很容易引发跨站脚本攻击。</p>
+<p>如果引发了跨站脚本攻击，我们将onclick之后的内容改成我们xss盲打平台上的内容，就可以实施攻击了。</p>
+<h3 id="应对-1"><a href="#应对-1" class="headerlink" title="应对"></a>应对</h3><ul>
+<li>严格过滤用户输入</li>
+<li>敏感位置不能使用户可控</li>
+</ul>
+<h2 id="0x03-XPATH-XQuery注入"><a href="#0x03-XPATH-XQuery注入" class="headerlink" title="0x03 XPATH/XQuery注入"></a>0x03 XPATH/XQuery注入</h2><p>XPATH和XQuery是能够查询xml文档的语言，类似于结构化查询语言(sql)，假设xml中包含账号密码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&apos;1.0&apos;?&gt;</span><br><span class="line">&lt;root&gt;</span><br><span class="line">&lt;author&gt;</span><br><span class="line">&lt;user&gt;jack&lt;/user&gt;</span><br><span class="line">&lt;pass&gt;123456&lt;/pass&gt;</span><br><span class="line">&lt;/author&gt;</span><br><span class="line">&lt;author&gt;</span><br><span class="line">&lt;user&gt;alice&lt;/user&gt;</span><br><span class="line">&lt;pass&gt;abc123456&lt;/pass&gt;</span><br><span class="line">&lt;/author&gt;</span><br><span class="line">&lt;author&gt;</span><br><span class="line">&lt;user&gt;lucy&lt;/user&gt;</span><br><span class="line">&lt;pass&gt;qwer1234&lt;/pass&gt;</span><br><span class="line">&lt;/author&gt;</span><br><span class="line">&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<p>系统正常情况下通过如下语句来查询xml数据，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//*[contains(user, &apos;jack&apos; )]/name</span><br></pre></td></tr></table></figure></p>
+<p>其中jack是用户可控制的，如果我们修改以上语句为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//*[contains(user, &apos;x&apos; )] | //*| //*[contains(user, &apos;y&apos; )]/name</span><br></pre></td></tr></table></figure>
+<p>|是或运算符号，//*是查询所有，这样就会返回所有用户的数据。</p>
+<h2 id="0x04-xml实体循环ddos"><a href="#0x04-xml实体循环ddos" class="headerlink" title="0x04 xml实体循环ddos"></a>0x04 xml实体循环ddos</h2><p>如果我们可以控制xml，那么我们可以在xml中添加如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY %xxx &apos;&amp;#x25;yyy&apos;&gt;</span><br><span class="line">&lt;!ENTITY %yyy &apos;&amp;#x25;xxx&apos;&gt;</span><br><span class="line">%xxx;</span><br></pre></td></tr></table></figure></p>
+<p>这个代码执行到最后一行，就会重复的执行前面的命令进入死循环，耗费服务器资源。</p>
+<h2 id="0x05-xml炸弹ddos"><a href="#0x05-xml炸弹ddos" class="headerlink" title="0x05 xml炸弹ddos"></a>0x05 xml炸弹ddos</h2><p>如果我们可以控制xml，那么我们可以在xml中添加如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE something[</span><br><span class="line">&lt;!ENTITY X0 &quot;testdata&quot;&gt;</span><br><span class="line">&lt;!ENTITY X1 &quot;&amp;x0;&amp;x0;&quot;&gt;</span><br><span class="line">&lt;!ENTITY X2 &quot;&amp;x1;&amp;x1;&quot;&gt;</span><br><span class="line">&lt;!ENTITY X3 &quot;&amp;x2;&amp;x2;&quot;&gt;</span><br><span class="line">···</span><br><span class="line">&lt;!ENTITY X100 &quot;&amp;x99;&amp;x99;&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;something&gt;&amp;x100;&lt;/something&gt;</span><br></pre></td></tr></table></figure>
+<p>当这个语句执行完的时候，原本的testdata就会经过指数式的增长，变成一个超大的字符串，极大的耗费服务器资源。</p>
+<h2 id="0x06-xml外部实体注入"><a href="#0x06-xml外部实体注入" class="headerlink" title="0x06 xml外部实体注入"></a>0x06 xml外部实体注入</h2><p>xml外部实体注入在前面的博客中写过，可以参考：</p>
+<p><a href="http://uuzdaisuki.com/2018/05/03/%E6%B5%85%E8%B0%88XXE%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">http://uuzdaisuki.com/2018/05/03/%E6%B5%85%E8%B0%88XXE%E6%BC%8F%E6%B4%9E/</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/一次localhost被劫持发现的盗版系统后门/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2489,211 +2696,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/19/机器学习-1-——定义与分类/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/19/机器学习-1-——定义与分类/" itemprop="url">
-                  机器学习(1)——定义与分类
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-19T18:43:03+08:00">
-                2018-06-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/19/机器学习-1-——定义与分类/" class="leancloud_visitors" data-flag-title="机器学习(1)——定义与分类">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>因为假期实习能选择的安全项目大部分都要用到机器学习，而自己对这个领域缺乏了解，所以准备用一段时间专心学习一下。</p>
-<h2 id="0x01-机器学习-Machine-Learning"><a href="#0x01-机器学习-Machine-Learning" class="headerlink" title="0x01 机器学习(Machine Learning)"></a>0x01 机器学习(Machine Learning)</h2><p>机器学习在不同的领域和不同的学者中有着不同的定义，我认为Alpaydin的定义更偏向于现代机器学习的核心内容：“机器学习是用数据或以往的经验，以此优化计算机程序的性能标准。”(Machine learning is programming computers to optimize a performance criterion using example data or past experience.)</p>
-<p>也就是说，机器学习方法是计算机利用已有的数据，得出了某种模型，并利用此模型预测未来的一种方法。</p>
-<p>机器学习与人类思考的对比：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml1_01.png?raw=true" alt=""></p>
-<h2 id="0x02-按照学习策略分类"><a href="#0x02-按照学习策略分类" class="headerlink" title="0x02 按照学习策略分类"></a>0x02 按照学习策略分类</h2><p>机器学习的学习策略指学习过程中系统所采用的推理策略。按照学习策略可以将机器学习分为下列几类：</p>
-<h4 id="1-机械学习-Rote-learning"><a href="#1-机械学习-Rote-learning" class="headerlink" title="(1)机械学习 (Rote learning)"></a>(1)机械学习 (Rote learning)</h4><p>学习者无需任何推理或其它的知识转换，直接吸取环境所提供的信息。如塞缪尔的跳棋程序，纽厄尔和西蒙的LT系统。这类学习系统主要考虑的是如何索引存贮的知识并加以利用。系统的学习方法是直接通过事先编好、构造好的程序来学习，学习者不作任何工作，或者是通过直接接收既定的事实和数据进行学习，对输入信息不作任何的推理。</p>
-<h4 id="2-示教学习-Learning-from-instruction"><a href="#2-示教学习-Learning-from-instruction" class="headerlink" title="(2)示教学习 (Learning from instruction)"></a>(2)示教学习 (Learning from instruction)</h4><p>学生从环境（教师或其它信息源如教科书等）获取信息，把知识转换成内部可使用的表示形式，并将新的知识和原有知识有机地结合为一体。所以要求学生有一定程度的推理能力，但环境仍要做大量的工作。教师以某种形式提出和组织知识，以使学生拥有的知识可以不断地增加。这种学习方法和人类社会的学校教学方式相似，学习的任务就是建立一个系统，使它能接受教导和建议，并有效地存贮和应用学到的知识。不少专家系统在建立知识库时使用这种方法去实现知识获取。示教学习的一个典型应用例是FOO程序。</p>
-<h4 id="3-演绎学习-Learning-by-deduction"><a href="#3-演绎学习-Learning-by-deduction" class="headerlink" title="(3)演绎学习 (Learning by deduction)"></a>(3)演绎学习 (Learning by deduction)</h4><p>学生所用的推理形式为演绎推理。推理从公理出发，经过逻辑变换推导出结论。这种推理是”保真”变换和特化(specialization)的过程，使学生在推理过程中可以获取有用的知识。这种学习方法包含宏操作(macro-operation)学习、知识编辑和组块(Chunking)技术。演绎推理的逆过程是归纳推理。</p>
-<h4 id="4-类比学习-Learning-by-analogy"><a href="#4-类比学习-Learning-by-analogy" class="headerlink" title="(4)类比学习 (Learning by analogy)"></a>(4)类比学习 (Learning by analogy)</h4><p>利用二个不同领域（源域、目标域）中的知识相似性，可以通过类比，从源域的知识（包括相似的特征和其它性质）推导出目标域的相应知识，从而实现学习。类比学习系统可以使一个已有的计算机应用系统转变为适应于新的领域，来完成原先没有设计的相类似的功能。</p>
-<h4 id="5-基于解释的学习-Explanation-based-learning-EBL"><a href="#5-基于解释的学习-Explanation-based-learning-EBL" class="headerlink" title="(5)基于解释的学习 (Explanation-based learning, EBL)"></a>(5)基于解释的学习 (Explanation-based learning, EBL)</h4><p>学生根据教师提供的目标概念、该概念的一个例子、领域理论及可操作准则，首先构造一个解释来说明为什该例子满足目标概念，然后将解释推广为目标概念的一个满足可操作准则的充分条件。EBL已被广泛应用于知识库求精和改善系统的性能。<br>著名的EBL系统有迪乔恩（G.DeJong）的GENESIS,米切尔（T.Mitchell）的LEXII和LEAP, 以及明顿（S.Minton）等的PRODIGY。</p>
-<h4 id="6-归纳学习-Learning-from-induction"><a href="#6-归纳学习-Learning-from-induction" class="headerlink" title="(6)归纳学习 (Learning from induction)"></a>(6)归纳学习 (Learning from induction)</h4><p>归纳学习是由教师或环境提供某概念的一些实例或反例，让学生通过归纳推理得出该概念的一般描述。这种学习的推理工作量远多于示教学习和演绎学习，因为环境并不提供一般性概念描述（如公理）。从某种程度上说，归纳学习的推理量也比类比学习大，因为没有一个类似的概念可以作为”源概念”加以取用。归纳学习是最基本的，发展也较为成熟的学习方法，在人工智能领域中已经得到广泛的研究和应用。</p>
-<h2 id="0x03-按照所获取知识的表示形式分类"><a href="#0x03-按照所获取知识的表示形式分类" class="headerlink" title="0x03 按照所获取知识的表示形式分类"></a>0x03 按照所获取知识的表示形式分类</h2><h4 id="1-代数表达式参数"><a href="#1-代数表达式参数" class="headerlink" title="(1)代数表达式参数"></a>(1)代数表达式参数</h4><p>学习的目标是调节一个固定函数形式的代数表达式参数或系数来达到一个理想的性能。</p>
-<h4 id="2-决策树"><a href="#2-决策树" class="headerlink" title="(2)决策树"></a>(2)决策树</h4><p>用决策树来划分物体的类属，树中每一内部节点对应一个物体属性，而每一边对应于这些属性的可选值，树的叶节点则对应于物体的每个基本分类。</p>
-<h4 id="3-形式文法"><a href="#3-形式文法" class="headerlink" title="(3)形式文法"></a>(3)形式文法</h4><p>在识别一个特定语言的学习中，通过对该语言的一系列表达式进行归纳，形成该语言的形式文法。</p>
-<h4 id="4-产生式规则"><a href="#4-产生式规则" class="headerlink" title="(4)产生式规则"></a>(4)产生式规则</h4><p>产生式规则表示为条件—动作对，已被极为广泛地使用。学习系统中的学习行为主要是：生成、泛化、特化（Specialization）或合成产生式规则。</p>
-<h4 id="5-形式逻辑表达式"><a href="#5-形式逻辑表达式" class="headerlink" title="(5)形式逻辑表达式"></a>(5)形式逻辑表达式</h4><p>形式逻辑表达式的基本成分是命题、谓词、变量、约束变量范围的语句，及嵌入的逻辑表达式。</p>
-<h4 id="6-图和网络"><a href="#6-图和网络" class="headerlink" title="(6)图和网络"></a>(6)图和网络</h4><p>有的系统采用图匹配和图转换方案来有效地比较和索引知识。</p>
-<h4 id="7-框架和模式（schema）"><a href="#7-框架和模式（schema）" class="headerlink" title="(7)框架和模式（schema）"></a>(7)框架和模式（schema）</h4><p>每个框架包含一组槽，用于描述事物（概念和个体）的各个方面。</p>
-<h4 id="8-计算机程序和其它的过程编码"><a href="#8-计算机程序和其它的过程编码" class="headerlink" title="(8)计算机程序和其它的过程编码"></a>(8)计算机程序和其它的过程编码</h4><p>获取这种形式的知识，目的在于取得一种能实现特定过程的能力，而不是为了推断该过程的内部结构。</p>
-<h4 id="9-神经网络"><a href="#9-神经网络" class="headerlink" title="(9)神经网络"></a>(9)神经网络</h4><p>这主要用在联接学习中。学习所获取的知识，最后归纳为一个神经网络。</p>
-<h4 id="10-多种表示形式的组合"><a href="#10-多种表示形式的组合" class="headerlink" title="(10)多种表示形式的组合"></a>(10)多种表示形式的组合</h4><p>有时一个学习系统中获取的知识需要综合应用上述几种知识表示形式。</p>
-<h2 id="0x04-按照学习形势分类"><a href="#0x04-按照学习形势分类" class="headerlink" title="0x04 按照学习形势分类"></a>0x04 按照学习形势分类</h2><h4 id="1-监督学习-supervised-learning"><a href="#1-监督学习-supervised-learning" class="headerlink" title="(1)监督学习(supervised learning)"></a>(1)监督学习(supervised learning)</h4><p>监督学习，即在机械学习过程中提供对错指示。一般实在是数据组中包含最终结果（0，1）。通过算法让机器自我减少误差。这一类学习主要应用于分类和预测 (regression &amp; classify)。监督学习从给定的训练数据集中学习出一个函数，当新的数据到来时，可以根据这个函数预测结果。监督学习的训练集要求是包括输入和输出，也可以说是特征和目标。训练集中的目标是由人标注的。</p>
-<p>常见的监督学习算法：</p>
-<p>线性回归，逻辑回归，神经网络，SVM</p>
-<h4 id="2-非监督学习-unsupervised-learning"><a href="#2-非监督学习-unsupervised-learning" class="headerlink" title="(2)非监督学习(unsupervised learning)"></a>(2)非监督学习(unsupervised learning)</h4><p>非监督学习又称归纳性学习（clustering）利用K方式(Kmeans)，建立中心（centriole），通过循环和递减运算(iteration&amp;descent)来减小误差，达到分类的目的。</p>
-<p>常见的无监督学习算法：</p>
-<p>聚类算法，降维算法</p>
-<h2 id="0x05-机器学习的范围"><a href="#0x05-机器学习的范围" class="headerlink" title="0x05 机器学习的范围"></a>0x05 机器学习的范围</h2><h4 id="模式识别"><a href="#模式识别" class="headerlink" title="模式识别"></a>模式识别</h4><p>模式识别=机器学习。两者的主要区别在于前者是从工业界发展起来的概念，后者则主要源自计算机学科。在著名的《Pattern Recognition And Machine Learning》这本书中，Christopher M. Bishop在开头是这样说的“模式识别源自工业界，而机器学习来自于计算机学科。不过，它们中的活动可以被视为同一个领域的两个方面，同时在过去的10年间，它们都有了长足的发展”。</p>
-<h4 id="数据挖掘"><a href="#数据挖掘" class="headerlink" title="数据挖掘"></a>数据挖掘</h4><p>数据挖掘=机器学习+数据库。这几年数据挖掘的概念实在是太耳熟能详。几乎等同于炒作。但凡说数据挖掘都会吹嘘数据挖掘如何如何，例如从数据中挖出金子，以及将废弃的数据转化为价值等等。但是，我尽管可能会挖出金子，但我也可能挖的是“石头”啊。这个说法的意思是，数据挖掘仅仅是一种思考方式，告诉我们应该尝试从数据中挖掘出知识，但不是每个数据都能挖掘出金子的，所以不要神话它。一个系统绝对不会因为上了一个数据挖掘模块就变得无所不能(这是IBM最喜欢吹嘘的)，恰恰相反，一个拥有数据挖掘思维的人员才是关键，而且他还必须对数据有深刻的认识，这样才可能从数据中导出模式指引业务的改善。大部分数据挖掘中的算法是机器学习的算法在数据库中的优化。</p>
-<h4 id="统计学习"><a href="#统计学习" class="headerlink" title="统计学习"></a>统计学习</h4><p>统计学习近似等于机器学习。统计学习是个与机器学习高度重叠的学科。因为机器学习中的大多数方法来自统计学，甚至可以认为，统计学的发展促进机器学习的繁荣昌盛。例如著名的支持向量机算法，就是源自统计学科。但是在某种程度上两者是有分别的，这个分别在于：统计学习者重点关注的是统计模型的发展与优化，偏数学，而机器学习者更关注的是能够解决问题，偏实践，因此机器学习研究者会重点研究学习算法在计算机上执行的效率与准确性的提升。</p>
-<h4 id="计算机视觉"><a href="#计算机视觉" class="headerlink" title="计算机视觉"></a>计算机视觉</h4><p>计算机视觉=图像处理+机器学习。图像处理技术用于将图像处理为适合进入机器学习模型中的输入，机器学习则负责从图像中识别出相关的模式。计算机视觉相关的应用非常的多，例如百度识图、手写字符识别、车牌识别等等应用。这个领域是应用前景非常火热的，同时也是研究的热门方向。随着机器学习的新领域深度学习的发展，大大促进了计算机图像识别的效果，因此未来计算机视觉界的发展前景不可估量。</p>
-<h4 id="语音识别"><a href="#语音识别" class="headerlink" title="语音识别"></a>语音识别</h4><p>语音识别=语音处理+机器学习。语音识别就是音频处理技术与机器学习的结合。语音识别技术一般不会单独使用，一般会结合自然语言处理的相关技术。目前的相关应用有苹果的语音助手siri等。</p>
-<h4 id="自然语言处理"><a href="#自然语言处理" class="headerlink" title="自然语言处理"></a>自然语言处理</h4><p>自然语言处理=文本处理+机器学习。自然语言处理技术主要是让机器理解人类的语言的一门领域。在自然语言处理技术中，大量使用了编译原理相关的技术，例如词法分析，语法分析等等，除此之外，在理解这个层面，则使用了语义理解，机器学习等技术。作为唯一由人类自身创造的符号，自然语言处理一直是机器学习界不断研究的方向。按照百度机器学习专家余凯的说法“听与看，说白了就是阿猫和阿狗都会的，而只有语言才是人类独有的”。如何利用机器学习技术进行自然语言的的深度理解，一直是工业和学术界关注的焦点。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2743,7 +2745,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">81</span>
+                <span class="site-state-item-count">82</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

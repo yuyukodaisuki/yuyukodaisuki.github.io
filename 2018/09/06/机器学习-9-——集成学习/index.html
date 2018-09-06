@@ -1,0 +1,915 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="机器学习," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言在我们设计的机器学习算法性能达到瓶颈却不满足我们的需求时，我们想在单一的学习器上提升精度需要投入大量的资源，很容易得不偿失。这个时候更好的做法是使用一种优化的策略来提升精度，那就是集成学习。 0x01 集成学习现实生活中，我们经常会通过投票的方式，以做出更加可靠的决策。集成学习就与此类似。集成学习就是通过构建多个学习器，并通过一定的学习策略将他们结合起来。 集成学习通过将多个学习器进">
+<meta name="keywords" content="机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习(9)——集成学习">
+<meta property="og:url" content="http://yoursite.com/2018/09/06/机器学习-9-——集成学习/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="0x00 前言在我们设计的机器学习算法性能达到瓶颈却不满足我们的需求时，我们想在单一的学习器上提升精度需要投入大量的资源，很容易得不偿失。这个时候更好的做法是使用一种优化的策略来提升精度，那就是集成学习。 0x01 集成学习现实生活中，我们经常会通过投票的方式，以做出更加可靠的决策。集成学习就与此类似。集成学习就是通过构建多个学习器，并通过一定的学习策略将他们结合起来。 集成学习通过将多个学习器进">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml9_01.png?raw=true">
+<meta property="og:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml9_02.png?raw=true">
+<meta property="og:updated_time" content="2018-09-06T08:43:26.701Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习(9)——集成学习">
+<meta name="twitter:description" content="0x00 前言在我们设计的机器学习算法性能达到瓶颈却不满足我们的需求时，我们想在单一的学习器上提升精度需要投入大量的资源，很容易得不偿失。这个时候更好的做法是使用一种优化的策略来提升精度，那就是集成学习。 0x01 集成学习现实生活中，我们经常会通过投票的方式，以做出更加可靠的决策。集成学习就与此类似。集成学习就是通过构建多个学习器，并通过一定的学习策略将他们结合起来。 集成学习通过将多个学习器进">
+<meta name="twitter:image" content="https://github.com/echohun/blog_image/blob/master/machine_learning/ml9_01.png?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/06/机器学习-9-——集成学习/"/>
+
+
+
+
+
+  <title> 机器学习(9)——集成学习 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/机器学习-9-——集成学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                机器学习(9)——集成学习
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-06T16:41:42+08:00">
+                2018-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/09/06/机器学习-9-——集成学习/" class="leancloud_visitors" data-flag-title="机器学习(9)——集成学习">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>在我们设计的机器学习算法性能达到瓶颈却不满足我们的需求时，我们想在单一的学习器上提升精度需要投入大量的资源，很容易得不偿失。这个时候更好的做法是使用一种优化的策略来提升精度，那就是集成学习。</p>
+<h2 id="0x01-集成学习"><a href="#0x01-集成学习" class="headerlink" title="0x01 集成学习"></a>0x01 集成学习</h2><p>现实生活中，我们经常会通过投票的方式，以做出更加可靠的决策。集成学习就与此类似。集成学习就是通过构建多个学习器，并通过一定的学习策略将他们结合起来。</p>
+<p>集成学习通过将多个学习器进行结合，一般可获得比单一学习器显著优越的泛化性能。</p>
+<h2 id="0x02-分类"><a href="#0x02-分类" class="headerlink" title="0x02 分类"></a>0x02 分类</h2><h3 id="以个体学习器的类型分类"><a href="#以个体学习器的类型分类" class="headerlink" title="以个体学习器的类型分类"></a>以个体学习器的类型分类</h3><ul>
+<li>在集成中只包含同种类型的个体学习器，被称为同质集成。如：“决策树集成”，“神经网络集成”。</li>
+<li>在集成种包含不同种类型的个体学习器，被称为异质集成。如同时包含决策树和神经网络。</li>
+</ul>
+<h3 id="以个体学习器的生成方式分类"><a href="#以个体学习器的生成方式分类" class="headerlink" title="以个体学习器的生成方式分类"></a>以个体学习器的生成方式分类</h3><ul>
+<li>个体学习器之间存在较强的依赖关系，则需要使用串行生成的序列化方法。如：“Boosting”</li>
+<li>个体学习器不存在强依赖关系，则可使用同时生成的并行化方法。如：“Bagging”、“随机森林”。</li>
+</ul>
+<h2 id="0x03-Boosting"><a href="#0x03-Boosting" class="headerlink" title="0x03 Boosting"></a>0x03 Boosting</h2><p>Boosting是一种可将弱学习器提升为强学习器的算法，这种算法的工作机制是先从初始训练集训练出一个基学习器，再根据基学习器的表现对训练样本分布进行调整，使得先前基学习器做错的训练样本在后续获得更多关注，然后基于调整后的样本分布来训练下一个基学习器。如此反复，直至基学习器数目达到我们需要的值，最终将这些基学习器进行加权结合。</p>
+<h2 id="0x04-Bagging"><a href="#0x04-Bagging" class="headerlink" title="0x04 Bagging"></a>0x04 Bagging</h2><p>Bagging是并行式集成学习算法最著名的代表，它基于自助采样法，给定包含m个样本的数据集，我们先随机取出一个样本放入采样器中，再把该样本放回数据集，这样下次该样本仍可能被选中，经过m次随机采样操作，我们得到含有m个样本的采样集，初始训练集中有的样本多次出现，有的样本从未出现。</p>
+<p>按照这种方法抽样出T个含m个样本的样本集，然后基于每个样本集训练一个基学习器，再将这些基学习器进行结合，就是Bagging。</p>
+<h2 id="0x05-随机森林"><a href="#0x05-随机森林" class="headerlink" title="0x05 随机森林"></a>0x05 随机森林</h2><p>随机森林是Bagging的一个扩展变体，随机森林在以决策树为基学习器构建Bagging的基础上，进一步在训练过程中引入随机属性选择。</p>
+<p>传统决策树在选择划分属性时是在当前结点的属性集合(共d个)中选择一个最优属性，而随机森林对决策树的每个结点，先从该结点的属性集合中随机选择一个包含k个属性的子集，然后再从这k个属性中选择最优属性进行划分。</p>
+<p>很显然，k控制了随机性：</p>
+<ul>
+<li>如果k和总属性量相同，那就是传统决策树，随机性最低；</li>
+<li>如果k=1，则随机选择一个属性用于划分，随机性最高。</li>
+</ul>
+<p>所以一般情况下，推荐选用k=log2（d）。</p>
+<h2 id="0x06-结合策略"><a href="#0x06-结合策略" class="headerlink" title="0x06 结合策略"></a>0x06 结合策略</h2><p>之前多次提到了“结合”一词，但是究竟怎么将多个学习器的结果结合起来，也有很多种不同的策略。</p>
+<p>下面给出一些常见的策略</p>
+<h3 id="平均法"><a href="#平均法" class="headerlink" title="平均法"></a>平均法</h3><p>对于回归任务的数值型输出，常见的策略是平均法</p>
+<h4 id="简单平均法"><a href="#简单平均法" class="headerlink" title="简单平均法"></a>简单平均法</h4><p>简单平均法就是将所有的学习器结果做算数平均，将平均数做为最终结果。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml9_01.png?raw=true" alt=""></p>
+<h4 id="加权平均法"><a href="#加权平均法" class="headerlink" title="加权平均法"></a>加权平均法</h4><p>加权平均法是给予每一个学习器不同的权重，加权平均法的权重一般从训练数据中学习得到。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml9_02.png?raw=true" alt=""></p>
+<h3 id="投票法"><a href="#投票法" class="headerlink" title="投票法"></a>投票法</h3><p>对于分类任务的标记型输出，常见的策略是投票法</p>
+<h4 id="绝对多数投票法（硬投票）"><a href="#绝对多数投票法（硬投票）" class="headerlink" title="绝对多数投票法（硬投票）"></a>绝对多数投票法（硬投票）</h4><p>绝对多数投票法即某标记的得票数过半，则预测为该标记，否则拒绝预测。</p>
+<h4 id="相对多数投票法（硬投票）"><a href="#相对多数投票法（硬投票）" class="headerlink" title="相对多数投票法（硬投票）"></a>相对多数投票法（硬投票）</h4><p>相对多数投票法即预测为得票最多的标记，若同时有多个最高票，则从中随机选取一个。</p>
+<h4 id="加权投票法（软投票）"><a href="#加权投票法（软投票）" class="headerlink" title="加权投票法（软投票）"></a>加权投票法（软投票）</h4><p>加权投票法会返回预测各个类的概率加权平均值，然后取其中最大平均概率的分类做为预测结果。</p>
+<p>可以用表格清晰的表示出来</p>
+<table>
+<thead>
+<tr>
+<th>分类器</th>
+<th>类别1</th>
+<th>类别2</th>
+<th>类别3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分类器1</td>
+<td>w1*0.2</td>
+<td>w1*0.5</td>
+<td>w1*0.3</td>
+</tr>
+<tr>
+<td>分类器2</td>
+<td>w2*0.6</td>
+<td>w2*0.3</td>
+<td>w2*0.1</td>
+</tr>
+<tr>
+<td>分类器3</td>
+<td>w3*0.3</td>
+<td>w2*0.4</td>
+<td>w2*0.3</td>
+</tr>
+</tbody>
+</table>
+<p>在预测时，计算每一类的加权平均值比较即可。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/22/GhostScript命令执行漏洞/" rel="next" title="GhostScript命令执行漏洞">
+                <i class="fa fa-chevron-left"></i> GhostScript命令执行漏洞
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-集成学习"><span class="nav-number">2.</span> <span class="nav-text">0x01 集成学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-分类"><span class="nav-number">3.</span> <span class="nav-text">0x02 分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#以个体学习器的类型分类"><span class="nav-number">3.1.</span> <span class="nav-text">以个体学习器的类型分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#以个体学习器的生成方式分类"><span class="nav-number">3.2.</span> <span class="nav-text">以个体学习器的生成方式分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-Boosting"><span class="nav-number">4.</span> <span class="nav-text">0x03 Boosting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-Bagging"><span class="nav-number">5.</span> <span class="nav-text">0x04 Bagging</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-随机森林"><span class="nav-number">6.</span> <span class="nav-text">0x05 随机森林</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-结合策略"><span class="nav-number">7.</span> <span class="nav-text">0x06 结合策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#平均法"><span class="nav-number">7.1.</span> <span class="nav-text">平均法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简单平均法"><span class="nav-number">7.1.1.</span> <span class="nav-text">简单平均法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加权平均法"><span class="nav-number">7.1.2.</span> <span class="nav-text">加权平均法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#投票法"><span class="nav-number">7.2.</span> <span class="nav-text">投票法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#绝对多数投票法（硬投票）"><span class="nav-number">7.2.1.</span> <span class="nav-text">绝对多数投票法（硬投票）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#相对多数投票法（硬投票）"><span class="nav-number">7.2.2.</span> <span class="nav-text">相对多数投票法（硬投票）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加权投票法（软投票）"><span class="nav-number">7.2.3.</span> <span class="nav-text">加权投票法（软投票）</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>
