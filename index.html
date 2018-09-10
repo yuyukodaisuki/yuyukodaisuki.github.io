@@ -258,6 +258,225 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/10/子域名劫持/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/09/10/子域名劫持/" itemprop="url">
+                  子域名劫持
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-10T15:22:45+08:00">
+                2018-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/09/10/子域名劫持/" class="leancloud_visitors" data-flag-title="子域名劫持">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>前几个月，关于子域名劫持的安全报告数量激增，去看了几篇报告，感觉这也是一个现在较为广泛存在的问题，就写出来共享一下。</p>
+<h2 id="0x01-子域名与域名解析"><a href="#0x01-子域名与域名解析" class="headerlink" title="0x01 子域名与域名解析"></a>0x01 子域名与域名解析</h2><p>先来介绍一下子域名和域名解析的一些相关知识。</p>
+<h3 id="子域名"><a href="#子域名" class="headerlink" title="子域名"></a>子域名</h3><p>我们通常在域名提供商购买的域名如 baidu.com，并不是只能解析一个服务器，我们可以在它的基础上增加很多的子域名，比如 test.baidu.com，smtp.baidu.com，image.baidu.com，talent.baidu.com 等等，它们可以分别解析到不同的服务器。</p>
+<h3 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h3><p>域名解析的记录类型很多：</p>
+<ul>
+<li><p>A记录：地址记录，用来指定域名的IPv4地址，如果需要将域名指向一个IP地址，就需要添加A记录。</p>
+</li>
+<li><p>CNAME： 如果需要将域名指向另一个域名，再由另一个域名提供ip地址，就需要添加CNAME记录。</p>
+</li>
+<li><p>TXT：在这里可以填写任何东西，长度限制255。绝大多数的TXT记录是用来做SPF记录（反垃圾邮件）。</p>
+</li>
+<li><p>NS：域名服务器记录，如果需要把子域名交给其他DNS服务商解析，就需要添加NS记录。</p>
+</li>
+<li><p>AAAA：用来指定主机名（或域名）对应的IPv6地址（例如：ff06:0:0:0:0:0:0:c3）记录。</p>
+</li>
+<li><p>MX：如果需要设置邮箱，让邮箱能收到邮件，就需要添加MX记录。</p>
+</li>
+<li><p>显性URL：从一个地址301重定向到另一个地址的时候，就需要添加显性URL记录（注：DNSPod目前只支持301重定向）。</p>
+</li>
+<li><p>隐性URL：类似于显性URL，区别在于隐性URL不会改变地址栏中的域名。</p>
+</li>
+<li><p>SRV：记录了哪台计算机提供了哪个服务。格式为：服务的名字、点、协议的类型</p>
+</li>
+</ul>
+<p>我们最常用的是A记录与CNMAE记录，分别是将域名指向ipv4地址或另一个域名。</p>
+<h2 id="0x02-漏洞原理"><a href="#0x02-漏洞原理" class="headerlink" title="0x02 漏洞原理"></a>0x02 漏洞原理</h2><p>子域名劫持产生的原因一般都是网站开启了很多子域名，这些子域名其中又有很多cname解析来解析到其他的网站，然后在某一天，这些被指向的网站废弃了，然后又没有去删除解析记录。</p>
+<p>这些被废弃的网站原本的域名被攻击者注册或通过其他手段获得，然后定向到攻击者的服务器并在上面部署钓鱼网站，或者劫持cookie的代码，当用户再次访问这些子域名就会解析向钓鱼网站，或者被盗取cookie而丢失账号。</p>
+<h2 id="0x03-漏洞利用"><a href="#0x03-漏洞利用" class="headerlink" title="0x03 漏洞利用"></a>0x03 漏洞利用</h2><p>我们可以用实例来证明一下，假设现在我们有一个域名 uuzdaisuki.com ,其中有一个解析记录 test.uuzdaisuki.com 原本指向我们另外一个域名 <a href="http://www.sbwyfdsmjb.tk" target="_blank" rel="noopener">www.sbwyfdsmjb.tk</a> ，但是有一天，我们废弃了这个功能，将第二个域名注销了，却忘记删掉这条解析记录。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/subdomain_takeover/subdomain01.png?raw=true" alt=""></p>
+<p>如果这个解析被攻击者发现了(通过扫描之后的报错界面)，然后攻击者抢注了这个已经被废弃的域名 sbwyfdsmjb.tk，这个时候攻击者就可以将域名解析向自己的服务器，我这里以github页面证明一下。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/subdomain_takeover/subdomain02.png?raw=true" alt=""></p>
+<p>可以看到，test.uuzdaisuki.com解析到了最终由攻击者可控的github页面。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/subdomain_takeover/subdomain03.png?raw=true" alt=""></p>
+<p>这个时候从包括第二个域名及其之后的东西全部都是我们可控了，这个时候可以用来做些什么，相信大家心里都有数了。</p>
+<p>我来举两个常见的例子：</p>
+<h3 id="钓鱼网站"><a href="#钓鱼网站" class="headerlink" title="钓鱼网站"></a>钓鱼网站</h3><p>我们在第二个域名中，使用A记录解析到一台自己的匿名服务器，然后在服务器上部署web服务，根据第一个域名所在公司的业务类型，写一个相似的前端登陆界面然后发送链接出去，就可以实施钓鱼，被攻击者一般看到这个域名的确是所登陆业务的域名，也就不会有疑心了，钓鱼成功率大大增加。</p>
+<p>提供一个qq邮箱的完整前后端钓鱼代码: <a href="https://github.com/echohun/tools/tree/master/%E9%92%93%E9%B1%BC/qq%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%89%8D%E7%AB%AF%2B%E5%90%8E%E7%AB%AF%E5%85%A8%E4%BB%A3%E7%A0%81/mailqq" target="_blank" rel="noopener">https://github.com/echohun/tools/tree/master/%E9%92%93%E9%B1%BC/qq%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%89%8D%E7%AB%AF%2B%E5%90%8E%E7%AB%AF%E5%85%A8%E4%BB%A3%E7%A0%81/mailqq</a></p>
+<p>效果如下，可以达到以假乱真：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/subdomain_takeover/subdomain04.png?raw=true" alt=""></p>
+<h3 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h3><p>我们目前可以控制的子域名和对方业务属于同一个顶级域名，那同源策略就限制不了我们了，只需要在这个子域构造一个恶意的页面，跳转对这个顶级域名下其他业务发起请求，很容易造成跨站请求伪造。</p>
+<p>详细可以参考这个案例： <a href="https://hackerone.com/reports/172137" target="_blank" rel="noopener">https://hackerone.com/reports/172137</a></p>
+<h3 id="cookie盗取"><a href="#cookie盗取" class="headerlink" title="cookie盗取"></a>cookie盗取</h3><p>同样的，既然我们控制的子域和对方业务属于同一个顶级域名，那么cookie的作用域，我们也是共享的，只需要在这个子域名增加代码将cookie保存起来，之后就可以利用cookie登陆这些被攻击用户的账号，造成cookie劫持。</p>
+<p>具体方法和xss进行cookie盗取一样。</p>
+<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><p>造成子域名劫持根本的原因是运维人员的粗心大意，没有及时关闭掉废弃的dns解析，只需要及时关闭，就可以避免这个问题。但是不幸的是这个问题现在广泛的存在于各个企业之中，每周都能看到非常多关于子域名劫持的安全报告。</p>
+<p>其他案例：</p>
+<p><a href="https://hackerone.com/reports/32825" target="_blank" rel="noopener">https://hackerone.com/reports/32825</a></p>
+<p><a href="https://hackerone.com/reports/38007" target="_blank" rel="noopener">https://hackerone.com/reports/38007</a></p>
+<p><a href="https://hackerone.com/reports/175070" target="_blank" rel="noopener">https://hackerone.com/reports/175070</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/06/机器学习-9-——集成学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2291,215 +2510,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/24/机器学习-5-——模型评估方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/24/机器学习-5-——模型评估方法/" itemprop="url">
-                  机器学习(5)——模型评估方法
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-24T20:42:30+08:00">
-                2018-07-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/24/机器学习-5-——模型评估方法/" class="leancloud_visitors" data-flag-title="机器学习(5)——模型评估方法">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-模型评估与选择"><a href="#0x00-模型评估与选择" class="headerlink" title="0x00 模型评估与选择"></a>0x00 模型评估与选择</h2><p>在机器学习中，我们需要对使用的模型进行评估，对误差等进行分析，来选择一个预测准确率最高的模型。</p>
-<h2 id="0x01-误差"><a href="#0x01-误差" class="headerlink" title="0x01 误差"></a>0x01 误差</h2><p>我们把学习器的实际预测输出与样本的真实输出之间的差异称为误差。</p>
-<ul>
-<li><p>经验误差：学习器在训练集上的误差称为训练误差或经验误差。</p>
-</li>
-<li><p>泛化误差：将训练好的模型用在新样本上的误差称为泛化误差。</p>
-</li>
-</ul>
-<p>机器学习的目的是为了预测新样本的情况，所以我们需要在新样本上表现很好的学习器，即需要得到一个泛化误差小的学习器。</p>
-<h2 id="0x02-过拟合与欠拟合"><a href="#0x02-过拟合与欠拟合" class="headerlink" title="0x02 过拟合与欠拟合"></a>0x02 过拟合与欠拟合</h2><ul>
-<li><p>过拟合：学习器把训练样本自身的一些特点当作了所有潜在样本都会具有的一般性质，导致泛化性能下降。一般是由于学习能力过强，将训练样本所包含的不太一般的性质都学到了。</p>
-</li>
-<li><p>欠拟合：学习器学习能力过弱，对训练样本的一般性质尚未学好</p>
-</li>
-</ul>
-<p>欠拟合比较容易克服，可以在决策树学习中扩展分支、在神经网络中增加训练轮数等。</p>
-<p>过拟合则难克服，过拟合是机器学习面临的关键障碍，各类学习算法都有一些针对过拟合的措施来缓解过拟合。</p>
-<h2 id="0x03-评估方法"><a href="#0x03-评估方法" class="headerlink" title="0x03 评估方法"></a>0x03 评估方法</h2><p>为了对学习器的泛化误差进行评估，需要使用一个测试集来测试学习器对新样本的判别能力，然后以测试集上的测试误差作为泛化误差的近似。</p>
-<p>测试集应该尽量与训练集互斥，即测试样本尽量不在训练集中出现、未在训练集中使用过。</p>
-<p>下来介绍几种常用的评估方法：</p>
-<h3 id="留出法"><a href="#留出法" class="headerlink" title="留出法"></a>留出法</h3><p>留出法是直接将数据集D划分为两个互斥的几何，其中一个集合作为训练集S，另一个作为测试集T。</p>
-<p>在训练集S中训练出模型后，用测试集T来评估其测试误差，作为对泛化误差的估计。</p>
-<p>训练/测试集要尽可能的保证数据分布的一致性，避免因数据划分过程引入额外的偏差而对最终结果产生影响。具体做法是尽可能保留类别比例，最好使用分层采样的方法。</p>
-<h3 id="交叉验证法"><a href="#交叉验证法" class="headerlink" title="交叉验证法"></a>交叉验证法</h3><p>交叉验证法先将数据集D划分为k个大小相似的互斥子集，每个子集尽可能的保证数据分布的一致性。<br>然后每次使用k-1个子集作为训练集，余下的一个子集作为测试集。<br>这样就可以得到k组训练/测试集，可以进行k次训练和测试，最终返回的是k个测试结果的均值。</p>
-<p>交叉验证法评估结果的稳定性和保真性在很大程度上取决于k的取值。<br>通常将交叉验证法称为“k折交叉验证”。如k取10，则称为10折交叉验证。</p>
-<h3 id="留一法"><a href="#留一法" class="headerlink" title="留一法"></a>留一法</h3><p>如果数据集D中包含m个样本，若令k=m，则得到了交叉验证法的一个特例：留一法。</p>
-<p>显然，留一法不受随机样本划分方式的影响，因为留一法只有唯一一种划分方式。</p>
-<p>留一法的评估结果往往被认为比较准确。但是留一法也存在缺陷，当数据集较大时，训练m个模型的计算开销非常大。比如我们是上千万级的数据，那么就得训练上千万个模型，这是不现实的。</p>
-<h3 id="自助法"><a href="#自助法" class="headerlink" title="自助法"></a>自助法</h3><p>上述几种方法都存在一个问题，那就是由于保留了一部分样本用于测试，导致实际评估的模型所使用的训练集比D小，会引起一些误差，而自助法，可以解决这个问题。</p>
-<p>自助法以自助采样法为基础，给定包含m个样本的数据集D，对它进行采样产生数据集D’：<br>每次随机从D中挑选一个样本，再将样本放回初始数据集中，使得该样本在下次采样时仍有可能被采到。这个过程重复执行m次后，我们就得到了包含m个样本的数据集D’，这就是自助采样的结果。</p>
-<p>D中有一部分样本会在D’中多次出现，而另一部分样本不出现。可以做一个简单的估计，样本在m次采样中始终不被采到的概率是<br><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml5_01.png?raw=true" alt=""></p>
-<p>取极限得到<br><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml5_02.png?raw=true" alt=""></p>
-<p>即通过自助采样，初始数据集中约有36.8%的样本未出现在采样数据集D’中，于是我们可以将D’用作训练集，D-D’用作测试集，这样世纪评估的模型与期望评估的模型都使用了m个训练样本，而我们仍然有数据总量36.8%、未在训练集中出现的样本用于测试。这样的测试结果，也被称为“包外估计”。</p>
-<p>自助法在数据集较小、难以有效划分训练/测试集时很有用；此外，自助法能从初始数据集中产生多个不同的训练集，这对集成学习等方法有很大的好处。</p>
-<p>自助法的缺陷是：自助法产生的数据集改变了初始数据集的分布，这会引入估计误差。</p>
-<p>所以在初始数据集够用的情况下，留出法和交叉验证法更常用。</p>
-<h2 id="0x04-调参与最终模型"><a href="#0x04-调参与最终模型" class="headerlink" title="0x04 调参与最终模型"></a>0x04 调参与最终模型</h2><p>大多数学习算法都有参数需要设定，参数配置不同，学得模型的性能往往有显著差别。因此，在进行模型评估与选择时，除了要对适用学习算法进行选择，还需要对算法参数进行设定，这就是通常所说的“参数调节”。</p>
-<p>给定包含m个样本的数据集D，在模型评估与选择过程中由于需要留出一部分数据进行评估测试，事实上我们只使用了一部分数据训练模型。因此，在模型选择完成后，学习算法和参数配置已选定，我们要用数据集D重新训练模型，使用所有的m个样本。这时产生的模型才是最终模型。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2549,7 +2559,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
