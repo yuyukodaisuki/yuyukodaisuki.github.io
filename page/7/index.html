@@ -258,6 +258,271 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/sql注入漏洞复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/01/27/sql注入漏洞复现/" itemprop="url">
+                  sql注入漏洞复现
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T19:16:37+08:00">
+                2018-01-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/01/27/sql注入漏洞复现/" class="leancloud_visitors" data-flag-title="sql注入漏洞复现">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-sql注入"><a href="#0x00-sql注入" class="headerlink" title="0x00 sql注入"></a>0x00 sql注入</h2><p>SQL注入是用户从正常的www访问通过全局变量POST和GET提交一些sql语句对数据库的数据进行操作。  </p>
+<h2 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a>0x01 环境搭建</h2><p>安装MariaDB、PHP、Apache环境:  </p>
+<p>安装MariaDB：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y mysql mysql-server</span><br></pre></td></tr></table></figure></p>
+<p>安装apache：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y httpd</span><br></pre></td></tr></table></figure></p>
+<p>安装php：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y php</span><br></pre></td></tr></table></figure></p>
+<p>安装php的一些组件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y php-gd libjpeg* php-imap php-ldap php-odbc php-pear php-mysqlnd</span><br></pre></td></tr></table></figure></p>
+<p>安装完成后编辑配置文件，然后重启httpd和mariadb。  </p>
+<h2 id="0x02-搭载存在SQL注入的php页面"><a href="#0x02-搭载存在SQL注入的php页面" class="headerlink" title="0x02 搭载存在SQL注入的php页面"></a>0x02 搭载存在SQL注入的php页面</h2><p>首先输入mysql -u root -p<br>然后输入密码进入数据库，创建一个test的数据库，然后在test里创建一个名为users的表单，表单中写入如下三组数据作为测试数据。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%871.png" alt=""></p>
+<p>然后在/var/www/html目录创建select.php<br>在select.php中写入一个存在SQL注入的代码段<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$servername = &quot;localhost&quot;;</span><br><span class="line">$username = &quot;root&quot;;</span><br><span class="line">$password = &quot;123456&quot;;</span><br><span class="line">$dbname = &quot;test&quot;;</span><br><span class="line"></span><br><span class="line">// 创建连接</span><br><span class="line">$conn = new mysqli($servername, $username, $password, $dbname);</span><br><span class="line">// Check connection</span><br><span class="line">if ($conn-&gt;connect_error) &#123;</span><br><span class="line">    die(&quot;连接失败: &quot; . $conn-&gt;connect_error);</span><br><span class="line">&#125;</span><br><span class="line">$id= $_GET[&apos;x&apos;];//接受get传递的参数名x的值并赋值给变量id</span><br><span class="line">$sql = &quot;select * from users where id=$id&quot;;//定义sql语句并组合变量id</span><br><span class="line">$result = $conn-&gt;query($sql);</span><br><span class="line">while($row = $result-&gt;fetch_assoc()) &#123;</span><br><span class="line">        echo &quot;Id: &quot; . $row[&quot;id&quot;]. &quot;  Name: &quot; . $row[&quot;username&quot;]. &quot;&lt;br&gt;&quot;;</span><br><span class="line">&#125; </span><br><span class="line">$conn-&gt;close();</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码的作用是读取一个输入的变量id，然后通过id查询数据库中这个id对应的username。  </p>
+<p>测试一下效果，通过读入x=1出现下面结果说明成功。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%872.png" alt=""></p>
+<h2 id="0x03-手工注入"><a href="#0x03-手工注入" class="headerlink" title="0x03 手工注入"></a>0x03 手工注入</h2><p>(1)判断是否存在SQL注入  </p>
+<p>与一个正确的式子时，结果不变。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%873.png" alt=""></p>
+<p>与一个错误的式子，结果改变，说明存在注入点。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%874.png" alt=""></p>
+<p>(2)当前数据库权限判断<br>提交and ord(mid(user(),1,1))=114如果页面正常则为root权限，下图可以看出是root权限</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%875.png" alt=""></p>
+<p>(3)判断字段数<br>提交union select * from users order by 数字填猜测的字段数，下图可见，填4可以正常显示，填5不能，所以字段数是4个。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%876.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%877.png" alt=""></p>
+<p>(4)获取数据库库名<br>获取字段数之后，我们就构造 and 1=2 union select 1,schema_name,3,4 from information_schema.schemata来查询所有数据库名  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%878.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的schemata表中的schema_name字段就存着数据库名。</p>
+<p>(5)获取数据库表名<br>获取数据库名之后，我们就构造 and 1=2 union select 1,table_name,3,4 from information_schema.tables where table_schema=0x76657374来查询test数据库下的所有表名  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%879.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的tables表中的table_name字段就存着表名，where后面的限定条件用来选择数据库，等号后面填数据库ascii编码的十六进制（如test是0x76657374）。</p>
+<p>(6)获取数据库字段名<br>获取数据库名和表名之后，我们就构造 and 1=2 union select 1,column_name,3,4 from information_schema.columns where table_name=0x7573657273 and table_schema=0x76657374来查询test数据库下users表中的所有字段名。<br><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8710.png" alt=""></p>
+<p>这里的1一直到4，就是之前找到的四个字段，然后information_schema库的columns表中的column_name字段就存着字段名，where后面的限定条件用来选择数据库和对应表，等号后面填数据库和表的ascii编码的十六进制（如test是0x76657374，users是0x7573657273）。</p>
+<p>(7)获取数据<br>已经获取了字段名和其顺序，我们知道了之前输出的位置是1，2号位的id和username，然后我们需要输出password和email到1，2号位，所以构造<br>and 1=2 union select email,password,3,4 from test.users<br>来查询test数据库下users表的email和password，获取这些数据。  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8711.png" alt=""></p>
+<h2 id="0x04-sqlmap注入"><a href="#0x04-sqlmap注入" class="headerlink" title="0x04 sqlmap注入"></a>0x04 sqlmap注入</h2><p>使用sqlmap时我们有以下几种探测方式<br>参数：–technique<br>这个参数可以指定sqlmap使用的探测技术，默认情况下会测试所有的方式。<br>支持的探测方式如下：  </p>
+<ul>
+<li>B: Boolean-based blind SQL injection（布尔型注入）</li>
+<li>E: Error-based SQL injection（报错型注入）</li>
+<li>U: UNION query SQL injection（可联合查询注入）</li>
+<li>S: Stacked queries SQL injection（可多语句查询注入）</li>
+<li>T: Time-based blind SQL injection（基于时间延迟注入）</li>
+</ul>
+<p>我们先用默认方式测试一下：  </p>
+<p>先查看有哪些数据库：<br>sqlmap -u “192.168.0.104/select.php?x=1” –dbs</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8712.png" alt=""></p>
+<p>然后查看test数据库中的所有表:<br>sqlmap -u “192.168.0.104/select.php?x=1” -D test –tables</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8713.png" alt=""></p>
+<p>然后查看users表中所有字段:<br>sqlmap -u “192.168.0.104/select.php?x=1” –D test -T users –columns</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8714.png" alt=""></p>
+<p>然后查看password字段中所有值:<br>sqlmap -u “192.168.0.104/select.php?x=1” –D test -T users -C password –dump  </p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8715.png" alt=""></p>
+<h2 id="0x05-抓包分析"><a href="#0x05-抓包分析" class="headerlink" title="0x05 抓包分析"></a>0x05 抓包分析</h2><p>我们再对其中几种注入方式进行抓包分析：  </p>
+<ul>
+<li><p>sqlmap Union注入  </p>
+<p>  可联合查询注入，通过UNION查询获取到所有想要的数据。</p>
+<p>  使用场景：请求返回后能输出SQL执行后查询到的所有内容。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1” -D test –tables –technique=U</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8716.png" alt=""></p>
+<p>从wireshrak抓包可以看到，只通过http请求从返回的信息中获取数据。  </p>
+<ul>
+<li><p>sqlmap Boolean Based注入</p>
+<p>  布尔型注入，可以根据返回页面判断条件真假的注入。</p>
+<p>  使用场景：我们无法根据应用程序的返回页面得到我们需要的数据库信息。但是可以通过构造逻辑判断（比较大小）来得到我们需要的信息。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1”–dbs –technique=B</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8717.png" alt=""></p>
+<p>从wireshark抓包我们可以看到，sqlmap一直在构造逻辑，然后通过反回的Error（500）或者ok（200）来得到信息。  </p>
+<ul>
+<li><p>sqlmap Time Based注入</p>
+<p>  基于时间的盲注，即不能根据页面返回内容判断任何信息，用条件语句查看时间延迟语句是否执行（即页面返回时间是否增加）来判断。</p>
+<p>  应用场景 ： 页面不会返回错误信息，不会输出UNION注入所查出来的泄露的信息。类似搜索这类请求，boolean注入也无能为力，因为搜索返回空也属于正常的，这时就得采用time-based的注入了，即判断请求响应的时间，但该类型注入获取信息的速度非常慢。  </p>
+<p>  sqlmap -u “192.168.43.63/select.php?x=1” –dbs –technique=T –flush-session</p>
+<p>  因为之前已经抓取到了数据库，为了防止结果影响，在这里加入–flush-session参数来清空之前的session，重新测试该目标。</p>
+</li>
+</ul>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_injection/%E5%9B%BE%E7%89%8718.png" alt=""></p>
+<p>从wireshark中可以看出，sqlmap在构造sleep函数，不通过返回来判断结果，而是通过返回的时间是否在预期内来判断是否存在注入点。  </p>
+<h2 id="0x08-危害"><a href="#0x08-危害" class="headerlink" title="0x08 危害"></a>0x08 危害</h2><ul>
+<li>入侵者可以通过网页来提交mysql语句对公司数据库敏感数据进行读取，配合python脚本可以获取整个数据库的数据。</li>
+<li>入侵者可以对公司数据库数据进行篡改，造成巨大损失。</li>
+<li>入侵者可以私自添加系统账号或是数据库使用者账号，拿到webshell，然后进而控制整个web服务器。</li>
+</ul>
+<h2 id="0x09-应对方案"><a href="#0x09-应对方案" class="headerlink" title="0x09 应对方案"></a>0x09 应对方案</h2><ul>
+<li><p>1.对输入参数进行验证</p>
+</li>
+<li><p>2.特殊字符过滤</p>
+</li>
+<li><p>3.使用参数化语句，不要拼接sql</p>
+</li>
+<li><p>4.编码输出</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/openssl心脏出血漏洞/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2198,191 +2463,6 @@ main()
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/09/天体距离测量/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/11/09/天体距离测量/" itemprop="url">
-                  天体距离测量
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-09T22:47:05+08:00">
-                2017-11-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/天文学/" itemprop="url" rel="index">
-                    <span itemprop="name">天文学</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/11/09/天体距离测量/" class="leancloud_visitors" data-flag-title="天体距离测量">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>我们经常在新闻里听说：距离地球XX光年发生超新星爆炸，距离地球XX光年发现类地行星。且不管新闻真假，真空中电磁波速度是c，要真的用雷达测量几十光年几百光年的距离是不可能实现的，那我们看到这些报道的时候有没有曾怀疑过这些距离是怎么测算的呢？  </p>
-<h2 id="0x01-天文学距离单位介绍"><a href="#0x01-天文学距离单位介绍" class="headerlink" title="0x01 天文学距离单位介绍"></a>0x01 天文学距离单位介绍</h2><p>谈到距离，肯定离不开距离单位，我们平时用到的距离单位放在天体的层面运算的话实在是令人头疼的事情，所以我们经常使用天文单位、光年、秒差距这些单位。  </p>
-<ul>
-<li>天文单位（AU）：即太阳和地球之间的平均距离，约1.5亿公里。</li>
-<li>光年（ly）：光在宇宙真空中沿直线传播了一儒略年（365.25天）时间的距离，约94607亿千米.</li>
-<li>秒差距（pc）：以地球公转轨道的平均半径（一个天文单位）为底边所对应的三角形内角称为周年视差。当这个角的大小为1角秒时，这个三角形的一条边的长度（地球到这个恒星的距离）就称为1秒差距。约为3.26光年。</li>
-</ul>
-<p>前两个单位我们经常见到，第三个很多不了解的人看了上面的定义也很迷糊，简单的说，1秒差距是周年视差为1”时天体的距离。</p>
-<h2 id="0x02-周年视差"><a href="#0x02-周年视差" class="headerlink" title="0x02 周年视差"></a>0x02 周年视差</h2><p>而秒差距中所说的周年视差又是什么？在说周年视差的概念之前我们先来看看视差是什么。<br>视差就是从有一定距离的两个点上观察同一个目标所产生的方向差异。从目标看两个点之间的夹角，叫做这两个点的视差角，两点之间的距离称作基线。只要知道视差角度和基线长度，就可以计算出目标和观测者之间的距离。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/01.jpg" alt="">  </p>
-<p>就像当你伸出一个手指放在眼前，先闭上右眼，用左眼看它；再闭上左眼，用右眼看它，会发现手指相对远方的物体的位置有了变化，这就是从不同角度去看同一点的视差。<br>而周年视差则是地球绕太阳周年运动的直径作为这个“左右眼”的距离，看天体所产生的视差。<br>即当恒星与太阳的连线垂直地球轨道半径时，恒星对日地平均距离d所张的角ρ叫恒星的周年视差。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/02.jpg" alt="">  </p>
-<h2 id="0x03-天体距离的计算"><a href="#0x03-天体距离的计算" class="headerlink" title="0x03 天体距离的计算"></a>0x03 天体距离的计算</h2><p>介绍了上面的这些定义，我们来看看天体距离的计算<br>当ρ为被测天体相对地球轨道半长径的夹角，a为地球公转轨道半长轴，d为天体距离时，距离的计算是：<br><img src="http://oo3iot5oz.bkt.clouddn.com/03.png" alt=""></p>
-<p>在这里角度极小情况下sin（ρ）近似为ρ，a为一个天文单位，所以最终距离为周年视差（以秒为单位时）的倒数倍的秒差距。<br>比如我们的比邻星周年视差为0.76”，则计算距离时：<br>0.76的倒数为1.32，所以1.32倍的秒差距（3.26光年）为4.3光年。<br>而建立空间卫星能提升观测距离的真正原因就是因为地面上的望远镜受到大气层影响太大，角分辨率一般不到0.01”，而2013年发射的盖亚空间卫星的角分辨率可以达到0.00001”，大大的增加了观测距离。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/04.jpg" alt="盖亚卫星">  </p>
-<h2 id="0x04-宇宙距离阶梯"><a href="#0x04-宇宙距离阶梯" class="headerlink" title="0x04 宇宙距离阶梯"></a>0x04 宇宙距离阶梯</h2><p>虽然通过之前的办法可以观测到很远的地方，但是宇宙的广袤远远超出我们的想像，再远的地方怎么办呢？对于更远的地方，人类就有了其他的观测方案。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/05.png" alt="宇宙距离阶梯">  </p>
-<p>在一系列的方法之下，哈勃望远镜眼中的宇宙深处，我们能够观察的宇宙空间直径大约是930亿光年，这个数字是这样得出的：那些从138亿光年外发出的光线，产生这些光线的古老天体，由于宇宙的膨胀，今天它们和我们之间的距离已经达到了大约465亿光年左右。这是我们能观测到的极限半径，乘以二则是我们能够观察的宇宙空间直径，约930亿光年。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2432,7 +2512,7 @@ main()
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">83</span>
+                <span class="site-state-item-count">84</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
