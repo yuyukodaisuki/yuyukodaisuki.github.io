@@ -258,6 +258,236 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/24/使用qshell批量下载七牛云文件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/10/24/使用qshell批量下载七牛云文件/" itemprop="url">
+                  使用qshell批量下载七牛云文件
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-24T15:22:51+08:00">
+                2018-10-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/搭建博客/" itemprop="url" rel="index">
+                    <span itemprop="name">搭建博客</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/10/24/使用qshell批量下载七牛云文件/" class="leancloud_visitors" data-flag-title="使用qshell批量下载七牛云文件">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>说起七牛云，国内很多人都因为它提供的免费存储和每日的10g免费流量，将它当作图床使用，我在建立博客的第一年里也是使用七牛云做图床的。</p>
+<p>不过昨天忽然收到一条七牛云的域名回收通知邮件，告诉我的七牛云域名将在7个工作日后被回收。登陆进账户后发现的确是这样的，而且之后的测试域名也只提供30天试用，无法再当作图床。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/qshell_download/qshell01.png?raw=true" alt=""></p>
+<p>准备将所有资源都迁移出来时，发现云存储的管理界面并不存在批量下载的功能，这个时候总不能一个一个下载吧？所以在经过几分钟的寻找之后，发现七牛云提供的管理工具qshell拥有批量下载的功能，所以就写个博客把如何通过qshell批量下载文件的方法记录下来，提供给有同样需求的朋友们参考。</p>
+<h2 id="0x01-下载并配置qshell"><a href="#0x01-下载并配置qshell" class="headerlink" title="0x01 下载并配置qshell"></a>0x01 下载并配置qshell</h2><p>七牛云的开发者中心提供qshell的下载地址： <a href="https://developer.qiniu.com/kodo/tools/1302/qshell" target="_blank" rel="noopener">https://developer.qiniu.com/kodo/tools/1302/qshell</a></p>
+<p>我们只需要下载自己机器对应的版本就可以了。</p>
+<p>接下来我们需要将qshell与我们七牛云的账号绑定，官方给出的命令是account，我们在qshell的路径打开command并输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qshell account &lt;Your AccessKey&gt; &lt;Your SecretKey&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这个AccessKey和SecretKey在我们账号的个人中心-&gt;密钥管理中可以找到。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/qshell_download/qshell02.png?raw=true" alt=""></p>
+<p>account文档: <a href="https://github.com/qiniu/qshell/blob/master/docs/account.md" target="_blank" rel="noopener">https://github.com/qiniu/qshell/blob/master/docs/account.md</a></p>
+<h2 id="0x02-配置qdownload参数"><a href="#0x02-配置qdownload参数" class="headerlink" title="0x02 配置qdownload参数"></a>0x02 配置qdownload参数</h2><p>qdownload是qshell中用来将七牛云空间数据同步到本地的，它的官方文档： <a href="https://github.com/qiniu/qshell/blob/master/docs/qdownload.md" target="_blank" rel="noopener">https://github.com/qiniu/qshell/blob/master/docs/qdownload.md</a></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/qshell_download/qshell03.png?raw=true" alt=""></p>
+<p>qdownload所用到的参数过多，我们使用test.conf文件来方便的配置这些参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;dest_dir&quot; : &quot;E:\\aaa\\backup&quot;,</span><br><span class="line">	&quot;bucket&quot; : &quot;xxxx&quot;,</span><br><span class="line">	&quot;cdn_domain&quot; : &quot;http://xxxxxxxx.bkt.clouddn.com&quot;,</span><br><span class="line">	&quot;access_key&quot; : &quot;xxxxxxxxx&quot;,</span><br><span class="line">	&quot;secret_key&quot; : &quot;xxxxxxxxx&quot;,</span><br><span class="line">	&quot;is_private&quot; : false,</span><br><span class="line">	&quot;prefix&quot; : &quot;&quot;,</span><br><span class="line">	&quot;suffix&quot; : &quot;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>各参数具体意义如下：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>描述</th>
+<th>可选参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dest_dir</td>
+<td>本地数据备份路径，为全路径</td>
+<td>N</td>
+</tr>
+<tr>
+<td>bucket</td>
+<td>空间名称</td>
+<td>N</td>
+</tr>
+<tr>
+<td>prefix</td>
+<td>只同步指定前缀的文件，默认为空</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>suffix</td>
+<td>只同步指定后缀的文件，默认为空</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>cdn_domain</td>
+<td>设置下载的CDN域名</td>
+<td>N</td>
+</tr>
+</tbody>
+</table>
+<p>其中dest_dir设置的路径参考上例中的路径格式书写即可，accesskey和secretkey我们已经在绑定时设置好了，又由于我们是拷贝所有文件，所以prefix参数和suffix参数都是空。</p>
+<p>官方文档中有提到：“该功能默认需要计费，如果希望享受10G的免费流量，请自行设置cdn_domain参数，如不设置，需支付源站流量费用，无法减免！！！”</p>
+<p>我们之前只是作为图床用自然是没有充值的，这个时候我们只需配置下cdn_domain参数，使用免费的10g流量下载一下就可以了。</p>
+<p>我们将cdn_domain这个参数设置成存储空间的那个免费域名就可以了。</p>
+<h2 id="0x03-批量下载文件"><a href="#0x03-批量下载文件" class="headerlink" title="0x03 批量下载文件"></a>0x03 批量下载文件</h2><p>配置全部完成之后，我们在qshell路径打开cmd窗口，使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qshell qdownload 10 test.conf</span><br></pre></td></tr></table></figure></p>
+<p>即可下载全部文件到配置文件中指定好的文件夹内。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/qshell_download/qshell04.png?raw=true" alt=""></p>
+<p>qdownload后面的参数10，为我们使用的并发线程数，像我这样几百个文件的，其实配置不配置影响不大，但是如果文件较多，建议使用多线程并发下载提升速度。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/14/点击劫持/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2263,205 +2493,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/机器学习-7-——多分类学习/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/26/机器学习-7-——多分类学习/" itemprop="url">
-                  机器学习(7)——多分类学习
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-26T14:59:28+08:00">
-                2018-07-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/26/机器学习-7-——多分类学习/" class="leancloud_visitors" data-flag-title="机器学习(7)——多分类学习">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>之前在逻辑回归中也提到了多分类问题，但是仅仅介绍了其中一种情况。多分类还存在一些其他的方式与问题，在这里总结一遍，用作笔记。</p>
-<p>除过那些直接可以由二分类算法推广到多分类的情况，我们就是基于一些策略利用二分类学习器来解决多分类问题。</p>
-<h2 id="0x01-一对一-One-vs-One"><a href="#0x01-一对一-One-vs-One" class="headerlink" title="0x01 一对一(One vs. One)"></a>0x01 一对一(One vs. One)</h2><p>OvO策略是将N个类别，两两配对分类，一共就产生了N(N-1)/2个二分类任务。在测试阶段，我们将新样本提交给所有的分类器，一共得到N(N-1)/2个分类结果，而最终这个新样本属于哪一类，可以通过投票产生，即这N(N-1)/2个分类结果中，预测得到最多得那个分类作为最终分类结果。</p>
-<h2 id="0x02-一对其余-One-vs-Rest"><a href="#0x02-一对其余-One-vs-Rest" class="headerlink" title="0x02 一对其余(One vs. Rest)"></a>0x02 一对其余(One vs. Rest)</h2><p>OvR策略是将N个类别，每次分别取一类作一次正例，其余类都作为反例，一共训练N个分类器。在测试阶段，我们将新样本提交给所有分类器，一共产生N个分类结果，这N个结果中置信度最高的一个就是最终结果。</p>
-<h2 id="0x03-多对多-Many-vs-Many"><a href="#0x03-多对多-Many-vs-Many" class="headerlink" title="0x03 多对多(Many vs. Many)"></a>0x03 多对多(Many vs. Many)</h2><p>MvM策略是每次将一部分类作为正类，一部分其他类作为反类。MvM的正反类构造不能随意选取，必须有特殊的设计。</p>
-<p>最常用的MvM技术是“纠错输出码”(Error Correcting Output Codes)</p>
-<p>纠错输出码是将编码的思想引入类别拆分，并尽可能在解码的过程中具有容错性。纠错输出码的工作过程：</p>
-<ul>
-<li>（1）编码：对N个类别做M次划分，每次划分将一部分类别划为正类，一部分划为反类，从而形成一个二分类训练集。这样一共产生M个训练集，可以训练出M个分类器。</li>
-<li>（2）解码：M个分类器分别对测试样本进行预测，这些预测标记组成一个编码，将这个预测编码与每个类别各自的编码进行比较，返回其中距离最小的类别作为最终预测结果。</li>
-</ul>
-<p>类别划分时使用编码矩阵表示，目前主要的编码矩阵是二元码和三元码：</p>
-<ul>
-<li>二元码： 每个类别有正类、反类两种情况。</li>
-<li>三元码： 每个类别有正类、反类、停用类三种情况。</li>
-</ul>
-<p>如图所示：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_01.png?raw=true" alt=""></p>
-<p>以二元码为例，图中使用五个分类器进行MvM分类，然后根据对不同类别的正反分类构成了黑白相间的编码矩阵。</p>
-<p>在解码时，我们将样例输入到五个分类器中，得到一个长度为5的测试样例，然后跟矩阵中c1、c2、c3、c4四个类别的编码方式比较，计算其欧氏距离，距离最小的类别c3就是最终预测结果，也就是说此样例被分类到c3。</p>
-<p>如果MvM用到的分类器越多，横轴也会越长，编码长度也就越长，这样即使有个别分类器预测错误，也不会影响最终结果。也就是说，分类器越多纠错能力越强。不过分类器越多，我们需要训练的次数也就越多，计算量就会增大，所以应当根据实际情况选择合适的分类器数量。</p>
-<h2 id="0x04-类别不平衡问题"><a href="#0x04-类别不平衡问题" class="headerlink" title="0x04 类别不平衡问题"></a>0x04 类别不平衡问题</h2><p>在通常的分类任务中，我们默认几类几类情况的发生几率差距不是特别大，但是如果某一类情况发生几率十分大，比如99.9%，另一类发生几率特别小，比如0.1%。</p>
-<p>这种情况下，我们的样本正例太多，反例太少，学习器往往会出现一些误差。</p>
-<p>此时我们需要用m+表示正例数目，m-表示反例数目，观测几率就是m+/m-，这个时候我们只需要分类器预测几率高于观测几率就应判定为正例，即</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_02.png?raw=true" alt=""></p>
-<p>但是我们的分类器是根据y/(1-y)进行决策的，为了适应它，我们只需要“再缩放”一下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_03.png?raw=true" alt=""></p>
-<h2 id="0x05-参考文档"><a href="#0x05-参考文档" class="headerlink" title="0x05 参考文档"></a>0x05 参考文档</h2><p>《机器学习》——周志华</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2511,7 +2542,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">84</span>
+                <span class="site-state-item-count">85</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

