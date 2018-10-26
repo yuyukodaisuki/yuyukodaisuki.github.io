@@ -95,26 +95,26 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 什么是https协议HTTPS（全称：Hyper Text Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。即HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。 它是一个URI scheme（抽象标识符体系），句法类同http:体系。用于安全的HTTP数据传">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/3.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/4.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/5.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/6.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/7.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/8.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/9.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/10.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/11.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/12.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/13.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/14.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/https/15.png">
-<meta property="og:updated_time" content="2017-11-25T09:27:01.979Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/11.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/12.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/13.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/14.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/15.png">
+<meta property="og:updated_time" content="2018-10-26T03:45:41.232Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="https握手详解">
 <meta name="twitter:description" content="0x00 什么是https协议HTTPS（全称：Hyper Text Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。即HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。 它是一个URI scheme（抽象标识符体系），句法类同http:体系。用于安全的HTTP数据传">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/https/1.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/1.png">
 
 
 
@@ -408,7 +408,7 @@
 <li>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</li>
 <li>http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。  </li>
 </ul>
-<h2 id="0x02-SSL协议"><a href="#0x02-SSL协议" class="headerlink" title="0x02 SSL协议"></a>0x02 SSL协议</h2><p>SSL(Secure Sockets Layer 安全套接层),及其继任者传输层安全（Transport Layer Security，TLS）是为网络通信提供安全及数据完整性的一种安全协议。TLS与SSL在传输层对网络连接进行加密。<br>所以SSL所具备的功能是：保证传输数据的保密性、完整性，并且实现通信双方的身份认证。<br>在协议栈种位置如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/1.png" alt=""><br>SSL协议是一个分层协议，共有两层组成。  </p>
+<h2 id="0x02-SSL协议"><a href="#0x02-SSL协议" class="headerlink" title="0x02 SSL协议"></a>0x02 SSL协议</h2><p>SSL(Secure Sockets Layer 安全套接层),及其继任者传输层安全（Transport Layer Security，TLS）是为网络通信提供安全及数据完整性的一种安全协议。TLS与SSL在传输层对网络连接进行加密。<br>所以SSL所具备的功能是：保证传输数据的保密性、完整性，并且实现通信双方的身份认证。<br>在协议栈种位置如下：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/1.png" alt=""><br>SSL协议是一个分层协议，共有两层组成。  </p>
 <p>高层协议包括：  </p>
 <ul>
 <li>SSL握手协议</li>
@@ -426,10 +426,10 @@
 <h2 id="0x04-wireshark抓包分析"><a href="#0x04-wireshark抓包分析" class="headerlink" title="0x04 wireshark抓包分析"></a>0x04 wireshark抓包分析</h2><p>接下来我们抓包进行分析：  </p>
 <p>1.我们打开wireshark软件，监视正在使用的网卡，然后通过浏览器访问 <a href="http://www.github.com" target="_blank" rel="noopener">www.github.com</a> 抓取完成后我们停止捕获。  </p>
 <p>2.在过滤器输入ssl，过滤ssl协议，找到本机向 github.com 的ip地址发起的client hello。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/2.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/2.png" alt="">  </p>
 <p>3.右键追踪，选择ssl流。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/3.png" alt="">  </p>
-<p>4.首先是client hello，这个包携带着客户的SSL版本号，加密套件列表，压缩算法列表，客户端随机数，sessionid = 0，传送给服务器。<br>我们开始分析，首先展开client hello的SSL，找到Handshark。可以看到client hello里面包含的各项数据。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/4.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/3.png" alt="">  </p>
+<p>4.首先是client hello，这个包携带着客户的SSL版本号，加密套件列表，压缩算法列表，客户端随机数，sessionid = 0，传送给服务器。<br>我们开始分析，首先展开client hello的SSL，找到Handshark。可以看到client hello里面包含的各项数据。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/4.png" alt=""></p>
 <p>  分别是：  </p>
 <ul>
 <li>SSL版本号:TLS 1.2</li>
@@ -437,31 +437,31 @@
 <li>sessionid = 0</li>
 <li>密码套件如下  </li>
 </ul>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/5.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/5.png" alt="">  </p>
 <ul>
-<li>server name，可以看到是 github.com。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/6.png" alt="">  </li>
+<li>server name，可以看到是 github.com。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/6.png" alt="">  </li>
 </ul>
 <p>5.然后找到server hello，这个包是服务器选择版本，确定要用的加密套件，压缩算法，计算sessionid以及随机数，发送给客户端。  </p>
-<p>同样展开SSL：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/7.png" alt=""><br>我们可以看到各项对应数据被放在server hello中，比如session ID，密码套件等。</p>
+<p>同样展开SSL：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/7.png" alt=""><br>我们可以看到各项对应数据被放在server hello中，比如session ID，密码套件等。</p>
 <p>并且我们看到，除了server hello部分，这个包还有服务器发向客户端的证书的前一部分。然后下一个包TCP segment of a reassemble PDU，是证书的中间部分。  </p>
-<p>6.然后找到Certificate，这一步是服务端将自己的证书下发给客户端，让客户端验证自己的身份，客户端验证通过后取出证书中的公钥。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/8.png" alt="">  </p>
+<p>6.然后找到Certificate，这一步是服务端将自己的证书下发给客户端，让客户端验证自己的身份，客户端验证通过后取出证书中的公钥。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/8.png" alt="">  </p>
 <p>而我们看到的包中内容呢是证书结尾部分，包括GitHub 机构旗下github.com网站的证书及其颁发机构 DigiCert 的证书。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/9.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/9.png" alt="">  </p>
 <p>7.下一部分是Server Key Exchange，用于将服务器的临时ECDH公钥传送给客户端。 </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/10.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/10.png" alt="">  </p>
 <p>8.之后是Server Hello Done，此消息由服务器发送，以指示ServerHello和相关消息的结束。<br>发送此消息后，服务器将等待客户端响应。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/11.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/11.png" alt=""></p>
 <p>9.客户端收到服务端传来的证书后，先从 CA 验证该证书的合法性，验证通过后取出证书中的服务端公钥，再生成一个随机数 Random3，再用服务端公钥非对称加密 Random3 生成 PreMaster Key。  </p>
 <p>然后我们看到下个包包含Client Key Exchange, Change Cipher Spec, Hello Request, Hello Request  </p>
 <p>10.首先是Client Key Exchange，上面客户端根据服务器传来的公钥生成了 PreMaster Key，Client Key Exchange 就是将这个 key 传给服务端。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/12.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/12.png" alt="">  </p>
 <p>11.Change Cipher Spec(Client)，<br>这一步是客户端通知服务端后面再发送的消息都会使用前面协商出来的秘钥加密了。然后客户端发送握手验证报文确保消息的完整性。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/13.png" alt=""> </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/13.png" alt=""> </p>
 <p>12.Change Cipher Spec(Server)<br>这一步是服务端收到数据后，通知客户端后面再发送的消息都会使用加密。  </p>
 <p>13.Encrypted Handshake Message，表示服务器端的SSL成功结束，发送握手验证报文确保消息的完整性。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/14.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/14.png" alt="">  </p>
 <p>14.下面开始正式交换数据。</p>
-<p>所以总的过程如下图所示：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/15.png" alt="">  </p>
+<p>所以总的过程如下图所示：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/15.png" alt="">  </p>
 <p>以上就是整个SSL握手过程，也是加密算法的典型应用之一。</p>
 
       

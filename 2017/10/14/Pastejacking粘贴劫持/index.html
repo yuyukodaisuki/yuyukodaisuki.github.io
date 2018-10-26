@@ -95,16 +95,16 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="Pastejacking粘贴劫持这是一个网站的演示，诱使用户复制无辜的命令 https://security.love/Pastejacking   在用户浏览网页，需要复制网页上内容的时候，通过js来劫持ctrl+c或者右键复制，替换剪切板的内容。配合网页内容的特殊性和对特定用户一定程度的了解，可以达到诱导他做一些事情的目的。   github地址:  https://github.com/dx">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/jacking/1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/jacking/2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/jacking/5.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/jacking/3.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/jacking/4.png">
-<meta property="og:updated_time" content="2017-10-14T07:27:14.397Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/4.png">
+<meta property="og:updated_time" content="2018-10-26T03:47:05.294Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Pastejacking粘贴劫持">
 <meta name="twitter:description" content="Pastejacking粘贴劫持这是一个网站的演示，诱使用户复制无辜的命令 https://security.love/Pastejacking   在用户浏览网页，需要复制网页上内容的时候，通过js来劫持ctrl+c或者右键复制，替换剪切板的内容。配合网页内容的特殊性和对特定用户一定程度的了解，可以达到诱导他做一些事情的目的。   github地址:  https://github.com/dx">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/jacking/1.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/1.png">
 
 
 
@@ -394,10 +394,10 @@
 <p>在用户浏览网页，需要复制网页上内容的时候，通过js来劫持ctrl+c或者右键复制，替换剪切板的内容。配合网页内容的特殊性和对特定用户一定程度的了解，可以达到诱导他做一些事情的目的。  </p>
 <p>github地址:  <a href="https://github.com/dxa4481/Pastejacking" target="_blank" rel="noopener">https://github.com/dxa4481/Pastejacking</a>    </p>
 <p>上面网站的演示中只是将剪贴板内容换成了显示“evil”这种无害命令，下来我们更改一下他的代码。 下图是他替换部分的代码。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/1.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/1.png" alt="">  </p>
 <p>在网页显示的部分我们自己改成目标可能会复制的东西，尤其对方可能会复制下来在cmd或者terminal中运行的东西，但是网页这部分看起来肯定是正常无害的。这里是稍作更改的用户能看到的界面，然后用户在这里复制。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/2.png" alt=""><br>然后在源码的这里，把括号中的内容换成调用一个有威胁的程序或者某些恶作剧命令，这里演示一下。<br><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/5.png" alt=""><br>这里改成关机的指令或者画图的指令，然后在页面随便复制什么东西，都会被替换成这个指令，到cmd中看看效果，因为有/n的存在，粘贴时直接就被执行了。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/3.png" alt=""><br><img src="http://oo3iot5oz.bkt.clouddn.com/jacking/4.png" alt=""><br>如果将这里的命令设置成一些危险的指令，后果十分严重，所以在访问看起来并不安全的网站的时候，要仔细检查剪贴板有没有被替换。最好的办法是用firefox中NoScript等工具在禁用js的情况下访问这类网站。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/2.png" alt=""><br>然后在源码的这里，把括号中的内容换成调用一个有威胁的程序或者某些恶作剧命令，这里演示一下。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/5.png" alt=""><br>这里改成关机的指令或者画图的指令，然后在页面随便复制什么东西，都会被替换成这个指令，到cmd中看看效果，因为有/n的存在，粘贴时直接就被执行了。  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/3.png" alt=""><br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/jacking/4.png" alt=""><br>如果将这里的命令设置成一些危险的指令，后果十分严重，所以在访问看起来并不安全的网站的时候，要仔细检查剪贴板有没有被替换。最好的办法是用firefox中NoScript等工具在禁用js的情况下访问这类网站。</p>
 
       
     </div>

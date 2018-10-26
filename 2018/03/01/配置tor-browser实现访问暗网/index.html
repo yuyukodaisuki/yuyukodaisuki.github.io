@@ -95,20 +95,20 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="写这一篇博客犹豫了很久，最终还是决定发表出来，毕竟技术本无对错，但我们要明辨是非。   0x00 暗网暗网是指那些存储在网络数据库里、但不能通过超链接访问而需要通过动态网页技术访问的资源集合，不属于那些可以被标准搜索引擎索引的表面网络。   但当今的爬虫并非完全爬行不到Hidden Web后台数据库内，一些主要的搜索引擎已经覆盖Hidden Web大约三分之一的内容。然而，在覆盖率上当前搜索引擎存">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor02.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor03.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor04.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor05.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor06.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor07.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor08.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor09.png">
-<meta property="og:updated_time" content="2018-02-28T17:18:39.259Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor03.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor04.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor05.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor06.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor07.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor08.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor09.png">
+<meta property="og:updated_time" content="2018-10-26T03:43:56.192Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="配置tor browser实现访问暗网">
 <meta name="twitter:description" content="写这一篇博客犹豫了很久，最终还是决定发表出来，毕竟技术本无对错，但我们要明辨是非。   0x00 暗网暗网是指那些存储在网络数据库里、但不能通过超链接访问而需要通过动态网页技术访问的资源集合，不属于那些可以被标准搜索引擎索引的表面网络。   但当今的爬虫并非完全爬行不到Hidden Web后台数据库内，一些主要的搜索引擎已经覆盖Hidden Web大约三分之一的内容。然而，在覆盖率上当前搜索引擎存">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/tor/tor01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor01.png">
 
 
 
@@ -409,24 +409,24 @@
 <h2 id="0x03-配置过程"><a href="#0x03-配置过程" class="headerlink" title="0x03 配置过程"></a>0x03 配置过程</h2><p>首先我们下载安装tor browser<br>下载地址： <a href="https://tor-browser.en.softonic.com/" target="_blank" rel="noopener">https://tor-browser.en.softonic.com/</a>  </p>
 <p>然后我们运行tor browser进行配置：  </p>
 <p>首先我们知道国内是无法直连的，所以我们要选择configure来配置代理。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor01.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor01.png" alt="">  </p>
 <p>然后在你的网络提供商是否对Tor网络进行了封锁或审查这里选yes。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor02.png" alt=""></p>
 <p>选了yes就要配置网桥，这里我们可以使用他提供的一些集成网桥，但是速度比较慢，自己去试试速度然后选个合适的。  </p>
 <p>但是我们想要更快更稳定的话，我们可以访问访问 <a href="https://bridges.torproject.org/bridges?transport=obfs4" target="_blank" rel="noopener">https://bridges.torproject.org/bridges?transport=obfs4</a> 获取obfs4网桥 。 </p>
 <p>然后在<a href="https://link.jianshu.com/?t=https://atlas.torproject.org/#search/网址后面加入刚才获取网桥中间的四十位字母数字来测试连接速度。" target="_blank" rel="noopener">https://link.jianshu.com/?t=https://atlas.torproject.org/#search/网址后面加入刚才获取网桥中间的四十位字母数字来测试连接速度。</a>  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor03.png" alt=""></p>
 <p>速度足够快的我们保留下来几条，选自定义网桥，然后逐条填在里面。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor04.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor04.png" alt=""></p>
 <p>其实这里配置已经可以使用了，但是在下一步如果我们有vpn的话，就直接选择使用本地代理，然后如果使用的是ss的话，那就直接选sock5协议，地址填127.0.0.1，端口填1080即可。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor05.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor06.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor05.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor06.png" alt=""></p>
 <p>在这里为什么我们还要选择vpn呢？因为GFW的原因，很多的网桥都失效了，我们很难找到能用的网桥，就算找到了，速度也非常慢，所以如果有vpn的话，我们就可以直接绕过ISP对Tor的审查，并且速度也会非常快。  </p>
 <p>接着我们选择connect，稍微等几十秒配置成功，就可以使用了。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor07.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor08.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor07.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor08.png" alt=""></p>
 <p>然后我们需要找一些暗网的导航网站，如<a href="https://hiddenwikitor.com/" target="_blank" rel="noopener">https://hiddenwikitor.com/</a><br>然后去寻找我们需要的网站。但是千万谨记隐藏自己的真实身份。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/tor/tor09.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/tor/tor09.png" alt=""></p>
 <h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>暗网因为其匿名性，缺乏监管，变成了一个鱼龙混杂的地方，它是互联网真正的暗面。我们小小的满足了一下好奇心，然后就应该明白我们并不属于这里。</p>
 
       

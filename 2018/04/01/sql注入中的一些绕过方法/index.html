@@ -95,18 +95,18 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 sql注入之前搭建sql注入环境测试过最基本的sql注入，但是实际情况中，会有很多的过滤来限制注入，这里记录读了《代码审计》和网络上搜集学习之后后掌握的几种常见的绕过方法，当作笔记。 0x01 大小写绕过mysql语句是不区分大小写的，如果过滤时没考虑到这点，就可以通过大小写混用来绕过。如：1UNion SeLecT 0x02 宽字节注入程序在进行操作之前一般会进行一些编码处理，但是做编">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg02.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg03.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg04.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg05.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg06.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg07.png">
-<meta property="og:updated_time" content="2018-04-26T15:16:32.450Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg03.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg04.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg05.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg06.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg07.png">
+<meta property="og:updated_time" content="2018-10-26T03:41:28.047Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sql注入中的一些绕过方法">
 <meta name="twitter:description" content="0x00 sql注入之前搭建sql注入环境测试过最基本的sql注入，但是实际情况中，会有很多的过滤来限制注入，这里记录读了《代码审计》和网络上搜集学习之后后掌握的几种常见的绕过方法，当作笔记。 0x01 大小写绕过mysql语句是不区分大小写的，如果过滤时没考虑到这点，就可以通过大小写混用来绕过。如：1UNion SeLecT 0x02 宽字节注入程序在进行操作之前一般会进行一些编码处理，但是做编">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg01.png">
 
 
 
@@ -397,15 +397,15 @@
 <h2 id="0x02-宽字节注入"><a href="#0x02-宽字节注入" class="headerlink" title="0x02 宽字节注入"></a>0x02 宽字节注入</h2><p>程序在进行操作之前一般会进行一些编码处理，但是做编码处理的函数是有问题的，比如在使用php连接mysql时，如果设置“set character_set_client=gbk” 时，就会导致宽字节注入问题。<br>如提交1’ and 1=1’时，对引号的过滤会把提交的语句变为1\’ and 1=1#’,这个时候，我们就没有把前面的引号闭合，无法使语句判别为真。<br>这个时候，我们如果提交1%df’ and ‘ 1=1’，由于反斜杠是%5c，%df%5c在编码处理时组成了“運”，然后我们的语句就变成了1運’ and 1=1#’成功闭合了前面的引号。  </p>
 <p>我们实战测试一下，在test.php中写入如下代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">header(&quot;content-type:text/html;charset=gb2312&quot;);</span><br><span class="line">$servername = &quot;localhost&quot;;</span><br><span class="line">$username = &quot;root&quot;;</span><br><span class="line">$password = &quot;123456&quot;;</span><br><span class="line">$dbname = &quot;test&quot;;</span><br><span class="line">// 创建连接</span><br><span class="line">$conn = mysqli_connect($servername, $username, $password, $dbname);</span><br><span class="line">// Check connection</span><br><span class="line">if (!$conn) &#123;</span><br><span class="line">    die(&quot;Connect error: &quot; . mysqli_connect_error());</span><br><span class="line">&#125;</span><br><span class="line">$uid = addslashes($_GET[&apos;id&apos;]);</span><br><span class="line">$sql = &quot;SELECT * FROM user where id=$uid&quot;;</span><br><span class="line">mysqli_query($conn, &quot;set names gbk&quot;);</span><br><span class="line">$result = mysqli_query($conn, $sql);</span><br><span class="line">print_r(&apos;当前语句: &apos; .$sql. &apos;&lt;br /&gt;&apos;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
 <p>然后传入参数进行测试</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg01.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg02.png" alt=""></p>
 <h2 id="0x03-正则替换绕过"><a href="#0x03-正则替换绕过" class="headerlink" title="0x03 正则替换绕过"></a>0x03 正则替换绕过</h2><p>有的防注入机制会正则匹配危险关键字并用空白替换，这个时候可以写出类似：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UNunionION SELselectECT</span><br></pre></td></tr></table></figure></p>
 <p>之类的用法，这个时候正则匹配一遍将union删除，剩下的部分又变成了UNION，就成功的绕过了。</p>
 <h2 id="0x04-二次urldecode注入"><a href="#0x04-二次urldecode注入" class="headerlink" title="0x04 二次urldecode注入"></a>0x04 二次urldecode注入</h2><p>web程序进行参数过滤时，很多采用反斜杠来转义单引号等危险参数的方法。如果某处使用了urldecode或者rawurldecode函数，会导致二次解码生成单引号。<br>如我们提交的是/test.php?id=1%2527，因为没有提交单引号没有触发过滤，%25的解码结果是%。则第一次解码之后是/test.php?id=1%27，如果程序里面再次使用urldecode解码id参数的话，就会生成/test.php?id=1’，单引号成功闭合。  </p>
 <p>我们们实战测试一下，在test.php中写入如下代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a=addslashes($_GET[&apos;p&apos;]);</span><br><span class="line">$b=urldecode($a);</span><br><span class="line">echo &apos;$a=&apos;.$a;</span><br><span class="line">echo &apos;&lt;br /&gt;&apos;</span><br><span class="line">echo &apos;$b=&apos;.$b;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
 <p>然后传入参数进行测试，结果如下:</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg03.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg04.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg04.png" alt=""></p>
 <h2 id="0x05-十六进制绕过"><a href="#0x05-十六进制绕过" class="headerlink" title="0x05 十六进制绕过"></a>0x05 十六进制绕过</h2><p>对于某些进行敏感词汇检查的机制，可以通过填ascii编码的十六进制来绕过，如：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and 1=2 union select 1,table_name,3,4 from information_schema.tables where table_schema=0x76657374</span><br></pre></td></tr></table></figure>
 <p>其中0x76657374是test的十六进制表示</p>
@@ -420,12 +420,12 @@
 <p>如果要实现上面所说功能本该这么构造：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select ascii(mid(user(),1,1))&lt;150</span><br></pre></td></tr></table></figure></p>
 <p>但是如果没了逗号，我们就得用from x for y的形式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select mid(user() from 1 for 1)&lt;150</span><br></pre></td></tr></table></figure></p>
 <p>再如有的时候，我们需要用limit函数来限制返回的数据数量，如我们要查询，从第三行开始的一行数据，limit之后的第一个数字代表行数（从0开始算）后面数字代表从这行要返回的行数<br>数据表如下：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg05.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg05.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from user limit 2,1;</span><br></pre></td></tr></table></figure>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg06.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg06.png" alt=""></p>
 <p>如果逗号无法使用，我们可以用offset，offset和limit同时用用法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT column1, column2, columnN </span><br><span class="line">FROM table_name</span><br><span class="line">LIMIT [no of rows] OFFSET [row num]</span><br></pre></td></tr></table></figure></p>
 <p>所以这里我们可以：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from user limit 1 offset 2</span><br></pre></td></tr></table></figure></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_rg/sql_rg07.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg07.png" alt=""></p>
 <h2 id="0x09-比较符号绕过"><a href="#0x09-比较符号绕过" class="headerlink" title="0x09 比较符号绕过"></a>0x09 比较符号绕过</h2><p>在盲注的时候，很多时候要用到比较符号大于(&lt;)和小于(&gt;)来进行二分查找，如果目标对比较符号进行了过滤，我们就需要通过greatest和least等函数进行绕过，这两个函数用法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GREATEST(value1, value2, ...);</span><br><span class="line">LEAST(value1,value2,...);</span><br></pre></td></tr></table></figure></p>
 <p>greatest函数会返回这些值里的最大值，least函数会返回最小值。如果我们要用刚才的mid方法比较，就需要这样构造：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">greatest(ascii(mid(user(),0,1)),150)</span><br><span class="line">least(ascii(mid(user(),0,1)),150)</span><br></pre></td></tr></table></figure></p>
 <h2 id="0x10-总结"><a href="#0x10-总结" class="headerlink" title="0x10 总结"></a>0x10 总结</h2><p>sql注入中常年作为owasp top 10中排名第一的漏洞，其危害不可小觑，有危害就有限制，有限制就有绕过，在这里比拼的是安全人员对漏洞原理的理解。如果作为防御方，更要有扎实的基本功，才能尽力避免这些问题。</p>

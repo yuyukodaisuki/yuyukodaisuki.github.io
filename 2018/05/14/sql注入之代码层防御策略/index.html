@@ -95,12 +95,12 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 前言之前写sql注入的博客都是站在攻击者角度上的，这次站在防御方的角度上，总结一下代码层防御sql注入的一些方法。 0x01 代码层防御在易受sql注入攻击的应用程序开发过程中，如果我们在代码里面进行一些合理的过滤和安全措施，就可以防范绝大多数的sql注入。 0x02 参数化语句引发sql注入最根本的原因是将sql语句创建成字符串发送给数据库，即动态sql。 而现在大多数程序在访问数据库">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_defense/SQL%20defense01.png">
-<meta property="og:updated_time" content="2018-05-14T14:47:59.186Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_defense/SQL%20defense01.png">
+<meta property="og:updated_time" content="2018-10-26T03:31:04.457Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sql注入之代码层防御策略">
 <meta name="twitter:description" content="0x00 前言之前写sql注入的博客都是站在攻击者角度上的，这次站在防御方的角度上，总结一下代码层防御sql注入的一些方法。 0x01 代码层防御在易受sql注入攻击的应用程序开发过程中，如果我们在代码里面进行一些合理的过滤和安全措施，就可以防范绝大多数的sql注入。 0x02 参数化语句引发sql注入最根本的原因是将sql语句创建成字符串发送给数据库，即动态sql。 而现在大多数程序在访问数据库">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/sql_defense/SQL%20defense01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_defense/SQL%20defense01.png">
 
 
 
@@ -411,7 +411,7 @@
 <p>但是为什么还要提他呢？因为在很多情况，如果我们过滤十分严格，输入一些敏感参数的人并不一定都是攻击者，这个时候每条语句都拿到后端判断然后跳转十分浪费时间，所以在前端给出一定的限制和提示，就能提升正常用户的体验。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input type=&quot;text&quot; required=&quot;required&quot; patter=&quot;^[a-zA-Z\d]*&quot; ...&gt;</span><br></pre></td></tr></table></figure></p>
 <h2 id="0x07-编码输出"><a href="#0x07-编码输出" class="headerlink" title="0x07 编码输出"></a>0x07 编码输出</h2><p>我们都清楚，白名单过滤要比黑名单过滤安全的多，在能使用白名单的时候尽量使用白名单，但是很多时候业务需求不能让我们使用白名单，这个时候我们就要使用黑名单结合编码的方式，提升安全性。</p>
 <p>我对其他几个语言不是非常熟悉，这里就只介绍一下php的编码函数。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/sql_defense/SQL%20defense01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_defense/SQL%20defense01.png" alt=""></p>
 <p>这些编码函数，能够将允许范围内的违法字符编码后再存入数据库，能一定程度的防止我们构造语句逃逸，提升了安全性。</p>
 <p>但是这些函数没有用对，仍然会出现一些问题，接下来我分享一下上图中我所了解的一些编码函数会存在的安全问题：</p>
 <ul>

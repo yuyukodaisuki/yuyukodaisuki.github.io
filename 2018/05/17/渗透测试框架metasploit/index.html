@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="笔记,渗透测试,metasploit," />
+  <meta name="keywords" content="渗透测试,笔记,metasploit," />
 
 
 
@@ -88,30 +88,30 @@
 
 
 <meta name="description" content="0x00 简介Metasploit是一款开源安全漏洞检测工具，可以用于渗透测试不同的系统和框架，附带数百个已知的软件漏洞，并保持频繁更新。 Metasploit框架是用Ruby语言开发的，包括Perl写的脚本，C ，汇编，和Python各种组件，并且可以由用户自行编写代码加入Metasploit的数据库。 0x01 术语在讲解Metasploit之前，先对我们即将用到的术语做一个解释。 Explo">
-<meta name="keywords" content="笔记,渗透测试,metasploit">
+<meta name="keywords" content="渗透测试,笔记,metasploit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="渗透测试框架metasploit">
 <meta property="og:url" content="http://yoursite.com/2018/05/17/渗透测试框架metasploit/index.html">
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 简介Metasploit是一款开源安全漏洞检测工具，可以用于渗透测试不同的系统和框架，附带数百个已知的软件漏洞，并保持频繁更新。 Metasploit框架是用Ruby语言开发的，包括Perl写的脚本，C ，汇编，和Python各种组件，并且可以由用户自行编写代码加入Metasploit的数据库。 0x01 术语在讲解Metasploit之前，先对我们即将用到的术语做一个解释。 Explo">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit02.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit03.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit04.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit05.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit06.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit07.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit08.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit09.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit10.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit11.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit12.png">
-<meta property="og:updated_time" content="2018-05-17T12:27:37.842Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit03.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit04.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit05.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit06.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit07.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit08.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit09.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit11.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit12.png">
+<meta property="og:updated_time" content="2018-10-26T03:30:57.985Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="渗透测试框架metasploit">
 <meta name="twitter:description" content="0x00 简介Metasploit是一款开源安全漏洞检测工具，可以用于渗透测试不同的系统和框架，附带数百个已知的软件漏洞，并保持频繁更新。 Metasploit框架是用Ruby语言开发的，包括Perl写的脚本，C ，汇编，和Python各种组件，并且可以由用户自行编写代码加入Metasploit的数据库。 0x01 术语在讲解Metasploit之前，先对我们即将用到的术语做一个解释。 Explo">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit01.png">
 
 
 
@@ -410,50 +410,50 @@
 <p>Msfweb（web界面）是一个Gui形界面，主要优点是为了让渗透测试操作变得更加容易，从命令行启动之后会创建一个web server,ip地址是127.0.0.1,端口是55553。</p>
 <p>我使用Msfconsole来演示。</p>
 <h2 id="0x03-模块"><a href="#0x03-模块" class="headerlink" title="0x03 模块"></a>0x03 模块</h2><p>我们在安装目录输入./Msfupdate更新一下metasploit</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit01.png" alt=""></p>
 <p>然后使用service postgresql start打开漏洞数据库服务</p>
 <p>然后使用./Msfconsole命令进入控制台交互界面，然后开始模块的使用。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit02.png" alt=""></p>
 <h4 id="show模块"><a href="#show模块" class="headerlink" title="show模块"></a>show模块</h4><p>show模块可以用来显示可用的exploits、payloads、encoders等等</p>
 <p>我们可以直接加参数来只显示某一类</p>
 <p>如show exploits</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit03.png" alt=""></p>
 <p>显示出来的有exp的名字、时间、攻击模块等级和描述。</p>
 <p>等级是我们选取时优先关注的，一般选择excellent和great两种等级，因为稳定且效果明显，其次查看后面的描述是否和我们攻击的服务有关，如果找到合适的模块，我们就可以记住名字之后使用。</p>
 <h4 id="search模块"><a href="#search模块" class="headerlink" title="search模块"></a>search模块</h4><p>我们之前使用show的时候出现了非常多的条目，但在应对实际情况中，肯定不能自己肉眼去寻找需要的exp，而search模块可以帮助我们快速筛选需要的exp。</p>
 <p>我们可以查看search -h的内容帮助我们学会这个模块的用法。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit04.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit04.png" alt=""></p>
 <p>如search cve:2017 type:exploit</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit05.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit05.png" alt=""></p>
 <p>然后我们再根据攻击模块等级和描述进一步人工筛选，就快了很多。</p>
 <h4 id="info模块"><a href="#info模块" class="headerlink" title="info模块"></a>info模块</h4><p>上面列举出来的模块我们只能看到大概信息，如果我们想要查看详细信息和利用方式等等，就得使用info模块来查看</p>
 <p>使用方法是info+模块名</p>
 <p>如struct-s2-052漏洞即cve:2017-9805：</p>
 <p>info exploit/multi/http/struts2_rest_xstream</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit06.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit06.png" alt=""></p>
 <h4 id="use模块"><a href="#use模块" class="headerlink" title="use模块"></a>use模块</h4><p>前面我们筛选出来合适的exp，下来就需要用use模块来使用这个exp</p>
 <p>使用方式是use+模块名</p>
 <p>如struct-s2-052漏洞</p>
 <p>use exploit/multi/http/struts2_rest_xstream</p>
 <h4 id="set模块"><a href="#set模块" class="headerlink" title="set模块"></a>set模块</h4><p>选好了模块下来就该攻击了，那攻击谁？怎么攻击？需要用这次攻击做什么事情？这些事情我们还没有告诉metasploit，所以我们需要用set来完成这些设置。</p>
 <p>首先我们需要一个payload完成我们要做的事情，我们通过前面的show命令，查看一下payload</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit07.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit07.png" alt=""></p>
 <p>然后再选择一个payload，用set payload PayloadName 来设置好这次攻击用到的payload</p>
 <p>这里我们用一个较稳定的反弹shell</p>
 <p>set payload windows/exec</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit08.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit08.png" alt=""></p>
 <p>接着设置攻击参数，具体有哪些攻击参数需要设置，我们可以用show options命令查看。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit09.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit09.png" alt=""></p>
 <p>然后我们根据看到的情况，结合我们要攻击的目标设置攻击参数，我这里在物理机重新搭了一遍struct-2-052漏洞的环境，可以参考之前的一篇博客进行配置： <a href="http://uuzdaisuki.com/2018/01/22/struts2-052%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">http://uuzdaisuki.com/2018/01/22/struts2-052%E6%BC%8F%E6%B4%9E/</a></p>
 <p>额外将tomcat/conf/server.xml中的这两处地方改为本机在局域网中的ip，就可以通过另一台机器访问了。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit10.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit10.png" alt=""></p>
 <p>接下来在metasploit中设置物理机的ip和端口即可</p>
 <p>set rhost 192.168.0.107</p>
 <p>set rport 12345</p>
 <p>set lhost 192.168.0.108</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit11.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit11.png" alt=""></p>
 <h4 id="run模块"><a href="#run模块" class="headerlink" title="run模块"></a>run模块</h4><p>万事俱备之后，设置好我们想执行的命令，直接输入run，即可发起攻击。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/metaspolit/metaspoit12.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/metaspoit12.png" alt=""></p>
 <h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>一款优秀的工具对渗透测试人员来说就像一把锋利的刀，他不仅能节省我们非常多的时间，也能弥补我们技术上的空白。</p>
 <p>metasploit还有非常多有趣的用法，我也是初学所以无法一一列举出来，学习新工具的过程，最需要的是耐心的读官方文档和善用-help命令，并且记好笔记。</p>
 
@@ -485,9 +485,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/笔记/" rel="tag"># 笔记</a>
-          
             <a href="/tags/渗透测试/" rel="tag"># 渗透测试</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
           
             <a href="/tags/metasploit/" rel="tag"># metasploit</a>
           

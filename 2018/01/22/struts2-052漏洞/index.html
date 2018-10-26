@@ -95,22 +95,22 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 struts2struts2是一个基于MVC设计模式的Web应用框架，它本质上相当于一个servlet，在MVC设计模式中，Struts2作为控制器(Controller)来建立模型与视图的数据交互。   0x01 struts2-052漏洞struts2-052漏洞触发点是REST插件在解析请求中的xml文件时，调用了XStreamHandler，传入的数据会被默认进行反序列化，如果当">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts3.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts4.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts5.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts6.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts7.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts8.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts9.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts10.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts11.png">
-<meta property="og:updated_time" content="2018-04-26T15:17:37.066Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts11.png">
+<meta property="og:updated_time" content="2018-10-26T03:43:45.002Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="struts2-052漏洞">
 <meta name="twitter:description" content="0x00 struts2struts2是一个基于MVC设计模式的Web应用框架，它本质上相当于一个servlet，在MVC设计模式中，Struts2作为控制器(Controller)来建立模型与视图的数据交互。   0x01 struts2-052漏洞struts2-052漏洞触发点是REST插件在解析请求中的xml文件时，调用了XStreamHandler，传入的数据会被默认进行反序列化，如果当">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts1.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts1.png">
 
 
 
@@ -403,7 +403,7 @@
 <ul>
 <li><p>在java官网下载java1.8  </p>
 </li>
-<li><p>然后添加到windows环境变量<br><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts1.png" alt="">  </p>
+<li><p>然后添加到windows环境变量<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts1.png" alt="">  </p>
 </li>
 </ul>
 <p>下载tomcat并配置环境：  </p>
@@ -413,11 +413,11 @@
 </ul>
 <p>下载存在漏洞的struts2框架版本：  </p>
 <p>在 <a href="http://archive.apache.org/dist/struts/2.5.12/struts-2.5.12-apps.zip" target="_blank" rel="noopener">http://archive.apache.org/dist/struts/2.5.12/struts-2.5.12-apps.zip</a> 下载漏洞影响的最后版本2.5.12<br>解压后将struts2-rest-showcase.war复制到tomcat的webapps的目录下  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts2.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts2.png" alt="">  </p>
 <p>更改/tomcat/conf中的server.xml，默认是8080，如果冲突我们可以将端口号更改到空闲端口，这里改到了12345  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts3.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts3.png" alt="">  </p>
 <p>打开/tomcat/bin中的startup.bat，并通过浏览器访问页面。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts4.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts4.png" alt="">  </p>
 <h2 id="0x03-payload生成"><a href="#0x03-payload生成" class="headerlink" title="0x03 payload生成"></a>0x03 payload生成</h2><p>若本机拥有git环境，则使用<br>git clone <a href="https://github.com/mbechler/marshalsec.git" target="_blank" rel="noopener">https://github.com/mbechler/marshalsec.git</a><br>然后参考 <a href="https://github.com/mbechler/marshalsec.git" target="_blank" rel="noopener">https://github.com/mbechler/marshalsec.git</a> 中的使用方法<br>来生成payload<br>如果没有，可以在网络中查找一段windows的payload，并将此段代码中command标签中的内容更改成想在cmd中执行的命令，这里使用了calc</p>
 <pre><code>&lt;map&gt;
   &lt;entry&gt;
@@ -475,19 +475,19 @@
 &lt;/map&gt;
 </code></pre><p>具体构造命令时，某些字符无法直接输入，关于这部分的构造方法在 <a href="http://www.freebuf.com/vuls/147017.html" target="_blank" rel="noopener">http://www.freebuf.com/vuls/147017.html</a>  </p>
 <h2 id="0x04-使用burpsuite进行截包重发"><a href="#0x04-使用burpsuite进行截包重发" class="headerlink" title="0x04 使用burpsuite进行截包重发"></a>0x04 使用burpsuite进行截包重发</h2><p>将burpsuite中的监听设置成127.0.0.1:8082  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts5.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts5.png" alt="">  </p>
 <p>将浏览器的代理设置成手动代理，ip和端口号与burpsuite中设置相同  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts6.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts6.png" alt="">  </p>
 <p>然后用浏览器访问 <a href="http://localhost:12345/struts2-rest-showcase" target="_blank" rel="noopener">http://localhost:12345/struts2-rest-showcase</a>  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts7.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts7.png" alt="">  </p>
 <p>然后利用brupsuite截断一次提交的数据  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts8.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts8.png" alt="">  </p>
 <p>将content-type改成application/xml，将body部分数据改为之前写好的payload  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts9.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts9.png" alt="">  </p>
 <p>然后提交，成功弹出本机计算器  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts10.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts10.png" alt="">  </p>
 <h2 id="0x05-使用openvas对该存在漏洞的系统进行扫描"><a href="#0x05-使用openvas对该存在漏洞的系统进行扫描" class="headerlink" title="0x05 使用openvas对该存在漏洞的系统进行扫描"></a>0x05 使用openvas对该存在漏洞的系统进行扫描</h2><p>扫描结果如下:  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/struts2-52/struts11.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts11.png" alt="">  </p>
 <h2 id="0x06-危害"><a href="#0x06-危害" class="headerlink" title="0x06 危害"></a>0x06 危害</h2><p>入侵者可以直接通过提交数据包对服务器进行操作，可以远程执行代码随意查看服务器内容，还可以通过命令写入木马、创建用户、留下后门。  </p>
 <h2 id="0x07-应对方案"><a href="#0x07-应对方案" class="headerlink" title="0x07 应对方案"></a>0x07 应对方案</h2><ul>
 <li>升级Struts到2.5.13最新版本</li>

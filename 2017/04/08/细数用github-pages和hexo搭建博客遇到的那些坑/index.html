@@ -95,16 +95,16 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="细数用github-pages和hexo搭建博客遇到的那些坑上次搭建博客时，踩了很多坑，为了接下来搭建个人博客的朋友们在遇到同样的问题时能够少走弯路，我就在这里谈谈之前踩到的一些比较重要的坑和对应的解决办法   搭建博客的具体过程我就不在赘述，有需要的朋友可以参考达壕的教程详细教程—用github-pages与hexo搭建属于自己的免费博客 首先配置git环境和node.js的环境都没有出现问题，">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/3.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/0004.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/5.png">
-<meta property="og:updated_time" content="2017-12-27T09:21:52.036Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/0004.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/5.png">
+<meta property="og:updated_time" content="2018-10-26T03:49:10.865Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细数用github-pages和hexo搭建博客遇到的那些坑">
 <meta name="twitter:description" content="细数用github-pages和hexo搭建博客遇到的那些坑上次搭建博客时，踩了很多坑，为了接下来搭建个人博客的朋友们在遇到同样的问题时能够少走弯路，我就在这里谈谈之前踩到的一些比较重要的坑和对应的解决办法   搭建博客的具体过程我就不在赘述，有需要的朋友可以参考达壕的教程详细教程—用github-pages与hexo搭建属于自己的免费博客 首先配置git环境和node.js的环境都没有出现问题，">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/1.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/1.png">
 
 
 
@@ -396,14 +396,14 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
 <p>当在git-bush中输入以上代码时，长时间不进入下一步只能用ctrl+c退出。这里我一开始认为是node.js和git的版本出错，找了很多解决方法都不奏效，最后发现其实是npm官方镜像连不通，在这里只需要把源换成taobao的就可以，代码如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config set registry &quot;https://registry.npm.taobao.org&quot;</span><br></pre></td></tr></table></figure>
-<p>之后重新输入安装hexo的代码就可以<br><img src="http://oo3iot5oz.bkt.clouddn.com/1.png" alt=""></p>
+<p>之后重新输入安装hexo的代码就可以<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/1.png" alt=""></p>
 <p>第二个问题是在部署hexo的时候，出现如下错误：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/2.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/2.png" alt=""></p>
 <p>这个错误是因为hexo3.0后需要在_config.yml中设置 deploy中的type为git，这里需要在本地仓库输入以下代码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>最后一个问题是在域名解析的时候，ping自己的github页面，返回地址可以当作A类解析指向的ipv4地址，但是这个地址有时会改变，会使域名解析失效：<br><img src="http://oo3iot5oz.bkt.clouddn.com/3.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/0004.png" alt=""><br>所以这里使用CNAME的解析方式更好，在你的github仓库创建一个CNAME文件，里面写着你的域名，然后再在你的域名提供商那里设置解析如下就可以解决问题</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/5.png" alt=""></p>
+<p>最后一个问题是在域名解析的时候，ping自己的github页面，返回地址可以当作A类解析指向的ipv4地址，但是这个地址有时会改变，会使域名解析失效：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/3.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/0004.png" alt=""><br>所以这里使用CNAME的解析方式更好，在你的github仓库创建一个CNAME文件，里面写着你的域名，然后再在你的域名提供商那里设置解析如下就可以解决问题</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/5.png" alt=""></p>
 <p>第一次尝试的朋友应该还会犯很多错误，比如ssh-key的创建和使用过程的问题，还有因为readme.md文件没有同步到本地引发的一些git上传时候的错误，这些问题的解决方案百度有很多，都很容易解决。</p>
 <p>冰心曾说:“成功的花,人们只惊慕她现时的明艳,然而当初它的芽儿,浸透了奋斗的泪泉,洒遍了牺牲的血雨”。尝试的道路上充满着荆棘，错误在所难免，希望这篇博客能帮到同样在尝试的你们。</p>
 

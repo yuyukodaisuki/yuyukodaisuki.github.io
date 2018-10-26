@@ -95,19 +95,19 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 CSRF跨站请求伪造CSRF（Cross-site request forgery）跨站请求伪造，也被称为“One Click Attack”或者Session Riding，通常缩写为CSRF或者XSRF，是一种对网站的恶意利用。尽管听起来像跨站脚本（XSS），但它与XSS非常不同，XSS利用站点内的信任用户，而CSRF则通过伪装来自受信任用户的请求来利用受信任的网站。与XSS攻击相比">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf02.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf03.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf04.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf05.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf06.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf07.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf08.png">
-<meta property="og:updated_time" content="2018-04-26T15:15:16.644Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf03.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf04.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf05.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf06.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf07.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf08.png">
+<meta property="og:updated_time" content="2018-10-26T03:39:26.342Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSRF跨站请求伪造">
 <meta name="twitter:description" content="0x00 CSRF跨站请求伪造CSRF（Cross-site request forgery）跨站请求伪造，也被称为“One Click Attack”或者Session Riding，通常缩写为CSRF或者XSRF，是一种对网站的恶意利用。尽管听起来像跨站脚本（XSS），但它与XSS非常不同，XSS利用站点内的信任用户，而CSRF则通过伪装来自受信任用户的请求来利用受信任的网站。与XSS攻击相比">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf01.png">
 
 
 
@@ -398,7 +398,7 @@
 <h2 id="0x02-CSRF攻击实例"><a href="#0x02-CSRF攻击实例" class="headerlink" title="0x02 CSRF攻击实例"></a>0x02 CSRF攻击实例</h2><p>CSRF 攻击可以在受害者毫不知情的情况下以受害者名义伪造请求发送给受攻击站点，从而在并未授权的情况下执行在权限保护之下的操作。比如说，受害者 Bob 在银行有一笔存款，通过对银行的网站发送请求 <a href="http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=bob2" target="_blank" rel="noopener">http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=bob2</a>  可以使 Bob 把 1000000 的存款转到 bob2 的账号下。通常情况下，该请求发送到网站后，服务器会先验证该请求是否来自一个合法的 session，并且该 session 的用户 Bob 已经成功登陆。黑客 Mallory 自己在该银行也有账户，他知道上文中的 URL 可以把钱进行转帐操作。Mallory 可以自己发送一个请求给银行：<a href="http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=Mallory" target="_blank" rel="noopener">http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=Mallory</a> 。但是这个请求来自 Mallory 而非 Bob，他不能通过安全认证，因此该请求不会起作用。这时，Mallory 想到使用 CSRF 的攻击方式，他先自己做一个网站，在网站中放入如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">src=&quot;http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=Mallory&quot;</span><br></pre></td></tr></table></figure></p>
 <p>并且通过广告等诱使 Bob 来访问他的网站。当 Bob 访问该网站时，上述 url 就会从 Bob 的浏览器发向银行，而这个请求会附带 Bob 浏览器中的 cookie 一起发向银行服务器。大多数情况下，该请求会失败，因为他要求 Bob 的认证信息。但是，如果 Bob 当时恰巧刚访问他的银行后不久，他的浏览器与银行网站之间的 session 尚未过期，浏览器的 cookie 之中含有 Bob 的认证信息。这时，悲剧发生了，这个 url 请求就会得到响应，钱将从 Bob 的账号转移到 Mallory 的账号，而 Bob 当时毫不知情。等以后 Bob 发现账户钱少了，即使他去银行查询日志，他也只能发现确实有一个来自于他本人的合法请求转移了资金，没有任何被攻击的痕迹。而 Mallory 则可以拿到钱后逍遥法外。</p>
 <h2 id="0x03-CSRF环境搭建"><a href="#0x03-CSRF环境搭建" class="headerlink" title="0x03 CSRF环境搭建"></a>0x03 CSRF环境搭建</h2><p>首先我们写一个登陆之后能修改密码的系统，账号密码等信息存放在数据库中，数据库中假设有如下几个用户的信息：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf01.png" alt=""></p>
 <p>然后在wamp环境中www/csrf路径中创建：</p>
 <ul>
 <li>login.html</li>
@@ -417,20 +417,20 @@
 <p>exit.php将session销毁，然后返回login.html。</p>
 <p>上述四个文件编写完毕，基本的环境就完成了，下来我们看如何进行csrf攻击。</p>
 <h2 id="0x04-csrf实现"><a href="#0x04-csrf实现" class="headerlink" title="0x04 csrf实现"></a>0x04 csrf实现</h2><p>首先登陆界面如下：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf02.png" alt=""></p>
 <p>lily用自己账号登陆了这个界面：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf03.png" alt=""></p>
 <p>然后修改了密码，发现密码修改时的url请求为：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf04.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf04.png" alt=""></p>
 <p>然后lily想，如果构造一个url请求发给别人，别人正好处于没有退出登陆的情况下点击了这个url，会不会被修改密码。</p>
 <p>ps：此时lily密码为233333，jack密码为qwe123。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf05.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf05.png" alt=""></p>
 <p>所以lily就构造url：<a href="http://127.0.0.1/csrf/welcome.php?password=123456" target="_blank" rel="noopener">http://127.0.0.1/csrf/welcome.php?password=123456</a> 给已经登陆的jack<br>，然后jack点击了lily发来的网址，jack的密码变成了123456：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf06.png" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf07.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf06.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf07.png" alt=""></p>
 <p>这个时候lily想，直接发网址太容易暴露了，我构造一个钓鱼网页，来欺骗jack点，所以写了一个hack.html(这个可以写在任何网络中，诱导jack点击)：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">&lt;title&gt;hack&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line"> </span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;a href=&quot;http://127.0.0.1/csrf/welcome.php?password=123456&quot;&gt;233333&lt;/a&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/csrf/csrf08.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf08.png" alt=""></p>
 <p>这个时候，只要处于未退出状态的人点击了这个链接，密码就会被改成123456</p>
 <p>至此，一次完美的csrf攻击就完成了。</p>
 <h2 id="0x05-应对"><a href="#0x05-应对" class="headerlink" title="0x05 应对"></a>0x05 应对</h2><ul>

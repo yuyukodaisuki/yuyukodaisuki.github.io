@@ -95,14 +95,14 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 信息加密原理信息加密是保证数据安全的一种方式。信息加密的原理是：把明文用加密方法和密钥生成保密的密文，只有使用正确的解密方法和密钥后才能还原出明文。一个完善的密码体制至少应该满足两个条件：    1.已知明文和加密密钥时，容易算出密文和解密过程。 2.未知解密密钥时，难以由密文推出明文。    这里介绍几种古典密码的加密方式:   0x01 Greece密码希腊密码出现于公元前2世纪，是">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/gudianmima/01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/gudianmima/02.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/gudianmima/03.png">
-<meta property="og:updated_time" content="2017-12-22T14:11:11.528Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/03.png">
+<meta property="og:updated_time" content="2018-10-26T03:45:11.901Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="密码学(一)——古典密码(上)">
 <meta name="twitter:description" content="0x00 信息加密原理信息加密是保证数据安全的一种方式。信息加密的原理是：把明文用加密方法和密钥生成保密的密文，只有使用正确的解密方法和密钥后才能还原出明文。一个完善的密码体制至少应该满足两个条件：    1.已知明文和加密密钥时，容易算出密文和解密过程。 2.未知解密密钥时，难以由密文推出明文。    这里介绍几种古典密码的加密方式:   0x01 Greece密码希腊密码出现于公元前2世纪，是">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/gudianmima/01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/01.png">
 
 
 
@@ -394,7 +394,7 @@
 <li>2.未知解密密钥时，难以由密文推出明文。  </li>
 </ul>
 <p>这里介绍几种古典密码的加密方式:  </p>
-<h2 id="0x01-Greece密码"><a href="#0x01-Greece密码" class="headerlink" title="0x01 Greece密码"></a>0x01 Greece密码</h2><p>希腊密码出现于公元前2世纪，是一种二维字母表编码方法(字母i和j算一个字母)。<br>如图将26个字母分为5×5的矩阵，用行列号作为字母的编码。<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/01.png" alt=""><br>如上图，GREECE可以编码为22 42 15 15 13 15<br>因为几乎是一一对应的关系，通过统计的方法可以很轻松的得出规律。  </p>
+<h2 id="0x01-Greece密码"><a href="#0x01-Greece密码" class="headerlink" title="0x01 Greece密码"></a>0x01 Greece密码</h2><p>希腊密码出现于公元前2世纪，是一种二维字母表编码方法(字母i和j算一个字母)。<br>如图将26个字母分为5×5的矩阵，用行列号作为字母的编码。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/01.png" alt=""><br>如上图，GREECE可以编码为22 42 15 15 13 15<br>因为几乎是一一对应的关系，通过统计的方法可以很轻松的得出规律。  </p>
 <h2 id="0x02-Caesar密码"><a href="#0x02-Caesar密码" class="headerlink" title="0x02 Caesar密码"></a>0x02 Caesar密码</h2><p>凯撒密码是一种古老的单表置换密码。方法是把字母表种每个字母用后面第n个字母进行替换。<br>如n=5：</p>
 <ul>
 <li>字母表为：abcdefghijklmnopqrstuvwxyz</li>
@@ -407,7 +407,7 @@
 <li>置换表为：bigacdefhjklmnopqrstuvwxyz  </li>
 </ul>
 <p>我们可以看到，big三个字母被放在了表头，然后剩下的字母依次排布。<br>如link的编码是lhnk，可以看到，这种方式如果选择的关键字太少且位于太前，后面的字母本身就对应明文，所以安全性也是很差的。并且所有的字母一一对应的加密方式，都可以用统计的方法破解。</p>
-<h2 id="0x04-Playfair密码"><a href="#0x04-Playfair密码" class="headerlink" title="0x04 Playfair密码"></a>0x04 Playfair密码</h2><p>公平竞赛密码属于多表加密体制，将明文中的双字母组合作为一个单元对待，并将这些单元转换为密文双字母组合。<br>Playfair算法使用一个5×5字母矩阵，该矩阵使用一个关键词构造。<br>例如关键词是big，那么排布规则和Prefix密码一致，只是要按照从左到右，从上到下的顺序把变换表写出来：<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/02.png" alt=""><br>生成矩阵之后，根据以下规则依次对明文的两个字母加密。  </p>
+<h2 id="0x04-Playfair密码"><a href="#0x04-Playfair密码" class="headerlink" title="0x04 Playfair密码"></a>0x04 Playfair密码</h2><p>公平竞赛密码属于多表加密体制，将明文中的双字母组合作为一个单元对待，并将这些单元转换为密文双字母组合。<br>Playfair算法使用一个5×5字母矩阵，该矩阵使用一个关键词构造。<br>例如关键词是big，那么排布规则和Prefix密码一致，只是要按照从左到右，从上到下的顺序把变换表写出来：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/02.png" alt=""><br>生成矩阵之后，根据以下规则依次对明文的两个字母加密。  </p>
 <ul>
 <li>1.属于相同对中的重复明文字母将使用一个填充字母进行分隔。</li>
 <li>2.属于矩阵同行的明文字母将由其右边的字母代替，而行的最后一个字母由行的第一个字母代替。</li>
@@ -415,7 +415,7 @@
 <li>4.明文的其他字母将由与其同行，其与下一个字母同列的字母代替。（也可以理解成以两个明文字母为顶角画矩形，矩形的另一对顶角即为密文字母对）  </li>
 </ul>
 <p>Playfair密码比起单字母替换的优势在于，26个字母衍生出26×26=676种双字母组合，频率分布也不规则，使分析起来要难很多。所以一战中被英国陆军作为顶级加密系统，二战中也被同盟国大量使用。</p>
-<h2 id="0x05-Vigenere密码"><a href="#0x05-Vigenere密码" class="headerlink" title="0x05 Vigenere密码"></a>0x05 Vigenere密码</h2><p>维吉尼亚密码是一种简单的单字符多表替换密码。其加密方法是：<br>为了加密一个消息，需要一个与该消息长度一致的密钥。通常该密钥为一重复的关键词。<br>如我们事先构造一个维吉尼亚矩阵，由步长为0到25的26行凯撒密码构成。<br><img src="http://oo3iot5oz.bkt.clouddn.com/gudianmima/03.png" alt=""><br>如图我们给定密钥字母d和明文字母w，密文字母就位于（d,w）位置。<br>如我们给出密钥关键字是fun，明文是exciting，则：</p>
+<h2 id="0x05-Vigenere密码"><a href="#0x05-Vigenere密码" class="headerlink" title="0x05 Vigenere密码"></a>0x05 Vigenere密码</h2><p>维吉尼亚密码是一种简单的单字符多表替换密码。其加密方法是：<br>为了加密一个消息，需要一个与该消息长度一致的密钥。通常该密钥为一重复的关键词。<br>如我们事先构造一个维吉尼亚矩阵，由步长为0到25的26行凯撒密码构成。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/03.png" alt=""><br>如图我们给定密钥字母d和明文字母w，密文字母就位于（d,w）位置。<br>如我们给出密钥关键字是fun，明文是exciting，则：</p>
 <ul>
 <li>密钥为：funfunfu</li>
 <li>明文为：exciting</li>

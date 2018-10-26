@@ -95,16 +95,16 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 snort是什么？snort是一款开源的入侵检测系统，由Marty Roesch先生用C语言开发，直至今天，Snort已发展成为一个多平台(Multi-Platform),实时(Real-Time)流量分析，网络IP数据包(Pocket)记录等特性的强大的网络入侵检测/防御系统。   0x01 snort安装这里主要讲ubuntu下通过编译源码的安装方法   首先，我们在snort官方">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/snort/snort01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/snort/snort02.jpg">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/snort/snort03.jpg">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/snort/snort04.jpg">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/snort/snort05.jpg">
-<meta property="og:updated_time" content="2018-03-17T14:07:39.408Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort02.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort03.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort04.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort05.jpg">
+<meta property="og:updated_time" content="2018-10-26T03:42:34.171Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ubuntu16.04安装snort">
 <meta name="twitter:description" content="0x00 snort是什么？snort是一款开源的入侵检测系统，由Marty Roesch先生用C语言开发，直至今天，Snort已发展成为一个多平台(Multi-Platform),实时(Real-Time)流量分析，网络IP数据包(Pocket)记录等特性的强大的网络入侵检测/防御系统。   0x01 snort安装这里主要讲ubuntu下通过编译源码的安装方法   首先，我们在snort官方">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/snort/snort01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort01.png">
 
 
 
@@ -393,21 +393,21 @@
         <h2 id="0x00-snort是什么？"><a href="#0x00-snort是什么？" class="headerlink" title="0x00 snort是什么？"></a>0x00 snort是什么？</h2><p>snort是一款开源的入侵检测系统，由Marty Roesch先生用C语言开发，直至今天，Snort已发展成为一个多平台(Multi-Platform),实时(Real-Time)流量分析，网络IP数据包(Pocket)记录等特性的强大的网络入侵检测/防御系统。  </p>
 <h2 id="0x01-snort安装"><a href="#0x01-snort安装" class="headerlink" title="0x01 snort安装"></a>0x01 snort安装</h2><p>这里主要讲ubuntu下通过编译源码的安装方法  </p>
 <p>首先，我们在snort官方 <a href="http://www.snort.org" target="_blank" rel="noopener">www.snort.org</a> 下查看最新版本的源码。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort01.png" alt=""></p>
 <p>然后在terminal中输入如下指令获取daq源码包和snort源码包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.snort.org/downloads/snort/daq-2.0.6.tar.gz</span><br><span class="line">wget https://www.snort.org/downloads/snort/snort-2.9.11.1.tar.gz</span><br></pre></td></tr></table></figure></p>
 <p>接着解压源码包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar xvzf daq-2.0.6.tar.gz</span><br><span class="line">tar xvzf snort-2.9.11.1.tar.gz</span><br></pre></td></tr></table></figure></p>
 <p>然后我们安装一下daq所依赖的一些开发包，否则直接编译安装会出现flex、bison和libpcap错误<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install flex</span><br><span class="line">sudo apt-get install bison</span><br><span class="line">sudo apt-get install libpcap-dev</span><br></pre></td></tr></table></figure></p>
 <p>然后先进入解压后daq的路径，进行编译安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd daq-2.0.6</span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort02.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort02.jpg" alt=""></p>
 <p>结果如下没有报错说明我们安装完成。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort03.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort03.jpg" alt=""></p>
 <p>接着我们要安装一下snort所依赖的一些开发包，否则配置脚本会由于缺少libpcre-dev、libdumbnet-dev 和zlib开发库而报错。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libpcre3-dev</span><br><span class="line">sudo apt-get install libdumbnet-dev</span><br><span class="line">sudo apt-get install zlib1g-dev</span><br></pre></td></tr></table></figure></p>
 <p>然后我们在local创建一个目录,再进入刚才解压的snort目录中，编译安装snort<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /usr/local/snort</span><br><span class="line">./configure --prefix=/usr/local/snort/ --enable-sourcefire &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
 <p>结果如下没有报错说明我们安装完成。  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort04.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort04.jpg" alt=""></p>
 <p>然后我们进入刚才创建的目录，并进入它的子目录bin来运行snort<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/snort/bin</span><br><span class="line">./snort</span><br></pre></td></tr></table></figure></p>
 <p>我们可以看到它处在promisc模式（包转储模式）。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/snort/snort05.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort05.jpg" alt=""></p>
 <p>至此，我们snort安装完成。</p>
 
       

@@ -95,23 +95,23 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="ctf中常见的隐写术0x01 什么是隐写术隐写术是关于信息隐藏，即不让计划的接收者之外的任何人知道信息的传递事件（而不只是信息的内容）的一门技巧与科学。具体涉及到图片隐写，音频隐写，视频隐写。其中图片的隐写是最为常见的，也是ctf中常见的一种题型。 0x02 准备的工具 Notepad++，功能比 Windows 中的 Notepad(记事本)强大，除了可以用来制作一般的纯文字说明文件，也十分适合">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.0.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.3.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.4.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/3.1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/3.2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.1.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.2.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.3.png">
-<meta property="og:updated_time" content="2017-05-29T01:59:12.328Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.0.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/3.1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/3.2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.3.png">
+<meta property="og:updated_time" content="2018-10-26T03:47:47.839Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ctf中常见的隐写术">
 <meta name="twitter:description" content="ctf中常见的隐写术0x01 什么是隐写术隐写术是关于信息隐藏，即不让计划的接收者之外的任何人知道信息的传递事件（而不只是信息的内容）的一门技巧与科学。具体涉及到图片隐写，音频隐写，视频隐写。其中图片的隐写是最为常见的，也是ctf中常见的一种题型。 0x02 准备的工具 Notepad++，功能比 Windows 中的 Notepad(记事本)强大，除了可以用来制作一般的纯文字说明文件，也十分适合">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.0.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.0.png">
 
 
 
@@ -411,15 +411,15 @@
 <p>  github项目：<a href="https://github.com/devttys0/binwalk" target="_blank" rel="noopener">https://github.com/devttys0/binwalk</a></p>
 <p>  binwalk的wiki：<a href="https://github.com/devttys0/binwalk/wiki" target="_blank" rel="noopener">https://github.com/devttys0/binwalk/wiki</a></p>
 <h2 id="0x03-类型1"><a href="#0x03-类型1" class="headerlink" title="0x03 类型1"></a>0x03 类型1</h2><p>用载体进行隐藏，查看一下属性，看看里面有没有什么信息，或者直接用notepad++打开，一般ctrl+f查找一下key，flag等信息，如果没找到，可以翻到图片头或者尾部查看是否有特殊的字符串，比如一段md5、base64、unicode之类的，然后到某些网址进行解密。</p>
-<p>通过备注查看：<br><img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.0.png" alt=""><br>通过notepad++查看：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.1.png" alt=""><br>在线解密：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/1.2.png" alt=""></p>
+<p>通过备注查看：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.0.png" alt=""><br>通过notepad++查看：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.1.png" alt=""><br>在线解密：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.2.png" alt=""></p>
 <h2 id="0x04-类型2"><a href="#0x04-类型2" class="headerlink" title="0x04 类型2"></a>0x04 类型2</h2><p>图片文件会自动忽略结束符之后的数据，比如jpg图片的结束符为FF D9,在这之后加入数据，不会影响jpg的显示，对于类隐写，我们肯定用不能winhex打开16进制数据肉眼去看，这个时候就要用到binwalk了，例子如下，放在linux里，用binwalk xxx.jpg自动跑出来隐藏的信息及其类型。这个时候我们借助winhex设置头和尾然后导出成新文件，或者直接在linux系统中用dd命令，都是可以分割出来后面一段文件的。</p>
-<p>  使用binwalk分析：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.1.png" alt=""><br>  在linux下用dd命令分离（方法一）：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.2.png" alt=""><br>  在win下用winhex分离（方法二）：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.3.png" alt=""><br>  分离出来的结果：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/2.4.png" alt=""></p>
+<p>  使用binwalk分析：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.1.png" alt=""><br>  在linux下用dd命令分离（方法一）：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.2.png" alt=""><br>  在win下用winhex分离（方法二）：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.3.png" alt=""><br>  分离出来的结果：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.4.png" alt=""></p>
 <h2 id="0x05-类型3"><a href="#0x05-类型3" class="headerlink" title="0x05 类型3"></a>0x05 类型3</h2><p>LSB隐写，也就是最低有效位 (Least Significant Bit)。图片中的像数一般是由三种颜色组成，即三原色，由这三种原色可以组成其他各种颜色，例如在PNG图片的储存中，每个颜色会有8bit，LSB隐写就是修改了像数中的最低的1bit。<br>这里需要注意一个坑，很多时候它会给你一个黑白颜色相反的二维码，直接扫肯定是出不来结果的，需要自己处理一下，最简单的就是放到一个可以编辑的地方ctrl+a一下，然后扫描。</p>
-<p>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/3.1.png" alt=""><br>使用Stegsolve发现他在灰色最低位隐藏了一个二维码：<br>  <img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/3.2.png" alt=""></p>
+<p>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/3.1.png" alt=""><br>使用Stegsolve发现他在灰色最低位隐藏了一个二维码：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/3.2.png" alt=""></p>
 <h2 id="0x06-类型4"><a href="#0x06-类型4" class="headerlink" title="0x06 类型4"></a>0x06 类型4</h2><p>Gif，这种题喜欢让密码出现的特别快来不及记录，这个时候丢到Stegsolve-frame browser，一帧一帧的看就行了<br>逐帧查看：  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.1.png" alt="">  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.2.png" alt="">  </p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/ctf-yx/4.3.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.1.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.2.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.3.png" alt=""></p>
 <h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>关于图片隐写的还有很多，png格式的文件经常会在一个不完整的版块藏很多数据，这个时候可以用pngcheck分析，有时候会跑出来两张看起来相同的png图片，可以丢到Stegsolve-image combiner中对比，bmp文件经常会在不同图层隐藏信息，photoshop就可以处理。例子中用到的图都放在github中了，有兴趣的朋友可以去试试。</p>
 
       

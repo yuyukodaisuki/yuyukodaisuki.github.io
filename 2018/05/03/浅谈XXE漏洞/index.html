@@ -95,12 +95,12 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 XMLXML是可扩展标记语言，标准通用标记语言的子集，是一种用于标记电子文件使其具有结构性的标记语言，与HTML的不同在于XML被设计用来传输和存储数据而HTML被设计用来显示数据。 XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。 XML声明即是位于XML文档开始部分的第一行，规定了xml版本和编码格式。1&amp;lt;?xml version=&quot;1.0&quot; encodin">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/xxe01.jpg">
-<meta property="og:updated_time" content="2018-05-03T07:32:37.234Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/xxe01.jpg">
+<meta property="og:updated_time" content="2018-10-26T03:33:13.712Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈XXE漏洞">
 <meta name="twitter:description" content="0x00 XMLXML是可扩展标记语言，标准通用标记语言的子集，是一种用于标记电子文件使其具有结构性的标记语言，与HTML的不同在于XML被设计用来传输和存储数据而HTML被设计用来显示数据。 XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。 XML声明即是位于XML文档开始部分的第一行，规定了xml版本和编码格式。1&amp;lt;?xml version=&quot;1.0&quot; encodin">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/xxe01.jpg">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/xxe01.jpg">
 
 
 
@@ -419,7 +419,7 @@
 <h2 id="0x03-XXE环境搭建"><a href="#0x03-XXE环境搭建" class="headerlink" title="0x03 XXE环境搭建"></a>0x03 XXE环境搭建</h2><p>我们新建一个存在xxe漏洞的index.php，写入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$xml=simplexml_load_string($_POST[&apos;xml&apos;]);</span><br><span class="line">print_r($xml);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
 <p>我们尝试一个正常使用的例子，在firefox的hackbar插件中传入数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xml=&lt;note&gt;</span><br><span class="line">&lt;to&gt;Tove&lt;/to&gt;</span><br><span class="line">&lt;from&gt;Jani&lt;/from&gt;</span><br><span class="line">&lt;heading&gt;Reminder&lt;/heading&gt;</span><br><span class="line">&lt;body&gt;Don&apos;t forget me this weekend!&lt;/body&gt;</span><br><span class="line">&lt;/note&gt;</span><br></pre></td></tr></table></figure></p>
 <p>可以得到回显：</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/xxe01.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/xxe01.jpg" alt=""></p>
 <p>此时，我们的环境搭建完成。</p>
 <h2 id="0x04-恶意代码的利用方式"><a href="#0x04-恶意代码的利用方式" class="headerlink" title="0x04 恶意代码的利用方式"></a>0x04 恶意代码的利用方式</h2><p>我们上面已经说过引用实体的方式，我们这里可以采用这几种方式在hackbar的post中写入恶意代码：</p>
 <ul>

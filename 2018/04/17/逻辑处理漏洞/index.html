@@ -95,18 +95,18 @@
 <meta property="og:site_name" content="Leticia&#39;s Blog">
 <meta property="og:description" content="0x00 逻辑处理漏洞很多漏洞出现的原因是在代码编写的环节没有考虑到一些安全问题，由程序逻辑失误导致的，这里记录一下一些常见的逻辑处理漏洞。 0x01 in_array函数in_array()函数是用来判断一个值是否在一个列表里面，一般用法如下：   1in_array(&amp;apos;b&amp;apos;,array(&amp;apos;a&amp;apos;,&amp;apos;b&amp;apos;,&amp;apos;c&amp;apos;))">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/logic/logic01.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/logic/logic02.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/logic/logic03.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/logic/logic04.jpg">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/logic/logic05.png">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/logic/logic06.jpg">
-<meta property="og:image" content="http://oo3iot5oz.bkt.clouddn.com/logic/logic07.png">
-<meta property="og:updated_time" content="2018-04-26T15:17:54.842Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic03.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic04.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic05.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic06.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic07.png">
+<meta property="og:updated_time" content="2018-10-26T03:39:32.212Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="逻辑处理漏洞">
 <meta name="twitter:description" content="0x00 逻辑处理漏洞很多漏洞出现的原因是在代码编写的环节没有考虑到一些安全问题，由程序逻辑失误导致的，这里记录一下一些常见的逻辑处理漏洞。 0x01 in_array函数in_array()函数是用来判断一个值是否在一个列表里面，一般用法如下：   1in_array(&amp;apos;b&amp;apos;,array(&amp;apos;a&amp;apos;,&amp;apos;b&amp;apos;,&amp;apos;c&amp;apos;))">
-<meta name="twitter:image" content="http://oo3iot5oz.bkt.clouddn.com/logic/logic01.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic01.png">
 
 
 
@@ -398,17 +398,17 @@
 <p>当我们php代码中这样写时：  </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(in_array($_GET[&apos;id&apos;],array(1,2,3,4)))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;select where id=&apos;&quot;.$_GET[&apos;id&apos;].&quot;&apos;&quot;;</span><br><span class="line">echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 <p>这段代码判断得到的参数id的值是否在array这个数组中，但是这里如果输入id=1’ union select <em> from user，in_array()函数会自动进行类型转换，就会认为这个输入参数类型转换之后是1，属于array数组中，就会执行select where id =’1’ union select </em> from user。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic01.png" alt=""></p>
 <h2 id="0x02-双等于和三等于"><a href="#0x02-双等于和三等于" class="headerlink" title="0x02 双等于和三等于"></a>0x02 双等于和三等于</h2><p>php中，双等于与三等于之间有一些区别，其中双等于在判断等于之前会先进行数据类型转换，而三等于则不会，所以在一些情况下，双等于会造成一些安全问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">var_dump($_GET[&apos;var&apos;]==2);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
 <p>var_dump()函数用于输出变量结构、内容和类型，一般用于精确调试。  </p>
 <p>这里我们如果给出var=2abcd,就会返回bool(true),发现类型强制转换之后判断为true。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic02.png" alt=""></p>
 <h2 id="0x03-is-numeric函数"><a href="#0x03-is-numeric函数" class="headerlink" title="0x03 is_numeric函数"></a>0x03 is_numeric函数</h2><p>in_numeric()用来判断一个变量是否为数字，如果检查通过返回true，否则返回false</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(is_numeric($_GET[&apos;var&apos;]))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;insert into user values(&apos;user&apos;,&#123;$_GET[&apos;var&apos;]&#125;)&quot;;</span><br><span class="line">    echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 <p>这个函数存在一个问题，那就是当传入hex时直接通过并返回true，但是mysql中是可以通过hex编码代替明文的，如我们提交一个xss测试代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
 <p>对应的hex编码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x3c7363726970743e616c6572742831293c2f7363726970743e</span><br></pre></td></tr></table></figure></p>
 <p>就会成功的将代码传入数据库。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic03.png" alt=""></p>
 <h2 id="0x04-订单支付漏洞"><a href="#0x04-订单支付漏洞" class="headerlink" title="0x04 订单支付漏洞"></a>0x04 订单支付漏洞</h2><p>在一些电商网站会出现的一些逻辑漏洞，主要是客户可以更改单价、总价、数量等，然后提交之后后台未作严格的校验导致的。</p>
 <p>比如价格可以在客户端提交，那么原本几千元的商品，我们抓包修改提交订单的商品单价为1，如果后台未作校验直接跳转支付界面，那么就可以用一元钱购买物品。总价也是同理。</p>
 <p>再比如将要购买的商品数量或单价改为负数，如果后台未作检验，那么计算总价时就会计算出负数，反而会让我们越买钱越多。</p>
@@ -419,13 +419,13 @@
 <h2 id="0x07-垂直权限漏洞"><a href="#0x07-垂直权限漏洞" class="headerlink" title="0x07 垂直权限漏洞"></a>0x07 垂直权限漏洞</h2><p>垂直越权就是低权限用户(普通用户)可以访问更高权限(如管理员)才能访问到的资源。  </p>
 <p>如之前淘宝举报号任意访问的问题，我们通过普通用户的身份，可以访问只有管理员才能访问的举报信息，就是这里的权限检查出现问题。</p>
 <h2 id="0x08-未授权访问"><a href="#0x08-未授权访问" class="headerlink" title="0x08 未授权访问"></a>0x08 未授权访问</h2><p>这个漏洞广泛存在于目前的网络中，很多公司都没有对自己公司的某些敏感目录做访问限制，使得外网可以直接通过浏览器访问。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic04.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic04.jpg" alt=""></p>
 <p>如正方教务系统的后台敏感日志查看漏洞</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic05.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic05.png" alt=""></p>
 <p>我们在正方教务系统的登陆页面后面加上/log/2018-04-17-log.txt，就可以直接访问后台敏感日志。</p>
 <p>有的公司的files信息和phpinfo信息，也直接暴露给用户，会被获得很多敏感信息。</p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic06.jpg" alt=""></p>
-<p><img src="http://oo3iot5oz.bkt.clouddn.com/logic/logic07.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic06.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic07.png" alt=""></p>
 <h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>逻辑处理漏洞还有很多类型，比如验证码爆破、密码找回等等，这些漏洞虽然原理不难理解，但是由于程序员编写代码时的考虑不周，导致逻辑处理漏洞广泛存在，并且危害极高，解决逻辑处理漏洞，更需要的是安全工作人员和开发人员的沟通配合。</p>
 
       
