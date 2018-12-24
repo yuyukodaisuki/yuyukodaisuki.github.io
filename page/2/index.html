@@ -258,6 +258,247 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/机器学习-8-——支持向量机-SVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/31/机器学习-8-——支持向量机-SVM/" itemprop="url">
+                  机器学习(8)——支持向量机(SVM)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-31T10:27:12+08:00">
+                2018-07-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/31/机器学习-8-——支持向量机-SVM/" class="leancloud_visitors" data-flag-title="机器学习(8)——支持向量机(SVM)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-支持向量机"><a href="#0x00-支持向量机" class="headerlink" title="0x00 支持向量机"></a>0x00 支持向量机</h2><p>在机器学习中，支持向量机（support vector machine，常简称为SVM，又名支持向量网络）是在分类与回归分析中分析数据的监督式学习模型与相关的学习算法。给定一组训练实例，每个训练实例被标记为属于两个类别中的一个或另一个，SVM训练算法建立一个将新的实例分配给两个类别之一的模型，使其成为非概率二元（binary classifier）线性分类器。SVM模型是将实例表示为空间中的点，这样映射就使得单独类别的实例被尽可能宽的明显的间隔分开。然后，将新的实例映射到同一空间，并基于它们落在间隔的哪一侧来预测所属类别。</p>
+<h2 id="0x01-间隔与支持向量"><a href="#0x01-间隔与支持向量" class="headerlink" title="0x01 间隔与支持向量"></a>0x01 间隔与支持向量</h2><p>首先看一张图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_01.png?raw=true" alt=""></p>
+<p>如果要用一条直线将两种类型的图形分开，那这样的直线我们可以找到很多条。那么哪条才是最好的分割线？</p>
+<p>我们可以设想一下，目前的样本并不代表所有可能发生的情况，如果进入新样本，很有可能会存在向直线贴近的样本，那么如果选择的直线到两边最近的点间隔越长，输入新样本时越过这条线的机会就越小，泛化能力就越强。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_05.png?raw=true" alt=""></p>
+<p>图中距离这条分割线最近的这几个点，就被称为支持向量。</p>
+<p>两个异类支持向量到这条直线的距离之和，就被称为间隔。</p>
+<p>假设我们分割线的方程如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_02.png?raw=true" alt=""></p>
+<p>其中w是法向量。</p>
+<p>我们的可以通过它将训练样本正确分类，即</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_03.png?raw=true" alt=""></p>
+<p>留出间隔，令：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_04.png?raw=true" alt=""></p>
+<p>则间隔的数学表示为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_06.png?raw=true" alt=""></p>
+<p>我们为了找到最大间隔，也就是使γ最大，也就是使||w||²最小，就可以转换成找</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_07.png?raw=true" alt=""></p>
+<p>的最小值。这被称为支持向量机的基本型。</p>
+<h2 id="0x02-对偶问题"><a href="#0x02-对偶问题" class="headerlink" title="0x02 对偶问题"></a>0x02 对偶问题</h2><p>上面的问题最终转换成求支持向量机基本型的最小值问题，这是一个凸二次规划问题，可以直接求解，但是我们有更优的计算方法。那就是通过拉格朗日乘子法得到其”对偶问题“。</p>
+<p>具体做法是对每条约束都增加拉格朗日乘子αi，则该问题可以写成：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_08.png?raw=true" alt=""></p>
+<p>这个时候要求其最小值，从之前转换成最小值的模型前加了1/2这点就可以想到，我们接下来肯定要通过求导，求导数零点，找极值点来完成。</p>
+<p>所以分别对w和b求导可以得出：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_09.png?raw=true" alt=""></p>
+<p>将其结论代回L中可得对偶问题：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_10.png?raw=true" alt=""></p>
+<p>这个结果，我们就可以直接交给机器去处理数据求这个式子的最大值了。</p>
+<h2 id="0x03-核函数"><a href="#0x03-核函数" class="headerlink" title="0x03 核函数"></a>0x03 核函数</h2><p>线性可分的训练样本我们可以通过直线将其正确分类，但是如果遇到线性不可分的训练样本，或许就不能通过一条直线来进行分割。</p>
+<p>这种情况下，我们可以将样本从原本的空间映射到一个更高维度的空间，使样本在这个空间内线性可分。</p>
+<p>比如二维平面中的样本投影到三维空间中，就可以通过一个超平面线性分割两类样本了：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_11.png?raw=true" alt=""></p>
+<p>具体做法是用Φ(x)代表x映射之后的特征向量，对偶问题就变为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_12.png?raw=true" alt=""></p>
+<p>在计算Φ(xi)的转置与Φ(xj)的矩阵乘积时，在高维会变的十分困难，所以就引入了：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_13.png?raw=true" alt=""></p>
+<p>Φ(xi)与Φ(xj)内积等于它们在原始样本空间通过k函数计算的结果，这样就不用去高维计算内积。这个k函数就被称为核函数。</p>
+<p>常用的核函数如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_14.png?raw=true" alt=""></p>
+<p>并不是所有的情况通过核函数映射之后都是线性可分的，我们会根据实际的情况去选取合适的核函数，使其映射到高维之后可以分割，然后高维分割的超平面在原始平面上的投影就是在原始平面上的分割曲线。</p>
+<h2 id="0x04-硬间隔和软间隔"><a href="#0x04-硬间隔和软间隔" class="headerlink" title="0x04 硬间隔和软间隔"></a>0x04 硬间隔和软间隔</h2><p>即使使用了核函数，实际中，我们仍然存在一种不可分的情况，即两类样本互相有一部分出现在对方的区域，如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_15.png?raw=true" alt=""></p>
+<p>那么这种情况，我们的处理方式就是允许支持向量机在一些样本上出错，也就是“软间隔”。</p>
+<p>对应的所有样本都被正确分类就被称为“硬间隔”。</p>
+<p>在之前机器学习的经验中我们都明白，出错就会有损失，那么我们需要一个损失函数来计算惩罚，最终的优化目标是在最大化间隔的同时使不满足约束的样本尽可能少，可写为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_16.png?raw=true" alt=""></p>
+<p>这里面使用的损失函数是0/1损失函数：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_17.png?raw=true" alt=""></p>
+<p>我们也有其他几种替代损失函数可供选择：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_18.png?raw=true" alt=""></p>
+<p>在软间隔情况中，只使满足最终优化目标的值优化到最小即可。</p>
+<h2 id="0x05-支持向量机的优缺点"><a href="#0x05-支持向量机的优缺点" class="headerlink" title="0x05 支持向量机的优缺点"></a>0x05 支持向量机的优缺点</h2><p>支持向量机的优势在于:</p>
+<ul>
+<li><p>在高维空间中非常高效</p>
+</li>
+<li><p>即使在数据维度比样本数量大的情况下仍然有效</p>
+</li>
+<li><p>在决策函数（称为支持向量）中使用训练集的子集,因此它也是高效利用内存的</p>
+</li>
+<li><p>通用性: 不同的核函数 核函数与特定的决策函数一一对应，常见的kernel已<br>经提供,也可以指定定制的内核</p>
+</li>
+</ul>
+<p>支持向量机的缺点包括:</p>
+<ul>
+<li><p>如果特征数量比样本数量大得多,在选择核函数 核函数 时要避免过拟合,<br>而且正则化项是非常重要的</p>
+</li>
+<li><p>支持向量机不直接提供概率估计</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/30/python-scikit-learn学习-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2327,272 +2568,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/27/机器学习-4-——神经网络/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/27/机器学习-4-——神经网络/" itemprop="url">
-                  机器学习(4)——神经网络
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-27T13:50:05+08:00">
-                2018-06-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/27/机器学习-4-——神经网络/" class="leancloud_visitors" data-flag-title="机器学习(4)——神经网络">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-神经网络"><a href="#0x00-神经网络" class="headerlink" title="0x00 神经网络"></a>0x00 神经网络</h2><p>人工神经网络（Artificial Neural Network，缩写ANN），简称神经网络（Neural Network，缩写NN），是一种模仿生物神经网络(动物的中枢神经系统，特别是大脑)的结构和功能的数学模型或计算模型，用于对函数进行估计或近似。</p>
-<h2 id="0x01-神经元"><a href="#0x01-神经元" class="headerlink" title="0x01 神经元"></a>0x01 神经元</h2><p>一个神经元通常具有多个树突，主要用来接受传入信息；而轴突只有一条，轴突尾端有许多轴突末梢可以给其他多个神经元传递信息。轴突末梢跟其他神经元的树突产生连接，从而传递信号。这个连接的位置在生物学上叫做“突触”。</p>
-<p>人脑中神经元如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_01.png?raw=true" alt=""></p>
-<h2 id="0x02-神经元的数学模型"><a href="#0x02-神经元的数学模型" class="headerlink" title="0x02 神经元的数学模型"></a>0x02 神经元的数学模型</h2><p>神经元模型是一个包含输入，输出与计算功能的模型。输入可以类比为神经元的树突，而输出可以类比为神经元的轴突，计算则可以类比为细胞核。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_02.png?raw=true" alt=""></p>
-<p>每个连线上都会分配一个权值，在数据传向下一层的时候要乘以对应的权值。在神经网络中，每个箭头表示值的加权传递。</p>
-<p>如果我们将神经元图中的所有变量用符号表示，并且写出输出的计算公式，就会得到：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_03.png?raw=true" alt=""></p>
-<p>z是在输入和权值的线性加权和叠加了一个激活函数g的值。在MP模型里，函数g是sgn函数，也就是取符号函数。这个函数当输入大于0时，输出1，否则输出-1。</p>
-<p>接下来我们将sum函数与sgn函数合并到一个圆圈里，代表神经元的内部计算。其次，把输入a与输出z写到连接线的左上方，便于后面画复杂的网络。一个神经元可以引出多个代表输出的有向箭头，但值都是一样的。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_04.png?raw=true" alt=""></p>
-<p>在其他类型神经网络中，这里的激活函数可以有很多种形式：</p>
-<ul>
-<li>线性函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_05.png?raw=true" alt=""></p>
-<ul>
-<li>阈值函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_06.png?raw=true" alt=""></p>
-<ul>
-<li>Sigmoid函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_07.png?raw=true" alt=""></p>
-<ul>
-<li>对称Sigmoid函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_08.png?raw=true" alt=""></p>
-<ul>
-<li>双曲正切函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_09.png?raw=true" alt=""></p>
-<ul>
-<li>高斯函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_10.png?raw=true" alt=""></p>
-<p>神经元可以看作一个计算与存储单元。计算是神经元对其的输入进行计算功能。存储是神经元会暂存计算结果，并传递到下一层。</p>
-<p>一个神经网络的训练算法的功能就是通过大量的样本数据训练，让权重的值调整到最佳，以使得整个网络的预测效果最好。然后用来在已知所有输入值的情况下预测输出值。</p>
-<h2 id="0x03-单层神经网络-感知器"><a href="#0x03-单层神经网络-感知器" class="headerlink" title="0x03 单层神经网络(感知器)"></a>0x03 单层神经网络(感知器)</h2><p>感知器(Perceptron)由两层神经元组成的神经网络。两层分别是输入层和输出层，输入层只负责传输数据，输出层对前一层传输过来的数据进行计算。</p>
-<p>结构如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_11.png?raw=true" alt=""></p>
-<p>其中，需要计算的层次也被称为计算层，因为感知器拥有一个计算层，所以称之为“单层神经网络”。</p>
-<p>感知器中，我们把 w 称为权重向量，a 称为训练样本。</p>
-<p>感知器数据分类的算法步骤如下：</p>
-<p>把 w 初始化为 0，或者把 w 的每个分量初始化为[0, 1]之间的任意小数；<br>把训练样本 a 输入感知器，得到分类结果 z （-1或1）；<br>根据分类结果更新权重向量。</p>
-<p>权重更新算法：</p>
-<p>wj=wj+∇wj</p>
-<p>∇wj=η∗(z−z′)∗aj</p>
-<p>其中</p>
-<ul>
-<li>η 是学习率，在 [0,1] 之间。</li>
-<li>z 是输入样本的正确分类，z’ 是感知器计算出来的分类。</li>
-</ul>
-<p>假设初始w=[0,0,0],a=[1,2,3]，z=1，z’=-1时，通过算法计算：</p>
-<p>∇w0=0.3∗(1−(−1))∗x0=0.3∗2∗1=0.6</p>
-<p>w0=w0+∇w0=0.6 </p>
-<p>∇w1=0.3∗(1−(−1))∗x1=0.3∗2∗2=1.2</p>
-<p>w1=w1+∇w1=1.2</p>
-<p>∇w2=0.3∗(1−(−1))∗x2=0.3∗2∗3=1.8</p>
-<p>w2=w2+∇w2=1.8</p>
-<p>得到更新后的w=[0.6,1.2,1.8]</p>
-<p>我们在输入大量样本时，每次在答案正确时不会更改，每次在答案错误时更新权值，只要取的学习率和样本量合适，就可以得到学习之后更为精准的算法。</p>
-<p>我们可以看到，感知器类似一个逻辑回归模型，可以做线性分类任务。</p>
-<p>我们可以用决策分界来形象的表达分类的效果。决策分界就是在二维的数据平面中划出一条直线，当数据的维度是3维的时候，就是划出一个平面，当数据的维度是n维时，就是划出一个n-1维的超平面。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_12.png?raw=true" alt=""></p>
-<h2 id="0x04-两层神经网络-多层感知器"><a href="#0x04-两层神经网络-多层感知器" class="headerlink" title="0x04 两层神经网络(多层感知器)"></a>0x04 两层神经网络(多层感知器)</h2><p>两层神经网络也就是多了一层计算层(被称为隐藏层)，在增加了这一层之后，神经网络就可以解决一些复杂的问题。</p>
-<p>此时，权值矩阵增加到两个，计算层数分为隐藏层计算和输出层计算。</p>
-<p>不过不同于单层的sgn函数，在两层神经网络中，我们使用的激活函数最多的是sigmoid函数。</p>
-<p>隐藏层计算如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_13.png?raw=true" alt=""></p>
-<p>输出层计算如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_14.png?raw=true" alt=""></p>
-<p>总的计算公式：</p>
-<p>g(W(1) * a(1)) = a(2); </p>
-<p>g(W(2) * a(2)) = z;</p>
-<p>与单层神经网络不同。理论证明，两层神经网络可以无限逼近任意连续函数。也就是说，面对复杂的非线性分类任务，两层（带一个隐藏层）神经网络可以分类的很好。</p>
-<p>如下例，红色的线与蓝色的线代表数据。而红色区域和蓝色区域代表由神经网络划开的区域，两者的分界线就是决策分界。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_15.png?raw=true" alt=""></p>
-<h2 id="0x05-多层神经网络"><a href="#0x05-多层神经网络" class="headerlink" title="0x05 多层神经网络"></a>0x05 多层神经网络</h2><p>延续两层神经网络,在两层神经网络的输出层后面，继续添加层次。原来的输出层变成中间层，新加的层次成为新的输出层。我们这样依次添加，就会产生多层神经网络。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_16.png?raw=true" alt=""></p>
-<p>增加了层数，那么正向传播计算公式也会增加一步</p>
-<p>g(W(1) * a(1)) = a(2); </p>
-<p>g(W(2) * a(2)) = a(3);</p>
-<p>g(W(3) * a(3)) = z;</p>
-<p>再增加层数的话，与上面同理递推即可：</p>
-<p>g(W(1) * a(1)) = a(2); </p>
-<p>g(W(2) * a(2)) = a(3);</p>
-<p>···</p>
-<p>g(w(n-1) * a(n-1)) = a(n);</p>
-<p>g(W(n) * a(n)) = z;</p>
-<p>随着网络的层数增加，每一层对于前一层次的抽象表示更深入。代表着更深入的表示特征，以及更强的函数模拟能力。在参数数量一样的情况下，更深的网络往往具有比浅层的网络更好的识别效率。</p>
-<p>相比于单层神经网络的sgn函数和双层神经网络的sigmoid函数，到了多层神经网络时，通过一系列的研究发现，ReLU函数在训练多层神经网络时，更容易收敛，并且预测性能更好。</p>
-<p>ReLU函数不是传统的非线性函数，而是分段线性函数。其表达式非常简单，就是y=max(x,0)。简而言之，在x大于0，输出就是输入，而在x小于0时，输出就保持为0。这种函数的设计启发来自于生物神经元对于激励的线性响应，以及当低于某个阈值后就不再响应的模拟。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_17.png?raw=true" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2642,7 +2617,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-count">87</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
