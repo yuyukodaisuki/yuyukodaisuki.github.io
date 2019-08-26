@@ -258,6 +258,250 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/01/python-scikit-learn学习-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/01/python-scikit-learn学习-2/" itemprop="url">
+                  python-scikit learn学习(2)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-01T17:06:38+08:00">
+                2018-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/01/python-scikit-learn学习-2/" class="leancloud_visitors" data-flag-title="python-scikit learn学习(2)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-scikit-learn"><a href="#0x00-scikit-learn" class="headerlink" title="0x00 scikit-learn"></a>0x00 scikit-learn</h2><p>Scikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。</p>
+<h2 id="0x01-模型属性与功能"><a href="#0x01-模型属性与功能" class="headerlink" title="0x01 模型属性与功能"></a>0x01 模型属性与功能</h2><p>sklearn库中所有机器学习的模型对象中都有一些属性与功能，假设模型对象名为mod，那么就可以这样表示mod模型的一些属性与功能：</p>
+<ul>
+<li>mod.coef_  x前的系数</li>
+<li>mod.intercept_  截距</li>
+<li>mod.predict() 预测</li>
+<li>mod.get_params() 定义的参数</li>
+<li>mod.score(data_x,data_y) 用data_x做预测，用data_y做比较给模型打分</li>
+</ul>
+<p>我们以上一篇中的线性回归模型为例查看一下这些属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">example_x,example_y = datasets.make_regression(n_samples=100,n_features=2,n_targets=1,noise=3)</span><br><span class="line"></span><br><span class="line">lr = LinearRegression()</span><br><span class="line">lr.fit(example_x,example_y)</span><br><span class="line"></span><br><span class="line">print(lr.coef_)</span><br><span class="line">print(lr.intercept_)</span><br><span class="line">print(lr.predict(example_x[:5,:]))</span><br><span class="line">print(lr.get_params())</span><br><span class="line">print(lr.score(example_x,example_y))</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn07.png?raw=true" alt=""></p>
+<p>可以从输出中看到：</p>
+<ul>
+<li>lr.coef_输出一个list代表每一种特征前的系数</li>
+<li>lr.intercept_输出截距</li>
+<li>lr.predict()方法可以输入样本进行预测</li>
+<li>lr.get_params()方法可以输出模型的配置信息</li>
+<li>lr.score()方法通过对比预测的数据和原始标签对模型打分</li>
+</ul>
+<h2 id="0x02-标准化"><a href="#0x02-标准化" class="headerlink" title="0x02 标准化"></a>0x02 标准化</h2><p>在训练模型时，某些特征可能会在不同的样本中相差特别大，有一些异常大或者异常小的数据会对模型训练结果造成较大误差，并且数据分布很分散也会影响训练结果，所以一般在训练之前，我们都会对特征数值进行标准化。</p>
+<p>基本的标准化流程是去除每个特征的平均值来转换数据使其居中，然后通过将非常数特征除以它们的标准差来对其进行缩放。</p>
+<p>在scikit-learn库中，有用于预处理数据的模块sklearn.preprocessing，其中scale方法可以快速简便的实现上述标准化操作。用一段代码来尝试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x_train = np.array([[1, -100, 0.03],</span><br><span class="line">              [-1, 500, -0.02],</span><br><span class="line">              [0.2, 200, 0.04]], dtype=np.float64)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(preprocessing.scale(x_train))</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn08.png?raw=true" alt=""></p>
+<p>可以看到，数据都被标准化到很接近的位置，这样就更利于学习器训练了。</p>
+<p>具体能产生多大的影响，我们可以通过datasets产生一组数据，对比直接训练和标准化之后训练的精度：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.datasets.samples_generator import make_classification</span><br><span class="line">from sklearn.svm import SVC</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line">X, y = make_classification(</span><br><span class="line">    n_samples=300, n_features=2,</span><br><span class="line">    n_redundant=0, n_informative=2,</span><br><span class="line">    n_clusters_per_class=1,scale=100)</span><br><span class="line"></span><br><span class="line">#可视化数据</span><br><span class="line">plt.scatter(X[:, 0], X[:, 1], c=y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</span><br><span class="line">clf = SVC()</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">print(clf.score(X_test, y_test))</span><br><span class="line"></span><br><span class="line">X = preprocessing.scale(X)</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</span><br><span class="line">clf = SVC()</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">print(clf.score(X_test, y_test))</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn09.png?raw=true" alt=""></p>
+<p>在这个程序中使用datasets中的make_classification方法产生拥有两个特征值的分类数据，然后就可以将两个特征值分别放在横轴和纵轴来观察数据分布</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn10.png?raw=true" alt=""></p>
+<p>接着对比直接训练和标准化之后训练的精度，发现前后差距非常大。</p>
+<p>标准化还有一种常用的方式那就是将特征取值规定到一个范围（默认0-1），只需将最开始代码中标准化函数改为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">min_max_scaler = preprocessing.MinMaxScaler()</span><br><span class="line">X_MinMax = min_max_scaler.fit_transform(x_train)</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x03-交叉验证"><a href="#0x03-交叉验证" class="headerlink" title="0x03 交叉验证"></a>0x03 交叉验证</h2><p>之前在机器学习的模型评估方法里面学过几种模型验证的方法，其中也提到了，学习器训练完成后仍然在训练集种测试实际上是一种错误的方法，因为这个学习器在自身的训练集上很容易得到一个很高的分数，但是对新样本无法预测出任何有用的信息，这种情况被称为过拟合。</p>
+<p>所以为了避免这种情况，我们一般在验证的时候会将样本分为训练集和测试集，在之前的博客（ <a href="http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/</a> ）介绍了留数法、交叉验证法、自助法这几种方法来分割训练集与测试集。</p>
+<p>前面的程序我们大多使用train_test_split方法将样本分为两部分，也就是留数法，那么这里就使用sklearn实现交叉验证法。</p>
+<p>交叉验证法需要用到sklearn的cross_val_score模块，我们就在刚才svm分类算法的基础上写出交叉验证：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.datasets.samples_generator import make_classification</span><br><span class="line">from sklearn.svm import SVC</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">from sklearn.model_selection import cross_val_score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#生成具有2种属性的300笔数据</span><br><span class="line">X, y = make_classification(</span><br><span class="line">    n_samples=300, n_features=2,</span><br><span class="line">    n_redundant=0, n_informative=2,</span><br><span class="line">    n_clusters_per_class=1,scale=100)</span><br><span class="line"></span><br><span class="line">#可视化数据</span><br><span class="line">plt.scatter(X[:, 0], X[:, 1], c=y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">X = preprocessing.scale(X)</span><br><span class="line">clf = SVC()</span><br><span class="line"></span><br><span class="line">scores=cross_val_score(clf,X,y,cv=10,scoring=&apos;accuracy&apos;)</span><br><span class="line"></span><br><span class="line">print(scores)</span><br><span class="line">print(scores.mean())</span><br></pre></td></tr></table></figure></p>
+<p>数据分布如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn11.png?raw=true" alt=""></p>
+<p>输出十组分别的分数和平均分数：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn12.png?raw=true" alt=""></p>
+<p>交叉验证因为抽取的测试集更随机化且全部抽到，所以平均后的评估得分更令人信服。</p>
+<p>其中cross_val_score种的clf是模型，X样本特征，y是样本标签，cv是交叉验证的分组数量，scoring参数是计分指标，可以根据实际情况在官方文档选取合适的计分指标：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn13.png?raw=true" alt=""></p>
+<h2 id="0x04-模型保存"><a href="#0x04-模型保存" class="headerlink" title="0x04 模型保存"></a>0x04 模型保存</h2><p>在实际的机器学习运用中，训练用的样本量是十分大的，也就是说训练一个模型需要的时间开销非常大，我们要使用一个训练好的模型，每次都去重新训练一遍是不现实的，所以在训练好之后我们需要保存模型。</p>
+<p>我们常用的存取模型方法有如下两种</p>
+<h3 id="使用pickle保存模型"><a href="#使用pickle保存模型" class="headerlink" title="使用pickle保存模型"></a>使用pickle保存模型</h3><p>第一种方法是使用pickle库保存和读取模型，以上一篇博客中的k近邻算法为例：</p>
+<p>保存模型：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(iris_x,iris_y)</span><br><span class="line"></span><br><span class="line">file = open(&quot;model/knn.pickle&quot;,&quot;wb&quot;)</span><br><span class="line">pickle.dump(knn,file)</span><br></pre></td></tr></table></figure></p>
+<p>然后当前程序目录中model子目录下就会产生一个knn.pickle的文件。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn14.png?raw=true" alt=""></p>
+<p>读取模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line"></span><br><span class="line">file = open(&quot;model/knn.pickle&quot;,&quot;rb&quot;)</span><br><span class="line">knn=pickle.load(file)</span><br><span class="line"></span><br><span class="line">pred = knn.predict(iris_x[0:5])</span><br><span class="line">print(pred)</span><br></pre></td></tr></table></figure>
+<p>读取模型时直接读取这个文件，就可以使用现有模型，在以上代码中使用这个模型预测了前五个数据，我们都知道鸢尾花数据集前五个样本分类都是0，将它们放在这个模型中预测输出，发现也都是0。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn15.png?raw=true" alt=""></p>
+<h3 id="使用joblib保存模型"><a href="#使用joblib保存模型" class="headerlink" title="使用joblib保存模型"></a>使用joblib保存模型</h3><p>第二种方法是用sklearn的joblib模块保存，joblib库会自动多线程运行，所以在面对大数据的时候性能要优于pickle模块，但是joblib模块只能将文件保存在磁盘中，而且会产生多个文件。</p>
+<p>保存模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line">from sklearn.externals import joblib</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(iris_x,iris_y)</span><br><span class="line"></span><br><span class="line">joblib.dump(knn,&apos;model/knn.pkl&apos;)</span><br></pre></td></tr></table></figure>
+<p>然后当前程序目录中model子目录下就会产生一个knn.pkl的文件，有时会产生多个文件，但是读取时只用读取第一个。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn16.png?raw=true" alt=""></p>
+<p>读取模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.externals import joblib</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">knn=joblib.load(&apos;model/knn.pkl&apos;)</span><br><span class="line"></span><br><span class="line">pred = knn.predict(iris_x[0:5])</span><br><span class="line">print(pred)</span><br></pre></td></tr></table></figure>
+<p>测试结果仍然成立。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn17.png?raw=true" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/机器学习-8-——支持向量机-SVM/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2342,232 +2586,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/28/IIS短文件名漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/28/IIS短文件名漏洞/" itemprop="url">
-                  IIS短文件名漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-28T11:39:37+08:00">
-                2018-06-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/28/IIS短文件名漏洞/" class="leancloud_visitors" data-flag-title="IIS短文件名漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-IIS短文件名"><a href="#0x00-IIS短文件名" class="headerlink" title="0x00 IIS短文件名"></a>0x00 IIS短文件名</h2><p>为了兼容16位MS-DOS程序，Windows为文件名较长的文件（和文件夹）生成了对应的DOS 8.3 短文件名。</p>
-<p>Windows下查看对应的短文件名，可以使用命令 dir /x</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename01.png?raw=true" alt=""></p>
-<p>对应短文件名的规律是：</p>
-<ul>
-<li>前六位保留</li>
-<li>所有小写字母均转换成大写字母</li>
-<li>后续字符用~1表示</li>
-<li>后缀最多显示三位，其余的被截断</li>
-<li>长文件名前缀/文件夹名字符长度符合0-9和Aa-Zz范围且需要大于等于9位才会生成短文件名，如果包含空格或者其他部分特殊字符，不论长度均会生成短文件</li>
-</ul>
-<h2 id="0x01-IIS短文件名漏洞"><a href="#0x01-IIS短文件名漏洞" class="headerlink" title="0x01 IIS短文件名漏洞"></a>0x01 IIS短文件名漏洞</h2><p>在IIS的web服务中，有时无法直接访问一些文件，但是我们发送一个存在通配符* 和?的请求,当IIS接收到一个文件路径中包含~的请求时，根据文件是否存在返回值是不同的，我们可以利用这个方法猜解本来无法得到的文件名。</p>
-<ul>
-<li><p>访问构造的某个存在的短文件名，会返回404</p>
-</li>
-<li><p>访问构造的某个不存在的短文件名，会返回400</p>
-</li>
-</ul>
-<h2 id="0x02-影响版本"><a href="#0x02-影响版本" class="headerlink" title="0x02 影响版本"></a>0x02 影响版本</h2><p>本来受到IIS短文件名漏洞影响的版本如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">IIS 1.0，Windows NT 3.51  </span><br><span class="line">IIS 3.0，Windows NT 4.0 Service Pack 2  </span><br><span class="line">IIS 4.0，Windows NT 4.0选项包 </span><br><span class="line">IIS 5.0，Windows 2000  </span><br><span class="line">IIS 5.1，Windows XP Professional和Windows XP Media Center Edition  </span><br><span class="line">IIS 6.0，Windows Server 2003和Windows XP Professional x64 Edition  </span><br><span class="line">IIS 7.0，Windows Server 2008和Windows Vista  </span><br><span class="line">IIS 7.5，Windows 7（远程启用&lt;customErrors&gt;或没有web.config）</span><br><span class="line">IIS 7.5，Windows 2008（经典管道模式）</span><br><span class="line">注意：IIS使用.Net Framework 4时不受影响</span><br></pre></td></tr></table></figure></p>
-<p>以上受影响范围主要是针对HTTP GET方法，且需要同时安装ASP.NET应用程序。</p>
-<p>但是漏洞发现者Soroush Dalili之后再次在IIS7.5和IIS8.0的版本中发现，当使用OPTIONS来代替GET 方法时，如果请求中的短文件名是存在的，IIS会返回一个不一样的错误信息。</p>
-<p>而且在之后的版本中此漏洞也都成功验证。<br>所以影响的版本又加上了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IIS 8.0，Windows 8, Windows Server 2012</span><br><span class="line">IIS 8.5，Windows 8.1,Windows Server 2012 R2</span><br><span class="line">IIS 10.0，Windows 10, Windows Server 2016</span><br></pre></td></tr></table></figure></p>
-<p>所以，短文件名漏洞存在于目前IIS的所有版本中。</p>
-<h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><h3 id="在windows10下打开IIS服务"><a href="#在windows10下打开IIS服务" class="headerlink" title="在windows10下打开IIS服务"></a>在windows10下打开IIS服务</h3><p>开始—–&gt;控制面板—-&gt;程序—-&gt;启用或关闭windows功能，勾选以下选项，安装IIS。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename02.png?raw=true" alt=""></p>
-<p>在浏览器访问ip地址，如果发现IIS windows信息说明安装成功。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename03.png?raw=true" alt=""></p>
-<p>IIS 安装成功以后，会默认在C盘目录下生成intpub目录，网站的根目录位于C:\inetpub\wwwroot，此时我们创建几个asp文件之后，再使用dir /x查看下根目录是否存在短文件名</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename04.png?raw=true" alt=""></p>
-<p>我们可以看到，有的文件有短文件名，有的文件没有，这是因为之前提到的，长文件名前缀/文件夹名字符长度符合0-9和Aa-Zz范围且需要大于等于9位才会生成短文件名，如果包含空格或者其他部分特殊字符，不论长度均会生成短文件。</p>
-<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>常用的利用方式有以下几种</p>
-<h3 id="短文件名泄露"><a href="#短文件名泄露" class="headerlink" title="短文件名泄露"></a>短文件名泄露</h3><p>我们可以写python脚本通过HTTP的OPTIONS方法爆破文件名，也可以下载专用的爆破工具来扫描。</p>
-<h3 id="apache下通过短文件名下载"><a href="#apache下通过短文件名下载" class="headerlink" title="apache下通过短文件名下载"></a>apache下通过短文件名下载</h3><p>当Apache运行在windows下，如果创建了一个长文件，那么无需猜解长文件，直接用短文件就可以下载了。</p>
-<h3 id="Net-Framework的拒绝服务攻击"><a href="#Net-Framework的拒绝服务攻击" class="headerlink" title="Net Framework的拒绝服务攻击"></a>Net Framework的拒绝服务攻击</h3><p>当请求文件夹名称包含~1的请求，会导致不存在该文件的.Net framework去递归所有根目录。特别是第一次请求时，会造成的文件读取特别多。用僵尸网络不断向服务器发送此类请求，很容易耗尽对方服务器资源。</p>
-<h2 id="0x05-局限性"><a href="#0x05-局限性" class="headerlink" title="0x05 局限性"></a>0x05 局限性</h2><ul>
-<li><p>1.此漏洞只能确定前6个字符，如果后面的字符太长、包含特殊字符，很难猜解</p>
-</li>
-<li><p>2.如果文件名本身太短（无短文件名）也是无法猜解的</p>
-</li>
-<li><p>3.如果文件名前6位带空格，8.3格式的短文件名会补进，和真实文件名不匹配</p>
-</li>
-<li><p>4.如果文件夹名前6位字符带点“.”，扫描程序会认为是文件而不是文件夹，最终出现误报</p>
-</li>
-<li><p>5.不支持中文文件名，包括中文文件和中文文件夹。一个中文相当于两个英文字符，故超过4个中文字会产生短文件名，但是IIS不支持中文猜测</p>
-</li>
-</ul>
-<h2 id="0x06-应对"><a href="#0x06-应对" class="headerlink" title="0x06 应对"></a>0x06 应对</h2><h4 id="禁止url中使用“-”或它的Unicode编码"><a href="#禁止url中使用“-”或它的Unicode编码" class="headerlink" title="禁止url中使用“~”或它的Unicode编码"></a>禁止url中使用“~”或它的Unicode编码</h4><h4 id="关闭windows的8-3格式功能"><a href="#关闭windows的8-3格式功能" class="headerlink" title="关闭windows的8.3格式功能"></a>关闭windows的8.3格式功能</h4><ul>
-<li><p>命令行中关闭：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fsutil 8dot3name set 1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>注册表中禁用：<br>在注册表中找到HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem，将其中的 NtfsDisable8dot3NameCreation这一项的值设为 1，代表不创建短文件名格式</p>
-</li>
-</ul>
-<h4 id="升级netFramework至4-0以上版本"><a href="#升级netFramework至4-0以上版本" class="headerlink" title="升级netFramework至4.0以上版本"></a>升级netFramework至4.0以上版本</h4><h4 id="修改注册表禁用短文件名功能"><a href="#修改注册表禁用短文件名功能" class="headerlink" title="修改注册表禁用短文件名功能"></a>修改注册表禁用短文件名功能</h4><h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>相对来说这个漏洞比较鸡肋，微软也表示IIS短文件漏洞未达到安全更新标准，需要确定何时在下一个逻辑版本中解决它。</p>
-<p>虽然漏洞的威胁不大，但是正因不严重导致微软没有更新，现在所有版本都存在这个问题，当有人将其与其他漏洞配合起来使用时，也是有可能造成很严重的后果。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2617,7 +2635,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">87</span>
+                <span class="site-state-item-count">88</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2681,7 +2699,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
