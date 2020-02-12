@@ -258,6 +258,215 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/29/爆破工具hydra笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/29/爆破工具hydra笔记/" itemprop="url">
+                  爆破工具hydra笔记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-29T21:17:42+08:00">
+                2018-04-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/29/爆破工具hydra笔记/" class="leancloud_visitors" data-flag-title="爆破工具hydra笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-hydra"><a href="#0x00-hydra" class="headerlink" title="0x00 hydra"></a>0x00 hydra</h2><p>hydra 是一个网络帐号破解工具，支持多种协议。其作者是van Hauser,David Maciejak与其共同维护。hydra在所有支持GCC的平台能很好的编译，包括Linux,所有版本的BSD,Mac OS, Solaris等。</p>
+<h2 id="0x01-参数说明"><a href="#0x01-参数说明" class="headerlink" title="0x01 参数说明"></a>0x01 参数说明</h2><p>hydra [[[-l LOGIN|-L FILE] [-p PASS|-P FILE]] | [-C FILE]] [-e ns]<br>[-o FILE] [-t TASKS] [-M FILE [-T TASKS]] [-w TIME] [-f] [-s PORT] [-S] [-vV] server service [OPT]</p>
+<ul>
+<li>-R 继续从上一次进度接着破解。</li>
+<li>-S 采用SSL链接。</li>
+<li>-s PORT 可通过这个参数指定非默认端口。</li>
+<li>-l LOGIN 指定破解的用户，对特定用户破解。</li>
+<li>-L FILE 指定用户名字典。</li>
+<li>-p PASS 小写，指定密码破解，少用，一般是采用密码字典。</li>
+<li>-P FILE 大写，指定密码字典。</li>
+<li>-e ns 可选选项，n：空密码试探，s：使用指定用户和密码试探。</li>
+<li>-C FILE 使用冒号分割格式，例如“登录名:密码”来代替-L/-P参数。</li>
+<li>-M FILE 指定目标列表文件一行一条。</li>
+<li>-o FILE 指定结果输出文件。</li>
+<li>-f 在使用-f参数以后，找到第一对登录名或者密码的时候中止破解。</li>
+<li>-t TASKS 同时运行的线程数，默认为16。</li>
+<li>-w TIME 设置最大超时的时间，单位秒，默认是30s。</li>
+<li>-v / -V 显示详细过程。</li>
+<li>server 目标ip</li>
+<li>service 指定服务名，支持的服务和协议：telnet ftp pop3[-ntlm] imap[-ntlm] smb smbnt http-{head|get} http-{get|post}-form http-proxy cisco cisco-enable vnc ldap2 ldap3 mssql mysql oracle-listener postgres nntp socks5 rexec rlogin pcnfs snmp rsh cvs svn icq sapr3 ssh smtp-auth[-ntlm] pcanywhere teamspeak sip vmauthd firebird ncp afp等等。</li>
+<li>OPT 可选项</li>
+</ul>
+<h2 id="0x02-使用范例"><a href="#0x02-使用范例" class="headerlink" title="0x02 使用范例"></a>0x02 使用范例</h2><ul>
+<li>1.破解ssh：<br>hydra -l 用户名 -p 密码字典 -t 线程 ip ssh</li>
+<li>2.破解ftp：<br>hydra ip ftp -l 用户名 -P 密码字典 -t 线程</li>
+<li>3.破解web登录（get方式）：<br>hydra -l 用户名 -p 密码字典 -t 线程 -f ip http-get 127.0.0.1/admin/index.php</li>
+<li>4.破解web登录（post方式）：<br>hydra -l 用户名 -P 密码字典 -s 80 ip http-post-form “/admin/login.php:username=^USER^&amp;password=^PASS^&amp;submit=login”</li>
+<li>5.破解https：<br>hydra -m /index.php -l 用户名 -P 密码字典 ip https</li>
+<li>6.破解teamspeak：<br>hydra -l 用户名 -P 密码字典 -s 端口号 ip teamspeak</li>
+<li>7.破解cisco：<br>hydra -P 密码字典 ip cisco</li>
+<li>8.破解smb：<br>hydra -l 用户名 -P 密码字典 ip smb</li>
+<li>9.破解pop3：<br>hydra -l 用户名 -P 密码字典 my.pop3.mail pop3</li>
+<li>10.破解rdp：<br>hydra ip rdp -l 用户名 -P 密码字典 -V</li>
+<li>11.破解http-proxy：<br>hydra -l 用户名 -p 密码字典 -t 线程 http-proxy://xxx.xxx.xxx.xxx</li>
+<li>12.破解imap：<br>hydra -l 用户名 -P 密码字典 ip imap PLAIN</li>
+</ul>
+<h2 id="0x03-总结"><a href="#0x03-总结" class="headerlink" title="0x03 总结"></a>0x03 总结</h2><p>hydra支持多种协议的爆破，并且使用方式简单灵活，是暴力测试必备良器，只需要自行提供字典，或根据实际情况生成社工字典，就可以运用到绝大多数场景。</p>
+<p>这里提供一下博主经常使用的一些字典 <a href="https://github.com/echohun/tools/tree/master/%E5%AD%97%E5%85%B8" target="_blank" rel="noopener">https://github.com/echohun/tools/tree/master/%E5%AD%97%E5%85%B8</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/29/反序列化漏洞/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2249,212 +2458,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/17/逻辑处理漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/17/逻辑处理漏洞/" itemprop="url">
-                  逻辑处理漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-17T18:32:46+08:00">
-                2018-04-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/17/逻辑处理漏洞/" class="leancloud_visitors" data-flag-title="逻辑处理漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-逻辑处理漏洞"><a href="#0x00-逻辑处理漏洞" class="headerlink" title="0x00 逻辑处理漏洞"></a>0x00 逻辑处理漏洞</h2><p>很多漏洞出现的原因是在代码编写的环节没有考虑到一些安全问题，由程序逻辑失误导致的，这里记录一下一些常见的逻辑处理漏洞。</p>
-<h2 id="0x01-in-array函数"><a href="#0x01-in-array函数" class="headerlink" title="0x01 in_array函数"></a>0x01 in_array函数</h2><p>in_array()函数是用来判断一个值是否在一个列表里面，一般用法如下：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">in_array(&apos;b&apos;,array(&apos;a&apos;,&apos;b&apos;,&apos;c&apos;))</span><br></pre></td></tr></table></figure>
-<p>当我们php代码中这样写时：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(in_array($_GET[&apos;id&apos;],array(1,2,3,4)))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;select where id=&apos;&quot;.$_GET[&apos;id&apos;].&quot;&apos;&quot;;</span><br><span class="line">echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这段代码判断得到的参数id的值是否在array这个数组中，但是这里如果输入id=1’ union select <em> from user，in_array()函数会自动进行类型转换，就会认为这个输入参数类型转换之后是1，属于array数组中，就会执行select where id =’1’ union select </em> from user。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic01.png" alt=""></p>
-<h2 id="0x02-双等于和三等于"><a href="#0x02-双等于和三等于" class="headerlink" title="0x02 双等于和三等于"></a>0x02 双等于和三等于</h2><p>php中，双等于与三等于之间有一些区别，其中双等于在判断等于之前会先进行数据类型转换，而三等于则不会，所以在一些情况下，双等于会造成一些安全问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">var_dump($_GET[&apos;var&apos;]==2);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>var_dump()函数用于输出变量结构、内容和类型，一般用于精确调试。  </p>
-<p>这里我们如果给出var=2abcd,就会返回bool(true),发现类型强制转换之后判断为true。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic02.png" alt=""></p>
-<h2 id="0x03-is-numeric函数"><a href="#0x03-is-numeric函数" class="headerlink" title="0x03 is_numeric函数"></a>0x03 is_numeric函数</h2><p>in_numeric()用来判断一个变量是否为数字，如果检查通过返回true，否则返回false</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(is_numeric($_GET[&apos;var&apos;]))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;insert into user values(&apos;user&apos;,&#123;$_GET[&apos;var&apos;]&#125;)&quot;;</span><br><span class="line">    echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这个函数存在一个问题，那就是当传入hex时直接通过并返回true，但是mysql中是可以通过hex编码代替明文的，如我们提交一个xss测试代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<p>对应的hex编码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x3c7363726970743e616c6572742831293c2f7363726970743e</span><br></pre></td></tr></table></figure></p>
-<p>就会成功的将代码传入数据库。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic03.png" alt=""></p>
-<h2 id="0x04-订单支付漏洞"><a href="#0x04-订单支付漏洞" class="headerlink" title="0x04 订单支付漏洞"></a>0x04 订单支付漏洞</h2><p>在一些电商网站会出现的一些逻辑漏洞，主要是客户可以更改单价、总价、数量等，然后提交之后后台未作严格的校验导致的。</p>
-<p>比如价格可以在客户端提交，那么原本几千元的商品，我们抓包修改提交订单的商品单价为1，如果后台未作校验直接跳转支付界面，那么就可以用一元钱购买物品。总价也是同理。</p>
-<p>再比如将要购买的商品数量或单价改为负数，如果后台未作检验，那么计算总价时就会计算出负数，反而会让我们越买钱越多。</p>
-<h2 id="0x05-利用时间差"><a href="#0x05-利用时间差" class="headerlink" title="0x05 利用时间差"></a>0x05 利用时间差</h2><p>这种类型在早期刷钻的时候出现过，先发给腾讯一条开通某钻的订单，然后再发送一个取消业务的短信给运营商，这样腾讯那边成功开通但是无法扣费，就实现了刷钻。</p>
-<p>还有就是在购买商品时，判断余额这条语句和扣费语句之间有某几条语句浪费了一些时间。比如我们有10元钱，然后商品也是10元，我们就可以以极快的速度发很多个请求，这个时候还没用扣费所以判断余额10元足够开通，然后请求都发送之后，获得了很多个10元钱请求的商品，然后才开始扣费，使余额成为负数，但是商品已经全部成功买到。</p>
-<h2 id="0x06-水平权限漏洞"><a href="#0x06-水平权限漏洞" class="headerlink" title="0x06 水平权限漏洞"></a>0x06 水平权限漏洞</h2><p>水平越权，即是相同级别的用户或者同一角色的不同用户之间，可以越权访问修改或者删除等重要功能。  </p>
-<p>如果我们自己的页面最后的id是12300，如果设计者没有考虑到水平权限的问题再次验证用户访问的空间是否属于这个用户自身的话，那么就可以通过遍历来得到所有用户的信息，甚至进行修改等。</p>
-<h2 id="0x07-垂直权限漏洞"><a href="#0x07-垂直权限漏洞" class="headerlink" title="0x07 垂直权限漏洞"></a>0x07 垂直权限漏洞</h2><p>垂直越权就是低权限用户(普通用户)可以访问更高权限(如管理员)才能访问到的资源。  </p>
-<p>如之前淘宝举报号任意访问的问题，我们通过普通用户的身份，可以访问只有管理员才能访问的举报信息，就是这里的权限检查出现问题。</p>
-<h2 id="0x08-未授权访问"><a href="#0x08-未授权访问" class="headerlink" title="0x08 未授权访问"></a>0x08 未授权访问</h2><p>这个漏洞广泛存在于目前的网络中，很多公司都没有对自己公司的某些敏感目录做访问限制，使得外网可以直接通过浏览器访问。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic04.jpg" alt=""></p>
-<p>如正方教务系统的后台敏感日志查看漏洞</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic05.png" alt=""></p>
-<p>我们在正方教务系统的登陆页面后面加上/log/2018-04-17-log.txt，就可以直接访问后台敏感日志。</p>
-<p>有的公司的files信息和phpinfo信息，也直接暴露给用户，会被获得很多敏感信息。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic06.jpg" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic07.png" alt=""></p>
-<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>逻辑处理漏洞还有很多类型，比如验证码爆破、密码找回等等，这些漏洞虽然原理不难理解，但是由于程序员编写代码时的考虑不周，导致逻辑处理漏洞广泛存在，并且危害极高，解决逻辑处理漏洞，更需要的是安全工作人员和开发人员的沟通配合。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2504,7 +2507,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">92</span>
+                <span class="site-state-item-count">93</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2515,7 +2518,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2526,7 +2529,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-count">59</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
