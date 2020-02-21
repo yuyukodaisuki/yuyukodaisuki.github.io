@@ -258,6 +258,259 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/25/机器学习-3-——逻辑回归/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/06/25/机器学习-3-——逻辑回归/" itemprop="url">
+                  机器学习(3)——逻辑回归
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-25T23:39:05+08:00">
+                2018-06-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/06/25/机器学习-3-——逻辑回归/" class="leancloud_visitors" data-flag-title="机器学习(3)——逻辑回归">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-逻辑回归-Logistic-Regression"><a href="#0x00-逻辑回归-Logistic-Regression" class="headerlink" title="0x00 逻辑回归(Logistic Regression)"></a>0x00 逻辑回归(Logistic Regression)</h2><p>逻辑回归就是这样的一个过程：面对一个回归或者分类问题，建立代价函数，然后通过优化方法迭代求解出最优的模型参数，然后测试验证我们这个求解的模型的好坏。</p>
+<p>Logistic回归虽然名字里带“回归”，但是它实际上是一种分类方法，主要用于两分类问题（即输出只有两种，分别代表两个类别）</p>
+<p>回归模型中，y是一个定性变量，比如y=0或1，logistic方法主要应用于研究某些事件发生的概率。</p>
+<h2 id="0x01-逻辑回归模型"><a href="#0x01-逻辑回归模型" class="headerlink" title="0x01 逻辑回归模型"></a>0x01 逻辑回归模型</h2><p>它的核心思想是，如果线性回归的结果输出是一个连续值，而值的范围是无法限定的，那我们有没有办法把这个结果值映射为可以帮助我们判断的结果呢。而如果输出结果是 (0,1) 的一个概率值，这个问题就很清楚了。</p>
+<p>在数学上有sigmoid函数可以帮助我们实现这一思想。</p>
+<p>sigmoid函数表达式：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_01.png?raw=true" alt=""></p>
+<p>二元逻辑回归时，将t换成ax+b，可以得到二元逻辑回归模型的参数形式：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_02.png?raw=true" alt=""></p>
+<p>sigmoid函数图形：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_03.png?raw=true" alt=""></p>
+<p>其中，如果是二元回归时，我们P(x)的值可以理解为某一分类概率的大小，如果P(x)值为0.6，代表输出为1的概率是60%，补集部分是输出为0的概率40%。</p>
+<p>此时P(x)的值越小，而分类为0的的概率越高，反之，值越大的话分类为1的的概率越高。如果靠近临界点即靠近0.6时，分类准确率会下降。</p>
+<h2 id="0x02-决策边界-decision-boundary"><a href="#0x02-决策边界-decision-boundary" class="headerlink" title="0x02 决策边界(decision boundary)"></a>0x02 决策边界(decision boundary)</h2><p>决策边界就是能够把样本正确分类的一条边界，从图像上可以直观的看到</p>
+<p>如线性决策边界：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_04.png?raw=true" alt=""></p>
+<p>非线性决策边界：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_05.png?raw=true" alt=""></p>
+<p>在上面二元逻辑回归的例子中，我们用y表示输出的离散值0或1，写为函数形式为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_06.png?raw=true" alt=""></p>
+<p>然后我们逻辑函数g要做到，在输入大于等于零时，输出大于等于0.6；在输入小于零时，输出小于等于0.6。即：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_07.png?raw=true" alt=""></p>
+<p>决策边界是假设函数的属性，由参数决定，而不是由数据集的特征决定。</p>
+<h2 id="0x03-成本函数-Cost-Function"><a href="#0x03-成本函数-Cost-Function" class="headerlink" title="0x03 成本函数(Cost Function)"></a>0x03 成本函数(Cost Function)</h2><p>线性回归中也说过成本函数，也叫代价函数,在逻辑回归中，我们也需要定义成本函数对其取值的好坏进行评估。</p>
+<p>而逻辑回归如果取用和线性回归一样的方式计算成本函数，那么图形是“非凸”的。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_08.png?raw=true" alt=""></p>
+<p>这样就会产生很多个局部最小值，无法使用梯度下降算法。所以我们需要一个新的成本函数。</p>
+<p>在逻辑回归中，损失函数是用来估计预测值（y^(i)）与期望输出值（y(i)）之间的差异。</p>
+<p>统计学习中常用的损失函数有以下几种：</p>
+<p>(1) 0-1损失函数(0-1 loss function):</p>
+<p>(2) 平方损失函数(quadratic loss function)</p>
+<p>(3) 绝对损失函数(absolute loss function)</p>
+<p>(4) 对数损失函数(logarithmic loss function) 或对数似然损失函数(log-likelihood loss function)</p>
+<p>损失函数越小，模型就越好。</p>
+<p>所以在逻辑回归中，为了保证全局收敛，我们采用对数似然损失函数。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_09.png?raw=true" alt=""></p>
+<p>也就是说，如下两个情况：</p>
+<p>如果是正确答案为y=1的情况：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_10.png?raw=true" alt=""></p>
+<p>当y=1, 则Cost=0，也就是预测的值和真实的值完全相等的时候成本为0;但是如果y=0，Cost接近无穷大，也就是说此时成本会非常大。</p>
+<p>如果是正确答案为y=0的情况：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_11.png?raw=true" alt=""></p>
+<p>当y=0, 则Cost=0，也就是预测的值和真实的值完全相等的时候成本为0;但是如果y=1，Cost接近无穷大，也就是说此时成本会非常大。</p>
+<h2 id="0x04-简化成本函数"><a href="#0x04-简化成本函数" class="headerlink" title="0x04 简化成本函数"></a>0x04 简化成本函数</h2><p>在上面式子中，由于y 只能等于0或1，所以可以将逻辑回归中的Cost function的两个公式合并可以将我们的成本函数的两个条件案例压缩成一个案例：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_12.png?raw=true" alt=""></p>
+<p>当y等于1时，第二项（1-y）log（1- hθ（x））将为零，并且不会影响结果。如果y等于0，则所述第一术语-ylog（1-hθ（X））将为零，且不会影响结果。</p>
+<p>所以最终整个逻辑回归的成本函数如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_13.png?raw=true" alt=""></p>
+<h2 id="0x05-梯度下降"><a href="#0x05-梯度下降" class="headerlink" title="0x05 梯度下降"></a>0x05 梯度下降</h2><p>与线性回归相似，这里我们同样采用梯度下降算法来学习参数</p>
+<p>迭代函数</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_14.png?raw=true" alt=""></p>
+<p>算法就是迭代这个公式每次更新参数值，上篇已经详细说过</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_15.png?raw=true" alt=""></p>
+<h2 id="0x06-优化-Advanced-Optimization"><a href="#0x06-优化-Advanced-Optimization" class="headerlink" title="0x06 优化(Advanced Optimization)"></a>0x06 优化(Advanced Optimization)</h2><p>优化算法除了梯度下降算法外，还包括：</p>
+<ul>
+<li>Conjugate gradient method(共轭梯度法)</li>
+<li>Quasi-Newton method(拟牛顿法)</li>
+<li>BFGS method</li>
+<li>L-BFGS(Limited-memory BFGS)</li>
+</ul>
+<p>后二者由拟牛顿法引申出来，与梯度下降算法相比，这些算法的优点是：</p>
+<ul>
+<li>1.不需要手动的选择步长</li>
+<li>2.通常比梯度下降算法快</li>
+</ul>
+<p>因为算法太过复杂，我们不需要手动编写代码，只需要在库中调用相关的函数即可。</p>
+<h2 id="0x07-多分类问题-Multiclass-Classification-One-vs-all"><a href="#0x07-多分类问题-Multiclass-Classification-One-vs-all" class="headerlink" title="0x07 多分类问题(Multiclass Classification: One-vs-all)"></a>0x07 多分类问题(Multiclass Classification: One-vs-all)</h2><p>我们大多时候遇到的分类并不止两类，这个时候就产生了多分类问题。</p>
+<p>首先，二分类问题时候图形如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_16.png?raw=true" alt=""></p>
+<p>那么多分类问题的图形就如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_17.png?raw=true" alt=""></p>
+<p>对于多分类问题，我们可以将其先看成二分类问题，保留一类之后剩余的划作另一类。</p>
+<p>对上面的三类问题，我们需要三次划分，如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_18.png?raw=true" alt=""></p>
+<p>最终的One-vs-all方法：</p>
+<ul>
+<li><p>对于每一个类i训练一个逻辑回归模型的分类器，并且预测 y = i时的概率。</p>
+</li>
+<li><p>对于一个新的输入变量x,分别对每一个类进行预测，取概率最大的那个类作为分类结果。</p>
+</li>
+</ul>
+<p>也就是说，如果输入一个x，此时分类器A概率为0.3，分类器B概率为0.4，分类器C概率为0.5，那么他就属于C这个分类。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/22/phpmyadmin注入webshell总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2350,279 +2603,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/25/python-flask模块学习/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/25/python-flask模块学习/" itemprop="url">
-                  python-flask模块学习
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-25T23:04:12+08:00">
-                2018-05-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/25/python-flask模块学习/" class="leancloud_visitors" data-flag-title="python-flask模块学习">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>最近想接触一下python作为后端的环境，所以准备从flask模块开始学习，记录一下用法，当作笔记。</p>
-<h2 id="0x01-flask"><a href="#0x01-flask" class="headerlink" title="0x01 flask"></a>0x01 flask</h2><p>Flask是一个使用 Python 编写的轻量级 Web 应用框架。其 WSGI 工具箱采用 Werkzeug ，模板引擎则使用 Jinja2 。Flask使用 BSD 授权。因为它使用简单的核心，用 extension 增加其他功能。Flask没有默认使用的数据库、窗体验证工具。</p>
-<h2 id="0x02-安装"><a href="#0x02-安装" class="headerlink" title="0x02 安装"></a>0x02 安装</h2><p>安装只需在具有python环境的计算机命令行中，输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install flask</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x03-基础步骤"><a href="#0x03-基础步骤" class="headerlink" title="0x03 基础步骤"></a>0x03 基础步骤</h2><ul>
-<li><p>我们在使用flask时，必须先要导入库，即</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>接下来，我们创建一个该类的实例，第一个参数是应用模块或者包的名称。如果使用单一的模块,就使用<strong>name</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app = Flask(__name__)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>然后，我们使用 route() 装饰器告诉 Flask 什么样的URL 能触发我们的函数。根目录为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&quot;/&quot;)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>这个函数的名字也在生成 URL 时被特定的函数采用，这个函数返回我们想要显示在用户浏览器中的信息。如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def hello():</span><br><span class="line">    return &quot;Hello World!&quot;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>最后用 run() 函数来让应用运行在本地服务器上。 其中 if <strong>name</strong> == ‘<strong>main</strong>‘: 确保服务器只会在该脚本被 Python 解释器直接执行的时候才会运行，而不是作为模块导入的时候。即：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>这是最基础的操作所需要的五步，组合起来就是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"> </span><br><span class="line">@app.route(&quot;/&quot;)</span><br><span class="line">def hello():</span><br><span class="line">    return &quot;Hello World!&quot;</span><br><span class="line"> </span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure></p>
-<p>然后在这个.py文件的目录下，打开命令行，使用python xxx.py的方式运行，就会部署到本地服务器的5000端口，我们通过浏览器访问127.0.0.1:5000，就会看到web页面的输出。</p>
-<h2 id="0x04-基础函数"><a href="#0x04-基础函数" class="headerlink" title="0x04 基础函数"></a>0x04 基础函数</h2><h4 id="设置公网访问"><a href="#设置公网访问" class="headerlink" title="设置公网访问"></a>设置公网访问</h4><p>web服务打开时默认是只能通过本机访问的，如果想要通过外网访问，就得先禁用了 debug 然后修改调用 run() 的方法使服务器公开。</p>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.run(host=&apos;0.0.0.0&apos;)</span><br></pre></td></tr></table></figure></p>
-<h4 id="设置路由"><a href="#设置路由" class="headerlink" title="设置路由"></a>设置路由</h4><p>上面的基础步骤已经提到，由route()函数来设置访问的url，如果我们有多个函数，就可以分别用route()装饰器将不同的函数绑定到不同的url上。</p>
-<p>实例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def index():</span><br><span class="line">    return &apos;Index Page&apos;</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/hello&apos;)</span><br><span class="line">def hello():</span><br><span class="line">    return &apos;Hello World&apos;</span><br><span class="line">    </span><br><span class="line">@app.route(&apos;/test&apos;)</span><br><span class="line">def test():</span><br><span class="line">    return &apos;Test&apos;</span><br></pre></td></tr></table></figure></p>
-<h4 id="路径变量"><a href="#路径变量" class="headerlink" title="路径变量"></a>路径变量</h4><p>路径变量的意思就如同它的名字一样，路径中的一部分是可以改变的，主要用于受变量影响的可变路径，用法是/path/<a href="converter:varname" target="_blank" rel="noopener">converter:varname</a>，并且在变量之前还可以使用转换器来改变数据类型</p>
-<table>
-<thead>
-<tr>
-<th>转换器</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>string</td>
-<td>默认选项，接受除了斜杠之外的字符串</td>
-</tr>
-<tr>
-<td>int</td>
-<td>接受整数</td>
-</tr>
-<tr>
-<td>float</td>
-<td>接受浮点数</td>
-</tr>
-<tr>
-<td>path</td>
-<td>和string类似，不过可以接受带斜杠的字符串</td>
-</tr>
-<tr>
-<td>any</td>
-<td>匹配任何一种转换器</td>
-</tr>
-<tr>
-<td>uuid</td>
-<td>接受UUID字符串</td>
-</tr>
-</tbody>
-</table>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&apos;/user/&lt;username&gt;&apos;)</span><br><span class="line">def show_user_profile(username):</span><br><span class="line">    # show the user profile for that user</span><br><span class="line">    return &apos;User %s&apos; % username</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/post/&lt;int:post_id&gt;&apos;)</span><br><span class="line">def show_post(post_id):</span><br><span class="line">    # show the post with the given id, the id is an integer</span><br><span class="line">    return &apos;Post %d&apos; % post_id</span><br></pre></td></tr></table></figure></p>
-<h4 id="构造URL"><a href="#构造URL" class="headerlink" title="构造URL"></a>构造URL</h4><p>flask中可以用 url_for(‘方法名’) 来给指定的函数构造 URL。主参数是方法名，可以额外传入对应 URL 规则的变量部分的命名参数。</p>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">url_for(&apos;index&apos;)</span><br><span class="line">url_for(&apos;user&apos;, username=&apos;jack&apos;)</span><br></pre></td></tr></table></figure></p>
-<h4 id="HTTP方法"><a href="#HTTP方法" class="headerlink" title="HTTP方法"></a>HTTP方法</h4><p>HTTP （与 Web 应用会话的协议）有许多不同的访问 URL 方法。默认情况下，路由只回应 GET 请求，但是通过 route() 装饰器传递 methods 参数可以改变这个行为。用法是app.route(‘/login’, methods=[‘GET’, ‘POST’])</p>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&apos;/login&apos;, methods=[&apos;GET&apos;, &apos;POST&apos;])</span><br><span class="line">def login():</span><br><span class="line">    if request.method == &apos;POST&apos;:</span><br><span class="line">        do_the_login()</span><br><span class="line">    else:</span><br><span class="line">        show_the_login_form()</span><br></pre></td></tr></table></figure></p>
-<h4 id="静态文件"><a href="#静态文件" class="headerlink" title="静态文件"></a>静态文件</h4><p>动态 web 应用也会需要静态文件，通常是 CSS 和 JavaScript 文件。只要在你的包中或是模块的所在目录中创建一个名为 static 的文件夹，在应用中使用 /static 即可访问。</p>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url_for(&apos;static&apos;, filename=&apos;style.css&apos;)</span><br></pre></td></tr></table></figure></p>
-<h4 id="调试模式"><a href="#调试模式" class="headerlink" title="调试模式"></a>调试模式</h4><p>如果你启用了调试支持，服务器会在代码修改后自动重新载入，并在发生错误时提供一个相当有用的调试器。</p>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app.debug = True</span><br><span class="line">app.run()</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.run(debug=True)</span><br></pre></td></tr></table></figure>
-<h4 id="URL-“-”重定向"><a href="#URL-“-”重定向" class="headerlink" title="URL “/”重定向"></a>URL “/”重定向</h4><p>如果设置route(‘/xxx/‘)访问url时如果结尾带了一个反斜杠，就会自动重定向到不带反斜杠的url中，如果不设置反斜杠，就不会重定向，而是返回一个404错误。</p>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&apos;/about/&apos;)</span><br><span class="line">def about():</span><br><span class="line">    return &apos;The about page&apos;</span><br></pre></td></tr></table></figure></p>
-<h4 id="模板渲染"><a href="#模板渲染" class="headerlink" title="模板渲染"></a>模板渲染</h4><p>Flask 配备了 Jinja2 模板引擎,python可以通过 render_template() 方法来渲染模板。只需将模板名和关键字的参数传入模板的变量。</p>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">from flask import render_template</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/hello/&apos;)</span><br><span class="line">@app.route(&apos;/hello/&lt;name&gt;&apos;)</span><br><span class="line">def hello(name=None):</span><br><span class="line">    return render_template(&apos;hello.html&apos;, name=name)</span><br></pre></td></tr></table></figure></p>
-<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p>用 Flask 处理文件上传，首先要确保在 HTML 表单中设置 enctype=”multipart/form-data”，已上传的文件存储在内存或是文件系统中一个临时的位置。可以通过请求对象的 files 属性访问它们。每个上传的文件都会存储在这个字典里。它表现近乎为一个标准的 Python file 对象，但它还有一个 save() 方法，这个方法允许你把文件保存到服务器的文件系统上。</p>
-<p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">from flask import request</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/upload&apos;, methods=[&apos;GET&apos;, &apos;POST&apos;])</span><br><span class="line">def upload_file():</span><br><span class="line">    if request.method == &apos;POST&apos;:</span><br><span class="line">        f = request.files[&apos;the_file&apos;]</span><br><span class="line">        f.save(&apos;/var/www/uploads/uploaded_file.txt&apos;)</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
-<h4 id="Cookies"><a href="#Cookies" class="headerlink" title="Cookies"></a>Cookies</h4><p>python flask可以通过 cookies 属性来访问 Cookies，用响应对象的 set_cookie 方法来设置 Cookies。请求对象的 cookies 属性是一个内容为客户端提交的所有 Cookies 的字典。</p>
-<p>实例：</p>
-<p>读取cookies<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from flask import request</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def index():</span><br><span class="line">    username = request.cookies.get(&apos;username&apos;)</span><br></pre></td></tr></table></figure></p>
-<p>写入cookies<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from flask import make_response</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def index():</span><br><span class="line">    resp = make_response(render_template(...))</span><br><span class="line">    resp.set_cookie(&apos;username&apos;, &apos;the username&apos;)</span><br><span class="line">    return resp</span><br></pre></td></tr></table></figure></p>
-<h4 id="重定向和错误"><a href="#重定向和错误" class="headerlink" title="重定向和错误"></a>重定向和错误</h4><p>flask可以用 redirect() 函数把用户重定向到其它地方。放弃请求并返回错误代码，用 abort() 函数。</p>
-<p>实例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from flask import abort, redirect, url_for</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def index():</span><br><span class="line">    return redirect(url_for(&apos;login&apos;))</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/login&apos;)</span><br><span class="line">def login():</span><br><span class="line">    abort(401)</span><br><span class="line">    this_is_never_executed()</span><br></pre></td></tr></table></figure>
-<h4 id="日志记录"><a href="#日志记录" class="headerlink" title="日志记录"></a>日志记录</h4><p>Flask预置了日志系统。在我们需要日志记录功能时，只需使用logger函数即可。</p>
-<p>实例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.logger.debug(&apos;A value for debugging&apos;)</span><br><span class="line">app.logger.warning(&apos;A warning occurred (%d apples)&apos;, 42)</span><br><span class="line">app.logger.error(&apos;An error occurred&apos;)</span><br></pre></td></tr></table></figure></p>
-<h4 id="session"><a href="#session" class="headerlink" title="session"></a>session</h4><p>flask除请求对象之外，还有一个 session 对象。它允许你在不同请求间存储特定用户的信息。它是在 Cookies 的基础上实现的，并且对 Cookies 进行密钥签名。要使用会话，需要设置一个密钥。</p>
-<p>实例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask, session, redirect, url_for, escape, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def index():</span><br><span class="line">    if &apos;username&apos; in session:</span><br><span class="line">        return &apos;Logged in as %s&apos; % escape(session[&apos;username&apos;])</span><br><span class="line">    return &apos;You are not logged in&apos;</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/login&apos;, methods=[&apos;GET&apos;, &apos;POST&apos;])</span><br><span class="line">def login():</span><br><span class="line">    if request.method == &apos;POST&apos;:</span><br><span class="line">        session[&apos;username&apos;] = request.form[&apos;username&apos;]</span><br><span class="line">        return redirect(url_for(&apos;index&apos;))</span><br><span class="line">    return &apos;&apos;&apos;</span><br><span class="line">        &lt;form action=&quot;&quot; method=&quot;post&quot;&gt;</span><br><span class="line">            &lt;p&gt;&lt;input type=text name=username&gt;</span><br><span class="line">            &lt;p&gt;&lt;input type=submit value=Login&gt;</span><br><span class="line">        &lt;/form&gt;</span><br><span class="line">    &apos;&apos;&apos;</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/logout&apos;)</span><br><span class="line">def logout():</span><br><span class="line">    # remove the username from the session if it&apos;s there</span><br><span class="line">    session.pop(&apos;username&apos;, None)</span><br><span class="line">    return redirect(url_for(&apos;index&apos;))</span><br><span class="line"></span><br><span class="line"># set the secret key.  keep this really secret:</span><br><span class="line">app.secret_key = &apos;A0Zr98j/3yX R~XHH!jmN]LWX/,?RT&apos;</span><br></pre></td></tr></table></figure>
-<h2 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h2><p>对浅显基础的知识进行学习，虽然对开发能力提升不大，但是有的时候遇到一些python后端或者需要搭建python后端漏洞环境进行测试时，如果没有接触过相关函数就会力不从心，对这些模块略微了解并总结一下，在之后遇到的时候就可以更熟练的进行审计或搭建。</p>
-<p>之后在遇到很重要的模块或者语言时，也要通过同样的方式总结一遍，等用到的时候就可以很快的入门。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2672,7 +2652,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">95</span>
+                <span class="site-state-item-count">96</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -258,6 +258,238 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/30/python-scikit-learn学习-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/30/python-scikit-learn学习-1/" itemprop="url">
+                  python-scikit learn学习(1)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-30T16:18:08+08:00">
+                2018-07-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/30/python-scikit-learn学习-1/" class="leancloud_visitors" data-flag-title="python-scikit learn学习(1)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-scikit-learn"><a href="#0x00-scikit-learn" class="headerlink" title="0x00 scikit-learn"></a>0x00 scikit-learn</h2><p>Scikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。</p>
+<h2 id="0x01-scikit-learn安装"><a href="#0x01-scikit-learn安装" class="headerlink" title="0x01 scikit-learn安装"></a>0x01 scikit-learn安装</h2><p>scikit-learn安装和别的python安装没有多少不同，不过安装scikit-learn之前要先安装新版本的numpy和scipy库。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install numpy</span><br><span class="line">pip install scipy</span><br><span class="line">pip install scikit-learn</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x02-scikit-learn数据集"><a href="#0x02-scikit-learn数据集" class="headerlink" title="0x02 scikit-learn数据集"></a>0x02 scikit-learn数据集</h2><p>scikit-learn库中有一些标准数据集。在scikit-learn官网的数据库中有大量的数据集，可以直接拿来使用。</p>
+<p>官方数据集： <a href="http://scikit-learn.org/stable/modules/classes.html#module-sklearn.datasets" target="_blank" rel="noopener">http://scikit-learn.org/stable/modules/classes.html#module-sklearn.datasets</a></p>
+<p>其中Loaders都是现实中一些整理好的数据，可以直接使用。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn01.png?raw=true" alt=""></p>
+<p>Samples generator中是一些用户可以通过输入参数来控制随机生成的数据。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn02.png?raw=true" alt=""></p>
+<p>使用时我们要先导入sklearn.datasets库，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">iris = datasets.load_iris() #鸢尾花数据集</span><br><span class="line">print(iris)</span><br><span class="line">digits = datasets.load_digits() #数字数据集</span><br><span class="line">print(digits)</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>一个数据集是一个包含数据所有元素的类字典对象，这个数据存在‘.data’成员变量中，是一个n*n数组行表示样例，列表示特征。</li>
+<li>在监督学习中，一个或多个标签Y存储在‘.target’成员变量中。</li>
+</ul>
+<p>从如下代码运行结果就能看出这几部分数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">digits = datasets.load_digits() #数字数据集</span><br><span class="line">print(digits.data)</span><br><span class="line">print(digits.target)</span><br><span class="line">print(digits.images[0])</span><br></pre></td></tr></table></figure>
+<h2 id="0x03-scikit-learn学习方法选择"><a href="#0x03-scikit-learn学习方法选择" class="headerlink" title="0x03 scikit-learn学习方法选择"></a>0x03 scikit-learn学习方法选择</h2><p>在学习和预测之前，我们要根据我们的数字数据集以及要达成的目标选择合适的机器学习方法，scikit-learn官网有一张图清晰的给出了如何去选择正确的方法：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn03.png?raw=true" alt=""></p>
+<p>官方网站提供的原图地址： <a href="http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html" target="_blank" rel="noopener">http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html</a></p>
+<p>我介绍一下具体步骤：</p>
+<ul>
+<li><p>这张图从start部分开始读，如果数据少于50，就去获取更多数据，如果数据大于50，就进入下一步。</p>
+</li>
+<li><p>然后根据是否预测类别、有无标签、是否预测数量等判断分别属于分类问题、聚类问题、回归问题和降维问题四种中的哪一种。</p>
+</li>
+<li><p>再根据数据量、数据类型等来分别选择合适的机器学习算法。</p>
+</li>
+</ul>
+<p>在选择好方法之后，从scikit-learn库导入对应的方法，然后根据官方提供的使用方法进行调用和参数的选用，就可以进行学习。</p>
+<h2 id="0x04-scikit-learn学习与预测（分类问题）"><a href="#0x04-scikit-learn学习与预测（分类问题）" class="headerlink" title="0x04 scikit-learn学习与预测（分类问题）"></a>0x04 scikit-learn学习与预测（分类问题）</h2><p>在这里以鸢尾花数据集的学习和预测为例，讲解一下通用的scikit-learn学习与预测步骤，先贴代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import numpy</span><br><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line">#print(iris_y)</span><br><span class="line"></span><br><span class="line">x_trian,x_test,y_train,y_test = train_test_split(iris_x,iris_y,test_size=0.25)</span><br><span class="line"></span><br><span class="line">#print(y_train)</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(x_trian,y_train)</span><br><span class="line">y_predict = knn.predict(x_test)</span><br><span class="line"></span><br><span class="line">print(y_predict)</span><br><span class="line">pritn(y_test)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>上面的代码从sklearn的数据库导入了鸢尾花数据集，然后将data作为特征，target作为标签。</li>
+<li>然后通过train_test_split方法将特征和标签分成训练集和测试集并打乱顺序，其中test_size控制测试集占比0.25。</li>
+<li>然后使用KNeighborsClassifier机器学习方法，学习训练集，并用训练好的模型预测测试集中x_test对应的分类结果。</li>
+<li>最后将预测的分类结果y_predict与原始数据中的分类结果y_test输出后对比</li>
+</ul>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn04.png?raw=true" alt=""></p>
+<p>从最终输出结果可以看到，基本都预测成功了，如果我们样本量更大一点，或许会找到一些错误预测结果。</p>
+<h2 id="0x05-scikit-learn学习与预测（回归问题）"><a href="#0x05-scikit-learn学习与预测（回归问题）" class="headerlink" title="0x05 scikit-learn学习与预测（回归问题）"></a>0x05 scikit-learn学习与预测（回归问题）</h2><p>再使用datasets中提供的自动生成数据的方法来预测一个回归问题。同样先贴代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">example_x,example_y = datasets.make_regression(n_samples=100,n_features=1,n_targets=1,noise=3)</span><br><span class="line"></span><br><span class="line">plt.scatter(example_x,example_y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">lr = LinearRegression()</span><br><span class="line">lr.fit(example_x,example_y)</span><br><span class="line"></span><br><span class="line">print(lr.predict(example_x[:5,:]))</span><br><span class="line">print(example_y[:5])</span><br></pre></td></tr></table></figure>
+<ul>
+<li>上面代码中，首先使用make_regression生成随机的回归数据，其中n_samples代表数据数量，n_features代表特征数量，n_targets代表特征数量，noise代表噪声大小</li>
+<li>然后使用matplotlib模块将生成的二维数据绘制出来</li>
+<li>接着使用LinearRegression机器学习方法，学习训练集，并用训练好的模型预测样本中前五个数据</li>
+<li>最后将预测结果与原始数据的标签值输出进行对比</li>
+</ul>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn05.png?raw=true" alt=""></p>
+<p>从二维图形可以看出生成数据的分布。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn06.png?raw=true" alt=""></p>
+<p>从输出结果可以看出，预测结果基本符合，但是有一定的误差。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/机器学习-7-——多分类学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2361,259 +2593,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/25/机器学习-3-——逻辑回归/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/25/机器学习-3-——逻辑回归/" itemprop="url">
-                  机器学习(3)——逻辑回归
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-25T23:39:05+08:00">
-                2018-06-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/25/机器学习-3-——逻辑回归/" class="leancloud_visitors" data-flag-title="机器学习(3)——逻辑回归">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-逻辑回归-Logistic-Regression"><a href="#0x00-逻辑回归-Logistic-Regression" class="headerlink" title="0x00 逻辑回归(Logistic Regression)"></a>0x00 逻辑回归(Logistic Regression)</h2><p>逻辑回归就是这样的一个过程：面对一个回归或者分类问题，建立代价函数，然后通过优化方法迭代求解出最优的模型参数，然后测试验证我们这个求解的模型的好坏。</p>
-<p>Logistic回归虽然名字里带“回归”，但是它实际上是一种分类方法，主要用于两分类问题（即输出只有两种，分别代表两个类别）</p>
-<p>回归模型中，y是一个定性变量，比如y=0或1，logistic方法主要应用于研究某些事件发生的概率。</p>
-<h2 id="0x01-逻辑回归模型"><a href="#0x01-逻辑回归模型" class="headerlink" title="0x01 逻辑回归模型"></a>0x01 逻辑回归模型</h2><p>它的核心思想是，如果线性回归的结果输出是一个连续值，而值的范围是无法限定的，那我们有没有办法把这个结果值映射为可以帮助我们判断的结果呢。而如果输出结果是 (0,1) 的一个概率值，这个问题就很清楚了。</p>
-<p>在数学上有sigmoid函数可以帮助我们实现这一思想。</p>
-<p>sigmoid函数表达式：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_01.png?raw=true" alt=""></p>
-<p>二元逻辑回归时，将t换成ax+b，可以得到二元逻辑回归模型的参数形式：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_02.png?raw=true" alt=""></p>
-<p>sigmoid函数图形：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_03.png?raw=true" alt=""></p>
-<p>其中，如果是二元回归时，我们P(x)的值可以理解为某一分类概率的大小，如果P(x)值为0.6，代表输出为1的概率是60%，补集部分是输出为0的概率40%。</p>
-<p>此时P(x)的值越小，而分类为0的的概率越高，反之，值越大的话分类为1的的概率越高。如果靠近临界点即靠近0.6时，分类准确率会下降。</p>
-<h2 id="0x02-决策边界-decision-boundary"><a href="#0x02-决策边界-decision-boundary" class="headerlink" title="0x02 决策边界(decision boundary)"></a>0x02 决策边界(decision boundary)</h2><p>决策边界就是能够把样本正确分类的一条边界，从图像上可以直观的看到</p>
-<p>如线性决策边界：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_04.png?raw=true" alt=""></p>
-<p>非线性决策边界：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_05.png?raw=true" alt=""></p>
-<p>在上面二元逻辑回归的例子中，我们用y表示输出的离散值0或1，写为函数形式为：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_06.png?raw=true" alt=""></p>
-<p>然后我们逻辑函数g要做到，在输入大于等于零时，输出大于等于0.6；在输入小于零时，输出小于等于0.6。即：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_07.png?raw=true" alt=""></p>
-<p>决策边界是假设函数的属性，由参数决定，而不是由数据集的特征决定。</p>
-<h2 id="0x03-成本函数-Cost-Function"><a href="#0x03-成本函数-Cost-Function" class="headerlink" title="0x03 成本函数(Cost Function)"></a>0x03 成本函数(Cost Function)</h2><p>线性回归中也说过成本函数，也叫代价函数,在逻辑回归中，我们也需要定义成本函数对其取值的好坏进行评估。</p>
-<p>而逻辑回归如果取用和线性回归一样的方式计算成本函数，那么图形是“非凸”的。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_08.png?raw=true" alt=""></p>
-<p>这样就会产生很多个局部最小值，无法使用梯度下降算法。所以我们需要一个新的成本函数。</p>
-<p>在逻辑回归中，损失函数是用来估计预测值（y^(i)）与期望输出值（y(i)）之间的差异。</p>
-<p>统计学习中常用的损失函数有以下几种：</p>
-<p>(1) 0-1损失函数(0-1 loss function):</p>
-<p>(2) 平方损失函数(quadratic loss function)</p>
-<p>(3) 绝对损失函数(absolute loss function)</p>
-<p>(4) 对数损失函数(logarithmic loss function) 或对数似然损失函数(log-likelihood loss function)</p>
-<p>损失函数越小，模型就越好。</p>
-<p>所以在逻辑回归中，为了保证全局收敛，我们采用对数似然损失函数。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_09.png?raw=true" alt=""></p>
-<p>也就是说，如下两个情况：</p>
-<p>如果是正确答案为y=1的情况：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_10.png?raw=true" alt=""></p>
-<p>当y=1, 则Cost=0，也就是预测的值和真实的值完全相等的时候成本为0;但是如果y=0，Cost接近无穷大，也就是说此时成本会非常大。</p>
-<p>如果是正确答案为y=0的情况：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_11.png?raw=true" alt=""></p>
-<p>当y=0, 则Cost=0，也就是预测的值和真实的值完全相等的时候成本为0;但是如果y=1，Cost接近无穷大，也就是说此时成本会非常大。</p>
-<h2 id="0x04-简化成本函数"><a href="#0x04-简化成本函数" class="headerlink" title="0x04 简化成本函数"></a>0x04 简化成本函数</h2><p>在上面式子中，由于y 只能等于0或1，所以可以将逻辑回归中的Cost function的两个公式合并可以将我们的成本函数的两个条件案例压缩成一个案例：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_12.png?raw=true" alt=""></p>
-<p>当y等于1时，第二项（1-y）log（1- hθ（x））将为零，并且不会影响结果。如果y等于0，则所述第一术语-ylog（1-hθ（X））将为零，且不会影响结果。</p>
-<p>所以最终整个逻辑回归的成本函数如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_13.png?raw=true" alt=""></p>
-<h2 id="0x05-梯度下降"><a href="#0x05-梯度下降" class="headerlink" title="0x05 梯度下降"></a>0x05 梯度下降</h2><p>与线性回归相似，这里我们同样采用梯度下降算法来学习参数</p>
-<p>迭代函数</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_14.png?raw=true" alt=""></p>
-<p>算法就是迭代这个公式每次更新参数值，上篇已经详细说过</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_15.png?raw=true" alt=""></p>
-<h2 id="0x06-优化-Advanced-Optimization"><a href="#0x06-优化-Advanced-Optimization" class="headerlink" title="0x06 优化(Advanced Optimization)"></a>0x06 优化(Advanced Optimization)</h2><p>优化算法除了梯度下降算法外，还包括：</p>
-<ul>
-<li>Conjugate gradient method(共轭梯度法)</li>
-<li>Quasi-Newton method(拟牛顿法)</li>
-<li>BFGS method</li>
-<li>L-BFGS(Limited-memory BFGS)</li>
-</ul>
-<p>后二者由拟牛顿法引申出来，与梯度下降算法相比，这些算法的优点是：</p>
-<ul>
-<li>1.不需要手动的选择步长</li>
-<li>2.通常比梯度下降算法快</li>
-</ul>
-<p>因为算法太过复杂，我们不需要手动编写代码，只需要在库中调用相关的函数即可。</p>
-<h2 id="0x07-多分类问题-Multiclass-Classification-One-vs-all"><a href="#0x07-多分类问题-Multiclass-Classification-One-vs-all" class="headerlink" title="0x07 多分类问题(Multiclass Classification: One-vs-all)"></a>0x07 多分类问题(Multiclass Classification: One-vs-all)</h2><p>我们大多时候遇到的分类并不止两类，这个时候就产生了多分类问题。</p>
-<p>首先，二分类问题时候图形如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_16.png?raw=true" alt=""></p>
-<p>那么多分类问题的图形就如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_17.png?raw=true" alt=""></p>
-<p>对于多分类问题，我们可以将其先看成二分类问题，保留一类之后剩余的划作另一类。</p>
-<p>对上面的三类问题，我们需要三次划分，如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_18.png?raw=true" alt=""></p>
-<p>最终的One-vs-all方法：</p>
-<ul>
-<li><p>对于每一个类i训练一个逻辑回归模型的分类器，并且预测 y = i时的概率。</p>
-</li>
-<li><p>对于一个新的输入变量x,分别对每一个类进行预测，取概率最大的那个类作为分类结果。</p>
-</li>
-</ul>
-<p>也就是说，如果输入一个x，此时分类器A概率为0.3，分类器B概率为0.4，分类器C概率为0.5，那么他就属于C这个分类。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2663,7 +2642,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">95</span>
+                <span class="site-state-item-count">96</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
