@@ -99,7 +99,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text02.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text03.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text04.png">
-<meta property="og:updated_time" content="2020-02-22T12:26:26.869Z">
+<meta property="og:updated_time" content="2020-02-23T14:00:22.938Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="栈溢出之ret2text">
 <meta name="twitter:description" content="前言目前栈溢出漏洞主要的利用方式是ROP(Return Oriented Programming)，即返回导向编程，通过栈溢出内容覆盖返回地址，使其跳转到我们想要执行恶意代码的位置中。而跳转的目标有可能是一段本就已经写好的可以执行恶意命令的函数，也有可能是某个全局变量空间，甚至构造一个系统调用的cpu指令，跳转到一个libc中的函数等。最终目的都是执行恶意命令，而未来几篇文章分别介绍采取上述不同的">
@@ -399,7 +399,7 @@
 <p>所以我们需要的信息有以下几点：<br>1.局部变量a的地址<br>2.func函数的返回地址<br>3.sys函数的地址</p>
 <h3 id="寻找信息"><a href="#寻找信息" class="headerlink" title="寻找信息"></a>寻找信息</h3><p>接下来就按照整理好的思路一步步获取信息<br>1.先查看代码，在第6行下个断点调试。</p>
 <p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text02.png" alt=""></p>
-<p>2.运行程序搭配func内，并打印局部变量a的地址，sys函数的地址，以及此时rbp的地址。</p>
+<p>2.运行程序到func内，并打印局部变量a的地址，sys函数的地址，以及此时rbp的地址。</p>
 <p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text03.png" alt=""></p>
 <p>此时找到变量a的地址是0xffe2b6，rbp的地址是0xffe2c0，sys函数的地址是0x401142。</p>
 <p>我们需要的三个信息已经得到两个，最后剩下的func函数返回地址，在64位程序中，在rbp之后8个字节，所以返回地址是rbp+8=0xffe2c8。</p>
@@ -462,6 +462,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/02/24/栈溢出之ret2shellcode/" rel="prev" title="栈溢出之ret2shellcode">
+                栈溢出之ret2shellcode <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -533,7 +537,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">97</span>
+                <span class="site-state-item-count">98</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

