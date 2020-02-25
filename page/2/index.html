@@ -258,6 +258,188 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/02/samba安装与配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/09/02/samba安装与配置/" itemprop="url">
+                  samba安装与配置
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-02T23:21:05+08:00">
+                2019-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/09/02/samba安装与配置/" class="leancloud_visitors" data-flag-title="samba安装与配置">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="samba-简介"><a href="#samba-简介" class="headerlink" title="samba 简介"></a>samba 简介</h3><p>Samba，用来让UNIX系列的操作系统与微软Windows操作系统的SMB/CIFS（Server Message Block/Common Internet File System）网络协定做连结，在Windows与UNIX系列OS之间搭起一座桥梁，使两者可以进行资源共享。<br>常用于需要频繁访问和读写文件的情况，如在windows下使用人性化的编辑器来书写或修改代码，在linux中进行频繁的编译验证这种场景。本文就以这种场景为例介绍samba的安装和配置。</p>
+<h3 id="samba-安装"><a href="#samba-安装" class="headerlink" title="samba 安装"></a>samba 安装</h3><p>根据自身情况选择命令安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt install samba</span><br><span class="line">apt-get install samba</span><br><span class="line">yum install samba</span><br></pre></td></tr></table></figure></p>
+<h3 id="samba-配置"><a href="#samba-配置" class="headerlink" title="samba 配置"></a>samba 配置</h3><p>进入samba配置文件目录，编辑配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/samba</span><br><span class="line">vi smb.conf</span><br></pre></td></tr></table></figure></p>
+<p>在末尾添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[share]</span><br><span class="line">    path =/home/share</span><br><span class="line">    available = yes</span><br><span class="line">    browsealbe = yes</span><br><span class="line">    public= no</span><br><span class="line">    writable = yes</span><br></pre></td></tr></table></figure></p>
+<p>然后在/home下创建share目录，并提升权限至777<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /home</span><br><span class="line">mkdir share</span><br><span class="line">chmod -R 777 share</span><br></pre></td></tr></table></figure></p>
+<p>然后添加samba用户share，注意这里必须先添加一个同名的系统用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd share</span><br><span class="line">smbpasswd -a share</span><br></pre></td></tr></table></figure></p>
+<p>设置完成密码后重启samba服务</p>
+<p>根据不同系统，选择不同命令启动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/samba restart</span><br><span class="line">service smbd restart</span><br></pre></td></tr></table></figure></p>
+<p>完成后，通过windows访问<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\\linux机器的ip</span><br></pre></td></tr></table></figure></p>
+<p>输入账号密码进入共享文件夹，开始方便的资源共享。</p>
+<p>接着就可以把需要在linux环境运行的代码，git clone到share目录下然后使用windows的编辑器编辑了。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/26/python渗透测试工具库-转载/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2315,215 +2497,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/03/C-C控制服务思路浅析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/03/C-C控制服务思路浅析/" itemprop="url">
-                  C&C控制服务思路浅析
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T10:48:49+08:00">
-                2018-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/08/03/C-C控制服务思路浅析/" class="leancloud_visitors" data-flag-title="C&C控制服务思路浅析">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>在前面的博客中写过一次用python实现的后门 <a href="http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/</a> 里面的代码用最简单的例子来实现了远程控制。</p>
-<p>但是当我们想要构建大规模僵尸网络的时候，就会发现这类简单的后门很不方便，我们不可能有时间一个一个手动的进行控制。而且大部分的肉鸡ip都是一直在变动而且无法直接访问的，所以远控中基本都使用反弹式通信，反弹式通信需要肉鸡每隔一段时间对我们的控制机发送心跳包，但是我们自己的电脑，ip很多情况也都是一直在变动的，我们很难保证自己拥有一个不变的公网ip。为了避免这些问题，我们就需要一台能够集中统一控制僵尸网络的主机，也就是C&amp;C服务器。</p>
-<ul>
-<li>C&amp;C服务器：command and control server(命令与控制服务器)。一般是指挥控制僵尸网络的主控服务器，用来和每个肉鸡进行通信并指挥它们的攻击行为。</li>
-</ul>
-<p>当然我这篇并不打算写一个简单的主控脚本和远控脚本，然后把它部署到公网服务器中，毕竟这些步骤只需要稍微改一下最开始那个链接里面脚本的代码就可以了。这篇我想要对通过各种方法部署和隐藏C&amp;C服务器的方法做一个总结。</p>
-<h2 id="0x01-通过IP地址访问C-amp-C服务器"><a href="#0x01-通过IP地址访问C-amp-C服务器" class="headerlink" title="0x01 通过IP地址访问C&amp;C服务器"></a>0x01 通过IP地址访问C&amp;C服务器</h2><p>最简单的方法就是租用一台云服务器，将服务器ip直接写远控脚本中反弹的ip中，然后所有肉鸡都会每隔一段时间与这个ip进行一次通信，我们也就可以在服务器上用脚本控制僵尸网络发动攻击。</p>
-<p>但是由于ip地址是直接写死在远控脚本或远控程序中的，如果对方捕获了远控脚本或者远控程序，进行简单的二进制逆向扫描就可以得到我们服务器ip地址，并且对方机器经常访问同一个ip也会增加被发现的几率。一旦被发现，对方直接将ip加入黑名单，并且将ip提交给我们购买云服务器的提供商，服务器被封禁就会使远控全部失效。</p>
-<p>优点：简单易实现、耗费小(仅服务器开销)。</p>
-<p>缺点：极易被发现、很容易大规模失效。</p>
-<h2 id="0x02-通过域名访问C-amp-C服务器"><a href="#0x02-通过域名访问C-amp-C服务器" class="headerlink" title="0x02 通过域名访问C&amp;C服务器"></a>0x02 通过域名访问C&amp;C服务器</h2><p>通过域名再指向服务器比起直接指向服务器只是将反弹ip改为反弹的域名。如果注册一些较正常的域名并且做一个伪装的主页，被发现的几率就会降低，而且直接二进制扫描不会被发现。但是逆向程序或着搭建蜜罐进行动态测试，很容易就能追踪到这些域名，将域名丢给运营商的黑名单就会造成大规模的远控失效。</p>
-<p>不过比起仅通过ip地址访问这种方式要多花去安全人员的一点时间，如果在这个时间内达成目的，也算是成功了。</p>
-<p>优点：简单易实现、耗费小(服务器和域名开销)。</p>
-<p>缺点：易被发现、很容易大规模失效。</p>
-<h2 id="0x03-Fast-flux"><a href="#0x03-Fast-flux" class="headerlink" title="0x03 Fast flux"></a>0x03 Fast flux</h2><p>如果一个域名很容易被蜜罐捕获的话，我们可以将几十个域名分散的写在代码中，这些域名都指向同一台服务器的ip地址，程序会对域名轮换访问，然后提供一个较短的ttl使域名对ip的解析记录也会不断的更换。</p>
-<p>这样被捕获某一部分域名添加黑名单并没有办法阻止恶意软件。而且因为ip解析记录一直变更也无法直接举报服务器，所以需要安全人员很高的逆向能力将恶意域名全部找出来。</p>
-<p>不过这个方式有两个缺陷，一个是将捕获的一部分恶意域名的ip解析历史记录进行统计、数据分析，也会很快找到服务器的ip地址。另一个缺陷是域名记录的TTL相比正常的过短，容易被抓住特征。</p>
-<p>优点：被发现后较难快速处理、被屏蔽一部分域名不会造成僵尸网络失效。</p>
-<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费较大(多个域名的开销)、一旦服务器ip被发现仍然会大规模失效。</p>
-<h2 id="0x04-Double-flux、Triple-flux"><a href="#0x04-Double-flux、Triple-flux" class="headerlink" title="0x04 Double flux、Triple flux"></a>0x04 Double flux、Triple flux</h2><p>既然Fast flux容易被捕获一部分恶意域名进行数据分析而发现ip，那域名能增加ip也能增加，Double flux就是在一般的fast flux过程中除了轮换域名，也让ip可以轮换，如果我们有M个域名和N个ip这样就产生了M*N组的C&amp;C通道，还有更多的干扰项。</p>
-<p>Triple flux在Double flux的基础上，增加一层Name Server通过CNAME方式解析，这样域名有可能指向ip也有可能指向别的域名，然后再指向ip，这些Name Server也会定期轮换，就增加了更多C&amp;C通道和干扰项。</p>
-<p>这两种方法都增加了安全人员分析的难度，而且不会因为个别的服务器或域名被封禁导致僵尸网络失效，但是仍然存在着和普通Fast flux一样的问题，那就是因为域名到ip的解析一直轮换导致TTL需要设置很短，很容易被抓取特征而捕获。</p>
-<p>优点：被发现后较难快速处理、被屏蔽一部分域名、封禁一部分ip都不会造成僵尸网络失效。</p>
-<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费很大(多个域名和多个服务器的开销)。</p>
-<h2 id="0x05-使用论坛等作为C-amp-C服务器"><a href="#0x05-使用论坛等作为C-amp-C服务器" class="headerlink" title="0x05 使用论坛等作为C&amp;C服务器"></a>0x05 使用论坛等作为C&amp;C服务器</h2><p>自己架设服务器很容易被封禁，然后丢失僵尸网络的控制权，有的攻击者想到一个绝佳的办法：通过在一些论坛的冷门区域发一些C&amp;C控制指令，然后让恶意软件通过爬虫在访问这些论坛的时候获取指令，最开始主要是在twitter上进行C&amp;C控制，这种情况一开始很让安全人员头疼，因为访问这些论坛的请求本就和正常数据包差不多很难被发现，而且就算发现了，总不能把twitter的域名或者服务器添加很名单吧，这会影响网络的正常使用。后来发现了这种情况可以进行举报，从而封禁对应的账号。</p>
-<p>优点：耗费低、不是特别容易被发现。</p>
-<p>缺点：被发现后会被直接封禁账号损失僵尸网络。</p>
-<h2 id="0x06-使用随机域名生成算法"><a href="#0x06-使用随机域名生成算法" class="headerlink" title="0x06 使用随机域名生成算法"></a>0x06 使用随机域名生成算法</h2><p>比起注册一堆域名耗费巨大，更好的办法是使用DGA(Domain Generation Algorithm)算法，这种C&amp;C控制方法的思路就是控制一个确定的随机域名生成算法，用约定好的随机数种子生成大量的随机域名（如当天日期时间），恶意软件对这些域名全部进行访问，我们只需要按照规律注册其中个别有可能的域名就可以进行控制。</p>
-<p>这个方法的重点在于没有任何确定的域名写入到恶意软件里，即使逆向也找不到真正的域名，而且逆向出这个随机算法的难度非常大。并且生成的随机域名数量十分巨大对方无法得知究竟我们注册了哪个域名。由于随机算法(提前设定好)和随机种子(可以根据时间等生成)都是我们不需要通信就可以得知的信息，我们任何时候都可以知道该注册那种类型的域名可以进行控制。</p>
-<p>除非源码泄露，安全人员要逆向出DGA算法是非常困难的，也很难用黑名单的方式屏蔽掉所有的域名。目前应对这种C&amp;C的方法一般是利用机器学习算法去判定域名的随机性，然后筛选出有可能是恶意域名的域名进行分析找出ip，或者利用机器学习算法智能的屏蔽对这些域名的访问。</p>
-<p>天下没有免费的午餐，这种方式比起前面的方法也有一个缺陷，产生的随机域名过多且访问频率有限的时候，想通过C&amp;C服务器进行控制就需要等待较长的时间，所以在攻击时灵活度不足。强行减少等待的时间就得增加访问频率，就会增加被发现的概率。</p>
-<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
-<p>缺点：控制延迟很高、灵活度不足。</p>
-<h2 id="0x07-使用变形DGA算法"><a href="#0x07-使用变形DGA算法" class="headerlink" title="0x07 使用变形DGA算法"></a>0x07 使用变形DGA算法</h2><p>这个方法是为了对抗检测域名随机性的机器学习算法而产生的，大体步骤和上面相似，不同处是比起使用域名随机算法，添加一些英文单词作为字典构成域名，就比较接近正常的网页，不会被普通的机器学习算法检测出来。</p>
-<p>还是那句话，天下没有免费的午餐，添加字典减少了随机性，必然会缩小产生域名的数量，很快就会用完所有的域名。</p>
-<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
-<p>缺点：控制延迟很高、灵活度不足。</p>
-<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>C&amp;C的设计与防御是目前攻防中很重要的一部分，围绕着C&amp;C，双方在攻防博弈中各显神通，完美的结合了机器学习、数据科学等知识，是非常有学习和研究价值的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2573,7 +2546,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-count">99</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

