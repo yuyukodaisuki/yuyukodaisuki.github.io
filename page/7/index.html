@@ -258,6 +258,416 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/01/解析漏洞总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/01/解析漏洞总结/" itemprop="url">
+                  解析漏洞总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-01T21:47:29+08:00">
+                2018-05-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/01/解析漏洞总结/" class="leancloud_visitors" data-flag-title="解析漏洞总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-服务器解析漏洞"><a href="#0x00-服务器解析漏洞" class="headerlink" title="0x00 服务器解析漏洞"></a>0x00 服务器解析漏洞</h2><p>服务器解析漏洞一般是服务器自身或扩展组件带来的漏洞，配合文件上传等漏洞就会产生很大的危害。</p>
+<p>我们这里整理常见的服务器apache、IIS、nginx的解析漏洞。</p>
+<h2 id="0x01-apache"><a href="#0x01-apache" class="headerlink" title="0x01 apache"></a>0x01 apache</h2><h4 id="一、不可识别解析"><a href="#一、不可识别解析" class="headerlink" title="一、不可识别解析"></a>一、不可识别解析</h4><p>apache解析文件的规则是从右到左开始判断解析,如果后缀名为不可识别文件解析,就再往左判断。比如 test.php.owf.rar “.owf”和”.rar” 这两种后缀是apache不可识别解析,apache就会把wooyun.php.owf.rar解析成php。</p>
+<p>apache版本在以下范围内</p>
+<ul>
+<li>Apache 2.0.x &lt;= 2.0.59</li>
+<li>Apache 2.2.x &lt;= 2.2.17</li>
+<li>Apache 2.2.2 &lt;= 2.2.8</li>
+</ul>
+<p>都可以通过上传xxx.php.rar或xxx.php+任意无法解析后缀解析为php。</p>
+<h4 id="二、配置问题"><a href="#二、配置问题" class="headerlink" title="二、配置问题"></a>二、配置问题</h4><ul>
+<li>1.如果在 Apache 的 conf 里有这样一行配置 AddHandler php5-script .php 这时只要文件名里包含.php 即使文件名是 test2.php.jpg 也会以 php 来执行。</li>
+<li>2.如果在 Apache 的 conf 里有这样一行配置 AddType application/x-httpd-php .jpg 即使扩展名是 jpg，一样能以 php 方式执行。</li>
+</ul>
+<h2 id="0x02-IIS"><a href="#0x02-IIS" class="headerlink" title="0x02 IIS"></a>0x02 IIS</h2><h4 id="一、目录解析"><a href="#一、目录解析" class="headerlink" title="一、目录解析"></a>一、目录解析</h4><p>在IIS-6.0的版本，在.asp或.asa文件夹下的所有类型后缀文件全部解析为.asp文件。</p>
+<h4 id="二、文件解析"><a href="#二、文件解析" class="headerlink" title="二、文件解析"></a>二、文件解析</h4><p>在IIS-6.0的版本，服务器默认不解析;后面的内容，所以xxx.asp;.jpg会被解析成xxx.asp。</p>
+<h4 id="三、其他解析类型"><a href="#三、其他解析类型" class="headerlink" title="三、其他解析类型"></a>三、其他解析类型</h4><p>在IIS6.0的版本，如下几种文件类型也会被执行。</p>
+<ul>
+<li>xxx.asa</li>
+<li>xxx.cer</li>
+<li>xxx.cdx</li>
+</ul>
+<h4 id="四、php-cgi漏洞"><a href="#四、php-cgi漏洞" class="headerlink" title="四、php-cgi漏洞"></a>四、php-cgi漏洞</h4><p>在IIS-7.0和IIS-7.5的版本，在php配置文件中，开启cgi.fix_pathinfo，然后上传一个1.jpg的一句话木马文件。然后用菜刀访问1.jpg/.php即可连接一句话木马。</p>
+<h2 id="0x03-nginx"><a href="#0x03-nginx" class="headerlink" title="0x03 nginx"></a>0x03 nginx</h2><h4 id="一、低版本nginx"><a href="#一、低版本nginx" class="headerlink" title="一、低版本nginx"></a>一、低版本nginx</h4><p>nginx 0.5.x、nginx 0.6.x中可以通过在任意文件名后面增加%00.php解析为php</p>
+<h4 id="二、php-cgi漏洞"><a href="#二、php-cgi漏洞" class="headerlink" title="二、php-cgi漏洞"></a>二、php-cgi漏洞</h4><p>和IIS的第四点相同，在php配置文件中，开启了cgi.fix_pathinfo，导致图片马1.jpg可以通过访问1.jpg/.php解析成php</p>
+<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><ul>
+<li>1.对于php-cgi漏洞，可以修改php.ini文件，将cgi.fix_pathinfo的值设置为0</li>
+<li>2.使用白名单匹配文件后缀名</li>
+<li>3.可以对上传后的文件固定后缀之前的所有字符进行重命名</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/29/爆破工具hydra笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/29/爆破工具hydra笔记/" itemprop="url">
+                  爆破工具hydra笔记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-29T21:17:42+08:00">
+                2018-04-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/29/爆破工具hydra笔记/" class="leancloud_visitors" data-flag-title="爆破工具hydra笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-hydra"><a href="#0x00-hydra" class="headerlink" title="0x00 hydra"></a>0x00 hydra</h2><p>hydra 是一个网络帐号破解工具，支持多种协议。其作者是van Hauser,David Maciejak与其共同维护。hydra在所有支持GCC的平台能很好的编译，包括Linux,所有版本的BSD,Mac OS, Solaris等。</p>
+<h2 id="0x01-参数说明"><a href="#0x01-参数说明" class="headerlink" title="0x01 参数说明"></a>0x01 参数说明</h2><p>hydra [[[-l LOGIN|-L FILE] [-p PASS|-P FILE]] | [-C FILE]] [-e ns]<br>[-o FILE] [-t TASKS] [-M FILE [-T TASKS]] [-w TIME] [-f] [-s PORT] [-S] [-vV] server service [OPT]</p>
+<ul>
+<li>-R 继续从上一次进度接着破解。</li>
+<li>-S 采用SSL链接。</li>
+<li>-s PORT 可通过这个参数指定非默认端口。</li>
+<li>-l LOGIN 指定破解的用户，对特定用户破解。</li>
+<li>-L FILE 指定用户名字典。</li>
+<li>-p PASS 小写，指定密码破解，少用，一般是采用密码字典。</li>
+<li>-P FILE 大写，指定密码字典。</li>
+<li>-e ns 可选选项，n：空密码试探，s：使用指定用户和密码试探。</li>
+<li>-C FILE 使用冒号分割格式，例如“登录名:密码”来代替-L/-P参数。</li>
+<li>-M FILE 指定目标列表文件一行一条。</li>
+<li>-o FILE 指定结果输出文件。</li>
+<li>-f 在使用-f参数以后，找到第一对登录名或者密码的时候中止破解。</li>
+<li>-t TASKS 同时运行的线程数，默认为16。</li>
+<li>-w TIME 设置最大超时的时间，单位秒，默认是30s。</li>
+<li>-v / -V 显示详细过程。</li>
+<li>server 目标ip</li>
+<li>service 指定服务名，支持的服务和协议：telnet ftp pop3[-ntlm] imap[-ntlm] smb smbnt http-{head|get} http-{get|post}-form http-proxy cisco cisco-enable vnc ldap2 ldap3 mssql mysql oracle-listener postgres nntp socks5 rexec rlogin pcnfs snmp rsh cvs svn icq sapr3 ssh smtp-auth[-ntlm] pcanywhere teamspeak sip vmauthd firebird ncp afp等等。</li>
+<li>OPT 可选项</li>
+</ul>
+<h2 id="0x02-使用范例"><a href="#0x02-使用范例" class="headerlink" title="0x02 使用范例"></a>0x02 使用范例</h2><ul>
+<li>1.破解ssh：<br>hydra -l 用户名 -p 密码字典 -t 线程 ip ssh</li>
+<li>2.破解ftp：<br>hydra ip ftp -l 用户名 -P 密码字典 -t 线程</li>
+<li>3.破解web登录（get方式）：<br>hydra -l 用户名 -p 密码字典 -t 线程 -f ip http-get 127.0.0.1/admin/index.php</li>
+<li>4.破解web登录（post方式）：<br>hydra -l 用户名 -P 密码字典 -s 80 ip http-post-form “/admin/login.php:username=^USER^&amp;password=^PASS^&amp;submit=login”</li>
+<li>5.破解https：<br>hydra -m /index.php -l 用户名 -P 密码字典 ip https</li>
+<li>6.破解teamspeak：<br>hydra -l 用户名 -P 密码字典 -s 端口号 ip teamspeak</li>
+<li>7.破解cisco：<br>hydra -P 密码字典 ip cisco</li>
+<li>8.破解smb：<br>hydra -l 用户名 -P 密码字典 ip smb</li>
+<li>9.破解pop3：<br>hydra -l 用户名 -P 密码字典 my.pop3.mail pop3</li>
+<li>10.破解rdp：<br>hydra ip rdp -l 用户名 -P 密码字典 -V</li>
+<li>11.破解http-proxy：<br>hydra -l 用户名 -p 密码字典 -t 线程 http-proxy://xxx.xxx.xxx.xxx</li>
+<li>12.破解imap：<br>hydra -l 用户名 -P 密码字典 ip imap PLAIN</li>
+</ul>
+<h2 id="0x03-总结"><a href="#0x03-总结" class="headerlink" title="0x03 总结"></a>0x03 总结</h2><p>hydra支持多种协议的爆破，并且使用方式简单灵活，是暴力测试必备良器，只需要自行提供字典，或根据实际情况生成社工字典，就可以运用到绝大多数场景。</p>
+<p>这里提供一下博主经常使用的一些字典 <a href="https://github.com/echohun/tools/tree/master/%E5%AD%97%E5%85%B8" target="_blank" rel="noopener">https://github.com/echohun/tools/tree/master/%E5%AD%97%E5%85%B8</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/29/反序列化漏洞/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2027,434 +2437,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/21/CSRF跨站请求伪造/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/21/CSRF跨站请求伪造/" itemprop="url">
-                  CSRF跨站请求伪造
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-21T00:47:53+08:00">
-                2018-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/21/CSRF跨站请求伪造/" class="leancloud_visitors" data-flag-title="CSRF跨站请求伪造">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-CSRF跨站请求伪造"><a href="#0x00-CSRF跨站请求伪造" class="headerlink" title="0x00 CSRF跨站请求伪造"></a>0x00 CSRF跨站请求伪造</h2><p>CSRF（Cross-site request forgery）跨站请求伪造，也被称为“One Click Attack”或者Session Riding，通常缩写为CSRF或者XSRF，是一种对网站的恶意利用。尽管听起来像跨站脚本（XSS），但它与XSS非常不同，XSS利用站点内的信任用户，而CSRF则通过伪装来自受信任用户的请求来利用受信任的网站。与XSS攻击相比，CSRF攻击往往不大流行和难以防范，所以被认为比XSS更具危险性。</p>
-<h2 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h2><p>用户登陆网站A，并且生成本地cookie，在没有退出的情况下点击了攻击者构造的危险链接进入了网站B，而网站B是个危险请求，用户以自己的身份发送了危险请求。</p>
-<h2 id="0x02-CSRF攻击实例"><a href="#0x02-CSRF攻击实例" class="headerlink" title="0x02 CSRF攻击实例"></a>0x02 CSRF攻击实例</h2><p>CSRF 攻击可以在受害者毫不知情的情况下以受害者名义伪造请求发送给受攻击站点，从而在并未授权的情况下执行在权限保护之下的操作。比如说，受害者 Bob 在银行有一笔存款，通过对银行的网站发送请求 <a href="http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=bob2" target="_blank" rel="noopener">http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=bob2</a>  可以使 Bob 把 1000000 的存款转到 bob2 的账号下。通常情况下，该请求发送到网站后，服务器会先验证该请求是否来自一个合法的 session，并且该 session 的用户 Bob 已经成功登陆。黑客 Mallory 自己在该银行也有账户，他知道上文中的 URL 可以把钱进行转帐操作。Mallory 可以自己发送一个请求给银行：<a href="http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=Mallory" target="_blank" rel="noopener">http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=Mallory</a> 。但是这个请求来自 Mallory 而非 Bob，他不能通过安全认证，因此该请求不会起作用。这时，Mallory 想到使用 CSRF 的攻击方式，他先自己做一个网站，在网站中放入如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">src=&quot;http://bank.example/withdraw?account=bob&amp;amount=1000000&amp;for=Mallory&quot;</span><br></pre></td></tr></table></figure></p>
-<p>并且通过广告等诱使 Bob 来访问他的网站。当 Bob 访问该网站时，上述 url 就会从 Bob 的浏览器发向银行，而这个请求会附带 Bob 浏览器中的 cookie 一起发向银行服务器。大多数情况下，该请求会失败，因为他要求 Bob 的认证信息。但是，如果 Bob 当时恰巧刚访问他的银行后不久，他的浏览器与银行网站之间的 session 尚未过期，浏览器的 cookie 之中含有 Bob 的认证信息。这时，悲剧发生了，这个 url 请求就会得到响应，钱将从 Bob 的账号转移到 Mallory 的账号，而 Bob 当时毫不知情。等以后 Bob 发现账户钱少了，即使他去银行查询日志，他也只能发现确实有一个来自于他本人的合法请求转移了资金，没有任何被攻击的痕迹。而 Mallory 则可以拿到钱后逍遥法外。</p>
-<h2 id="0x03-CSRF环境搭建"><a href="#0x03-CSRF环境搭建" class="headerlink" title="0x03 CSRF环境搭建"></a>0x03 CSRF环境搭建</h2><p>首先我们写一个登陆之后能修改密码的系统，账号密码等信息存放在数据库中，数据库中假设有如下几个用户的信息：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf01.png" alt=""></p>
-<p>然后在wamp环境中www/csrf路径中创建：</p>
-<ul>
-<li>login.html</li>
-<li>login.php</li>
-<li>welcome.php</li>
-<li>exit.php</li>
-</ul>
-<p>各部分代码如下</p>
-<p>登陆界面login.html:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">&lt;title&gt;login&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line"> </span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form action=&quot;login.php&quot; method=&quot;post&quot;&gt;</span><br><span class="line">username:&lt;input type=&quot;text&quot; name=&quot;username&quot; /&gt;&lt;br /&gt;</span><br><span class="line">password:&lt;input type=&quot;password&quot; name=&quot;password&quot; /&gt;&lt;br /&gt;</span><br><span class="line">&lt;input type=&quot;submit&quot; value=&quot;登录&quot; /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>登陆界面代码只有简单的一个表单提交账号密码给后台。</p>
-<p>登陆后台login.php:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">&lt;title&gt;login.....&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line"> </span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">session_start();</span><br><span class="line">$username=$_REQUEST[&quot;username&quot;];</span><br><span class="line">$password=$_REQUEST[&quot;password&quot;];</span><br><span class="line">$con=mysql_connect(&quot;localhost&quot;,&quot;root&quot;,&quot;123456&quot;);</span><br><span class="line">if(!$con)&#123;</span><br><span class="line"> die(&quot;database connect error!&quot;);</span><br><span class="line"> &#125;</span><br><span class="line">mysql_select_db(&quot;test&quot;,$con);</span><br><span class="line">$dbusername=null;</span><br><span class="line">$dbpassword=null;</span><br><span class="line">$result=mysql_query(&quot;select * from user where username=&apos;&quot;.$username.&quot;&apos;;&quot;);</span><br><span class="line">while($row=mysql_fetch_array($result))&#123;</span><br><span class="line"> $dbusername=$row[&quot;username&quot;];</span><br><span class="line"> $dbpassword=$row[&quot;password&quot;];</span><br><span class="line">&#125;</span><br><span class="line">if(is_null($dbusername))&#123;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">alert(&quot;username is not exist!&quot;);</span><br><span class="line">window.location.href=&quot;login.html&quot;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;?php</span><br><span class="line"> &#125;</span><br><span class="line">else&#123;</span><br><span class="line"> if($dbpassword!=$password)&#123;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">alert(&quot;password error!&quot;);</span><br><span class="line">window.location.href=&quot;login.html&quot;;</span><br><span class="line">&lt;/script&gt;    </span><br><span class="line">&lt;?php</span><br><span class="line"> &#125;</span><br><span class="line"> else&#123;</span><br><span class="line"> $_SESSION[&quot;username&quot;]=$username;</span><br><span class="line"> $_SESSION[&quot;code&quot;]=mt_rand(0,100000);</span><br><span class="line">?&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">window.location.href=&quot;welcome.php&quot;;</span><br><span class="line">&lt;/script&gt; </span><br><span class="line">&lt;?php</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br><span class="line">mysql_close($con);</span><br><span class="line">?&gt;</span><br><span class="line"> </span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>后台拿到收到的账号密码，然后连接数据库登陆，与数据库中账号密码匹配成功则生成session并跳转到welcome.php，匹配失败就返回login.html。</p>
-<p>登陆成功界面welcome.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;  </span><br><span class="line">&lt;head&gt;  </span><br><span class="line">&lt;meta charset=&quot;UTF-8&quot;&gt;  </span><br><span class="line">&lt;title&gt;welcome&lt;/title&gt;  </span><br><span class="line">&lt;/head&gt;  </span><br><span class="line">&lt;body&gt;  </span><br><span class="line">  </span><br><span class="line">&lt;?php  </span><br><span class="line">session_start ();  </span><br><span class="line">if (isset ( $_SESSION [&quot;code&quot;] )) &#123;//判断code存不存在，如果不存在，说明异常登录  </span><br><span class="line">    ?&gt;  </span><br><span class="line">welcome &lt;?php  </span><br><span class="line">    echo &quot;$&#123;_SESSION[&quot;username&quot;]&#125;&quot;;//显示登录用户名  </span><br><span class="line">    ?&gt;&lt;br&gt;  </span><br><span class="line">your ip：&lt;?php  </span><br><span class="line">    echo &quot;$&#123;_SERVER[&apos;REMOTE_ADDR&apos;]&#125;&quot;;//显示ip  </span><br><span class="line">    ?&gt;  </span><br><span class="line">&lt;br&gt;  </span><br><span class="line">&lt;a href=&quot;exit.php&quot;&gt;exit&lt;/a&gt;  </span><br><span class="line">&lt;?php  </span><br><span class="line">&#125; else &#123;//code不存在，调用exit.php 退出登录  </span><br><span class="line">    ?&gt;  </span><br><span class="line">&lt;script type=&quot;text/javascript&quot;&gt;  </span><br><span class="line">    alert(&quot;exit&quot;);  </span><br><span class="line">    window.location.href=&quot;exit.php&quot;;  </span><br><span class="line">&lt;/script&gt;  </span><br><span class="line">&lt;?php  </span><br><span class="line">&#125;  </span><br><span class="line">?&gt;  </span><br><span class="line">&lt;br&gt;</span><br><span class="line">&lt;!--  &lt;input type=&quot;button&quot; onclick=&quot;window.location.href=&apos;password.html&apos;&quot; value=&quot;change password&quot;&gt;   --&gt;</span><br><span class="line">&lt;form action=&quot;&quot; method=&quot;get&quot;&gt;</span><br><span class="line">newpassword: &lt;input type=&quot;text&quot; name=&quot;password&quot;&gt;</span><br><span class="line">&lt;input type=&quot;submit&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">$con=mysqli_connect(&quot;localhost&quot;,&quot;root&quot;,&quot;123456&quot;,&quot;test&quot;);</span><br><span class="line">if(!$con)&#123;</span><br><span class="line"> die(&quot;database connect error!&quot;);</span><br><span class="line"> &#125;</span><br><span class="line">if($_GET[&apos;password&apos;])&#123;</span><br><span class="line">$n_password = $_GET[&apos;password&apos;];</span><br><span class="line">$username=&quot;$&#123;_SESSION[&quot;username&quot;]&#125;&quot;;</span><br><span class="line">#print &quot;update user set password= &apos;&quot;.$n_password.&quot;&apos; where username= &apos;&quot;.$username.&quot;&apos;;&quot;;</span><br><span class="line">mysqli_query($con,&quot;update user set password= &apos;&quot;.$n_password.&quot;&apos; where username= &apos;&quot;.$username.&quot;&apos;;&quot;);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;  </span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>登陆成功界面显示用户名和ip地址，然后有一个修改密码的输入框，如果我们在这里提交新密码，就会连接mysql数据库修改密码，点击exit可以退出登陆。</p>
-<p>退出处理exit.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">&lt;title&gt;log out&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">session_start();</span><br><span class="line">session_destroy();</span><br><span class="line">?&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">window.location.href=&quot;login.html&quot;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>exit.php将session销毁，然后返回login.html。</p>
-<p>上述四个文件编写完毕，基本的环境就完成了，下来我们看如何进行csrf攻击。</p>
-<h2 id="0x04-csrf实现"><a href="#0x04-csrf实现" class="headerlink" title="0x04 csrf实现"></a>0x04 csrf实现</h2><p>首先登陆界面如下：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf02.png" alt=""></p>
-<p>lily用自己账号登陆了这个界面：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf03.png" alt=""></p>
-<p>然后修改了密码，发现密码修改时的url请求为：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf04.png" alt=""></p>
-<p>然后lily想，如果构造一个url请求发给别人，别人正好处于没有退出登陆的情况下点击了这个url，会不会被修改密码。</p>
-<p>ps：此时lily密码为233333，jack密码为qwe123。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf05.png" alt=""></p>
-<p>所以lily就构造url：<a href="http://127.0.0.1/csrf/welcome.php?password=123456" target="_blank" rel="noopener">http://127.0.0.1/csrf/welcome.php?password=123456</a> 给已经登陆的jack<br>，然后jack点击了lily发来的网址，jack的密码变成了123456：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf06.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf07.png" alt=""></p>
-<p>这个时候lily想，直接发网址太容易暴露了，我构造一个钓鱼网页，来欺骗jack点，所以写了一个hack.html(这个可以写在任何网络中，诱导jack点击)：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">&lt;title&gt;hack&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line"> </span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;a href=&quot;http://127.0.0.1/csrf/welcome.php?password=123456&quot;&gt;233333&lt;/a&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/csrf/csrf08.png" alt=""></p>
-<p>这个时候，只要处于未退出状态的人点击了这个链接，密码就会被改成123456</p>
-<p>至此，一次完美的csrf攻击就完成了。</p>
-<h2 id="0x05-应对"><a href="#0x05-应对" class="headerlink" title="0x05 应对"></a>0x05 应对</h2><ul>
-<li><p>添加验证码<br>如果提交请求的界面需要有验证码，即使存在csrf漏洞，攻击者也无法预测下一个验证码是什么，就成功的避免了csrf攻击。</p>
-</li>
-<li><p>验证referer<br>HTTP Referer是header的一部分，当浏览器向web服务器发送请求的时候，一般会带上Referer，告诉服务器是从哪个页面链接过来的，而且它无法被javascript所更改，所以服务器可以通过Referer来判断是用户的正常操作还是被csrf攻击后的操作。</p>
-</li>
-<li><p>token<br>CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请求，该请求中所有的用户验证信息都是存在于 cookie 中，因此黑客可以在不知道这些验证信息的情况下直接利用用户自己的 cookie 来通过安全验证。要抵御 CSRF，关键在于在请求中放入黑客所不能伪造的信息，并且该信息不存在于 cookie 之中。可以在 HTTP 请求中以参数的形式加入一个随机产生的 token，并在服务器端建立一个拦截器来验证这个 token，如果请求中没有 token 或者 token 内容不正确，则认为可能是 CSRF 攻击而拒绝该请求。</p>
-</li>
-<li><p>设置跨域权限<br>设置跨域权限使用户的某些操作不接受其他域的提交，就可以避免csrf。</p>
-</li>
-</ul>
-<h2 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h2><p>CSRF漏洞虽然原理不难理解，攻击也不难实现，但是搭漏洞环境时一句一句的写代码出了很多错误花了很多时间，不过总的来说受益良多，提升了自己的编程能力。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/17/逻辑处理漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/17/逻辑处理漏洞/" itemprop="url">
-                  逻辑处理漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-17T18:32:46+08:00">
-                2018-04-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/17/逻辑处理漏洞/" class="leancloud_visitors" data-flag-title="逻辑处理漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-逻辑处理漏洞"><a href="#0x00-逻辑处理漏洞" class="headerlink" title="0x00 逻辑处理漏洞"></a>0x00 逻辑处理漏洞</h2><p>很多漏洞出现的原因是在代码编写的环节没有考虑到一些安全问题，由程序逻辑失误导致的，这里记录一下一些常见的逻辑处理漏洞。</p>
-<h2 id="0x01-in-array函数"><a href="#0x01-in-array函数" class="headerlink" title="0x01 in_array函数"></a>0x01 in_array函数</h2><p>in_array()函数是用来判断一个值是否在一个列表里面，一般用法如下：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">in_array(&apos;b&apos;,array(&apos;a&apos;,&apos;b&apos;,&apos;c&apos;))</span><br></pre></td></tr></table></figure>
-<p>当我们php代码中这样写时：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(in_array($_GET[&apos;id&apos;],array(1,2,3,4)))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;select where id=&apos;&quot;.$_GET[&apos;id&apos;].&quot;&apos;&quot;;</span><br><span class="line">echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这段代码判断得到的参数id的值是否在array这个数组中，但是这里如果输入id=1’ union select <em> from user，in_array()函数会自动进行类型转换，就会认为这个输入参数类型转换之后是1，属于array数组中，就会执行select where id =’1’ union select </em> from user。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic01.png" alt=""></p>
-<h2 id="0x02-双等于和三等于"><a href="#0x02-双等于和三等于" class="headerlink" title="0x02 双等于和三等于"></a>0x02 双等于和三等于</h2><p>php中，双等于与三等于之间有一些区别，其中双等于在判断等于之前会先进行数据类型转换，而三等于则不会，所以在一些情况下，双等于会造成一些安全问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">var_dump($_GET[&apos;var&apos;]==2);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>var_dump()函数用于输出变量结构、内容和类型，一般用于精确调试。  </p>
-<p>这里我们如果给出var=2abcd,就会返回bool(true),发现类型强制转换之后判断为true。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic02.png" alt=""></p>
-<h2 id="0x03-is-numeric函数"><a href="#0x03-is-numeric函数" class="headerlink" title="0x03 is_numeric函数"></a>0x03 is_numeric函数</h2><p>in_numeric()用来判断一个变量是否为数字，如果检查通过返回true，否则返回false</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(is_numeric($_GET[&apos;var&apos;]))</span><br><span class="line">&#123;</span><br><span class="line">    $sql=&quot;insert into user values(&apos;user&apos;,&#123;$_GET[&apos;var&apos;]&#125;)&quot;;</span><br><span class="line">    echo $sql;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这个函数存在一个问题，那就是当传入hex时直接通过并返回true，但是mysql中是可以通过hex编码代替明文的，如我们提交一个xss测试代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<p>对应的hex编码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x3c7363726970743e616c6572742831293c2f7363726970743e</span><br></pre></td></tr></table></figure></p>
-<p>就会成功的将代码传入数据库。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic03.png" alt=""></p>
-<h2 id="0x04-订单支付漏洞"><a href="#0x04-订单支付漏洞" class="headerlink" title="0x04 订单支付漏洞"></a>0x04 订单支付漏洞</h2><p>在一些电商网站会出现的一些逻辑漏洞，主要是客户可以更改单价、总价、数量等，然后提交之后后台未作严格的校验导致的。</p>
-<p>比如价格可以在客户端提交，那么原本几千元的商品，我们抓包修改提交订单的商品单价为1，如果后台未作校验直接跳转支付界面，那么就可以用一元钱购买物品。总价也是同理。</p>
-<p>再比如将要购买的商品数量或单价改为负数，如果后台未作检验，那么计算总价时就会计算出负数，反而会让我们越买钱越多。</p>
-<h2 id="0x05-利用时间差"><a href="#0x05-利用时间差" class="headerlink" title="0x05 利用时间差"></a>0x05 利用时间差</h2><p>这种类型在早期刷钻的时候出现过，先发给腾讯一条开通某钻的订单，然后再发送一个取消业务的短信给运营商，这样腾讯那边成功开通但是无法扣费，就实现了刷钻。</p>
-<p>还有就是在购买商品时，判断余额这条语句和扣费语句之间有某几条语句浪费了一些时间。比如我们有10元钱，然后商品也是10元，我们就可以以极快的速度发很多个请求，这个时候还没用扣费所以判断余额10元足够开通，然后请求都发送之后，获得了很多个10元钱请求的商品，然后才开始扣费，使余额成为负数，但是商品已经全部成功买到。</p>
-<h2 id="0x06-水平权限漏洞"><a href="#0x06-水平权限漏洞" class="headerlink" title="0x06 水平权限漏洞"></a>0x06 水平权限漏洞</h2><p>水平越权，即是相同级别的用户或者同一角色的不同用户之间，可以越权访问修改或者删除等重要功能。  </p>
-<p>如果我们自己的页面最后的id是12300，如果设计者没有考虑到水平权限的问题再次验证用户访问的空间是否属于这个用户自身的话，那么就可以通过遍历来得到所有用户的信息，甚至进行修改等。</p>
-<h2 id="0x07-垂直权限漏洞"><a href="#0x07-垂直权限漏洞" class="headerlink" title="0x07 垂直权限漏洞"></a>0x07 垂直权限漏洞</h2><p>垂直越权就是低权限用户(普通用户)可以访问更高权限(如管理员)才能访问到的资源。  </p>
-<p>如之前淘宝举报号任意访问的问题，我们通过普通用户的身份，可以访问只有管理员才能访问的举报信息，就是这里的权限检查出现问题。</p>
-<h2 id="0x08-未授权访问"><a href="#0x08-未授权访问" class="headerlink" title="0x08 未授权访问"></a>0x08 未授权访问</h2><p>这个漏洞广泛存在于目前的网络中，很多公司都没有对自己公司的某些敏感目录做访问限制，使得外网可以直接通过浏览器访问。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic04.jpg" alt=""></p>
-<p>如正方教务系统的后台敏感日志查看漏洞</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic05.png" alt=""></p>
-<p>我们在正方教务系统的登陆页面后面加上/log/2018-04-17-log.txt，就可以直接访问后台敏感日志。</p>
-<p>有的公司的files信息和phpinfo信息，也直接暴露给用户，会被获得很多敏感信息。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic06.jpg" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/logic/logic07.png" alt=""></p>
-<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>逻辑处理漏洞还有很多类型，比如验证码爆破、密码找回等等，这些漏洞虽然原理不难理解，但是由于程序员编写代码时的考虑不周，导致逻辑处理漏洞广泛存在，并且危害极高，解决逻辑处理漏洞，更需要的是安全工作人员和开发人员的沟通配合。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2504,7 +2486,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">102</span>
+                <span class="site-state-item-count">104</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2526,7 +2508,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">63</span>
+                <span class="site-state-item-count">64</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

